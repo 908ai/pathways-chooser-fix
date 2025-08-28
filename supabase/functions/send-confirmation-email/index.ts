@@ -1,4 +1,4 @@
-/// <reference types="https://deno.land/x/deno/cli/types/deno.d.ts" />
+/// <reference lib="deno.ns" />
 
 // @ts-ignore
 import { Resend } from "https://esm.sh/resend@2.0.0";
@@ -23,7 +23,12 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendApiKey) {
+      console.error("Missing RESEND_API_KEY secret in Supabase project settings.");
+      throw new Error("RESEND_API_KEY is not set in Supabase secrets. The email function cannot proceed.");
+    }
+    const resend = new Resend(resendApiKey);
     const { userEmail, companyName, compliancePath, selections }: ConfirmationEmailRequest = await req.json();
 
     const pathType = compliancePath === "9365" || compliancePath === "9367" ? "Performance" : "Prescriptive";
