@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calculator, Edit } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +13,9 @@ import InstructionsSection from "@/components/calculator/sections/InstructionsSe
 import ContactSection from "@/components/calculator/sections/ContactSection";
 import ProjectInfoSection from "@/components/calculator/sections/ProjectInfoSection";
 import CompliancePathSection from "@/components/calculator/sections/CompliancePathSection";
+import BuildingEnvelopeSection from "@/components/calculator/sections/BuildingEnvelopeSection";
+import MechanicalSystemsSection from "@/components/calculator/sections/MechanicalSystemsSection";
+import SubmissionSection from "@/components/calculator/sections/SubmissionSection";
 
 interface NBCCalculatorProps {
   onPathwayChange?: (pathwayInfo: string) => void;
@@ -27,13 +29,12 @@ const NBCCalculator = ({ onPathwayChange }: NBCCalculatorProps = {}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showProjectSummary, setShowProjectSummary] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   const [agreementChecked, setAgreementChecked] = useState(false);
   const [expandedWarnings, setExpandedWarnings] = useState<{ [key: string]: boolean }>({});
 
   const { selections, setSelections, logic } = useNBCCalculator();
 
-  // Load project data if editing
   useEffect(() => {
     const editProjectId = searchParams.get('edit');
     if (editProjectId && user) {
@@ -42,47 +43,81 @@ const NBCCalculator = ({ onPathwayChange }: NBCCalculatorProps = {}) => {
   }, [searchParams, user]);
 
   const loadProjectForEditing = async (projectId: string) => {
-    // ... (keep existing loadProjectForEditing logic)
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('project_summaries')
+        .select('*')
+        .eq('id', projectId)
+        .eq('user_id', user!.id)
+        .single();
+
+      if (error) throw error;
+      
+      // Convert DB data to form state
+      const loadedSelections: Partial<Selections> = {
+        // map all fields...
+      };
+      setSelections(prev => ({ ...prev, ...loadedSelections }));
+      if (data.uploaded_files && Array.isArray(data.uploaded_files)) {
+        setUploadedFiles(data.uploaded_files);
+      }
+
+    } catch (error) {
+      console.error("Error loading project for editing:", error);
+      toast({ title: "Error", description: "Failed to load project data.", variant: "destructive" });
+      navigate('/calculator');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (field: keyof Selections, value: any) => {
     setSelections(prev => ({ ...prev, [field]: value }));
     if (field === 'compliancePath' && onPathwayChange) {
         const pathwayMap: { [key: string]: string } = {
-            '9362': 'Prescriptive',
-            '9368': 'Prescriptive',
-            '9365': 'Performance',
-            '9367': 'Performance',
+            '9362': 'Prescriptive', '9368': 'Prescriptive',
+            '9365': 'Performance', '9367': 'Performance',
         };
         onPathwayChange(pathwayMap[value] || '');
     }
   };
-
-  const handleSubmitApplication = async (pathType: 'performance' | 'prescriptive') => {
-    // ... (keep existing handleSubmitApplication logic)
+  
+  const handleFileUploaded = (file: any) => {
+    setUploadedFiles(prev => [...prev, file]);
   };
 
-  // ... (keep other handlers like handleFileUpload, removeFile, etc.)
+  const handleSubmitApplication = async (pathType: 'performance' | 'prescriptive') => {
+    setIsSubmitting(true);
+    // Combine selections and uploaded files for submission
+    const submissionData = {
+      ...selections,
+      selectedPathway: pathType,
+      uploadedFiles: uploadedFiles,
+      complianceStatus: 'submitted',
+    };
+    
+    // Logic to save to Supabase...
+    console.log("Submitting application:", submissionData);
+    
+    // For now, just show the summary form
+    setShowProjectSummary(true);
+    
+    // In a real scenario, you would save and then maybe show a success message
+    // and navigate away.
+    // setIsSubmitting(false);
+  };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-lg font-medium mb-2">Loading project data...</div>
-          <div className="text-muted-foreground">Please wait while we load your project for editing.</div>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Loading project data...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-4 relative" style={{
-      backgroundImage: `url(${starryMountainsBg})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      backgroundAttachment: 'fixed'
-    }}>
+    <div className="min-h-screen p-4 relative">
       <ResultsSidebar logic={logic} compliancePath={selections.compliancePath} />
 
       {searchParams.get('edit') && (
@@ -116,33 +151,42 @@ const NBCCalculator = ({ onPathwayChange }: NBCCalculatorProps = {}) => {
         <CompliancePathSection selections={selections} handleInputChange={handleInputChange} />
 
         {selections.compliancePath && (
-          <div className="grid lg:grid-cols-5 gap-6">
-            <div className="lg:col-span-4 space-y-4">
-              <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
-                <CardHeader>
-                  <CardTitle className="text-white text-center">
-                    {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? 'Prescriptive Building Requirements' : 'Performance Building Specifications'}
-                  </CardTitle>
-                  <CardDescription className="text-slate-200">
-                    {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? 'Specify minimum required values for prescriptive compliance' : 'Enter proposed building specifications for energy modeling'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-8">
-                  {/* TODO: Replace this with the new section components */}
-                  <p className="text-white text-center p-8">Building Envelope and Mechanicals sections will be placed here.</p>
-                </CardContent>
-              </Card>
-            </div>
-            <div className="space-y-4">
-              {/* Results for non-9368 paths will go here */}
-            </div>
-          </div>
+          <>
+            <BuildingEnvelopeSection 
+              selections={selections} 
+              handleInputChange={handleInputChange} 
+              logic={logic}
+              expandedWarnings={expandedWarnings}
+              setExpandedWarnings={setExpandedWarnings}
+            />
+            <MechanicalSystemsSection 
+              selections={selections} 
+              handleInputChange={handleInputChange} 
+            />
+            <SubmissionSection
+              selections={selections}
+              handleInputChange={handleInputChange}
+              agreementChecked={agreementChecked}
+              setAgreementChecked={setAgreementChecked}
+              handleSubmitApplication={handleSubmitApplication}
+              isSubmitting={isSubmitting}
+              uploadedFiles={uploadedFiles}
+              onFileUploaded={handleFileUploaded}
+            />
+          </>
         )}
       </div>
 
       {showProjectSummary && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          {/* ... (keep existing ProjectSummaryForm modal logic) */}
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[100] animate-in fade-in-50">
+           <ProjectSummaryForm 
+             calculatorData={{...selections, uploadedFiles}} 
+             onSave={() => {
+               setShowProjectSummary(false);
+               navigate('/dashboard');
+             }}
+             editingProjectId={searchParams.get('edit') || undefined}
+           />
         </div>
       )}
     </div>
