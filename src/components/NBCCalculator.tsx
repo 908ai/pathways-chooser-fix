@@ -8,12 +8,12 @@ import { useToast } from "@/hooks/use-toast";
 import ProjectSummaryForm from "@/components/ProjectSummaryForm";
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 import { useNBCCalculator } from "@/hooks/useNBCCalculator";
+import { Selections } from "./calculator/types";
 import ResultsSidebar from "@/components/calculator/ResultsSidebar";
 import InstructionsSection from "@/components/calculator/sections/InstructionsSection";
 import ContactSection from "@/components/calculator/sections/ContactSection";
-// Import section components when they are created
-// import ProjectInfoSection from "./calculator/sections/ProjectInfoSection";
-// ... other sections
+import ProjectInfoSection from "@/components/calculator/sections/ProjectInfoSection";
+import CompliancePathSection from "@/components/calculator/sections/CompliancePathSection";
 
 interface NBCCalculatorProps {
   onPathwayChange?: (pathwayInfo: string) => void;
@@ -43,6 +43,19 @@ const NBCCalculator = ({ onPathwayChange }: NBCCalculatorProps = {}) => {
 
   const loadProjectForEditing = async (projectId: string) => {
     // ... (keep existing loadProjectForEditing logic)
+  };
+
+  const handleInputChange = (field: keyof Selections, value: any) => {
+    setSelections(prev => ({ ...prev, [field]: value }));
+    if (field === 'compliancePath' && onPathwayChange) {
+        const pathwayMap: { [key: string]: string } = {
+            '9362': 'Prescriptive',
+            '9368': 'Prescriptive',
+            '9365': 'Performance',
+            '9367': 'Performance',
+        };
+        onPathwayChange(pathwayMap[value] || '');
+    }
   };
 
   const handleSubmitApplication = async (pathType: 'performance' | 'prescriptive') => {
@@ -98,28 +111,33 @@ const NBCCalculator = ({ onPathwayChange }: NBCCalculatorProps = {}) => {
 
         <InstructionsSection />
         <ContactSection />
+        
+        <ProjectInfoSection selections={selections} handleInputChange={handleInputChange} />
+        <CompliancePathSection selections={selections} handleInputChange={handleInputChange} />
 
-        <div className="grid lg:grid-cols-5 gap-6">
-          <div className="lg:col-span-4 space-y-4">
-            <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
-              <CardHeader>
-                <CardTitle className="text-white text-center">
-                  {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? 'Prescriptive Building Requirements' : selections.compliancePath === '9365' || selections.compliancePath === '9367' ? 'Performance Building Specifications' : 'Building Specifications'}
-                </CardTitle>
-                <CardDescription className="text-slate-200">
-                  {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? 'Specify minimum required values for prescriptive compliance' : selections.compliancePath === '9365' || selections.compliancePath === '9367' ? 'Enter proposed building specifications for energy modeling' : 'Select performance levels for each building component'}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-8">
-                {/* TODO: Replace this with the new section components */}
-                <p className="text-white text-center p-8">Calculator form sections will be placed here.</p>
-              </CardContent>
-            </Card>
+        {selections.compliancePath && (
+          <div className="grid lg:grid-cols-5 gap-6">
+            <div className="lg:col-span-4 space-y-4">
+              <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+                <CardHeader>
+                  <CardTitle className="text-white text-center">
+                    {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? 'Prescriptive Building Requirements' : 'Performance Building Specifications'}
+                  </CardTitle>
+                  <CardDescription className="text-slate-200">
+                    {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? 'Specify minimum required values for prescriptive compliance' : 'Enter proposed building specifications for energy modeling'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-8">
+                  {/* TODO: Replace this with the new section components */}
+                  <p className="text-white text-center p-8">Building Envelope and Mechanicals sections will be placed here.</p>
+                </CardContent>
+              </Card>
+            </div>
+            <div className="space-y-4">
+              {/* Results for non-9368 paths will go here */}
+            </div>
           </div>
-          <div className="space-y-4">
-            {/* Results for non-9368 paths will go here */}
-          </div>
-        </div>
+        )}
       </div>
 
       {showProjectSummary && (
