@@ -1,7 +1,7 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
+/// <reference types="https://deno.land/x/deno/cli/types/deno.d.ts" />
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+// @ts-ignore
+import { Resend } from "https://esm.sh/resend@2.0.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,6 +23,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
     const { userEmail, companyName, compliancePath, selections }: ConfirmationEmailRequest = await req.json();
 
     const pathType = compliancePath === "9365" || compliancePath === "9367" ? "Performance" : "Prescriptive";
@@ -82,4 +83,4 @@ const handler = async (req: Request): Promise<Response> => {
   }
 };
 
-serve(handler);
+Deno.serve(handler);
