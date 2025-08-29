@@ -73,15 +73,12 @@ const NBCCalculator = ({ onPathwayChange }: NBCCalculatorProps = {}) => {
   // Calculate derived values
   const totalPoints = Object.entries(selections).reduce((total, [category, value]) => {
     if (value) {
-      // Exclude water heater points if boiler with indirect tank is selected
       if (category === 'waterHeater' && selections.heatingType === 'boiler' && selections.indirectTank === 'yes') {
         return total;
       }
-      // Skip boolean values as they don't contribute to points
       if (typeof value === 'boolean') {
         return total;
       }
-      // Handle array values (like floorsSlabsSelected)
       if (Array.isArray(value)) {
         return total + value.reduce((subTotal, item) => subTotal + getPoints(category, item, selections), 0);
       }
@@ -91,14 +88,18 @@ const NBCCalculator = ({ onPathwayChange }: NBCCalculatorProps = {}) => {
   }, 0);
 
   const compliance = getTierCompliance(totalPoints, selections);
+  const isEditMode = !!searchParams.get('edit');
 
-  console.log("NBCCalculator rendering with selections:", selections);
-  console.log("Edit project ID from URL:", searchParams.get('edit'));
+  const getPathwayDisplayName = (pathway: string) => {
+    if (pathway === '9362' || pathway === '9368') return 'Prescriptive';
+    if (pathway === '9365' || pathway === '9367') return 'Performance';
+    return 'Building Specifications';
+  };
 
   // Show project summary form if requested
   if (showProjectSummary) {
     return (
-      <div 
+      <div
         className="min-h-screen bg-cover bg-center bg-fixed relative"
         style={{ backgroundImage: `url(${starryMountainsBg})` }}
       >
@@ -115,13 +116,12 @@ const NBCCalculator = ({ onPathwayChange }: NBCCalculatorProps = {}) => {
   }
 
   return (
-    <div 
+    <div
       className="min-h-screen bg-cover bg-center bg-fixed relative"
       style={{ backgroundImage: `url(${starryMountainsBg})` }}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-blue-900/70 to-teal-900/80 backdrop-blur-sm"></div>
-      
-      {/* Loading overlay */}
+
       {(isLoading || isEditLoading) && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 shadow-xl">
@@ -133,69 +133,51 @@ const NBCCalculator = ({ onPathwayChange }: NBCCalculatorProps = {}) => {
         </div>
       )}
 
-      {/* Compliance Sidebar */}
       <ComplianceSidebar
         selections={selections}
         totalPoints={totalPoints}
         compliance={compliance}
-        getPoints={(category, value) => getPoints(category, value, selections)}
+        getPoints={(category: string, value: string) => getPoints(category, value, selections)}
         calculatePrescriptiveCost={() => calculatePrescriptiveCost(compliance)}
         calculatePerformanceCost={() => calculatePerformanceCost(compliance)}
         calculateCostSavings={() => calculateCostSavings(compliance)}
       />
 
-      {/* Edit Mode Indicator */}
-      <EditModeIndicator isEditing={!!searchParams.get('edit')} />
+      <EditModeIndicator isEditMode={isEditMode} />
 
       <div className={`mx-auto space-y-6 relative z-10 transition-all duration-300 ${
         selections.compliancePath === "9368" ? "max-w-3xl mr-80" : "max-w-4xl"
       }`}>
-        
-        {/* Header Section */}
-        <HeaderSection />
 
-        {/* Instructions Section */}
-        <InstructionsSection />
-
-        {/* Contact Section */}
+        <HeaderSection isEditMode={isEditMode} />
+        <InstructionsSection expandedWarnings={expandedWarnings} toggleWarning={toggleWarning} />
         <ContactSection />
 
         <div className="grid lg:grid-cols-5 gap-6">
-          {/* Input Form - Takes up 4/5 of the width */}
           <div className="lg:col-span-4 space-y-4">
             <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
               <CardHeader>
                 <CardTitle className="text-white text-center">
-                  {selections.compliancePath === '9362' || selections.compliancePath === '9368' 
-                    ? 'Prescriptive Building Requirements' 
-                    : selections.compliancePath === '9365' || selections.compliancePath === '9367' 
-                    ? 'Performance Building Specifications' 
-                    : 'Building Specifications'}
+                  {getPathwayDisplayName(selections.compliancePath)} Building Requirements
                 </CardTitle>
                 <CardDescription className="text-slate-200">
-                  {selections.compliancePath === '9362' || selections.compliancePath === '9368' 
-                    ? 'Specify minimum required values for prescriptive compliance' 
-                    : selections.compliancePath === '9365' || selections.compliancePath === '9367' 
-                    ? 'Enter proposed building specifications for energy modeling' 
-                    : 'Select performance levels for each building component'}
+                  Specify minimum required values for compliance.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-8">
-                
-                {/* Project Information Section */}
+
                 <ProjectInformationSection
                   selections={selections}
                   setSelections={setSelections}
                   uploadedFiles={uploadedFiles}
+                  setUploadedFiles={setUploadedFiles}
                   handleFileUploaded={handleFileUploaded}
                   removeFile={removeFile}
+                  getPathwayDisplayName={getPathwayDisplayName}
                 />
 
-                {/* Additional form sections would go here */}
-                {/* This is where you would add the remaining form sections from the original component */}
-                {/* For brevity, I'm not including all the form sections, but they would follow the same pattern */}
+                {/* Restored form sections will be added here */}
 
-                {/* Agreement and Submit Section */}
                 <Card className="bg-gradient-to-r from-slate-700/40 to-teal-700/40 border-slate-400/50 backdrop-blur-sm shadow-lg">
                   <CardContent className="p-6">
                     <div className="space-y-4">
@@ -207,9 +189,8 @@ const NBCCalculator = ({ onPathwayChange }: NBCCalculatorProps = {}) => {
                           className="mt-1"
                         />
                         <label htmlFor="agreement" className="text-sm text-slate-200 leading-relaxed">
-                          I acknowledge that this application is for energy code compliance consultation and 
-                          that final compliance determination rests with the local building authority. 
-                          I understand that additional documentation or modifications may be required.
+                          I acknowledge that this application is for energy code compliance consultation and
+                          that final compliance determination rests with the local building authority.
                         </label>
                       </div>
 
@@ -221,7 +202,7 @@ const NBCCalculator = ({ onPathwayChange }: NBCCalculatorProps = {}) => {
                         >
                           {isSubmitting ? 'Submitting...' : 'Submit for Prescriptive Path Review'}
                         </Button>
-                        
+
                         <Button
                           onClick={() => handleSubmitApplication('performance')}
                           disabled={!agreementChecked || isSubmitting}
