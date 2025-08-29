@@ -9,7 +9,15 @@ export interface Selections {
   province: string;
   buildingAddress: string;
   comments: string;
-  // Add other selection fields here as they are created
+  atticRSI: string;
+  wallRSI: string;
+  belowGradeRSI: string;
+  windowUValue: string;
+  heatingType: string;
+  waterHeater: string;
+  hasHrv: string;
+  hrvEfficiency: string;
+  airtightness: string;
 }
 
 const initialSelections: Selections = {
@@ -18,6 +26,15 @@ const initialSelections: Selections = {
   province: 'BC',
   buildingAddress: '',
   comments: '',
+  atticRSI: '',
+  wallRSI: '',
+  belowGradeRSI: '',
+  windowUValue: '',
+  heatingType: '',
+  waterHeater: '',
+  hasHrv: 'yes_hrv',
+  hrvEfficiency: '',
+  airtightness: '',
 };
 
 // Hook for core calculator state

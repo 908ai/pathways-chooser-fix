@@ -31,7 +31,9 @@ import {
   ContactSection,
   EditModeIndicator,
   ComplianceSidebar,
-  ProjectInformationSection
+  ProjectInformationSection,
+  BuildingEnvelopeSection,
+  MechanicalSystemsSection
 } from './components';
 
 interface NBCCalculatorProps {
@@ -137,10 +139,6 @@ const NBCCalculator = ({ onPathwayChange }: NBCCalculatorProps = {}) => {
         selections={selections}
         totalPoints={totalPoints}
         compliance={compliance}
-        getPoints={(category: string, value: string) => getPoints(category, value, selections)}
-        calculatePrescriptiveCost={() => calculatePrescriptiveCost(compliance)}
-        calculatePerformanceCost={() => calculatePerformanceCost(compliance)}
-        calculateCostSavings={() => calculateCostSavings(compliance)}
       />
 
       <EditModeIndicator isEditMode={isEditMode} />
@@ -176,7 +174,8 @@ const NBCCalculator = ({ onPathwayChange }: NBCCalculatorProps = {}) => {
                   getPathwayDisplayName={getPathwayDisplayName}
                 />
 
-                {/* Restored form sections will be added here */}
+                <BuildingEnvelopeSection selections={selections} setSelections={setSelections} />
+                <MechanicalSystemsSection selections={selections} setSelections={setSelections} />
 
                 <Card className="bg-gradient-to-r from-slate-700/40 to-teal-700/40 border-slate-400/50 backdrop-blur-sm shadow-lg">
                   <CardContent className="p-6">

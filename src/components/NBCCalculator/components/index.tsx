@@ -6,14 +6,28 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { FileManager, FileItem } from "@/components/ui/file-manager";
 import { Selections } from '../hooks/useNBCCalculator';
-import { COMPLIANCE_PATH_OPTIONS, BUILDING_TYPE_OPTIONS, PROVINCE_OPTIONS } from '../data/constants';
+import { 
+  COMPLIANCE_PATH_OPTIONS, 
+  BUILDING_TYPE_OPTIONS, 
+  PROVINCE_OPTIONS,
+  atticRSIOptions,
+  wallRSIOptions,
+  belowGradeRSIOptions,
+  windowUValueOptions,
+  waterHeaterOptions,
+  hrvOptions,
+  airtightnessOptions
+} from '../data/constants';
 
 // Define Prop Types for each component
 type SelectionsSetter = React.Dispatch<React.SetStateAction<Selections>>;
 
-interface ProjectInformationSectionProps {
+interface SectionProps {
   selections: Selections;
   setSelections: SelectionsSetter;
+}
+
+interface ProjectInformationSectionProps extends SectionProps {
   uploadedFiles: File[];
   setUploadedFiles: (files: File[]) => void;
   handleFileUploaded: (fileData: { url: string; file: File }) => void;
@@ -79,10 +93,6 @@ export const ComplianceSidebar: React.FC<any> = ({
   selections,
   totalPoints,
   compliance,
-  getPoints,
-  calculatePrescriptiveCost,
-  calculatePerformanceCost,
-  calculateCostSavings,
 }) => {
   if (selections.compliancePath !== "9368") return null;
   return (
@@ -93,7 +103,6 @@ export const ComplianceSidebar: React.FC<any> = ({
           <p className="font-semibold text-white">Total Points: {totalPoints}</p>
           <p className="font-semibold text-white">Compliance Tier: <span className={`font-bold ${compliance.tier.startsWith('Tier') ? 'text-green-400' : 'text-red-400'}`}>{compliance.tier}</span></p>
         </div>
-        {/* Other sidebar content */}
       </div>
     </div>
   );
@@ -105,7 +114,6 @@ export const ProjectInformationSection: React.FC<ProjectInformationSectionProps>
   uploadedFiles,
   setUploadedFiles,
   handleFileUploaded,
-  getPathwayDisplayName,
 }) => {
   const handleSelectionChange = (key: keyof Selections, value: any) => {
     setSelections(prev => ({ ...prev, [key]: value }));
@@ -135,74 +143,113 @@ export const ProjectInformationSection: React.FC<ProjectInformationSectionProps>
         </CardDescription>
       </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Form Fields */}
         <div className="space-y-2">
           <Label htmlFor="compliancePath" className="text-slate-200">Compliance Path</Label>
-          <Select
-            value={selections.compliancePath}
-            onValueChange={(value) => handleSelectionChange('compliancePath', value)}
-          >
+          <Select value={selections.compliancePath} onValueChange={(value) => handleSelectionChange('compliancePath', value)}>
             <SelectTrigger id="compliancePath"><SelectValue placeholder="Select a path" /></SelectTrigger>
-            <SelectContent>
-              {COMPLIANCE_PATH_OPTIONS.map(option => (
-                <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-              ))}
-            </SelectContent>
+            <SelectContent>{COMPLIANCE_PATH_OPTIONS.map(option => (<SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>))}</SelectContent>
           </Select>
         </div>
         <div className="space-y-2">
           <Label htmlFor="buildingType" className="text-slate-200">Building Type</Label>
-          <Select
-            value={selections.buildingType}
-            onValueChange={(value) => handleSelectionChange('buildingType', value)}
-          >
+          <Select value={selections.buildingType} onValueChange={(value) => handleSelectionChange('buildingType', value)}>
             <SelectTrigger id="buildingType"><SelectValue placeholder="Select a type" /></SelectTrigger>
-            <SelectContent>
-              {BUILDING_TYPE_OPTIONS.map(option => (
-                <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-              ))}
-            </SelectContent>
+            <SelectContent>{BUILDING_TYPE_OPTIONS.map(option => (<SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>))}</SelectContent>
           </Select>
         </div>
         <div className="space-y-2">
           <Label htmlFor="province" className="text-slate-200">Province</Label>
-          <Select
-            value={selections.province}
-            onValueChange={(value) => handleSelectionChange('province', value)}
-          >
+          <Select value={selections.province} onValueChange={(value) => handleSelectionChange('province', value)}>
             <SelectTrigger id="province"><SelectValue placeholder="Select a province" /></SelectTrigger>
-            <SelectContent>
-              {PROVINCE_OPTIONS.map(option => (
-                <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-              ))}
-            </SelectContent>
+            <SelectContent>{PROVINCE_OPTIONS.map(option => (<SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>))}</SelectContent>
           </Select>
         </div>
         <div className="space-y-2">
           <Label htmlFor="buildingAddress" className="text-slate-200">Project Address</Label>
-          <Input
-            id="buildingAddress"
-            value={selections.buildingAddress}
-            onChange={(e) => handleSelectionChange('buildingAddress', e.target.value)}
-            className="text-white"
-          />
+          <Input id="buildingAddress" value={selections.buildingAddress} onChange={(e) => handleSelectionChange('buildingAddress', e.target.value)} className="text-white" />
         </div>
         <div className="md:col-span-2 space-y-2">
           <Label className="text-slate-200">Project Files</Label>
-          <FileManager
-            files={fileItems}
-            onFilesChange={handleFilesChange}
-            onFileUploaded={handleFileUploaded}
-          />
+          <FileManager files={fileItems} onFilesChange={handleFilesChange} onFileUploaded={handleFileUploaded} />
         </div>
         <div className="md:col-span-2 space-y-2">
           <Label htmlFor="comments" className="text-slate-200">Comments</Label>
-          <Textarea
-            id="comments"
-            value={selections.comments}
-            onChange={(e) => handleSelectionChange('comments', e.target.value)}
-            className="text-white"
-          />
+          <Textarea id="comments" value={selections.comments} onChange={(e) => handleSelectionChange('comments', e.target.value)} className="text-white" />
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export const BuildingEnvelopeSection: React.FC<SectionProps> = ({ selections, setSelections }) => {
+  const handleSelectionChange = (key: keyof Selections, value: any) => {
+    setSelections(prev => ({ ...prev, [key]: value }));
+  };
+  return (
+    <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-sm">
+      <CardHeader><CardTitle className="text-white">Building Envelope</CardTitle></CardHeader>
+      <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <Label htmlFor="atticRSI" className="text-slate-200">Attic/Ceiling RSI</Label>
+          <Select value={selections.atticRSI} onValueChange={(value) => handleSelectionChange('atticRSI', value)}>
+            <SelectTrigger id="atticRSI"><SelectValue placeholder="Select RSI" /></SelectTrigger>
+            <SelectContent>{atticRSIOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="wallRSI" className="text-slate-200">Wall RSI</Label>
+          <Select value={selections.wallRSI} onValueChange={(value) => handleSelectionChange('wallRSI', value)}>
+            <SelectTrigger id="wallRSI"><SelectValue placeholder="Select RSI" /></SelectTrigger>
+            <SelectContent>{wallRSIOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="belowGradeRSI" className="text-slate-200">Below Grade RSI</Label>
+          <Select value={selections.belowGradeRSI} onValueChange={(value) => handleSelectionChange('belowGradeRSI', value)}>
+            <SelectTrigger id="belowGradeRSI"><SelectValue placeholder="Select RSI" /></SelectTrigger>
+            <SelectContent>{belowGradeRSIOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="windowUValue" className="text-slate-200">Window U-Value</Label>
+          <Select value={selections.windowUValue} onValueChange={(value) => handleSelectionChange('windowUValue', value)}>
+            <SelectTrigger id="windowUValue"><SelectValue placeholder="Select U-Value" /></SelectTrigger>
+            <SelectContent>{windowUValueOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export const MechanicalSystemsSection: React.FC<SectionProps> = ({ selections, setSelections }) => {
+  const handleSelectionChange = (key: keyof Selections, value: any) => {
+    setSelections(prev => ({ ...prev, [key]: value }));
+  };
+  return (
+    <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-sm">
+      <CardHeader><CardTitle className="text-white">Mechanical Systems</CardTitle></CardHeader>
+      <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <Label htmlFor="waterHeater" className="text-slate-200">Water Heater</Label>
+          <Select value={selections.waterHeater} onValueChange={(value) => handleSelectionChange('waterHeater', value)}>
+            <SelectTrigger id="waterHeater"><SelectValue placeholder="Select Type" /></SelectTrigger>
+            <SelectContent>{waterHeaterOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="hrvEfficiency" className="text-slate-200">HRV/ERV Efficiency</Label>
+          <Select value={selections.hrvEfficiency} onValueChange={(value) => handleSelectionChange('hrvEfficiency', value)}>
+            <SelectTrigger id="hrvEfficiency"><SelectValue placeholder="Select Efficiency" /></SelectTrigger>
+            <SelectContent>{hrvOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="airtightness" className="text-slate-200">Airtightness</Label>
+          <Select value={selections.airtightness} onValueChange={(value) => handleSelectionChange('airtightness', value)}>
+            <SelectTrigger id="airtightness"><SelectValue placeholder="Select Level" /></SelectTrigger>
+            <SelectContent>{airtightnessOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+          </Select>
         </div>
       </CardContent>
     </Card>
