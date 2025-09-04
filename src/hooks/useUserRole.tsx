@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
@@ -28,7 +28,7 @@ export const useUserRole = () => {
           console.error('Error fetching user role:', error);
           setUserRole('user');
         } else if (data && data.role) {
-          setUserRole(data.role);
+          setUserRole(data.role as UserRole);
         } else {
           // No role found, default to 'user'
           setUserRole('user');
@@ -44,23 +44,23 @@ export const useUserRole = () => {
     fetchUserRole();
   }, [user]);
 
-  const hasRole = (role: UserRole): boolean => {
+  const hasRole = useCallback((role: UserRole): boolean => {
     if (!userRole) return false;
     if (userRole === 'admin') return true;
     if (userRole === 'account_manager' && (role === 'account_manager' || role === 'user')) return true;
     if (userRole === 'user' && role === 'user') return true;
     return false;
-  };
+  }, [userRole]);
 
-  const canDeleteProjects = (): boolean => {
+  const canDeleteProjects = useCallback((): boolean => {
     return hasRole('account_manager') || hasRole('admin');
-  };
+  }, [hasRole]);
 
-  const canViewAllProjects = (): boolean => {
+  const canViewAllProjects = useCallback((): boolean => {
     return hasRole('account_manager') || hasRole('admin');
-  };
+  }, [hasRole]);
 
-  return {
+  const value = useMemo(() => ({
     userRole,
     loading,
     hasRole,
@@ -69,5 +69,7 @@ export const useUserRole = () => {
     isAdmin: userRole === 'admin',
     isAccountManager: userRole === 'account_manager',
     isUser: userRole === 'user'
-  };
+  }), [userRole, loading, hasRole, canDeleteProjects, canViewAllProjects]);
+
+  return value;
 };
