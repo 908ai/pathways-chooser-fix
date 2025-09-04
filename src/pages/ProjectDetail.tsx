@@ -21,7 +21,7 @@ const ProjectDetail = () => {
   const { id } = useParams();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const { canDeleteProjects, canViewAllProjects, isAdmin, isAccountManager, loading: roleLoading } = useUserRole();
+  const { canDeleteProjects, canViewAllProjects, isAdmin, isAccountManager } = useUserRole();
   const { toast } = useToast();
   const [project, setProject] = useState<any>(null);
   const [editedProject, setEditedProject] = useState<any>(null);
@@ -35,20 +35,14 @@ const ProjectDetail = () => {
 
   useEffect(() => {
     const loadProject = async () => {
-      if (!user || !id || roleLoading) return;
-      
+      if (!user || !id) return;
       try {
-        let query = supabase
+        const { data, error } = await supabase
           .from('project_summaries')
           .select('*')
-          .eq('id', id);
-
-        if (!canViewAllProjects) {
-          query = query.eq('user_id', user.id);
-        }
-        
-        const { data, error } = await query.maybeSingle();
-
+          .eq('id', id)
+          .eq('user_id', user.id)
+          .maybeSingle();
         if (error) throw error;
         if (data) {
           setProject(data);
@@ -73,7 +67,7 @@ const ProjectDetail = () => {
       }
     };
     loadProject();
-  }, [user, id, canViewAllProjects, roleLoading, navigate, toast]);
+  }, [user, id]);
 
   const handleSave = async () => {
     if (!editedProject || !user) return;
@@ -408,7 +402,7 @@ const ProjectDetail = () => {
     navigate('/dashboard');
   };
 
-  if (loading || roleLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Header showSignOut={true} onSignOut={signOut} pathwayInfo="" />
