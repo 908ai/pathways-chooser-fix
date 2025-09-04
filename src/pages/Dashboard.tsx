@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
-import { Plus, Clock, CheckCircle, User, Building, Edit, Save, X, AlertTriangle, FileText, Info } from 'lucide-react';
+import { Plus, Clock, CheckCircle, User, Building, Edit, Save, X, AlertTriangle, FileText, Info, Loader2 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
@@ -234,8 +234,12 @@ const Dashboard = () => {
               </div>
             </div>
             {status === 'inProgress' && <div onClick={e => e.stopPropagation()} className="flex-shrink-0">
-                <Button variant="outline" size="sm" onClick={e => handleEditProject(project.id, e)} className="h-8 px-3 text-xs" type="button">
-                  <Edit className="h-3 w-3 mr-1" />
+                <Button variant="outline" size="sm" onClick={e => handleEditProject(project.id, e)} className="h-8 px-3 text-xs" type="button" disabled={roleLoading}>
+                  {roleLoading ? (
+                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                  ) : (
+                    <Edit className="h-3 w-3 mr-1" />
+                  )}
                   Edit
                 </Button>
               </div>}
