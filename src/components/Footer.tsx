@@ -16,7 +16,7 @@ const Footer = () => {
             rel="noopener noreferrer"
             className="text-primary hover:text-primary/80 transition-colors underline"
           >
-            Visit our website: www.solinvictusenergyservices.com
+            Visit our website: solinvictusenergyservices.com
           </a>
           
           <Button 
