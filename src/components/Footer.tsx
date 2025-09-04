@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Phone } from 'lucide-react';
+import { Phone, Globe } from 'lucide-react';
 
 const Footer = () => {
   const handleCallContact = () => {
@@ -14,8 +14,9 @@ const Footer = () => {
             href="https://www.solinvictusenergyservices.com" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-primary hover:text-primary/80 transition-colors underline"
+            className="text-primary hover:text-primary/80 transition-colors underline flex items-center gap-2"
           >
+            <Globe className="h-4 w-4" />
             Visit our website: solinvictusenergyservices.com
           </a>
           
