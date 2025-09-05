@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -81,9 +81,10 @@ interface ProjectSummaryFormProps {
   calculatorData?: CalculatorData;
   onSave?: () => void;
   editingProjectId?: string;
+  autoSave?: boolean;
 }
 
-const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId }: ProjectSummaryFormProps) => {
+const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave = false }: ProjectSummaryFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -175,6 +176,12 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId }: Projec
       })
     )
   });
+
+  useEffect(() => {
+    if (autoSave) {
+      handleSave();
+    }
+  }, [autoSave]);
 
   // Debug logging
   console.log('ProjectSummaryForm calculatorData:', calculatorData);
@@ -429,7 +436,9 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId }: Projec
           .select();
         if (error) throw error;
         console.log('Project created:', data);
-        if (data && data[0]) {
+        if (autoSave) {
+          navigate('/dashboard');
+        } else if (data && data[0]) {
           navigate(`/project/${data[0].id}`);
         } else {
           navigate('/dashboard');
@@ -444,7 +453,7 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId }: Projec
           title: "Project Updated",
           description: "Your project has been updated successfully.",
         });
-      } else {
+      } else if (!autoSave) {
         toast({
           title: "Project Saved",
           description: "Your project summary has been saved successfully.",

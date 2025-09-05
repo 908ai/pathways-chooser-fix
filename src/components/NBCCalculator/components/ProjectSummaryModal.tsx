@@ -9,6 +9,7 @@ type Props = {
   searchParams: URLSearchParams;
   getPoints: (category: string, value: string) => number;
   uploadedFiles: any[]; // <- adicionado
+  autoSave?: boolean;
 };
 
 export default function ProjectSummaryModal({
@@ -18,6 +19,7 @@ export default function ProjectSummaryModal({
   searchParams,
   getPoints,
   uploadedFiles, // <- desestrutura com o MESMO nome
+  autoSave = false,
 }: Props) {
   return (
     <>
@@ -124,7 +126,7 @@ export default function ProjectSummaryModal({
             complianceStatus: 'submitted',
             // Changed to keep projects in progress until admin review
             upgradeCosts: 0 // This would need to be calculated based on selected upgrades
-          }} editingProjectId={searchParams.get('edit') || undefined} onSave={() => setShowProjectSummary(false)} />
+          }} editingProjectId={searchParams.get('edit') || undefined} onSave={() => setShowProjectSummary(false)} autoSave={autoSave} />
             </div>
           </div>
         </div>        
