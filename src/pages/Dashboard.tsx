@@ -56,7 +56,7 @@ const Dashboard = () => {
   // Load user projects
   useEffect(() => {
     const loadProjects = async () => {
-      if (!user) return;
+      if (!user || roleLoading) return; // Wait for user and role to be loaded
       try {
         let projectsData: any[] = [];
         if (canViewAllProjects) {
@@ -88,7 +88,7 @@ const Dashboard = () => {
       }
     };
     loadProjects();
-  }, [user, canViewAllProjects]);
+  }, [user, canViewAllProjects, roleLoading]);
 
   const handleNewProject = () => {
     navigate('/calculator');
