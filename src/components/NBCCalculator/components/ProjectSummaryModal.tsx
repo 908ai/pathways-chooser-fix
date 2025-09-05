@@ -6,6 +6,7 @@ type Props = {
   setShowProjectSummary: (v: boolean) => void;
   selections: any;
   totalPoints: number;
+  searchParams: URLSearchParams;
   getPoints: (category: string, value: string) => number;
   uploadedFiles: any[]; // <- adicionado
   autoSave?: boolean;

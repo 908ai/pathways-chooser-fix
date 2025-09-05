@@ -61,11 +61,21 @@ export const useFileUploads = () => {
         const { data: urlData } = supabase.storage.from("project-files").getPublicUrl(fileName);
         console.log("DEBUG: Public URL data:", urlData);
 
-        // Create a File object with additional metadata
-        const uploadedFile = new File([file], file.name, { type: file.type });
-        (uploadedFile as any).url = urlData.publicUrl;
-        (uploadedFile as any).path = fileName;
-        (uploadedFile as any).size = file.size;
+        // Create a File-like object with additional metadata
+        const uploadedFile = {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          lastModified: file.lastModified,
+          webkitRelativePath: file.webkitRelativePath,
+          arrayBuffer: () => file.arrayBuffer(),
+          slice: (start?: number, end?: number, contentType?: string) => file.slice(start, end, contentType),
+          stream: () => file.stream(),
+          text: () => file.text(),
+          bytes: () => file.bytes(),
+          url: urlData.publicUrl,
+          path: fileName,
+        };
         console.log("DEBUG: File uploaded successfully:", {
           name: file.name,
           size: file.size,
@@ -141,6 +151,7 @@ export const useFileUploads = () => {
       stream: () => new ReadableStream(),
       text: () => Promise.resolve(""),
       arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
+      bytes: () => Promise.resolve(new Uint8Array(0)),
       slice: () => new Blob(),
       url: fileData.url,
       path: fileData.path

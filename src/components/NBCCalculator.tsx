@@ -5925,7 +5925,8 @@ const NBCCalculator = ({
           searchParams={searchParams}
           getPoints={getPoints}
           uploadedFiles={uploadedFiles}
-          autoSave={autoSaveTrigger}
+          autoSave={autoSaveTrigger}  
+          projectId={projectId}      
         />
       )}
     </div>;
