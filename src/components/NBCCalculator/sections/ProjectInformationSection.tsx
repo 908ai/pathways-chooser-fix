@@ -20,8 +20,9 @@ type Props = {
   selections: any;
   setSelections: React.Dispatch<React.SetStateAction<any>>;
   uploadedFiles: (File & { url?: string; path?: string })[];
-  handleFileUploaded: (fileData: { name: string; url: string; size: number; type: string; path?: string }) => void;
-  removeFile: (index: number) => void;
+  onFileUploadRequest: (file: File) => void;
+  isUploading: boolean;
+  removeFile: (file: any) => void;
   onPathwayChange?: (pathwayInfo: string) => void;
   projectId: string | null;
 };
@@ -30,14 +31,12 @@ export default function ProjectInformationSection({
   selections,
   setSelections,
   uploadedFiles,
-  handleFileUploaded,
+  onFileUploadRequest,
+  isUploading,
   removeFile,
   onPathwayChange,
   projectId,
 }: Props) {
-
-  // ✅ alias para manter o nome usado no bloco colado
-  const onFileUploaded = handleFileUploaded;
 
   return (
     <>
@@ -115,9 +114,8 @@ export default function ProjectInformationSection({
                           <label className="text-sm font-medium">Building Plans & Documents</label>
                           <div className="space-y-2">
                             <FileUpload
-                              onFileUploaded={handleFileUploaded}
-                              projectId={projectId}
-                              maxFiles={10}
+                              onFileUploadRequest={onFileUploadRequest}
+                              uploading={isUploading}
                               acceptedTypes={['pdf', 'dwg', 'jpg', 'jpeg', 'png', 'tiff', 'doc', 'docx', 'xls', 'xlsx', 'txt']}
                               maxSizePerFile={10 * 1024 * 1024}
                             />
@@ -129,7 +127,7 @@ export default function ProjectInformationSection({
                                 <div className="space-y-1">
                                   {uploadedFiles.map((file, index) => <div key={index} className="flex items-center justify-between p-2 bg-emerald-50/80 border border-emerald-300/50 rounded-md backdrop-blur-sm">
                                        <span className="text-sm truncate text-emerald-900">{file.name}</span>
-                                      <Button type="button" variant="ghost" size="sm" onClick={() => removeFile(index)} className="h-6 w-6 p-0 text-green-600 hover:text-red-600">
+                                      <Button type="button" variant="ghost" size="sm" onClick={() => removeFile(file)} className="h-6 w-6 p-0 text-green-600 hover:text-red-600">
                                         <X className="h-3 w-3" />
                                       </Button>
                                     </div>)}

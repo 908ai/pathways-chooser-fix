@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -14,6 +13,7 @@ import {
   Upload 
 } from 'lucide-react';
 import FileUpload from '@/components/FileUpload';
+import { useAuth } from '@/hooks/useAuth';
 
 interface FileItem {
   name: string;
@@ -38,6 +38,8 @@ const FileManager: React.FC<FileManagerProps> = ({
   readOnly = false,
   showUpload = true
 }) => {
+  const { user } = useAuth();
+  const [uploading, setUploading] = useState(false);
   const [deletingFiles, setDeletingFiles] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
@@ -95,10 +97,59 @@ const FileManager: React.FC<FileManagerProps> = ({
     return 'Document';
   };
 
+  const handleFileUploadRequest = async (file: File) => {
+    if (!user) {
+      toast({ title: "Authentication Error", description: "You must be logged in to upload files.", variant: "destructive" });
+      return;
+    }
+    if (!projectId) {
+      toast({ title: "Project Error", description: "A project must be created before uploading files.", variant: "destructive" });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const timestamp = Date.now();
+      const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+      const filePath = `${user.id}/${projectId}/${timestamp}-${sanitizedFileName}`;
+
+      const { data, error } = await supabase.storage
+        .from("project-files")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage
+        .from("project-files")
+        .getPublicUrl(filePath);
+
+      const newFile: FileItem = {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        url: urlData.publicUrl,
+        path: data.path,
+      };
+
+      const updatedFiles = [...files, newFile];
+      onFilesChange(updatedFiles);
+
+      toast({ title: "File Uploaded", description: `${file.name} has been uploaded successfully.` });
+
+    } catch (error: any) {
+      console.error("Error uploading file:", error);
+      toast({ title: "Upload Failed", description: error.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleFileDownload = async (file: FileItem) => {
     try {
       if (file.url) {
-        // For Supabase storage files, we can use the direct URL
         const link = document.createElement('a');
         link.href = file.url;
         link.download = file.name;
@@ -121,7 +172,6 @@ const FileManager: React.FC<FileManagerProps> = ({
     try {
       setDeletingFiles(prev => new Set([...prev, fileToDelete.name]));
 
-      // Delete from Supabase storage if path is available
       if (fileToDelete.path) {
         const { error } = await supabase.storage
           .from('project-files')
@@ -132,7 +182,6 @@ const FileManager: React.FC<FileManagerProps> = ({
         }
       }
 
-      // Update the files list
       const updatedFiles = files.filter(f => f.name !== fileToDelete.name);
       onFilesChange(updatedFiles);
 
@@ -157,13 +206,6 @@ const FileManager: React.FC<FileManagerProps> = ({
     }
   };
 
-  const handleFileUploaded = (newFile: FileItem) => {
-    console.log('DEBUG: FileManager - File uploaded callback triggered:', newFile);
-    const updatedFiles = [...files, newFile];
-    console.log('DEBUG: FileManager - Updated files list:', updatedFiles);
-    onFilesChange(updatedFiles);
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -181,9 +223,8 @@ const FileManager: React.FC<FileManagerProps> = ({
         {!readOnly && showUpload && (
           <div className="space-y-2">
             <FileUpload
-              onFileUploaded={handleFileUploaded}
-              projectId={projectId}
-              maxFiles={10}
+              onFileUploadRequest={handleFileUploadRequest}
+              uploading={uploading}
               maxSizePerFile={10 * 1024 * 1024} // 10MB
             />
           </div>
