@@ -21,7 +21,7 @@ const ProjectDetail = () => {
   const { id } = useParams();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const { canDeleteProjects, canViewAllProjects, isAdmin, isAccountManager } = useUserRole();
+  const { canDeleteProjects, canViewAllProjects, isAdmin, loading: roleLoading } = useUserRole();
   const { toast } = useToast();
   const [project, setProject] = useState<any>(null);
   const [editedProject, setEditedProject] = useState<any>(null);
@@ -31,41 +31,39 @@ const ProjectDetail = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [documentToDelete, setDocumentToDelete] = useState<any>(null);
 
   useEffect(() => {
     const loadProject = async () => {
       if (!user || !id) return;
       
+      setLoading(true);
       try {
-        const session = await supabase.auth.getSession();
-        if (!session.data.session) return;
+        let query = supabase
+          .from('project_summaries')
+          .select('*')
+          .eq('id', id);
 
-        const SUPABASE_URL = "https://dgiclujcwqihwvuenlni.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRnaWNsdWpjd3FpaHd2dWVubG5pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MDQ4MTMsImV4cCI6MjA3MTk4MDgxM30.3BLVkh5slLpYchVksAS_98zEkmyRpvFpPdWl1PXhaMk";
-        
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/project_summaries?id=eq.${id}&user_id=eq.${user.id}`, {
-          method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.data.session.access_token}`,
-          'apikey': SUPABASE_KEY
+        // Only filter by user_id if the user is NOT an admin/manager
+        if (!canViewAllProjects) {
+          query = query.eq('user_id', user.id);
         }
-        });
 
-        if (response.ok) {
-          const projects = await response.json();
-          if (projects.length > 0) {
-            setProject(projects[0]);
-            setEditedProject({ ...projects[0] }); // Initialize edit state
-          } else {
-            toast({
-              title: "Project Not Found",
-              description: "The project you're looking for doesn't exist or you don't have access to it.",
-              variant: "destructive"
-            });
-            navigate('/dashboard');
-          }
+        const { data, error } = await query.single();
+
+        if (error && error.code !== 'PGRST116') { // PGRST116 is "single() did not return a row"
+          throw error;
+        }
+
+        if (data) {
+          setProject(data);
+          setEditedProject({ ...data });
+        } else {
+          toast({
+            title: "Project Not Found",
+            description: "The project you're looking for doesn't exist or you don't have access to it.",
+            variant: "destructive"
+          });
+          navigate('/dashboard');
         }
       } catch (error) {
         console.error('Error loading project:', error);
@@ -79,8 +77,11 @@ const ProjectDetail = () => {
       }
     };
 
-    loadProject();
-  }, [user, id]);
+    // Wait for role to be loaded before fetching
+    if (!roleLoading) {
+      loadProject();
+    }
+  }, [user, id, canViewAllProjects, roleLoading, navigate, toast]);
 
   const handleSave = async () => {
     if (!editedProject || !user) return;
@@ -88,13 +89,6 @@ const ProjectDetail = () => {
     setSaving(true);
     
     try {
-      const session = await supabase.auth.getSession();
-      if (!session.data.session) throw new Error('No authentication session');
-
-      const SUPABASE_URL = "https://dgiclujcwqihwvuenlni.supabase.co";
-      const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRnaWNsdWpjd3FpaHd2dWVubG5pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MDQ4MTMsImV4cCI6MjA3MTk4MDgxM30.3BLVkh5slLpYchVksAS_98zEkmyRpvFpPdWl1PXhaMk";
-      
-      // Prepare update data
       const updateData = {
         project_name: editedProject.project_name,
         building_type: editedProject.building_type,
@@ -120,33 +114,27 @@ const ProjectDetail = () => {
         updated_at: new Date().toISOString()
       };
 
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/project_summaries?id=eq.${project.id}&user_id=eq.${user.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Profile': 'api',
-          'Accept-Profile': 'api',
-          'Authorization': `Bearer ${session.data.session.access_token}`,
-          'apikey': SUPABASE_KEY,
-          'Prefer': 'return=representation'
-        },
-        body: JSON.stringify(updateData)
+      let query = supabase
+        .from('project_summaries')
+        .update(updateData)
+        .eq('id', project.id);
+
+      if (!canViewAllProjects) {
+        query = query.eq('user_id', user.id);
+      }
+
+      const { data, error } = await query.select().single();
+
+      if (error) throw error;
+
+      setProject(data);
+      setEditedProject({ ...data });
+      setIsEditing(false);
+      toast({
+        title: "Project Updated",
+        description: "Your project has been saved successfully.",
       });
 
-      if (response.ok) {
-        const updatedProjects = await response.json();
-        if (updatedProjects.length > 0) {
-          setProject(updatedProjects[0]);
-          setEditedProject({ ...updatedProjects[0] });
-        }
-        setIsEditing(false);
-        toast({
-          title: "Project Updated",
-          description: "Your project has been saved successfully.",
-        });
-      } else {
-        throw new Error('Failed to update project');
-      }
     } catch (error) {
       console.error('Error saving project:', error);
       toast({
@@ -174,53 +162,28 @@ const ProjectDetail = () => {
     setDuplicating(true);
     
     try {
-      const session = await supabase.auth.getSession();
-      if (!session.data.session) throw new Error('No authentication session');
-
-      const SUPABASE_URL = "https://dgiclujcwqihwvuenlni.supabase.co";
-      const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRnaWNsdWpjd3FpaHd2dWVubG5pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MDQ4MTMsImV4cCI6MjA3MTk4MDgxM30.3BLVkh5slLpYchVksAS_98zEkmyRpvFpPdWl1PXhaMk";
+      const { id, created_at, updated_at, ...restOfProject } = project;
       
-      // Create a copy of the project with modified name and reset status
       const duplicateData = {
-        ...project,
+        ...restOfProject,
         project_name: `${project.project_name} (Copy)`,
-        compliance_status: null, // Reset to pending
+        compliance_status: null,
         performance_compliance_result: null,
-        created_at: undefined, // Will use current timestamp
-        updated_at: undefined, // Will use current timestamp
-        id: undefined // Will generate new ID
+        user_id: user.id, // Ensure it's assigned to the current user
       };
 
-      // Remove the old ID and timestamps
-      delete duplicateData.id;
-      delete duplicateData.created_at;
-      delete duplicateData.updated_at;
+      const { error } = await supabase
+        .from('project_summaries')
+        .insert(duplicateData);
 
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/project_summaries`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Profile': 'api',
-          'Accept-Profile': 'api',
-          'Authorization': `Bearer ${session.data.session.access_token}`,
-          'apikey': SUPABASE_KEY,
-          'Prefer': 'return=representation'
-        },
-        body: JSON.stringify(duplicateData)
+      if (error) throw error;
+
+      toast({
+        title: "Project Duplicated",
+        description: "A copy of this project has been created and moved to 'In Progress'.",
       });
+      navigate('/dashboard');
 
-      if (response.ok) {
-        const newProject = await response.json();
-        toast({
-          title: "Project Duplicated",
-          description: "A copy of this project has been created and moved to 'In Progress'.",
-        });
-        
-        // Navigate to the new project or back to dashboard
-        navigate('/dashboard');
-      } else {
-        throw new Error('Failed to duplicate project');
-      }
     } catch (error) {
       console.error('Error duplicating project:', error);
       toast({
@@ -243,35 +206,25 @@ const ProjectDetail = () => {
     setDeleting(true);
     
     try {
-      const session = await supabase.auth.getSession();
-      if (!session.data.session) throw new Error('No authentication session');
+      let query = supabase
+        .from('project_summaries')
+        .delete()
+        .eq('id', project.id);
 
-      const SUPABASE_URL = "https://dgiclujcwqihwvuenlni.supabase.co";
-      const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRnaWNsdWpjd3FpaHd2dWVubG5pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MDQ4MTMsImV4cCI6MjA3MTk4MDgxM30.3BLVkh5slLpYchVksAS_98zEkmyRpvFpPdWl1PXhaMk";
-      
-      // For account managers, don't filter by user_id to allow deleting any project
-      const deleteUrl = canDeleteProjects ? 
-        `${SUPABASE_URL}/rest/v1/project_summaries?id=eq.${project.id}` :
-        `${SUPABASE_URL}/rest/v1/project_summaries?id=eq.${project.id}&user_id=eq.${user.id}`;
-      
-      const response = await fetch(deleteUrl, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.data.session.access_token}`,
-          'apikey': SUPABASE_KEY
-        }
-      });
-
-      if (response.ok) {
-        toast({
-          title: "Project Deleted",
-          description: "The project has been permanently deleted.",
-        });
-        navigate('/dashboard');
-      } else {
-        throw new Error('Failed to delete project');
+      if (!canDeleteProjects) {
+        query = query.eq('user_id', user.id);
       }
+
+      const { error } = await query;
+
+      if (error) throw error;
+
+      toast({
+        title: "Project Deleted",
+        description: "The project has been permanently deleted.",
+      });
+      navigate('/dashboard');
+
     } catch (error) {
       console.error('Error deleting project:', error);
       toast({
@@ -288,41 +241,25 @@ const ProjectDetail = () => {
     if (!project || !user || !isAdmin) return;
 
     try {
-      const session = await supabase.auth.getSession();
-      if (!session.data.session) throw new Error('No authentication session');
-
-      const SUPABASE_URL = "https://dgiclujcwqihwvuenlni.supabase.co";
-      const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRnaWNsdWpjd3FpaHd2dWVubG5pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MDQ4MTMsImV4cCI6MjA3MTk4MDgxM30.3BLVkh5slLpYchVksAS_98zEkmyRpvFpPdWl1PXhaMk";
-      
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/project_summaries?id=eq.${project.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Profile': 'api',
-          'Accept-Profile': 'api',
-          'Authorization': `Bearer ${session.data.session.access_token}`,
-          'apikey': SUPABASE_KEY,
-          'Prefer': 'return=representation'
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase
+        .from('project_summaries')
+        .update({
           compliance_status: newStatus,
           updated_at: new Date().toISOString()
         })
+        .eq('id', project.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setProject(data);
+      setEditedProject({ ...data });
+      toast({
+        title: "Project Status Updated",
+        description: `Project has been marked as ${newStatus === 'pass' ? 'compliant' : 'non-compliant'}.`,
       });
 
-      if (response.ok) {
-        const updatedProjects = await response.json();
-        if (updatedProjects.length > 0) {
-          setProject(updatedProjects[0]);
-          setEditedProject({ ...updatedProjects[0] });
-        }
-        toast({
-          title: "Project Status Updated",
-          description: `Project has been marked as ${newStatus === 'pass' ? 'compliant' : 'non-compliant'}.`,
-        });
-      } else {
-        throw new Error('Failed to update project status');
-      }
     } catch (error) {
       console.error('Error updating project status:', error);
       toast({
@@ -364,45 +301,28 @@ const ProjectDetail = () => {
         });
       }
 
-      // Update project with new files
       const updatedFiles = [...(project.uploaded_files || []), ...uploadedFileData];
       
-      const session = await supabase.auth.getSession();
-      if (!session.data.session) throw new Error('No authentication session');
-
-      const SUPABASE_URL = "https://dgiclujcwqihwvuenlni.supabase.co";
-      const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRnaWNsdWpjd3FpaHd2dWVubG5pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MDQ4MTMsImV4cCI6MjA3MTk4MDgxM30.3BLVkh5slLpYchVksAS_98zEkmyRpvFpPdWl1PXhaMk";
-
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/project_summaries?id=eq.${project.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Profile': 'api',
-          'Accept-Profile': 'api',
-          'Authorization': `Bearer ${session.data.session.access_token}`,
-          'apikey': SUPABASE_KEY,
-          'Prefer': 'return=representation'
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase
+        .from('project_summaries')
+        .update({
           uploaded_files: updatedFiles,
           updated_at: new Date().toISOString()
         })
+        .eq('id', project.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setProject(data);
+      setEditedProject({ ...data });
+      
+      toast({
+        title: "Files Uploaded",
+        description: `${uploadedFileData.length} file(s) uploaded successfully.`,
       });
 
-      if (response.ok) {
-        const updatedProjects = await response.json();
-        if (updatedProjects.length > 0) {
-          setProject(updatedProjects[0]);
-          setEditedProject({ ...updatedProjects[0] });
-        }
-        
-        toast({
-          title: "Files Uploaded",
-          description: `${uploadedFileData.length} file(s) uploaded successfully.`,
-        });
-      } else {
-        throw new Error('Failed to update project with uploaded files');
-      }
     } catch (error) {
       console.error('Error uploading files:', error);
       toast({
@@ -412,7 +332,6 @@ const ProjectDetail = () => {
       });
     } finally {
       setUploading(false);
-      // Reset the input
       event.target.value = '';
     }
   };
@@ -451,54 +370,36 @@ const ProjectDetail = () => {
     }
 
     try {
-      // Delete from storage
       const { error: storageError } = await supabase.storage
         .from('project-files')
         .remove([fileToDelete.path]);
 
       if (storageError) throw storageError;
 
-      // Update project files
       const updatedFiles = (project.uploaded_files || []).filter(
         (file: any) => file.path !== fileToDelete.path
       );
 
-      const session = await supabase.auth.getSession();
-      if (!session.data.session) throw new Error('No authentication session');
-
-      const SUPABASE_URL = "https://dgiclujcwqihwvuenlni.supabase.co";
-      const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRnaWNsdWpjd3FpaHd2dWVubG5pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MDQ4MTMsImV4cCI6MjA3MTk4MDgxM30.3BLVkh5slLpYchVksAS_98zEkmyRpvFpPdWl1PXhaMk";
-
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/project_summaries?id=eq.${project.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Profile': 'api',
-          'Accept-Profile': 'api',
-          'Authorization': `Bearer ${session.data.session.access_token}`,
-          'apikey': SUPABASE_KEY,
-          'Prefer': 'return=representation'
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase
+        .from('project_summaries')
+        .update({
           uploaded_files: updatedFiles,
           updated_at: new Date().toISOString()
         })
+        .eq('id', project.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setProject(data);
+      setEditedProject({ ...data });
+      
+      toast({
+        title: "File Deleted",
+        description: "The file has been permanently removed.",
       });
 
-      if (response.ok) {
-        const updatedProjects = await response.json();
-        if (updatedProjects.length > 0) {
-          setProject(updatedProjects[0]);
-          setEditedProject({ ...updatedProjects[0] });
-        }
-        
-        toast({
-          title: "File Deleted",
-          description: "The file has been permanently removed.",
-        });
-      } else {
-        throw new Error('Failed to update project after file deletion');
-      }
     } catch (error) {
       console.error('Error deleting file:', error);
       toast({
@@ -531,7 +432,7 @@ const ProjectDetail = () => {
   };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+    if (!bytes || bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -559,7 +460,7 @@ const ProjectDetail = () => {
     navigate('/dashboard');
   };
 
-  if (loading) {
+  if (loading || roleLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Header showSignOut={true} onSignOut={signOut} pathwayInfo="" />
@@ -625,7 +526,6 @@ const ProjectDetail = () => {
             <div className="flex items-center gap-4">
               {getComplianceStatusBadge()}
               
-              {/* Admin approval buttons for submitted projects */}
               {isAdmin && project.compliance_status === 'submitted' && (
                 <div className="flex items-center gap-2">
                   <Button 
@@ -647,12 +547,10 @@ const ProjectDetail = () => {
                 </div>
               )}
               
-              {/* Edit/Save/Cancel/Delete buttons for in-progress projects OR account managers */}
               {(project.compliance_status !== 'pass' && project.compliance_status !== 'fail') || canDeleteProjects ? (
                 <div className="flex items-center gap-2">
                   {!isEditing ? (
                     <>
-                      {/* Only show edit button for in-progress projects */}
                       {(project.compliance_status !== 'pass' && project.compliance_status !== 'fail') && (
                         <>
                           <Button 
@@ -667,14 +565,7 @@ const ProjectDetail = () => {
                           <CodePreviewModal
                             triggerText="AI Code Editor"
                             projectId={project.id}
-                            initialCode={`// Project: ${project.project_name}
-// Building Type: ${project.building_type}
-// Location: ${project.location}
-
-const projectData = ${JSON.stringify(project, null, 2)};
-
-// Add your AI-generated code here
-console.log('Project loaded:', projectData);`}
+                            initialCode={`// Project: ${project.project_name}\n// Building Type: ${project.building_type}\n// Location: ${project.location}\n\nconst projectData = ${JSON.stringify(project, null, 2)};\n\n// Add your AI-generated code here\nconsole.log('Project loaded:', projectData);`}
                             onCodeSaved={(code) => {
                               console.log('Code saved for project:', project.id);
                               toast({
@@ -694,7 +585,6 @@ console.log('Project loaded:', projectData);`}
                           </CodePreviewModal>
                         </>
                       )}
-                      {/* Show delete button for in-progress projects OR account managers */}
                       {((project.compliance_status !== 'pass' && project.compliance_status !== 'fail') || canDeleteProjects) && (
                         <Button 
                           onClick={handleDelete} 
@@ -760,7 +650,6 @@ console.log('Project loaded:', projectData);`}
 
           <TabsContent value="overview" className="mt-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Project Overview */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -837,7 +726,6 @@ console.log('Project loaded:', projectData);`}
                 </CardContent>
               </Card>
 
-              {/* Project Summary */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -873,7 +761,6 @@ console.log('Project loaded:', projectData);`}
 
           <TabsContent value="technical" className="mt-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Building Envelope */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -957,7 +844,6 @@ console.log('Project loaded:', projectData);`}
                 </CardContent>
               </Card>
 
-              {/* Mechanical Systems */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -1051,7 +937,6 @@ console.log('Project loaded:', projectData);`}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Upload Section */}
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
                   <Upload className="h-8 w-8 text-gray-400 mx-auto mb-4" />
                   <div className="space-y-2">
@@ -1083,12 +968,11 @@ console.log('Project loaded:', projectData);`}
                   />
                 </div>
 
-                {/* File Categories */}
                 {project.uploaded_files && project.uploaded_files.length > 0 ? (
                   <div className="space-y-6">
                     {['Building Plans', 'Window/Door Schedule', 'Technical Specifications', 'Reports', 'Photos', 'Other Documents'].map((category) => {
                       const categoryFiles = (project.uploaded_files || []).filter((file: any) => 
-                        getFileCategory(file.name) === category
+                        file && file.name && getFileCategory(file.name) === category
                       );
                       
                       if (categoryFiles.length === 0) return null;
@@ -1109,7 +993,7 @@ console.log('Project loaded:', projectData);`}
                                     <div className="flex items-center gap-4 text-xs text-gray-200 drop-shadow-sm">
                                       <span className="flex items-center gap-1">
                                         <Calendar className="h-3 w-3" />
-                                        {new Date(file.uploadedAt).toLocaleDateString()}
+                                        {file.uploadedAt ? new Date(file.uploadedAt).toLocaleDateString() : 'N/A'}
                                       </span>
                                       <span>{formatFileSize(file.size)}</span>
                                       {file.uploadedBy && (
@@ -1160,7 +1044,6 @@ console.log('Project loaded:', projectData);`}
           </TabsContent>
         </Tabs>
 
-        {/* Duplicate Project Information Card */}
         <Card className="mt-6 animate-fade-in bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
           <CardContent className="p-6">
             <div className="flex items-start gap-3 mb-4">
