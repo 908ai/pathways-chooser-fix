@@ -52,13 +52,13 @@ export const useUserRole = () => {
     return false;
   }, [userRole]);
 
-  const canDeleteProjects = useCallback((): boolean => {
-    return hasRole('account_manager') || hasRole('admin');
-  }, [hasRole]);
+  const canDeleteProjects = useMemo((): boolean => {
+    return userRole === 'admin' || userRole === 'account_manager';
+  }, [userRole]);
 
-  const canViewAllProjects = useCallback((): boolean => {
-    return hasRole('account_manager') || hasRole('admin');
-  }, [hasRole]);
+  const canViewAllProjects = useMemo((): boolean => {
+    return userRole === 'admin' || userRole === 'account_manager';
+  }, [userRole]);
 
   const value = useMemo(() => ({
     userRole,
