@@ -134,6 +134,7 @@ const ProjectDetail = () => {
         title: "Project Updated",
         description: "Your project has been saved successfully.",
       });
+      navigate('/dashboard');
 
     } catch (error) {
       console.error('Error saving project:', error);

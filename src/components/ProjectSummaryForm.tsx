@@ -448,11 +448,11 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
       console.log('Save successful!');
       
       if (editingProjectId) {
-        // If editing, show success message but don't navigate away
         toast({
           title: "Project Updated",
           description: "Your project has been updated successfully.",
         });
+        navigate('/dashboard');
       } else if (!autoSave) {
         toast({
           title: "Project Saved",
