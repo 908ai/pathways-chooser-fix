@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { v4 as uuidv4 } from 'uuid';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -61,6 +62,7 @@ const NBCCalculator = ({
   } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [projectId, setProjectId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showProjectSummary, setShowProjectSummary] = useState(false);
   const [autoSaveTrigger, setAutoSaveTrigger] = useState(false);
@@ -173,13 +175,19 @@ const NBCCalculator = ({
   } = useFileUploads();
   const [agreementChecked, setAgreementChecked] = useState(false);
 
-  // Load project data if editing
+  // Load project data if editing, or generate a new ID for a new project
   useEffect(() => {
     const editProjectId = searchParams.get('edit');
-    if (editProjectId && user) {
-      loadProjectForEditing(editProjectId);
+    if (editProjectId) {
+      setProjectId(editProjectId);
+      if (user) {
+        loadProjectForEditing(editProjectId);
+      }
+    } else {
+      setProjectId(uuidv4()); // Generate a new ID for a new project
     }
   }, [searchParams, user]);
+
   const loadProjectForEditing = async (projectId: string) => {
     setIsLoading(true);
     console.log('Loading project for editing:', projectId);
@@ -318,7 +326,7 @@ const NBCCalculator = ({
 
           // Filter out empty objects and only process files with valid metadata
           const validFileMetadata = project.uploaded_files.filter((fileMetadata: any) => {
-            const isValid = fileMetadata && typeof fileMetadata === 'object' && fileMetadata.name && fileMetadata.url;
+            const isValid = fileMetadata && typeof fileMetadata === 'object' && fileMetadata.name && (fileMetadata.url || fileMetadata.path);
             console.log('File metadata validation:', fileMetadata, 'is valid:', isValid);
             return isValid;
           });
@@ -403,7 +411,6 @@ const NBCCalculator = ({
       });
       return;
     }
-
     setIsSubmitting(true);
     try {
       // 1) Sessão atual
@@ -706,6 +713,7 @@ const NBCCalculator = ({
 
       {/* Edit Mode Indicator */}
       {searchParams.get('edit') && <EditModeIndicator />}
+
       <div className={`mx-auto space-y-6 relative z-10 transition-all duration-300 ${selections.compliancePath === "9368" ? "max-w-3xl mr-80" : "max-w-4xl"}`}>
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-2">
@@ -745,6 +753,7 @@ const NBCCalculator = ({
                     handleFileUploaded={handleFileUploaded}
                     removeFile={removeFile}
                     onPathwayChange={onPathwayChange}
+                    projectId={projectId}
                   />
 
                   {/* EnerGuide Rating System for Performance Paths */}
@@ -1769,13 +1778,13 @@ const NBCCalculator = ({
                         }
                         if (!isNaN(inputValue) && inputValue < minValue) {
                           return <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-                                           <p className="text-sm text-destructive font-medium">
-                                             ⚠️ Secondary Heating Efficiency Too Low
-                                           </p>
-                                           <p className="text-sm text-destructive/80 mt-1">
-                                             {systemType} - Your input of {inputValue} is below the minimum requirement.
-                                           </p>
-                                         </div>;
+                                            <p className="text-sm text-destructive font-medium">
+                                              ⚠️ Secondary Heating Efficiency Too Low
+                                            </p>
+                                            <p className="text-sm text-destructive/80 mt-1">
+                                              {systemType} - Your input of {inputValue} is below the minimum requirement.
+                                            </p>
+                                          </div>;
                         }
                         return null;
                       })()}
@@ -1995,23 +2004,18 @@ const NBCCalculator = ({
                                   </p>
                                   
                                   <div className="space-y-2">
-                                    <div className="flex items-center gap-2">
-                                       <span className="text-green-600 text-sm">✅</span>
-                                       <span className="text-sm">Improves energy efficiency</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                       <span className="text-green-600 text-sm">✅</span>
-                                       <span className="text-sm">Helps earn NBC tiered compliance points</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                       <span className="text-green-600 text-sm">✅</span>
-                                       <span className="text-sm">Great for homes with frequent showers</span>
-                                    </div>
+                                    <h5 className="font-medium text-sm">How it works:</h5>
+                                    <p className="text-sm text-muted-foreground">When hot water goes down the drain (like from a shower), the DWHR unit uses a heat exchanger to transfer that thermal energy to the incoming cold water supply before it reaches your water heater.</p>
                                   </div>
                                   
-                                   <div className="space-y-1 text-sm text-muted-foreground">
-                                    <p><strong>Estimated cost:</strong> $800–$1,200 installed</p>
-                                    <p><strong>Best fit:</strong> Homes with vertical drain stacks and electric or heat pump water heaters.</p>
+                                  <div className="space-y-2">
+                                    <h5 className="font-medium text-sm">Benefits:</h5>
+                                    <div className="text-sm text-muted-foreground space-y-1">
+                                      <p>• Reduces water heating energy consumption</p>
+                                      <p>• Lowers utility bills</p>
+                                      <p>• Contributes to overall building energy efficiency</p>
+                                      <p>• Works continuously with no maintenance required</p>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -3379,14 +3383,14 @@ const NBCCalculator = ({
 
                      <div className="space-y-2">
                        <div className="flex items-center gap-3">
-                         <label className="text-sm font-medium">Airtightness Level (Unguarded Testing)</label>
+                         <label className="text-sm font-medium">Airtightness Level</label>
                          <Popover>
                            <PopoverTrigger asChild>
                              <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
                                More Info
                              </Button>
                            </PopoverTrigger>
-                            <PopoverContent className="w-[600px] max-h-[80vh] overflow-y-auto p-4" side="right" align="start">
+                           <PopoverContent className="w-[600px] max-h-[80vh] overflow-y-auto p-4" side="right" align="start">
                               <div className="space-y-4">
                                  <div>
                                    <h4 className="font-semibold text-sm mb-2">What's a Blower Door Test?</h4>
@@ -3785,7 +3789,6 @@ const NBCCalculator = ({
                     }))} placeholder="Enter cooling system make and model" />
                           </div>
                         </div>}
-
                       </>}
 
                      {/* HRV/ERV Section for 9367 moved to Additional Information section */}

@@ -23,6 +23,7 @@ type Props = {
   handleFileUploaded: (fileData: { name: string; url: string; size: number; type: string; path?: string }) => void;
   removeFile: (index: number) => void;
   onPathwayChange?: (pathwayInfo: string) => void;
+  projectId: string | null;
 };
 
 export default function ProjectInformationSection({
@@ -32,6 +33,7 @@ export default function ProjectInformationSection({
   handleFileUploaded,
   removeFile,
   onPathwayChange,
+  projectId,
 }: Props) {
 
   // ✅ alias para manter o nome usado no bloco colado
@@ -112,7 +114,13 @@ export default function ProjectInformationSection({
                         <div className="space-y-2 p-4 bg-red-50/50 border border-red-200 rounded-lg">
                           <label className="text-sm font-medium">Building Plans & Documents</label>
                           <div className="space-y-2">
-                            <FileUpload onFileUploaded={handleFileUploaded} maxFiles={10} acceptedTypes={['pdf', 'dwg', 'jpg', 'jpeg', 'png', 'tiff', 'doc', 'docx', 'xls', 'xlsx', 'txt']} maxSizePerFile={10 * 1024 * 1024} />
+                            <FileUpload
+                              onFileUploaded={handleFileUploaded}
+                              projectId={projectId}
+                              maxFiles={10}
+                              acceptedTypes={['pdf', 'dwg', 'jpg', 'jpeg', 'png', 'tiff', 'doc', 'docx', 'xls', 'xlsx', 'txt']}
+                              maxSizePerFile={10 * 1024 * 1024}
+                            />
                             {uploadedFiles.length > 0 && <div className="space-y-2">
                                 <div className="flex items-center gap-2 text-green-600">
                                   <div className="h-2 w-2 bg-green-500 rounded-full"></div>

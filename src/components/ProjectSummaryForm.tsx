@@ -303,65 +303,17 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
       if (calculatorData?.uploadedFiles && calculatorData.uploadedFiles.length > 0) {
         console.log('Processing files from calculator:', calculatorData.uploadedFiles);
         
-        // Separate files that are already uploaded (have URLs) from those that need uploading
-        const alreadyUploaded = calculatorData.uploadedFiles.filter(file => 
-          file && typeof file === 'object' && file.name && file.url
-        );
+        // All files from the calculator should already have their path and URL
+        uploadedFileData = calculatorData.uploadedFiles.map(file => ({
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          path: file.path,
+          url: file.url,
+          uploaded_at: new Date().toISOString()
+        }));
         
-        const needsUpload = calculatorData.uploadedFiles.filter(file => 
-          file && typeof file === 'object' && file.name && file.size && file.type && !file.url
-        );
-        
-        console.log('Already uploaded files:', alreadyUploaded.length);
-        console.log('Files needing upload:', needsUpload.length);
-        
-        // Start with already uploaded files
-        uploadedFileData = [...alreadyUploaded];
-        
-        // Process files that need to be uploaded
-        for (const file of needsUpload) {
-          try {
-            // Create a unique filename with user ID and timestamp
-            const fileExtension = file.name.split('.').pop();
-            // Sanitize filename by removing spaces and special characters
-            const sanitizedName = file.name
-              .replace(/[^a-zA-Z0-9.-]/g, '_') // Replace invalid characters with underscores
-              .replace(/_{2,}/g, '_') // Replace multiple underscores with single
-              .replace(/^_|_$/g, ''); // Remove leading/trailing underscores
-            const fileName = `${user.id}/${Date.now()}-${sanitizedName}`;
-            
-            console.log('Uploading file:', fileName);
-            
-            // Upload file to Supabase Storage
-            const { data: uploadData, error: uploadError } = await supabase.storage
-              .from('project-files')
-              .upload(fileName, file, {
-                cacheControl: '3600',
-                upsert: false
-              });
-
-            if (uploadError) {
-              console.error('File upload error:', uploadError);
-              throw new Error(`Failed to upload ${file.name}: ${uploadError.message}`);
-            }
-
-            console.log('File uploaded successfully:', uploadData);
-
-            // Store file metadata
-            uploadedFileData.push({
-              name: file.name,
-              size: file.size,
-              type: file.type,
-              path: uploadData.path,
-              uploaded_at: new Date().toISOString()
-            });
-          } catch (error) {
-            console.error('Error uploading file:', error);
-            throw error;
-          }
-        }
-        
-        console.log('All files uploaded successfully:', uploadedFileData);
+        console.log('All files processed successfully:', uploadedFileData);
         console.log('uploadedFileData length:', uploadedFileData.length);
         console.log('uploadedFileData structure:', JSON.stringify(uploadedFileData, null, 2));
       }
@@ -429,7 +381,7 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
         if (error) throw error;
         console.log('Project updated:', data);
       } else {
-        const insertData = { ...baseProjectData, user_id: user.id };
+        const insertData = { ...baseProjectData, user_id: user.id, id: calculatorData?.projectId };
         const { data, error } = await supabase
           .from('project_summaries')
           .insert(insertData)

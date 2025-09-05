@@ -51,7 +51,7 @@ export const useFileUploads = () => {
           cacheControl: "3600",
           upsert: false
         });
-        console.log("DEBUG: Upload response - data:", data, "error:", error);
+        console.log("DEBUG: Upload response - data:", data);
         if (error) {
           console.error("DEBUG: Upload error details:", { message: error.message, error: error });
           throw error;

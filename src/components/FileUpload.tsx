@@ -7,7 +7,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Upload, X, FileText, Image, Archive } from 'lucide-react';
 
 interface FileUploadProps {
-  onFileUploaded: (file: { name: string; url: string; size: number; type: string }) => void;
+  onFileUploaded: (file: { name: string; url: string; size: number; type: string; path: string }) => void;
+  projectId: string | null;
   maxFiles?: number;
   acceptedTypes?: string[];
   maxSizePerFile?: number; // in bytes
@@ -15,6 +16,7 @@ interface FileUploadProps {
 
 const FileUpload: React.FC<FileUploadProps> = ({
   onFileUploaded,
+  projectId,
   maxFiles = 5,
   acceptedTypes = ['pdf', 'doc', 'docx', 'xlsx', 'xls', 'jpg', 'jpeg', 'png', 'gif', 'zip', 'txt', 'csv'],
   maxSizePerFile = 10 * 1024 * 1024 // 10MB
@@ -98,23 +100,18 @@ const FileUpload: React.FC<FileUploadProps> = ({
         throw new Error('You must be logged in to upload files');
       }
 
-      console.log('DEBUG: User authenticated successfully:', user.id);
-
-      // Fix #4: Backend Storage Check - Verify storage bucket accessibility
-      try {
-        const { data: buckets, error: bucketError } = await supabase.storage.listBuckets();
-        console.log('DEBUG: Available buckets:', buckets?.map(b => b.name));
-        if (bucketError) {
-          console.error('DEBUG: Bucket list error:', bucketError);
-        }
-      } catch (bucketCheckError) {
-        console.error('DEBUG: Bucket check failed:', bucketCheckError);
+      if (!projectId) {
+        console.error('DEBUG: No project ID provided for upload');
+        throw new Error('A project ID is required to upload files.');
       }
+
+      console.log('DEBUG: User authenticated successfully:', user.id);
+      console.log('DEBUG: Project ID for upload:', projectId);
 
       // Create unique filename with timestamp
       const timestamp = Date.now();
       const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const fileName = `${user.id}/${timestamp}-${sanitizedFileName}`;
+      const fileName = `${user.id}/${projectId}/${timestamp}-${sanitizedFileName}`;
 
       console.log('DEBUG: Generated file path:', fileName);
       console.log('DEBUG: File size:', file.size, 'bytes');
