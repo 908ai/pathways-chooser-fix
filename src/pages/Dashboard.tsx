@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
-import { Plus, Clock, CheckCircle, User, Building, Edit, Save, X, AlertTriangle, FileText, Info } from 'lucide-react';
+import { Plus, Clock, CheckCircle, User, Building, Edit, Save, X, AlertTriangle, FileText, Info, Shield } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
@@ -293,6 +293,14 @@ const Dashboard = () => {
             Manage your NBC 9.36 compliance projects and account information
           </p>
         </div>
+        {canViewAllProjects && (
+          <div className="mb-6 p-4 bg-blue-900/30 border border-blue-400/50 rounded-lg text-center flex items-center justify-center gap-3">
+            <Shield className="h-5 w-5 text-blue-300" />
+            <p className="font-semibold text-blue-300">
+              Admin View: You are viewing projects from all users.
+            </p>
+          </div>
+        )}
         <Tabs defaultValue="projects" className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="projects" className="flex items-center gap-2">
