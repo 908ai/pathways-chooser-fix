@@ -26,6 +26,7 @@ interface FileItem {
 interface FileManagerProps {
   files: FileItem[];
   onFilesChange: (files: FileItem[]) => void;
+  projectId: string | null;
   readOnly?: boolean;
   showUpload?: boolean;
 }
@@ -33,6 +34,7 @@ interface FileManagerProps {
 const FileManager: React.FC<FileManagerProps> = ({
   files = [],
   onFilesChange,
+  projectId,
   readOnly = false,
   showUpload = true
 }) => {
@@ -180,6 +182,7 @@ const FileManager: React.FC<FileManagerProps> = ({
           <div className="space-y-2">
             <FileUpload
               onFileUploaded={handleFileUploaded}
+              projectId={projectId}
               maxFiles={10}
               maxSizePerFile={10 * 1024 * 1024} // 10MB
             />

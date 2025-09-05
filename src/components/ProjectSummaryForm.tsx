@@ -1199,6 +1199,7 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
         <FileManager
           files={formData.uploadedFiles || []}
           onFilesChange={(files) => handleInputChange('uploadedFiles', files)}
+          projectId={editingProjectId || null}
           readOnly={false}
           showUpload={true}
         />
