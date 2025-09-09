@@ -55,11 +55,6 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
                   Calculator
                 </Button>
               </Link>
-              <Link to="/test-upload">
-                <Button variant={location.pathname === '/test-upload' ? 'default' : 'ghost'} size="sm">
-                  Test Upload
-                </Button>
-              </Link>
             </nav>
           )}
           <img 
