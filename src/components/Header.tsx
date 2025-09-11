@@ -57,11 +57,6 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
               </Link>
             </nav>
           )}
-          <img 
-            src="https://oxvhlrvtmfnmdazwgdtp.supabase.co/storage/v1/object/public/company-assets/path4.svg" 
-            alt="Sol Invictus Energy Services" 
-            className="h-24 w-auto"
-          />
           {showSignOut && (
             <Button variant="outline" onClick={onSignOut}>
               Sign Out
