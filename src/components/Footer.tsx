@@ -17,7 +17,7 @@ const Footer = () => {
             className="text-primary hover:text-primary/80 transition-colors underline flex items-center gap-2"
           >
             <Globe className="h-4 w-4" />
-            Visit our website: solinvictusenergyservices.com
+            Visit our website: www.solinvictusenergyservices.com
           </a>
           
           <Button 
