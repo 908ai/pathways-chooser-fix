@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       (event, session) => {
         if (event === 'PASSWORD_RECOVERY') {
           setIsPasswordRecovery(true);
-        } else if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+        } else if (event === 'SIGNED_OUT') {
           setIsPasswordRecovery(false);
         }
         
