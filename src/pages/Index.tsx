@@ -7,19 +7,23 @@ import Footer from '@/components/Footer';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 
 const Index = () => {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, isPasswordRecovery } = useAuth();
   const navigate = useNavigate();
   const [pathwayInfo, setPathwayInfo] = useState<string>('');
 
   useEffect(() => {
+    if (isPasswordRecovery) {
+      return;
+    }
+
     if (!loading && !user) {
       navigate('/login');
     } else if (!loading && user) {
       navigate('/dashboard');
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, isPasswordRecovery]);
 
-  if (loading) {
+  if (loading || (!user && !isPasswordRecovery)) {
     return (
       <div className="min-h-screen flex items-center justify-center relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
         <div className="absolute inset-0"></div>
