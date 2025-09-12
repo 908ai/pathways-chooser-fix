@@ -14,6 +14,7 @@ import TestUpload from "./pages/TestUpload";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 import UpdatePassword from "./pages/UpdatePassword";
+import PasswordRecovery from "./pages/PasswordRecovery";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/password-recovery" element={<PasswordRecovery />} />
             <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/calculator" element={<ProtectedRoute><Calculator /></ProtectedRoute>} />
