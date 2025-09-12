@@ -20,7 +20,7 @@ const Dashboard = () => {
   const { canViewAllProjects, userRole, loading: roleLoading } = useUserRole();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [projects, setProjects] = useState<{
     new: any[];
     inProgress: any[];
@@ -35,7 +35,11 @@ const Dashboard = () => {
   const [isEditingCompany, setIsEditingCompany] = useState(false);
   const [editedCompanyInfo, setEditedCompanyInfo] = useState<any>({});
 
-  const defaultTab = searchParams.get('tab') || 'projects';
+  const activeTab = searchParams.get('tab') || 'projects';
+
+  const handleTabChange = (value: string) => {
+    setSearchParams({ tab: value });
+  };
 
   // Load user's company information
   useEffect(() => {
@@ -308,7 +312,7 @@ const Dashboard = () => {
             </p>
           </div>
         )}
-        <Tabs defaultValue={defaultTab} className="space-y-6">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="projects" className="flex items-center gap-2">
               <Building className="h-4 w-4" />
