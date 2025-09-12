@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Edit, Save, X, KeyRound } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 const AccountInfoTab = () => {
   const { user } = useAuth();
@@ -20,6 +21,7 @@ const AccountInfoTab = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
 
   useEffect(() => {
     const loadCompanyInfo = async () => {
@@ -104,6 +106,7 @@ const AccountInfoTab = () => {
       toast({ title: "Success", description: "Password updated successfully." });
       setPassword('');
       setConfirmPassword('');
+      setIsPasswordDialogOpen(false);
     }
   };
 
@@ -127,6 +130,51 @@ const AccountInfoTab = () => {
               <p className="text-sm text-slate-200">Active</p>
             </div>
           </div>
+          <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="mt-4">
+                <KeyRound className="h-4 w-4 mr-2" />
+                Change Password
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Change Password</DialogTitle>
+                <DialogDescription>
+                  Enter your new password below. Make sure it's at least 6 characters long.
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handlePasswordUpdate} className="space-y-4 pt-4">
+                <div className="space-y-2">
+                  <Label htmlFor="new-password-account">New Password</Label>
+                  <Input
+                    id="new-password-account"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter new password"
+                    minLength={6}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password-account">Confirm New Password</Label>
+                  <Input
+                    id="confirm-password-account"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                    minLength={6}
+                    required
+                  />
+                </div>
+                <Button type="submit" disabled={isUpdatingPassword} className="w-full">
+                  {isUpdatingPassword ? 'Updating...' : 'Update Password'}
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
 
@@ -200,49 +248,6 @@ const AccountInfoTab = () => {
               </Button>
             </div>
           )}
-        </CardContent>
-      </Card>
-
-      <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
-        <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
-            <KeyRound className="h-5 w-5" />
-            Change Password
-          </CardTitle>
-          <CardDescription className="text-slate-200">
-            Update your account password.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handlePasswordUpdate} className="space-y-4 max-w-md">
-            <div className="space-y-2">
-              <Label htmlFor="new-password-account" className="text-white">New Password</Label>
-              <Input
-                id="new-password-account"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter new password"
-                minLength={6}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirm-password-account" className="text-white">Confirm New Password</Label>
-              <Input
-                id="confirm-password-account"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm new password"
-                minLength={6}
-                required
-              />
-            </div>
-            <Button type="submit" disabled={isUpdatingPassword}>
-              {isUpdatingPassword ? 'Updating...' : 'Update Password'}
-            </Button>
-          </form>
         </CardContent>
       </Card>
     </div>
