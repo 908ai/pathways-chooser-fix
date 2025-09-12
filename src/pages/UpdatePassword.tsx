@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
+import { useAuth } from '@/hooks/useAuth';
 
 const UpdatePassword = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,10 +19,16 @@ const UpdatePassword = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { isPasswordRecovery, loading: authLoading } = useAuth();
 
   const handleUpdatePassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
+
+    if (!isPasswordRecovery) {
+      setError("Invalid session. Please request a new password reset link.");
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
@@ -54,6 +61,8 @@ const UpdatePassword = () => {
     
     setIsLoading(false);
   };
+
+  const isReady = isPasswordRecovery && !authLoading;
 
   return (
     <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
@@ -98,8 +107,8 @@ const UpdatePassword = () => {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Updating...' : 'Update Password'}
+              <Button type="submit" className="w-full" disabled={isLoading || !isReady}>
+                {isLoading ? 'Updating...' : !isReady ? 'Verifying session...' : 'Update Password'}
               </Button>
             </form>
           </CardContent>
