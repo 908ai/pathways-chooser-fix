@@ -5,9 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
-import { Edit, Save, X, KeyRound } from 'lucide-react';
+import { Edit, Save, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import ChangePasswordForm from './ChangePasswordForm';
 
 const AccountInfoTab = () => {
   const { user } = useAuth();
@@ -16,7 +15,6 @@ const AccountInfoTab = () => {
   const [loadingCompany, setLoadingCompany] = useState(true);
   const [isEditingCompany, setIsEditingCompany] = useState(false);
   const [editedCompanyInfo, setEditedCompanyInfo] = useState<any>({});
-  const [showChangePassword, setShowChangePassword] = useState(false);
 
   useEffect(() => {
     const loadCompanyInfo = async () => {
@@ -100,18 +98,8 @@ const AccountInfoTab = () => {
               <p className="text-sm text-slate-200">Active</p>
             </div>
           </div>
-          {!showChangePassword && (
-            <Button variant="outline" onClick={() => setShowChangePassword(true)}>
-              <KeyRound className="h-4 w-4 mr-2" />
-              Change Password
-            </Button>
-          )}
         </CardContent>
       </Card>
-
-      {showChangePassword && (
-        <ChangePasswordForm onClose={() => setShowChangePassword(false)} />
-      )}
 
       <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
         <CardHeader>
