@@ -25,6 +25,22 @@ const Login = () => {
   const [profileType, setProfileType] = useState('');
   const [activeTab, setActiveTab] = useState('signin');
 
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        toast({
+          title: 'Signed In',
+          description: 'You have been signed in via password recovery link.',
+        });
+        navigate('/dashboard');
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [navigate, toast]);
+
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
