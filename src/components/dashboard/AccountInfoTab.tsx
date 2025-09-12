@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
-import { Edit, Save, X } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { Edit, Save, X, KeyRound } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const AccountInfoTab = () => {
@@ -15,6 +15,11 @@ const AccountInfoTab = () => {
   const [loadingCompany, setLoadingCompany] = useState(true);
   const [isEditingCompany, setIsEditingCompany] = useState(false);
   const [editedCompanyInfo, setEditedCompanyInfo] = useState<any>({});
+
+  // State for password change
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
   useEffect(() => {
     const loadCompanyInfo = async () => {
@@ -76,6 +81,30 @@ const AccountInfoTab = () => {
   const handleCancelEdit = () => {
     setIsEditingCompany(false);
     setEditedCompanyInfo({});
+  };
+
+  const handlePasswordUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      toast({ title: "Error", description: "Passwords do not match.", variant: "destructive" });
+      return;
+    }
+    if (password.length < 6) {
+      toast({ title: "Error", description: "Password must be at least 6 characters long.", variant: "destructive" });
+      return;
+    }
+
+    setIsUpdatingPassword(true);
+    const { error } = await supabase.auth.updateUser({ password });
+    setIsUpdatingPassword(false);
+
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Success", description: "Password updated successfully." });
+      setPassword('');
+      setConfirmPassword('');
+    }
   };
 
   return (
@@ -171,6 +200,49 @@ const AccountInfoTab = () => {
               </Button>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <KeyRound className="h-5 w-5" />
+            Change Password
+          </CardTitle>
+          <CardDescription className="text-slate-200">
+            Update your account password.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handlePasswordUpdate} className="space-y-4 max-w-md">
+            <div className="space-y-2">
+              <Label htmlFor="new-password-account" className="text-white">New Password</Label>
+              <Input
+                id="new-password-account"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter new password"
+                minLength={6}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password-account" className="text-white">Confirm New Password</Label>
+              <Input
+                id="confirm-password-account"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm new password"
+                minLength={6}
+                required
+              />
+            </div>
+            <Button type="submit" disabled={isUpdatingPassword}>
+              {isUpdatingPassword ? 'Updating...' : 'Update Password'}
+            </Button>
+          </form>
         </CardContent>
       </Card>
     </div>

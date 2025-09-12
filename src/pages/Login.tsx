@@ -26,13 +26,12 @@ const Login = () => {
   const [activeTab, setActiveTab] = useState('signin');
 
   useEffect(() => {
+    // This listener handles the session establishment after clicking the magic link.
+    // The actual UI for password reset is handled by the `isResetMode` check.
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
-        toast({
-          title: 'Signed In',
-          description: 'You have been signed in via password recovery link.',
-        });
-        navigate('/dashboard');
+        // The user is now in a temporary session to update their password.
+        // No navigation is needed here.
       }
     });
 
