@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -17,9 +17,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [searchParams] = useSearchParams();
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const isResetMode = searchParams.get('mode') === 'reset';
   const [profileType, setProfileType] = useState('');
   const [activeTab, setActiveTab] = useState('signin');
 
@@ -29,13 +31,18 @@ const Login = () => {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
+    console.log('Form submission - email:', email, 'password length:', password?.length);
+
     setIsLoading(true);
     setError('');
 
     try {
       const { error } = await signIn(email, password);
       
+      console.log('Sign in response:', { error });
+      
       if (error) {
+        console.error('Sign in error:', error);
         setError(error.message);
         toast({
           title: "Sign In Failed",
@@ -43,6 +50,7 @@ const Login = () => {
           variant: "destructive"
         });
       } else {
+        console.log('Sign in successful');
         toast({
           title: "Welcome back!",
           description: "You've been signed in successfully."
@@ -50,6 +58,7 @@ const Login = () => {
         navigate('/');
       }
     } catch (err) {
+      console.error('Sign in exception in component:', err);
       setError('An unexpected error occurred');
     }
     
@@ -105,7 +114,7 @@ const Login = () => {
     setError('');
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/update-password`
+      redirectTo: `${window.location.origin}/login?mode=reset`
     });
 
     if (error) {
@@ -124,6 +133,77 @@ const Login = () => {
     
     setIsLoading(false);
   };
+
+  const handleUpdatePassword = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const password = formData.get('password') as string;
+
+    setIsLoading(true);
+    setError('');
+
+    const { error } = await supabase.auth.updateUser({
+      password: password
+    });
+
+    if (error) {
+      setError(error.message);
+      toast({
+        title: "Password Update Failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Password Updated!",
+        description: "Your password has been updated successfully."
+      });
+      navigate('/');
+    }
+    
+    setIsLoading(false);
+  };
+
+  if (isResetMode) {
+    return (
+      <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
+        <div className="absolute inset-0 bg-black/40"></div>
+        <Header />
+        <div className="flex-1 flex items-center justify-center px-4 relative z-10">
+          <Card className="w-full max-w-md bg-background/95 backdrop-blur-sm border-white/20">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl">Set New Password</CardTitle>
+              <CardDescription>Enter your new password below</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleUpdatePassword} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="new-password">New Password</Label>
+                  <Input
+                    id="new-password"
+                    name="password"
+                    type="password"
+                    placeholder="Enter your new password"
+                    required
+                    minLength={6}
+                  />
+                </div>
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? 'Updating...' : 'Update Password'}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
