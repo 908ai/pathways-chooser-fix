@@ -18,12 +18,18 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [searchParams] = useSearchParams();
-  const { signIn, signUp } = useAuth();
+  const { user, loading, signIn, signUp } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const isResetMode = searchParams.get('mode') === 'reset';
   const [profileType, setProfileType] = useState('');
   const [activeTab, setActiveTab] = useState('signin');
+
+  useEffect(() => {
+    if (!loading && user && !isResetMode) {
+      navigate('/dashboard');
+    }
+  }, [user, loading, isResetMode, navigate]);
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
