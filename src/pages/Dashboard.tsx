@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,12 @@ const Dashboard = () => {
   const { canViewAllProjects, userRole, loading: roleLoading } = useUserRole();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [projects, setProjects] = useState({
+  const [searchParams] = useSearchParams();
+  const [projects, setProjects] = useState<{
+    new: any[];
+    inProgress: any[];
+    complete: any[];
+  }>({
     new: [],
     inProgress: [],
     complete: []
@@ -29,6 +34,8 @@ const Dashboard = () => {
   const [loadingCompany, setLoadingCompany] = useState(true);
   const [isEditingCompany, setIsEditingCompany] = useState(false);
   const [editedCompanyInfo, setEditedCompanyInfo] = useState<any>({});
+
+  const defaultTab = searchParams.get('tab') || 'projects';
 
   // Load user's company information
   useEffect(() => {
@@ -301,7 +308,7 @@ const Dashboard = () => {
             </p>
           </div>
         )}
-        <Tabs defaultValue="projects" className="space-y-6">
+        <Tabs defaultValue={defaultTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="projects" className="flex items-center gap-2">
               <Building className="h-4 w-4" />
