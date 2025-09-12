@@ -14,7 +14,7 @@ import Footer from '@/components/Footer';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const Auth = () => {
+const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [searchParams] = useSearchParams();
@@ -23,6 +23,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const isResetMode = searchParams.get('mode') === 'reset';
   const [profileType, setProfileType] = useState('');
+  const [activeTab, setActiveTab] = useState('signin');
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -99,6 +100,7 @@ const Auth = () => {
         title: "Account Created!",
         description: "Please check your email to verify your account."
       });
+      setActiveTab('signin');
     }
     
     setIsLoading(false);
@@ -113,7 +115,7 @@ const Auth = () => {
     setError('');
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth?mode=reset`
+      redirectTo: `${window.location.origin}/login?mode=reset`
     });
 
     if (error) {
@@ -230,7 +232,7 @@ const Auth = () => {
               <CardDescription>Sign in to your account</CardDescription>
             </CardHeader>
           <CardContent>
-            <Tabs defaultValue="signin" className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="signin">Sign In</TabsTrigger>
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>
@@ -361,4 +363,4 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default Login;
