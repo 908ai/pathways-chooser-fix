@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,6 +22,7 @@ const Auth = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const isResetMode = searchParams.get('mode') === 'reset';
+  const [profileType, setProfileType] = useState('');
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -72,7 +74,18 @@ const Auth = () => {
     setIsLoading(true);
     setError('');
 
-    const { error } = await signUp(email, password, companyName);
+    if (!profileType) {
+      setError('Please select a profile type.');
+      toast({
+        title: "Sign Up Failed",
+        description: "Please select a profile type.",
+        variant: "destructive"
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    const { error } = await signUp(email, password, companyName, profileType);
     
     if (error) {
       setError(error.message);
@@ -268,6 +281,21 @@ const Auth = () => {
                       placeholder="Enter your company name"
                       required
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="profile-type">Profile Type</Label>
+                    <Select onValueChange={setProfileType} required>
+                      <SelectTrigger id="profile-type">
+                        <SelectValue placeholder="Select your profile type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="builder_contractor">Builder / Contractor</SelectItem>
+                        <SelectItem value="building_official">Building Official (AHJ)</SelectItem>
+                        <SelectItem value="energy_advisor">Energy Advisor / Modeler</SelectItem>
+                        <SelectItem value="designer_architect">Designer / Architect</SelectItem>
+                        <SelectItem value="homeowner">Homeowner</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
