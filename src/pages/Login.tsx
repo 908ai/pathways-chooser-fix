@@ -70,7 +70,6 @@ const Login = () => {
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
-    const companyName = formData.get('company_name') as string;
 
     setIsLoading(true);
     setError('');
@@ -86,7 +85,7 @@ const Login = () => {
       return;
     }
 
-    const { error } = await signUp(email, password, companyName, profileType);
+    const { error } = await signUp(email, password, profileType);
     
     if (error) {
       setError(error.message);
@@ -274,16 +273,6 @@ const Login = () => {
               
               <TabsContent value="signup">
                 <form onSubmit={handleSignUp} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="company-name">Company Name</Label>
-                    <Input
-                      id="company-name"
-                      name="company_name"
-                      type="text"
-                      placeholder="Enter your company name"
-                      required
-                    />
-                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="profile-type">Profile Type</Label>
                     <Select onValueChange={setProfileType} required>
