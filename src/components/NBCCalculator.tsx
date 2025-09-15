@@ -65,6 +65,7 @@ const NBCCalculator = ({
   const [currentStep, setCurrentStep] = useState(1);
   const steps = ["Project Information", "Compliance Path", "Technical Specifications", "Documents & Submission"];
   const formContainerRef = useRef<HTMLDivElement>(null);
+  const [validationErrors, setValidationErrors] = useState<Record<string, boolean>>({});
 
   const [selections, setSelections] = useState({
     firstName: "",
@@ -202,6 +203,23 @@ const NBCCalculator = ({
       }
     }
   }, [searchParams, user]);
+
+  useEffect(() => {
+    // Clear validation errors as user fills them out
+    if (Object.keys(validationErrors).length > 0) {
+      const newErrors = { ...validationErrors };
+      let changed = false;
+      (Object.keys(validationErrors) as Array<keyof typeof validationErrors>).forEach((key) => {
+        if (selections[key as keyof typeof selections]) {
+          delete newErrors[key];
+          changed = true;
+        }
+      });
+      if (changed) {
+        setValidationErrors(newErrors);
+      }
+    }
+  }, [selections, validationErrors]);
 
   const loadProjectForEditing = async (projectId: string) => {
     setIsLoading(true);
@@ -564,15 +582,26 @@ const NBCCalculator = ({
   };
 
   const validateStep1 = () => {
-    const { firstName, lastName, company, phoneNumber, buildingAddress, buildingType, province, climateZone } = selections;
-    if (!firstName || !lastName || !company || !phoneNumber || !buildingAddress || !buildingType || !province) {
+    const { firstName, lastName, company, phoneNumber, buildingAddress, buildingType, province, climateZone, companyAddress } = selections;
+    const errors: Record<string, boolean> = {};
+
+    if (!firstName) errors.firstName = true;
+    if (!lastName) errors.lastName = true;
+    if (!company) errors.company = true;
+    if (!companyAddress) errors.companyAddress = true;
+    if (!phoneNumber) errors.phoneNumber = true;
+    if (!buildingAddress) errors.buildingAddress = true;
+    if (!buildingType) errors.buildingType = true;
+    if (!province) errors.province = true;
+    if (province === 'alberta' && !climateZone) errors.climateZone = true;
+
+    setValidationErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
       toast({ title: "Missing Information", description: "Please fill out all required fields in this step.", variant: "destructive" });
       return false;
     }
-    if (province === 'alberta' && !climateZone) {
-      toast({ title: "Missing Information", description: "Please select a Climate Zone for Alberta.", variant: "destructive" });
-      return false;
-    }
+
     return true;
   };
 
@@ -580,6 +609,7 @@ const NBCCalculator = ({
     const { compliancePath } = selections;
     if (!compliancePath) {
       toast({ title: "Missing Information", description: "Please select a compliance path to continue.", variant: "destructive" });
+      setValidationErrors({ compliancePath: true });
       return false;
     }
     return true;
@@ -663,6 +693,7 @@ const NBCCalculator = ({
         <ProjectInformationSection
           selections={selections}
           setSelections={setSelections}
+          validationErrors={validationErrors}
         />
       )}
 

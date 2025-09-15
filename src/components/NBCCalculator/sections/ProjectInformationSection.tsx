@@ -12,6 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Info, FileText, Zap } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 import { getPathwayDisplayName, isSingleDetached } from "../utils/helpers";
 
@@ -19,12 +20,14 @@ import { getPathwayDisplayName, isSingleDetached } from "../utils/helpers";
 type Props = {
   selections: any;
   setSelections: React.Dispatch<React.SetStateAction<any>>;
+  validationErrors: Record<string, boolean>;
   onPathwayChange?: (pathwayInfo: string) => void;
 };
 
 export default function ProjectInformationSection({
   selections,
   setSelections,
+  validationErrors,
   onPathwayChange,
 }: Props) {
 
@@ -56,7 +59,7 @@ export default function ProjectInformationSection({
                            <Input type="text" placeholder="Enter first name" value={selections.firstName} onChange={e => setSelections(prev => ({
                           ...prev,
                           firstName: e.target.value
-                        }))} />
+                        }))} className={cn(validationErrors.firstName && "border-red-500 ring-2 ring-red-500")} />
                          </div>
                          
                          <div className="space-y-2">
@@ -64,7 +67,7 @@ export default function ProjectInformationSection({
                            <Input type="text" placeholder="Enter last name" value={selections.lastName} onChange={e => setSelections(prev => ({
                           ...prev,
                           lastName: e.target.value
-                        }))} />
+                        }))} className={cn(validationErrors.lastName && "border-red-500 ring-2 ring-red-500")} />
                          </div>
                        </div>
 
@@ -74,7 +77,7 @@ export default function ProjectInformationSection({
                            <Input type="text" placeholder="Enter company name" value={selections.company} onChange={e => setSelections(prev => ({
                           ...prev,
                           company: e.target.value
-                        }))} />
+                        }))} className={cn(validationErrors.company && "border-red-500 ring-2 ring-red-500")} />
                          </div>
 
                          <div className="space-y-2">
@@ -82,7 +85,7 @@ export default function ProjectInformationSection({
                            <Input type="tel" placeholder="Enter phone number" value={selections.phoneNumber} onChange={e => setSelections(prev => ({
                           ...prev,
                           phoneNumber: e.target.value
-                        }))} />
+                        }))} className={cn(validationErrors.phoneNumber && "border-red-500 ring-2 ring-red-500")} />
                          </div>
                        </div>
 
@@ -91,7 +94,7 @@ export default function ProjectInformationSection({
                          <Input type="text" placeholder="Enter company address" value={selections.companyAddress} onChange={e => setSelections(prev => ({
                         ...prev,
                         companyAddress: e.target.value
-                      }))} />
+                      }))} className={cn(validationErrors.companyAddress && "border-red-500 ring-2 ring-red-500")} />
                        </div>
                      </div>
 
@@ -104,7 +107,7 @@ export default function ProjectInformationSection({
                          <Input type="text" placeholder="Enter building/project address" value={selections.buildingAddress} onChange={e => setSelections(prev => ({
                         ...prev,
                         buildingAddress: e.target.value
-                      }))} />
+                      }))} className={cn(validationErrors.buildingAddress && "border-red-500 ring-2 ring-red-500")} />
                         </div>
 
                         <div className="space-y-2">
@@ -113,7 +116,7 @@ export default function ProjectInformationSection({
                         ...prev,
                         buildingType: value
                       }))}>
-                            <SelectTrigger>
+                            <SelectTrigger className={cn(validationErrors.buildingType && "border-red-500 ring-2 ring-red-500")}>
                               <SelectValue placeholder="Select building type" />
                             </SelectTrigger>
                              <SelectContent className="bg-background border shadow-lg z-50">
@@ -181,7 +184,7 @@ export default function ProjectInformationSection({
                             hasDWHR: ""
                           }));
                         }}>
-                             <SelectTrigger>
+                             <SelectTrigger className={cn(validationErrors.province && "border-red-500 ring-2 ring-red-500")}>
                                <SelectValue placeholder="Select your province" />
                              </SelectTrigger>
                              <SelectContent>
@@ -233,7 +236,7 @@ export default function ProjectInformationSection({
                           ...prev,
                           climateZone: value
                         }))}>
-                                <SelectTrigger>
+                                <SelectTrigger className={cn(validationErrors.climateZone && "border-red-500 ring-2 ring-red-500")}>
                                   <SelectValue placeholder="Select climate zone" />
                                 </SelectTrigger>
                                 <SelectContent>
