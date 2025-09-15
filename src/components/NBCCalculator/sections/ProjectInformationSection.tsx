@@ -34,24 +34,23 @@ export default function ProjectInformationSection({
   return (
     <>
       {
-                <Card className="bg-gradient-to-r from-slate-700/40 to-teal-700/40 border-slate-400/50 backdrop-blur-sm shadow-lg">
+                <Card>
                    <CardHeader className="pb-4">
-                      <CardTitle className="text-lg flex items-center gap-2 text-white">
+                      <CardTitle className="text-lg flex items-center gap-2">
                         📋 Project Information
-                        {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? <Badge variant="outline" className="ml-2 border-orange-400 text-orange-300 bg-orange-900/30">
+                        {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? <Badge variant="outline" className="ml-2 border-primary text-primary">
                             Prescriptive Path
                           </Badge> : selections.compliancePath === '9365' || selections.compliancePath === '9367' ? <Badge variant="outline" className="ml-2 border-blue-400 text-blue-300 bg-blue-900/30">
                             Performance Path
                           </Badge> : null}
                       </CardTitle>
-                      <CardDescription className="text-slate-200">
+                      <CardDescription>
                         Personal details, building location, and compliance path selection
                       </CardDescription>
                    </CardHeader>
                    <CardContent className="space-y-6">
-                     {/* Personal/Contact Information */}
                      <div className="space-y-4">
-                       <h4 className="text-md font-medium text-white border-b pb-2">Personal & Contact Information <span className="text-red-500">(Required)</span></h4>
+                       <h4 className="text-md font-medium border-b pb-2">Personal & Contact Information <span className="text-destructive">(Required)</span></h4>
                        
                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                          <div className="space-y-2">
@@ -59,7 +58,7 @@ export default function ProjectInformationSection({
                            <Input type="text" placeholder="Enter first name" value={selections.firstName} onChange={e => setSelections(prev => ({
                           ...prev,
                           firstName: e.target.value
-                        }))} className={cn(validationErrors.firstName && "border-red-500 ring-2 ring-red-500")} />
+                        }))} className={cn(validationErrors.firstName && "border-destructive ring-2 ring-destructive")} />
                          </div>
                          
                          <div className="space-y-2">
@@ -67,7 +66,7 @@ export default function ProjectInformationSection({
                            <Input type="text" placeholder="Enter last name" value={selections.lastName} onChange={e => setSelections(prev => ({
                           ...prev,
                           lastName: e.target.value
-                        }))} className={cn(validationErrors.lastName && "border-red-500 ring-2 ring-red-500")} />
+                        }))} className={cn(validationErrors.lastName && "border-destructive ring-2 ring-destructive")} />
                          </div>
                        </div>
 
@@ -77,7 +76,7 @@ export default function ProjectInformationSection({
                            <Input type="text" placeholder="Enter company name" value={selections.company} onChange={e => setSelections(prev => ({
                           ...prev,
                           company: e.target.value
-                        }))} className={cn(validationErrors.company && "border-red-500 ring-2 ring-red-500")} />
+                        }))} className={cn(validationErrors.company && "border-destructive ring-2 ring-destructive")} />
                          </div>
 
                          <div className="space-y-2">
@@ -85,7 +84,7 @@ export default function ProjectInformationSection({
                            <Input type="tel" placeholder="Enter phone number" value={selections.phoneNumber} onChange={e => setSelections(prev => ({
                           ...prev,
                           phoneNumber: e.target.value
-                        }))} className={cn(validationErrors.phoneNumber && "border-red-500 ring-2 ring-red-500")} />
+                        }))} className={cn(validationErrors.phoneNumber && "border-destructive ring-2 ring-destructive")} />
                          </div>
                        </div>
 
@@ -94,20 +93,19 @@ export default function ProjectInformationSection({
                          <Input type="text" placeholder="Enter company address" value={selections.companyAddress} onChange={e => setSelections(prev => ({
                         ...prev,
                         companyAddress: e.target.value
-                      }))} className={cn(validationErrors.companyAddress && "border-red-500 ring-2 ring-red-500")} />
+                      }))} className={cn(validationErrors.companyAddress && "border-destructive ring-2 ring-destructive")} />
                        </div>
                      </div>
 
-                     {/* Building & Location Information */}
                      <div className="space-y-4">
-                       <h4 className="text-md font-medium text-white border-b pb-2">Building & Location Details <span className="text-red-500">(Required)</span></h4>
+                       <h4 className="text-md font-medium border-b pb-2">Building & Location Details <span className="text-destructive">(Required)</span></h4>
 
                        <div className="space-y-2">
                          <label className="text-sm font-medium">Building/Project Address</label>
                          <Input type="text" placeholder="Enter building/project address" value={selections.buildingAddress} onChange={e => setSelections(prev => ({
                         ...prev,
                         buildingAddress: e.target.value
-                      }))} className={cn(validationErrors.buildingAddress && "border-red-500 ring-2 ring-red-500")} />
+                      }))} className={cn(validationErrors.buildingAddress && "border-destructive ring-2 ring-destructive")} />
                         </div>
 
                         <div className="space-y-2">
@@ -116,10 +114,10 @@ export default function ProjectInformationSection({
                         ...prev,
                         buildingType: value
                       }))}>
-                            <SelectTrigger className={cn(validationErrors.buildingType && "border-red-500 ring-2 ring-red-500")}>
+                            <SelectTrigger className={cn(validationErrors.buildingType && "border-destructive ring-2 ring-destructive")}>
                               <SelectValue placeholder="Select building type" />
                             </SelectTrigger>
-                             <SelectContent className="bg-background border shadow-lg z-50">
+                             <SelectContent>
                                <SelectItem value="single-detached">Single-detached home</SelectItem>
                                <SelectItem value="single-detached-secondary">Single-detached home with a secondary suite</SelectItem>
                                <SelectItem value="multi-unit">Multi-Unit Residential Building or Town/Row-House</SelectItem>
@@ -134,7 +132,6 @@ export default function ProjectInformationSection({
                           setSelections(prev => ({
                             ...prev,
                             province: value,
-                            // Reset technical selections when province changes
                             compliancePath: "",
                             hasHrv: "",
                             isVolumeOver380: "",
@@ -184,7 +181,7 @@ export default function ProjectInformationSection({
                             hasDWHR: ""
                           }));
                         }}>
-                             <SelectTrigger className={cn(validationErrors.province && "border-red-500 ring-2 ring-red-500")}>
+                             <SelectTrigger className={cn(validationErrors.province && "border-destructive ring-2 ring-destructive")}>
                                <SelectValue placeholder="Select your province" />
                              </SelectTrigger>
                              <SelectContent>
@@ -194,15 +191,14 @@ export default function ProjectInformationSection({
                            </Select>
                           </div>
 
-                           {/* Climate Zone Selection for Alberta */}
                            {selections.province === "alberta" && <div className="space-y-2">
                                <div className="flex items-center gap-2">
-                                 <label className="text-sm font-medium">Climate Zone <span className="text-red-500">*</span></label>
+                                 <label className="text-sm font-medium">Climate Zone <span className="text-destructive">*</span></label>
                                  <Dialog>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <DialogTrigger asChild>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary/10">
                                                     <Info className="h-4 w-4" />
                                                 </Button>
                                             </DialogTrigger>
@@ -216,15 +212,15 @@ export default function ProjectInformationSection({
                                        <DialogTitle>Climate Zone Information</DialogTitle>
                                      </DialogHeader>
                                      <div className="space-y-4">
-                                       <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                                         <h4 className="font-semibold text-green-800 mb-2">Saskatchewan</h4>
-                                         <p className="text-green-700">All of Saskatchewan is in Climate Zone 7A (5000 to 5999 HDD)</p>
+                                       <div className="bg-secondary border rounded-lg p-4">
+                                         <h4 className="font-semibold text-secondary-foreground mb-2">Saskatchewan</h4>
+                                         <p className="text-muted-foreground">All of Saskatchewan is in Climate Zone 7A (5000 to 5999 HDD)</p>
                                        </div>
                                        
-                                       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                         <h4 className="font-semibold text-blue-800 mb-2">Alberta Climate Zones</h4>
-                                         <img src="/lovable-uploads/9b289384-01b6-4f5f-a713-ddcae27167db.png" alt="Climate Zone Map for Alberta showing Zone 6, 7A, 7B, and 8 with corresponding cities and HDD ranges" className="w-full h-auto rounded-lg border border-gray-200" />
-                                         <div className="mt-4 text-xs text-blue-600">
+                                       <div className="bg-secondary border rounded-lg p-4">
+                                         <h4 className="font-semibold text-secondary-foreground mb-2">Alberta Climate Zones</h4>
+                                         <img src="/lovable-uploads/9b289384-01b6-4f5f-a713-ddcae27167db.png" alt="Climate Zone Map for Alberta showing Zone 6, 7A, 7B, and 8 with corresponding cities and HDD ranges" className="w-full h-auto rounded-lg border" />
+                                         <div className="mt-4 text-xs text-muted-foreground">
                                            <p><strong>HDD:</strong> Heating Degree Days - a measure of how much (in degrees), and for how long (in days), the outside air temperature was below a certain level.</p>
                                          </div>
                                        </div>
@@ -236,7 +232,7 @@ export default function ProjectInformationSection({
                           ...prev,
                           climateZone: value
                         }))}>
-                                <SelectTrigger className={cn(validationErrors.climateZone && "border-red-500 ring-2 ring-red-500")}>
+                                <SelectTrigger className={cn(validationErrors.climateZone && "border-destructive ring-2 ring-destructive")}>
                                   <SelectValue placeholder="Select climate zone" />
                                 </SelectTrigger>
                                 <SelectContent>

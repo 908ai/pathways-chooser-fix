@@ -8,13 +8,13 @@ interface NewProjectCardProps {
 
 const NewProjectCard = ({ handleNewProject }: NewProjectCardProps) => {
   return (
-    <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+    <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-white">
+        <CardTitle className="flex items-center gap-2">
           <Plus className="h-5 w-5" />
           Start New Project
         </CardTitle>
-        <CardDescription className="text-slate-200">
+        <CardDescription>
           Begin a new NBC 9.36 compliance assessment
         </CardDescription>
       </CardHeader>
