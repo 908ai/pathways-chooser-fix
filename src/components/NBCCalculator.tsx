@@ -41,7 +41,6 @@ import { getPathwayDisplayName, isSingleDetached } from "./NBCCalculator/utils/h
 
 import { useFileUploads } from "./NBCCalculator/hooks/useFileUploads";
 import EditModeIndicator from "./NBCCalculator/sections/EditModeIndicator";
-import InstructionsSection from "./NBCCalculator/sections/InstructionsSection";
 import ContactSection from "./NBCCalculator/sections/ContactSection";
 import ProjectSummaryModal from "./NBCCalculator/components/ProjectSummaryModal";
 import FloatingPointsSummary from "./NBCCalculator/components/FloatingPointsSummary";
@@ -54,6 +53,7 @@ import Prescriptive9368Section from "./NBCCalculator/sections/Prescriptive9368Se
 import Prescriptive9368WithHrvSection from "./NBCCalculator/sections/Prescriptive9368WithHrvSection";
 import HrvAdditionalInfoSection from "./NBCCalculator/sections/HrvAdditionalInfoSection";
 import EnerGuidePathwaySection from "./NBCCalculator/sections/EnerGuidePathwaySection";
+import HelpDrawer from "@/components/HelpDrawer";
 
 interface NBCCalculatorProps {
   onPathwayChange?: (pathwayInfo: string) => void;
@@ -742,6 +742,7 @@ const NBCCalculator = ({
     backgroundRepeat: 'no-repeat',
     backgroundAttachment: 'fixed'
   }}>
+    <HelpDrawer />
 
     {/* Floating Points Breakdown - only show for tiered prescriptive path */}
     {selections.compliancePath === "9368" && <div className="fixed top-20 right-4 z-50 w-72">
@@ -770,9 +771,6 @@ const NBCCalculator = ({
           National Building Code of Canada - Energy Performance Compliance Tool
         </p>
       </div>
-
-      {/* Combined Instructions Section */}
-      <InstructionsSection />
 
       {/* Contact Section */}
       <ContactSection />
