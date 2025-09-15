@@ -33,7 +33,7 @@ export default function CompliancePathSection({
                 <Card className="bg-gradient-to-r from-slate-700/40 to-teal-700/40 border-slate-400/50 backdrop-blur-sm shadow-lg">
                    <CardHeader className="pb-4">
                       <CardTitle className="text-lg flex items-center gap-2 text-white">
-                        🛤️ Compliance Path Selection
+                        Compliance Path Selection
                       </CardTitle>
                       <CardDescription className="text-slate-200">
                         Choose the compliance pathway for your project. This is a critical decision that affects all subsequent steps.

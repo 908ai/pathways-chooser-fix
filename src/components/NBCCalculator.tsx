@@ -883,11 +883,9 @@ const NBCCalculator = ({
         </Card>
       )}
 
-      <div className="flex justify-between mt-8">
-        {currentStep > 1 ? (
+      <div className="flex justify-center gap-4 mt-8">
+        {currentStep > 1 && (
           <Button variant="outline" onClick={prevStep}>Back</Button>
-        ) : (
-          <div />
         )}
         {currentStep < steps.length && (
           <Button onClick={nextStep}>Next</Button>
