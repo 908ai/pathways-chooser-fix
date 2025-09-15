@@ -2,106 +2,106 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 
-  New Color Palette:
-  - Deep Blue (#0A063F): hsl(244, 83%, 14%)
-  - Deep Purple (#3e2060): hsl(273, 50%, 25%)
-  - Strong Green (#3F9D3E): hsl(120, 44%, 43%)
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 240 10% 98%; /* Almost white */
-    --foreground: 244, 83%, 14%; /* Deep Blue */
+    --background: 0 0% 98%;
+    --foreground: 0 0% 15%;
 
-    --card: 0 0% 100%; /* White */
-    --card-foreground: 244, 83%, 14%; /* Deep Blue */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 244, 83%, 14%;
+    --popover-foreground: 0 0% 15%;
 
-    --primary: 273 50% 25%; /* Deep Purple */
-    --primary-foreground: 0 0% 100%; /* White */
+    --primary: 270 50% 25%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 240 5% 96%; /* Light Gray */
-    --secondary-foreground: 244, 83%, 14%; /* Deep Blue */
+    --secondary: 270 20% 90%;
+    --secondary-foreground: 270 50% 25%;
 
-    --muted: 240 5% 90%; /* Slightly darker gray */
-    --muted-foreground: 240 4% 46%; /* Muted gray text */
+    --muted: 270 10% 95%;
+    --muted-foreground: 270 10% 45%;
 
-    --accent: 240 5% 96%;
-    --accent-foreground: 244, 83%, 14%;
+    --accent: 270 30% 92%;
+    --accent-foreground: 270 50% 25%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
 
-    --success: 120 44% 43%; /* Strong Green */
-    --success-foreground: 0 0% 100%;
-
+    --border: 270 15% 85%;
+    --input: 270 15% 85%;
+    --ring: 270 50% 25%;
+    
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 98%;
+    
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 273 50% 25%; /* Deep Purple */
+    --warning-foreground: 0 0% 98%;
+    
+    --gradient-primary: linear-gradient(135deg, hsl(270 50% 25%), hsl(270 60% 35%));
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 98%), hsl(270 10% 95%));
+    --gradient-purple-green: linear-gradient(135deg, hsl(280 70% 50%), hsl(140 70% 45%));
 
     --radius: 0.5rem;
 
-    /* Sidebar colors (matched to main theme) */
-    --sidebar-background: 240 10% 98%;
-    --sidebar-foreground: 244, 83%, 14%;
-    --sidebar-primary: 273 50% 25%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 5% 96%;
-    --sidebar-accent-foreground: 244, 83%, 14%;
-    --sidebar-border: 240 6% 90%;
-    --sidebar-ring: 273 50% 25%;
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 244 83% 14%; /* Deep Blue */
-    --foreground: 240 10% 98%; /* Almost white */
+    --background: 270 20% 8%;
+    --foreground: 0 0% 95%;
 
-    --card: 244 70% 18%; /* Slightly lighter deep blue */
-    --card-foreground: 240 10% 98%;
+    --card: 270 15% 12%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 244 70% 18%;
-    --popover-foreground: 240 10% 98%;
+    --popover: 270 15% 12%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 273 50% 65%; /* Lighter Purple for dark mode */
-    --primary-foreground: 244 83% 14%; /* Deep Blue for contrast */
+    --primary: 270 60% 70%;
+    --primary-foreground: 270 20% 8%;
 
-    --secondary: 244 60% 22%; /* Darker blue */
-    --secondary-foreground: 240 10% 98%;
+    --secondary: 270 20% 18%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 244 60% 22%;
-    --muted-foreground: 240 5% 65%; /* Lighter gray text for dark mode */
+    --muted: 270 20% 18%;
+    --muted-foreground: 270 10% 65%;
 
-    --accent: 244 60% 22%;
-    --accent-foreground: 240 10% 98%;
+    --accent: 270 25% 20%;
+    --accent-foreground: 0 0% 95%;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
 
-    --success: 120 44% 53%; /* Brighter Green */
-    --success-foreground: 244 83% 14%;
-
-    --warning: 38 92% 50%;
-    --warning-foreground: 244 83% 14%;
-
-    --border: 244 50% 25%;
-    --input: 244 50% 25%;
-    --ring: 273 50% 65%;
-
-    /* Sidebar colors for dark theme */
-    --sidebar-background: 244 83% 14%;
-    --sidebar-foreground: 240 10% 98%;
-    --sidebar-primary: 273 50% 65%;
-    --sidebar-primary-foreground: 244 83% 14%;
-    --sidebar-accent: 244 60% 22%;
-    --sidebar-accent-foreground: 240 10% 98%;
-    --sidebar-border: 244 50% 25%;
-    --sidebar-ring: 273 50% 65%;
+    --border: 270 20% 18%;
+    --input: 270 20% 18%;
+    --ring: 270 60% 70%;
+    
+    --sidebar-background: 270 25% 6%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 270 60% 60%;
+    --sidebar-primary-foreground: 270 20% 8%;
+    --sidebar-accent: 270 20% 15%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 270 20% 15%;
+    --sidebar-ring: 270 60% 70%;
   }
 }
 

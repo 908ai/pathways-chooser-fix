@@ -205,6 +205,7 @@ const NBCCalculator = ({
   }, [searchParams, user]);
 
   useEffect(() => {
+    // Clear validation errors as user fills them out
     if (Object.keys(validationErrors).length > 0) {
       const newErrors = { ...validationErrors };
       let changed = false;
@@ -457,16 +458,16 @@ const NBCCalculator = ({
     variant?: "warning" | "destructive";
   }) => {
     const isExpanded = expandedWarnings[warningId];
-    const bgColor = variant === "warning" ? "bg-warning/10" : "bg-destructive/10";
-    const borderColor = variant === "warning" ? "border-warning" : "border-destructive";
-    return <div className={`p-4 ${bgColor} border ${borderColor} rounded-lg`}>
+    const bgColor = variant === "warning" ? "bg-gradient-to-r from-slate-800/60 to-teal-800/60" : "bg-gradient-to-r from-slate-800/60 to-red-800/60";
+    const borderColor = variant === "warning" ? "border-2 border-orange-400" : "border-2 border-red-400";
+    return <div className={`p-4 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
       <button onClick={() => toggleWarning(warningId)} className="flex items-center gap-3 w-full text-left">
-        <span className="text-lg font-bold text-card-foreground">
+        <span className="text-lg font-bold text-white">
           {title}
         </span>
       </button>
       {isExpanded && <div className="mt-4 animate-accordion-down">
-        <div className="text-card-foreground font-semibold">
+        <div className="text-white font-semibold">
           {children}
         </div>
       </div>}
@@ -677,11 +678,11 @@ const NBCCalculator = ({
     <div ref={formContainerRef} className={`mx-auto space-y-6 relative z-10 transition-all duration-300 ${selections.compliancePath === "9368" ? "max-w-3xl mr-80" : "max-w-4xl"}`}>
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-3 mb-2">
-          <Calculator className="h-8 w-8 text-primary" />
-          <h1 className="text-4xl font-bold text-white drop-shadow-lg">NBC2020 Energy Code Pathways Selector</h1>
+          <Calculator className="h-8 w-8 text-teal-300" />
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-200 via-blue-200 to-teal-200 bg-clip-text text-transparent drop-shadow-lg">NBC2020 Energy Code Pathways Selector</h1>
         </div>
-        <p className="text-xl text-gray-200 font-medium mb-4 drop-shadow-md">(Alberta & Saskatchewan)</p>
-        <p className="text-lg text-gray-300 drop-shadow-md">
+        <p className="text-xl bg-gradient-to-r from-slate-300 to-teal-300 bg-clip-text text-transparent font-medium mb-4 drop-shadow-md">(Alberta & Saskatchewan)</p>
+        <p className="text-gray-200 text-lg drop-shadow-md">
           National Building Code of Canada - Energy Performance Compliance Tool
         </p>
       </div>
@@ -705,12 +706,12 @@ const NBCCalculator = ({
       )}
 
       {currentStep === 3 && (
-        <Card>
+        <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
           <CardHeader>
-            <CardTitle className="text-center">
+            <CardTitle className="text-white text-center">
               {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? 'Prescriptive Building Requirements' : 'Performance Building Specifications'}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-slate-200">
               {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? 'Specify minimum required values for prescriptive compliance' : 'Enter proposed building specifications for energy modeling'}
             </CardDescription>
           </CardHeader>
@@ -725,12 +726,12 @@ const NBCCalculator = ({
       )}
 
       {currentStep === 4 && (
-        <Card>
+        <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
           <CardHeader>
-            <CardTitle className="text-center">
+            <CardTitle className="text-white text-center">
               Documents & Submission
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-slate-200">
               Upload supporting documents and submit your application.
             </CardDescription>
           </CardHeader>
@@ -758,30 +759,33 @@ const NBCCalculator = ({
               />
             )}
 
+            {/* Results */}
             {selections.compliancePath === "9368" && (
-              <Card>
+              <Card className="bg-slate-900/50 border-slate-600">
                 <CardHeader>
-                  <CardTitle>Compliance Results</CardTitle>
+                  <CardTitle className="text-white">Compliance Results</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="text-center">
-                    <p className="text-sm text-muted-foreground">Total Points</p>
+                    <p className="text-sm text-slate-300">Total Points</p>
                     <p className="text-5xl font-bold text-primary">{totalPoints.toFixed(1)}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm text-muted-foreground">Compliance Tier</p>
-                    <p className={`text-2xl font-bold ${compliance.status === "success" ? "text-success" : compliance.status === "warning" ? "text-warning" : "text-destructive"}`}>{compliance.tier}</p>
-                    <p className="text-xs text-muted-foreground">{compliance.description}</p>
+                    <p className="text-sm text-slate-300">Compliance Tier</p>
+                    <p className={`text-2xl font-bold ${compliance.status === "success" ? "text-green-400" : compliance.status === "warning" ? "text-yellow-400" : "text-red-400"}`}>{compliance.tier}</p>
+                    <p className="text-xs text-slate-400">{compliance.description}</p>
                   </div>
                 </CardContent>
               </Card>
             )}
 
-            <div className="pt-6 border-t space-y-4">
+            {/* Submit section — conditional on path */}
+            <div className="pt-6 border-t border-slate-600 space-y-4">
               {selections.compliancePath === "9365" ||
                 selections.compliancePath === "9367" ? (
                 <>
-                  <div className="flex items-start space-x-3 p-4 bg-secondary border rounded-lg">
+                  {/* Performance Path */}
+                  <div className="flex items-start space-x-3 p-4 bg-slate-900/50 border border-slate-600 rounded-lg">
                     <Checkbox
                       id="agreement-performance"
                       checked={agreementChecked}
@@ -791,7 +795,7 @@ const NBCCalculator = ({
                     />
                     <label
                       htmlFor="agreement-performance"
-                      className="text-sm text-muted-foreground leading-relaxed cursor-pointer"
+                      className="text-sm text-slate-300 leading-relaxed cursor-pointer"
                     >
                       I agree to notify my energy advisor before making any changes to
                       the design, including envelope components, windows, or
@@ -809,6 +813,7 @@ const NBCCalculator = ({
                   <div className="flex justify-center">
                     <Button
                       size="lg"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3"
                       onClick={() => handleSubmitApplication("performance")}
                       disabled={isSubmitting || !agreementChecked}
                     >
@@ -820,14 +825,15 @@ const NBCCalculator = ({
                     </Button>
                   </div>
 
-                  <p className="text-sm text-muted-foreground text-center mt-3">
+                  <p className="text-sm text-slate-400 text-center mt-3">
                     Your application will be reviewed and energy modeling will begin
                     within 1-2 business days.
                   </p>
                 </>
               ) : (
                 <>
-                  <div className="flex items-start space-x-3 p-4 bg-secondary border rounded-lg">
+                  {/* Prescriptive Path */}
+                  <div className="flex items-start space-x-3 p-4 bg-slate-900/50 border border-slate-600 rounded-lg">
                     <Checkbox
                       id="agreement-prescriptive"
                       checked={agreementChecked}
@@ -837,7 +843,7 @@ const NBCCalculator = ({
                     />
                     <label
                       htmlFor="agreement-prescriptive"
-                      className="text-sm text-muted-foreground leading-relaxed cursor-pointer"
+                      className="text-sm text-slate-300 leading-relaxed cursor-pointer"
                     >
                       I agree to notify the Authority Having Jurisdiction if any
                       changes to the design occur, including envelope components,
@@ -855,6 +861,7 @@ const NBCCalculator = ({
                   <div className="flex justify-center">
                     <Button
                       size="lg"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3"
                       onClick={() => handleSubmitApplication("prescriptive")}
                       disabled={isSubmitting || !agreementChecked}
                     >
@@ -866,7 +873,7 @@ const NBCCalculator = ({
                     </Button>
                   </div>
 
-                  <p className="text-sm text-muted-foreground text-center mt-3">
+                  <p className="text-sm text-slate-400 text-center mt-3">
                     Your application will be reviewed within 1-2 business days.
                   </p>
                 </>

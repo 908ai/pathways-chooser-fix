@@ -1,9 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FileText, Zap, LogOut, UserCircle, Moon, Sun } from 'lucide-react';
+import { FileText, Zap, LogOut, UserCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { useTheme } from "@/components/ThemeProvider";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,10 +10,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuSubContent,
-  DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -28,7 +23,6 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { setTheme } = useTheme();
 
   const handleAccountClick = () => {
     navigate('/dashboard?tab=account');
@@ -51,7 +45,7 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
               {pathwayInfo.includes('Prescriptive') && (
                 <Badge 
                   variant="outline" 
-                  className="text-sm font-medium border-2 border-primary text-primary bg-primary/10 px-3 py-1 flex items-center gap-1.5"
+                  className="text-sm font-medium border-2 border-orange-500 text-orange-700 bg-orange-50 dark:border-orange-400 dark:text-orange-300 dark:bg-orange-950/30 px-3 py-1 flex items-center gap-1.5"
                 >
                   <FileText className="h-3.5 w-3.5" />
                   Prescriptive Path
@@ -107,26 +101,6 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
                   <UserCircle className="mr-2 h-4 w-4" />
                   <span>Account Details</span>
                 </DropdownMenuItem>
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>
-                    <Sun className="h-4 w-4 mr-2 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                    <Moon className="absolute h-4 w-4 mr-2 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                    <span>Theme</span>
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuPortal>
-                    <DropdownMenuSubContent>
-                      <DropdownMenuItem onClick={() => setTheme("light")}>
-                        Light
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setTheme("dark")}>
-                        Dark
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setTheme("system")}>
-                        System
-                      </DropdownMenuItem>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuPortal>
-                </DropdownMenuSub>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={onSignOut} className="cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />

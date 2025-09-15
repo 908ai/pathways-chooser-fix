@@ -82,9 +82,9 @@ const Dashboard = () => {
           </p>
         </div>
         {canViewAllProjects && (
-          <div className="mb-6 p-4 bg-primary/10 border border-primary/20 rounded-lg text-center flex items-center justify-center gap-3">
-            <Shield className="h-5 w-5 text-primary" />
-            <p className="font-semibold text-primary">
+          <div className="mb-6 p-4 bg-blue-900/30 border border-blue-400/50 rounded-lg text-center flex items-center justify-center gap-3">
+            <Shield className="h-5 w-5 text-blue-300" />
+            <p className="font-semibold text-blue-300">
               Admin View: You are viewing projects from all users.
             </p>
           </div>

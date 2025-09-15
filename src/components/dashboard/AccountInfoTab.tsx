@@ -17,6 +17,7 @@ const AccountInfoTab = () => {
   const [isEditingCompany, setIsEditingCompany] = useState(false);
   const [editedCompanyInfo, setEditedCompanyInfo] = useState<any>({});
 
+  // State for password change
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
@@ -111,22 +112,22 @@ const AccountInfoTab = () => {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
         <CardHeader>
-          <CardTitle>Account Information</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-white">Account Information</CardTitle>
+          <CardDescription className="text-slate-200">
             Manage your personal and company information
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label className="text-sm font-medium">Email</Label>
-              <p className="text-sm text-muted-foreground">{user?.email}</p>
+              <label className="text-sm font-medium text-white">Email</label>
+              <p className="text-sm text-slate-200">{user?.email}</p>
             </div>
             <div>
-              <Label className="text-sm font-medium">Account Status</Label>
-              <p className="text-sm text-muted-foreground">Active</p>
+              <label className="text-sm font-medium text-white">Account Status</label>
+              <p className="text-sm text-slate-200">Active</p>
             </div>
           </div>
           <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
@@ -177,10 +178,10 @@ const AccountInfoTab = () => {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
         <CardHeader>
-          <CardTitle>Company Information</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-white">Company Information</CardTitle>
+          <CardDescription className="text-slate-200">
             Update your company details for project documentation
           </CardDescription>
         </CardHeader>
@@ -189,19 +190,19 @@ const AccountInfoTab = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="company_name">Company Name</Label>
+                  <Label htmlFor="company_name" className="text-white">Company Name</Label>
                   <Input id="company_name" value={editedCompanyInfo.company_name || ''} onChange={e => setEditedCompanyInfo({ ...editedCompanyInfo, company_name: e.target.value })} placeholder="Enter company name" />
                 </div>
                 <div>
-                  <Label htmlFor="contact_email">Contact Email</Label>
+                  <Label htmlFor="contact_email" className="text-white">Contact Email</Label>
                   <Input id="contact_email" type="email" value={editedCompanyInfo.contact_email || ''} onChange={e => setEditedCompanyInfo({ ...editedCompanyInfo, contact_email: e.target.value })} placeholder="Enter contact email" />
                 </div>
                 <div>
-                  <Label htmlFor="phone">Phone</Label>
+                  <Label htmlFor="phone" className="text-white">Phone</Label>
                   <Input id="phone" value={editedCompanyInfo.phone || ''} onChange={e => setEditedCompanyInfo({ ...editedCompanyInfo, phone: e.target.value })} placeholder="Enter phone number" />
                 </div>
                 <div>
-                  <Label htmlFor="address">Address</Label>
+                  <Label htmlFor="address" className="text-white">Address</Label>
                   <Input id="address" value={editedCompanyInfo.address || ''} onChange={e => setEditedCompanyInfo({ ...editedCompanyInfo, address: e.target.value })} placeholder="Enter address" />
                 </div>
               </div>
@@ -220,24 +221,24 @@ const AccountInfoTab = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium">Company Name</Label>
-                  <p className="text-sm text-muted-foreground">{loadingCompany ? 'Loading...' : companyInfo?.company_name || 'No company information yet'}</p>
+                  <label className="text-sm font-medium text-white">Company Name</label>
+                  <p className="text-sm text-slate-200">{loadingCompany ? 'Loading...' : companyInfo?.company_name || 'No company information yet'}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Contact Email</Label>
-                  <p className="text-sm text-muted-foreground">{loadingCompany ? 'Loading...' : companyInfo?.contact_email || user?.email || 'Not specified'}</p>
+                  <label className="text-sm font-medium text-white">Contact Email</label>
+                  <p className="text-sm text-slate-200">{loadingCompany ? 'Loading...' : companyInfo?.contact_email || user?.email || 'Not specified'}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Phone</Label>
-                  <p className="text-sm text-muted-foreground">{loadingCompany ? 'Loading...' : companyInfo?.phone || 'Not specified'}</p>
+                  <label className="text-sm font-medium text-white">Phone</label>
+                  <p className="text-sm text-slate-200">{loadingCompany ? 'Loading...' : companyInfo?.phone || 'Not specified'}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium">Address</Label>
-                  <p className="text-sm text-muted-foreground">{loadingCompany ? 'Loading...' : companyInfo?.address || 'Not specified'}</p>
+                  <label className="text-sm font-medium text-white">Address</label>
+                  <p className="text-sm text-slate-200">{loadingCompany ? 'Loading...' : companyInfo?.address || 'Not specified'}</p>
                 </div>
               </div>
-              {!loadingCompany && !companyInfo && <div className="mt-4 p-3 bg-secondary border rounded-md">
-                <p className="text-sm text-secondary-foreground">
+              {!loadingCompany && !companyInfo && <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                <p className="text-sm text-blue-800">
                   <strong>Tip:</strong> Your account information will be automatically imported when you submit your first project.
                 </p>
               </div>}

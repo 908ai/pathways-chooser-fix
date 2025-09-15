@@ -26,9 +26,12 @@ const Login = () => {
   const [activeTab, setActiveTab] = useState('signin');
 
   useEffect(() => {
+    // This listener handles the session establishment after clicking the magic link.
+    // The actual UI for password reset is handled by the `isResetMode` check.
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
         // The user is now in a temporary session to update their password.
+        // No navigation is needed here.
       }
     });
 
@@ -43,13 +46,18 @@ const Login = () => {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
+    console.log('Form submission - email:', email, 'password length:', password?.length);
+
     setIsLoading(true);
     setError('');
 
     try {
       const { error } = await signIn(email, password);
       
+      console.log('Sign in response:', { error });
+      
       if (error) {
+        console.error('Sign in error:', error);
         setError(error.message);
         toast({
           title: "Sign In Failed",
@@ -57,6 +65,7 @@ const Login = () => {
           variant: "destructive"
         });
       } else {
+        console.log('Sign in successful');
         toast({
           title: "Welcome back!",
           description: "You've been signed in successfully."
@@ -64,6 +73,7 @@ const Login = () => {
         navigate('/');
       }
     } catch (err) {
+      console.error('Sign in exception in component:', err);
       setError('An unexpected error occurred');
     }
     
@@ -175,7 +185,7 @@ const Login = () => {
         <div className="absolute inset-0 bg-black/40"></div>
         <Header />
         <div className="flex-1 flex items-center justify-center px-4 relative z-10">
-          <Card className="w-full max-w-md">
+          <Card className="w-full max-w-md bg-background/95 backdrop-blur-sm border-white/20">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl">Set New Password</CardTitle>
               <CardDescription>Enter your new password below</CardDescription>
@@ -216,7 +226,8 @@ const Login = () => {
       <Header />
       <div className="flex-1 flex items-center justify-center px-4 relative z-10">
         <div className="w-full max-w-2xl space-y-6">
-          <Card>
+          {/* What is the Pathway Selector intro */}
+          <Card className="bg-background/95 backdrop-blur-sm border-white/20">
             <CardContent className="pt-6">
               <div className="text-center space-y-3">
                 <h2 className="text-xl font-semibold text-foreground">What is the Pathway Selector?</h2>
@@ -229,7 +240,7 @@ const Login = () => {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="bg-background/95 backdrop-blur-sm border-white/20">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl">NBC 9.36 Pathway Selector</CardTitle>
               <CardDescription>Sign in to your account</CardDescription>
