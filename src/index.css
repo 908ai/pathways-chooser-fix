@@ -5,7 +5,7 @@
 /* 
   New Color Palette:
   - Deep Blue (#0A063F): hsl(244, 83%, 14%)
-  - Vibrant Orange (#F96C0D): hsl(26, 95%, 51%)
+  - Deep Purple (#3e2060): hsl(273, 50%, 25%)
   - Strong Green (#3F9D3E): hsl(120, 44%, 43%)
 */
 
@@ -20,7 +20,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 244, 83%, 14%;
 
-    --primary: 26 95% 51%; /* Vibrant Orange */
+    --primary: 273 50% 25%; /* Deep Purple */
     --primary-foreground: 0 0% 100%; /* White */
 
     --secondary: 240 5% 96%; /* Light Gray */
@@ -43,19 +43,19 @@
 
     --border: 240 6% 90%;
     --input: 240 6% 90%;
-    --ring: 26 95% 51%; /* Vibrant Orange */
+    --ring: 273 50% 25%; /* Deep Purple */
 
     --radius: 0.5rem;
 
     /* Sidebar colors (matched to main theme) */
     --sidebar-background: 240 10% 98%;
     --sidebar-foreground: 244, 83%, 14%;
-    --sidebar-primary: 26 95% 51%;
+    --sidebar-primary: 273 50% 25%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 5% 96%;
     --sidebar-accent-foreground: 244, 83%, 14%;
     --sidebar-border: 240 6% 90%;
-    --sidebar-ring: 26 95% 51%;
+    --sidebar-ring: 273 50% 25%;
   }
 
   .dark {
@@ -68,7 +68,7 @@
     --popover: 244 70% 18%;
     --popover-foreground: 240 10% 98%;
 
-    --primary: 26 95% 51%; /* Vibrant Orange */
+    --primary: 273 50% 65%; /* Lighter Purple for dark mode */
     --primary-foreground: 244 83% 14%; /* Deep Blue for contrast */
 
     --secondary: 244 60% 22%; /* Darker blue */
@@ -91,17 +91,17 @@
 
     --border: 244 50% 25%;
     --input: 244 50% 25%;
-    --ring: 26 95% 51%;
+    --ring: 273 50% 65%;
 
     /* Sidebar colors for dark theme */
     --sidebar-background: 244 83% 14%;
     --sidebar-foreground: 240 10% 98%;
-    --sidebar-primary: 26 95% 51%;
+    --sidebar-primary: 273 50% 65%;
     --sidebar-primary-foreground: 244 83% 14%;
     --sidebar-accent: 244 60% 22%;
     --sidebar-accent-foreground: 240 10% 98%;
     --sidebar-border: 244 50% 25%;
-    --sidebar-ring: 26 95% 51%;
+    --sidebar-ring: 273 50% 65%;
   }
 }
 
