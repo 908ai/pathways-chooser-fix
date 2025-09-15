@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Info, FileText, Zap } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { getPathwayDisplayName, isSingleDetached } from "../utils/helpers";
 
@@ -195,12 +196,18 @@ export default function ProjectInformationSection({
                                <div className="flex items-center gap-2">
                                  <label className="text-sm font-medium">Climate Zone <span className="text-red-500">*</span></label>
                                  <Dialog>
-                                   <DialogTrigger asChild>
-                                     <Button variant="outline" size="sm" className="h-8 px-3 text-sm font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                       <Info className="h-3 w-3 mr-1" />
-                                       More info
-                                     </Button>
-                                   </DialogTrigger>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <DialogTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                                    <Info className="h-4 w-4" />
+                                                </Button>
+                                            </DialogTrigger>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>More Info</p>
+                                        </TooltipContent>
+                                    </Tooltip>
                                    <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                                      <DialogHeader>
                                        <DialogTitle>Climate Zone Information</DialogTitle>
@@ -266,12 +273,18 @@ export default function ProjectInformationSection({
                           <div className="flex items-center gap-3">
                             <label className="text-sm font-medium">Which compliance path are you using?</label>
                             <Dialog>
-                              <DialogTrigger asChild>
-                                 <Button variant="outline" size="sm" className="h-8 px-3 text-sm font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                  <Info className="h-3 w-3 mr-1" />
-                                  More Info
-                                </Button>
-                              </DialogTrigger>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <DialogTrigger asChild>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                                <Info className="h-4 w-4" />
+                                            </Button>
+                                        </DialogTrigger>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>More Info</p>
+                                    </TooltipContent>
+                                </Tooltip>
                               <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                                 <DialogHeader>
                                   <DialogTitle>NBC Part 9 Energy Compliance – Simple Overview</DialogTitle>
@@ -477,12 +490,18 @@ export default function ProjectInformationSection({
                              <div className="flex items-center gap-2">
                                <label className="text-sm font-medium">Front Door Orientation</label>
                                   <Dialog>
-                                   <DialogTrigger asChild>
-                                      <Button variant="outline" size="sm" className="h-8 px-3 text-sm font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                        <Info className="h-3 w-3 mr-1" />
-                                        More Info
-                                      </Button>
-                                   </DialogTrigger>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <DialogTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                                    <Info className="h-4 w-4" />
+                                                </Button>
+                                            </DialogTrigger>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>More Info</p>
+                                        </TooltipContent>
+                                    </Tooltip>
                                    <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                                      <DialogHeader>
                                        <DialogTitle>Why Orientation Matters in Energy Efficiency</DialogTitle>

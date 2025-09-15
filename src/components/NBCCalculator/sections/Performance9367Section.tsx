@@ -21,6 +21,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function Performance9367Section({
     selections,
@@ -366,11 +367,18 @@ export default function Performance9367Section({
                         <div className="flex items-center gap-3">
                             <label className="text-sm font-medium">Airtightness Level</label>
                             <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                        More Info
-                                    </Button>
-                                </PopoverTrigger>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <PopoverTrigger asChild>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                                <Info className="h-4 w-4" />
+                                            </Button>
+                                        </PopoverTrigger>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>More Info</p>
+                                    </TooltipContent>
+                                </Tooltip>
                                 <PopoverContent className="w-[600px] max-h-[80vh] overflow-y-auto p-4" side="right" align="start">
                                     <div className="space-y-4">
                                         <div>
@@ -620,11 +628,18 @@ export default function Performance9367Section({
                         <div className="flex items-center gap-3">
                             <label className="text-sm font-medium">Is a drain water heat recovery system being installed?</label>
                             <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button variant="outline" size="sm" className="h-8 px-3 text-sm font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                        More Info
-                                    </Button>
-                                </PopoverTrigger>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <PopoverTrigger asChild>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                                <Info className="h-4 w-4" />
+                                            </Button>
+                                        </PopoverTrigger>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>More Info</p>
+                                    </TooltipContent>
+                                </Tooltip>
                                 <PopoverContent className="w-[500px] p-4" side="right" align="start">
                                     <div className="space-y-4">
                                         <div className="border-b pb-2">

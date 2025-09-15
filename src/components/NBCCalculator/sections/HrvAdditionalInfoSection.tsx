@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Props {
     selections: any;
@@ -21,12 +22,18 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, 
                         <div className="flex items-center gap-3">
                             <label className="text-sm font-medium">Does this building include an HRV or ERV?</label>
                             <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button variant="outline" size="sm" className="h-8 px-3 text-sm font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                        <Info className="h-3 w-3 mr-1" />
-                                        More Info
-                                    </Button>
-                                </DialogTrigger>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <DialogTrigger asChild>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                                <Info className="h-4 w-4" />
+                                            </Button>
+                                        </DialogTrigger>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>More Info</p>
+                                    </TooltipContent>
+                                </Tooltip>
                                 <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                                     <DialogHeader>
                                         <DialogTitle>Should I include an HRV (Heat Recovery Ventilator)?</DialogTitle>
@@ -97,12 +104,18 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, 
                             <div className="flex items-center gap-3">
                                 <label className="text-sm font-medium">Will there be a second HRV/ERV for the secondary suite?</label>
                                 <Dialog>
-                                    <DialogTrigger asChild>
-                                        <Button variant="outline" size="sm" className="h-8 px-3 text-sm font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                            <Info className="h-3 w-3 mr-1" />
-                                            More Info
-                                        </Button>
-                                    </DialogTrigger>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <DialogTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                                    <Info className="h-4 w-4" />
+                                                </Button>
+                                            </DialogTrigger>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>More Info</p>
+                                        </TooltipContent>
+                                    </Tooltip>
                                     <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                                         <DialogHeader>
                                             <DialogTitle>Secondary Suite HRV/ERV Information</DialogTitle>
@@ -184,12 +197,18 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, 
                         <div className="flex items-center gap-2">
                             <label className="text-sm font-medium">Are you interested in any of the following certifications or programs?</label>
                             <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button variant="outline" size="sm" className="h-8 px-3 text-sm font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                        <Info className="h-3 w-3 mr-1" />
-                                        More Info
-                                    </Button>
-                                </DialogTrigger>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <DialogTrigger asChild>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                                <Info className="h-4 w-4" />
+                                            </Button>
+                                        </DialogTrigger>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>More Info</p>
+                                    </TooltipContent>
+                                </Tooltip>
                                 <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                                     <DialogHeader>
                                         <DialogTitle>Certification Information</DialogTitle>

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { validateRSI_9362 } from "../utils/validation";
 
@@ -67,12 +68,18 @@ export default function Prescriptive9362Section({
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium">Does this building include an HRV or ERV?</label>
                     <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="outline" size="sm" className="h-8 px-3 text-sm font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                <Info className="h-3 w-3 mr-1" />
-                                More Info
-                            </Button>
-                        </DialogTrigger>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <DialogTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                        <Info className="h-4 w-4" />
+                                    </Button>
+                                </DialogTrigger>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>More Info</p>
+                            </TooltipContent>
+                        </Tooltip>
                         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                             <DialogHeader>
                                 <DialogTitle>Should I include an HRV (Heat Recovery Ventilator)?</DialogTitle>
@@ -143,12 +150,18 @@ export default function Prescriptive9362Section({
                     <div className="flex items-center gap-3">
                         <label className="text-sm font-medium">Will there be a second HRV/ERV for the secondary suite?</label>
                         <Dialog>
-                            <DialogTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-8 px-3 text-sm font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                    <Info className="h-3 w-3 mr-1" />
-                                    More Info
-                                </Button>
-                            </DialogTrigger>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <DialogTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                            <Info className="h-4 w-4" />
+                                        </Button>
+                                    </DialogTrigger>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>More Info</p>
+                                </TooltipContent>
+                            </Tooltip>
                             <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                                 <DialogHeader>
                                     <DialogTitle>Secondary Suite HRV/ERV Information</DialogTitle>
@@ -550,11 +563,18 @@ export default function Prescriptive9362Section({
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium">Airtightness Level (Unguarded Testing)</label>
                     <Popover>
-                        <PopoverTrigger asChild>
-                            <Button variant="outline" size="sm" className="h-8 px-3 text-sm font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                More Info
-                            </Button>
-                        </PopoverTrigger>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <PopoverTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                        <Info className="h-4 w-4" />
+                                    </Button>
+                                </PopoverTrigger>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>More Info</p>
+                            </TooltipContent>
+                        </Tooltip>
                         <PopoverContent className="w-[600px] max-h-[80vh] overflow-y-auto p-4" side="right" align="start">
                             <div className="space-y-4">
                                 <div>
@@ -1166,12 +1186,18 @@ export default function Prescriptive9362Section({
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium">Is a drain water heat recovery system being installed?</label>
                     <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="outline" size="sm" className="h-8 px-3 text-sm font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                <Info className="h-3 w-3 mr-1" />
-                                More Info
-                            </Button>
-                        </DialogTrigger>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <DialogTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                        <Info className="h-4 w-4" />
+                                    </Button>
+                                </DialogTrigger>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>More Info</p>
+                            </TooltipContent>
+                        </Tooltip>
                         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                             <DialogHeader>
                                 <DialogTitle>Drain Water Heat Recovery System Information</DialogTitle>
@@ -1218,6 +1244,6 @@ export default function Prescriptive9362Section({
                     </SelectContent>
                 </Select>
             </div>
-        </div>
+        </>
     );
 }
