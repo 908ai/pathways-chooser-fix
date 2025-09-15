@@ -10,8 +10,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Info, FileText, Zap, X } from "lucide-react";
-import FileUpload from "@/components/FileUpload";
+import { Info, FileText, Zap } from "lucide-react";
 
 import { getPathwayDisplayName, isSingleDetached } from "../utils/helpers";
 
@@ -19,23 +18,13 @@ import { getPathwayDisplayName, isSingleDetached } from "../utils/helpers";
 type Props = {
   selections: any;
   setSelections: React.Dispatch<React.SetStateAction<any>>;
-  uploadedFiles: (File & { url?: string; path?: string })[];
-  onFileUploadRequest: (file: File) => void;
-  isUploading: boolean;
-  removeFile: (file: any) => void;
   onPathwayChange?: (pathwayInfo: string) => void;
-  projectId: string | null;
 };
 
 export default function ProjectInformationSection({
   selections,
   setSelections,
-  uploadedFiles,
-  onFileUploadRequest,
-  isUploading,
-  removeFile,
   onPathwayChange,
-  projectId,
 }: Props) {
 
   return (
@@ -108,33 +97,6 @@ export default function ProjectInformationSection({
                      {/* Building & Location Information */}
                      <div className="space-y-4">
                        <h4 className="text-md font-medium text-white border-b pb-2">Building & Location Details <span className="text-red-500">(Required)</span></h4>
-
-                       {/* Upload Building Plans */}
-                        <div className="space-y-2 p-4 bg-red-50/50 border border-red-200 rounded-lg">
-                          <label className="text-sm font-medium">Building Plans & Documents</label>
-                          <div className="space-y-2">
-                            <FileUpload
-                              onFileUploadRequest={onFileUploadRequest}
-                              uploading={isUploading}
-                              acceptedTypes={['pdf', 'dwg', 'jpg', 'jpeg', 'png', 'tiff', 'doc', 'docx', 'xls', 'xlsx', 'txt']}
-                              maxSizePerFile={10 * 1024 * 1024}
-                            />
-                            {uploadedFiles.length > 0 && <div className="space-y-2">
-                                <div className="flex items-center gap-2 text-green-600">
-                                  <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                                  <span className="text-sm font-medium">{uploadedFiles.length} file(s) uploaded successfully</span>
-                                </div>
-                                <div className="space-y-1">
-                                  {uploadedFiles.map((file, index) => <div key={index} className="flex items-center justify-between p-2 bg-emerald-50/80 border border-emerald-300/50 rounded-md backdrop-blur-sm">
-                                       <span className="text-sm truncate text-emerald-900">{file.name}</span>
-                                      <Button type="button" variant="ghost" size="sm" onClick={() => removeFile(file)} className="h-6 w-6 p-0 text-green-600 hover:text-red-600">
-                                        <X className="h-3 w-3" />
-                                      </Button>
-                                    </div>)}
-                                </div>
-                              </div>}
-                         </div>
-                       </div>
 
                        <div className="space-y-2">
                          <label className="text-sm font-medium">Building/Project Address</label>
