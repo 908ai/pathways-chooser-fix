@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Calculator, Info } from "lucide-react";
 
 type Props = {
@@ -95,15 +96,24 @@ export default function FloatingPointsSummary({
               {(selections.compliancePath === "9368" || selections.compliancePath === "9362") && <div className="border-t border-slate-600 pt-3 space-y-3">
                   <div className="flex items-center justify-center gap-2">
                     <h4 className="text-sm font-medium text-white">Cost Estimates</h4>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-5 w-5 p-0 text-slate-300 hover:text-white">
-                          <Info className="h-4 w-4" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent side="left" align="start" className="w-80 bg-slate-800 border-slate-600 z-[100]">
+                    <Dialog>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <DialogTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-300 hover:text-white">
+                              <Info className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>More Info</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      <DialogContent className="bg-slate-800 border-slate-600 z-[100]">
+                        <DialogHeader>
+                          <DialogTitle>How Cost Estimates Are Calculated</DialogTitle>
+                        </DialogHeader>
                         <div className="space-y-3">
-                          <h4 className="font-medium text-white">How Cost Estimates Are Calculated</h4>
                           <div className="text-sm text-slate-300 space-y-2">
                             <p><strong>Prescriptive Path:</strong> Based on baseline construction costs plus upgrades required to meet minimum NBC2020 requirements for each building component.</p>
                             <p><strong>Performance Path:</strong> Calculated using optimized component selections that achieve the same energy performance at potentially lower cost through strategic trade-offs.</p>
@@ -111,8 +121,8 @@ export default function FloatingPointsSummary({
                             <p><strong>Note:</strong> Costs are estimates for a typical 2,000 sq ft home and may vary based on local pricing, specific products, and installation complexity.</p>
                           </div>
                         </div>
-                      </PopoverContent>
-                    </Popover>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                   <div className="space-y-2">
                     <div className="bg-slate-700/40 p-3 rounded-lg">

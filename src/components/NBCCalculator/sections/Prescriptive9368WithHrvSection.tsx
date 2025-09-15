@@ -3,9 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { wallRSIOptions, belowGradeRSIOptions, windowUValueOptions, waterHeaterOptions, airtightnessOptions } from "../constants/options";
 import { validateRSI } from "../utils/validation";
@@ -23,18 +23,24 @@ const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, setSelect
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">
                         <label className="text-sm font-medium">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                    More Info
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-96 p-4" side="right" align="start">
+                        <Dialog>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <DialogTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                            <Info className="h-4 w-4" />
+                                        </Button>
+                                    </DialogTrigger>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>More Info</p>
+                                </TooltipContent>
+                            </Tooltip>
+                            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                                <DialogHeader>
+                                    <DialogTitle>What is an F280 Calculation?</DialogTitle>
+                                </DialogHeader>
                                 <div className="space-y-4">
-                                    <div className="border-b pb-2">
-                                        <h4 className="font-medium text-sm">ℹ️ What is an F280 Calculation?</h4>
-                                    </div>
-
                                     <div className="space-y-3">
                                         <p className="text-sm text-muted-foreground">
                                             An F280 calculation is a heating and cooling load calculation based on CSA Standard F280-12 (or updated versions), which is the Canadian standard for determining how much heating or cooling a home needs. It accounts for factors like insulation levels, windows, air leakage, and local climate.
@@ -70,8 +76,8 @@ const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, setSelect
                                         </div>
                                     </div>
                                 </div>
-                            </PopoverContent>
-                        </Popover>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                     <Select value={selections.hasF280Calculation} onValueChange={value => setSelections(prev => ({
                         ...prev,
@@ -481,16 +487,25 @@ const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, setSelect
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">
                         <label className="text-sm font-medium">Airtightness Level (Unguarded Testing)</label>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                    More Info
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-[600px] max-h-[80vh] overflow-y-auto p-4" side="right" align="start">
+                        <Dialog>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <DialogTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                            <Info className="h-4 w-4" />
+                                        </Button>
+                                    </DialogTrigger>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>More Info</p>
+                                </TooltipContent>
+                            </Tooltip>
+                            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                                <DialogHeader>
+                                    <DialogTitle>What's a Blower Door Test?</DialogTitle>
+                                </DialogHeader>
                                 <div className="space-y-4">
                                     <div>
-                                        <h4 className="font-semibold text-sm mb-2">What's a Blower Door Test?</h4>
                                         <p className="text-sm text-muted-foreground">A blower door test measures air leakage in a home. A fan is placed in an exterior door to pressurize or depressurize the building, and sensors track how much air is needed to maintain a pressure difference (usually 50 Pascals). This tells us how "leaky" the building is.</p>
                                     </div>
 
@@ -596,6 +611,19 @@ const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, setSelect
                                                 <p>• Combining zones? You must test each one. Use the lowest Airtightness Level for scoring if they're different. Reference the Illustrated Guide for the image above.</p>
                                             </div>
                                         </div>
+
+                                        <div className="w-full h-px bg-muted"></div>
+
+                                        <div>
+                                            <h5 className="font-medium text-sm mb-2">Potential Air Leakage Locations</h5>
+                                            <p className="text-sm text-muted-foreground mb-3">Common areas where air leakage occurs in buildings:</p>
+                                            <div className="mb-3">
+                                                <img src="/lovable-uploads/9d231144-3c4e-430b-9f8c-914698eae23e.png" alt="Figure 9.25-9 Potential air leakage locations in a house showing various points where air can escape including joints at attic hatches, ceiling light fixtures, windows, electrical outlets, around posts and columns, chimney leaks, plumbing stack penetrations, and more" className="w-full h-auto border border-border rounded" onLoad={() => console.log('Air leakage diagram loaded successfully')} onError={e => console.log('Failed to load air leakage diagram:', e)} />
+                                            </div>
+                                            <p className="text-xs text-muted-foreground">
+                                                Figure 9.25-9 from Housing and Small Buildings - Illustrated User's Guide, National Building Code of Canada 2020, Part 9 of Division B
+                                            </p>
+                                        </div>
                                     </div>
 
                                     <div className="space-y-2">
@@ -612,39 +640,16 @@ const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, setSelect
                                         </div>
                                     </div>
                                 </div>
-                            </PopoverContent>
-                        </Popover>
+                            </DialogContent>
+                        </Dialog>
                     </div>
-                    <Select value={selections.airtightness} onValueChange={value => setSelections(prev => ({
+                    <Input type="text" placeholder={`Min ${selections.province === "saskatchewan" ? "3.2" : "3.0"} ACH50 for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.airtightness} onChange={e => setSelections(prev => ({
                         ...prev,
-                        airtightness: value
-                    }))}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select air-tightness level" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {airtightnessOptions.map(option => <SelectItem key={option.value} value={option.value}>
-                                <div className="flex justify-between items-center w-full">
-                                    <span>
-                                        {option.label.includes('ACH₅₀:') ? <>
-                                            {option.label.split('ACH₅₀:')[0]}
-                                            <strong>ACH₅₀: </strong>
-                                            <strong className="text-primary">
-                                                {option.label.split('ACH₅₀:')[1].split(',')[0]}
-                                            </strong>
-                                            {option.label.split('ACH₅₀:')[1].substring(option.label.split('ACH₅₀:')[1].split(',')[0].length)}
-                                        </> : option.label}
-                                    </span>
-                                    <Badge variant={option.points > 0 ? "default" : "secondary"}>
-                                        {option.points} pts
-                                    </Badge>
-                                </div>
-                            </SelectItem>)}
-                        </SelectContent>
-                    </Select>
+                        airtightness: e.target.value
+                    }))} />
 
-                    <WarningButton warningId="airtightness-caution" title="Caution: Choosing Airtightness Points Without Experience">
-                        <div className="text-xs text-foreground space-y-2">
+                    <WarningButton warningId="airtightness-caution-9367" title="Caution: Air-Tightness Targets Without Testing History">
+                        <div className="text-xs text-white space-y-2">
                             <p>
                                 Choosing an air-tightness target lower than prescribed by NBC2020 without prior test results is risky.
                             </p>
@@ -660,7 +665,7 @@ const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, setSelect
                                 <li>Face expensive late-stage upgrades or rework</li>
                             </ul>
                             <p>
-                                If you're unsure of your airtightness performance, consider using performance modelling instead — it offers more flexibility and reduces the risk of non-compliance.
+                                <strong>Good news:</strong> We track airtightness results across all projects so we can help you set realistic targets, reduce build costs, and optimize performance from day one.
                             </p>
                             <div className="flex items-center gap-1 text-sm mt-3">
                                 <span>🔗</span>
@@ -674,18 +679,18 @@ const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, setSelect
                     {/* Mid-Construction Blower Door Test Checkbox */}
                     <div className="space-y-3 pt-4 border-t border-border/20">
                         <div className="flex items-start gap-3">
-                            <input type="checkbox" id="midConstructionBlowerDoor-9367" checked={selections.midConstructionBlowerDoorPlanned} onChange={e => setSelections(prev => ({
+                            <input type="checkbox" id="midConstructionBlowerDoor-9368" checked={selections.midConstructionBlowerDoorPlanned} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 midConstructionBlowerDoorPlanned: e.target.checked
                             }))} className="w-4 h-4 text-primary mt-1" />
                             <div className="flex-1">
-                                <label htmlFor="midConstructionBlowerDoor-9367" className="text-sm font-medium cursor-pointer">
+                                <label htmlFor="midConstructionBlowerDoor-9368" className="text-sm font-medium cursor-pointer">
                                     Mid-Construction Blower Door Test Planned
                                 </label>
                             </div>
                         </div>
 
-                        <WarningButton warningId="mid-construction-blower-door-info-9367" title="Benefits of Mid-Construction Blower Door Testing">
+                        <WarningButton warningId="mid-construction-blower-door-info-9368" title="Benefits of Mid-Construction Blower Door Testing">
                             <div className="text-xs text-white space-y-2">
                                 <p className="font-medium">Benefits of a mid-construction (misconstruction) blower door test:</p>
                                 <ul className="list-disc ml-4 space-y-1">
@@ -707,6 +712,112 @@ const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, setSelect
                     </div>
                 </div>
 
+                <div className="space-y-2">
+                    <label className="text-sm font-medium">Water Heater Type</label>
+                    <Select value={selections.waterHeaterType} onValueChange={value => setSelections(prev => ({
+                        ...prev,
+                        waterHeaterType: value
+                    }))}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select water heater type" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background border shadow-lg z-50">
+                            <SelectItem value="gas">Gas</SelectItem>
+                            <SelectItem value="electric">Electric</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-sm font-medium">Water Heater</label>
+                    <Input type="text" placeholder="Enter Water Heater Make/Model" value={selections.waterHeater} onChange={e => setSelections(prev => ({
+                        ...prev,
+                        waterHeater: e.target.value
+                    }))} />
+                </div>
+
+                <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                        <label className="text-sm font-medium">Is a drain water heat recovery system being installed?</label>
+                        <Dialog>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <DialogTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                            <Info className="h-4 w-4" />
+                                        </Button>
+                                    </DialogTrigger>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>More Info</p>
+                                </TooltipContent>
+                            </Tooltip>
+                            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                                <DialogHeader>
+                                    <DialogTitle>Drain Water Heat Recovery System Information</DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                    <div className="border-b pb-2">
+                                        <h4 className="font-medium text-sm">ℹ️ Drain Water Heat Recovery (DWHR)</h4>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <p className="text-sm text-muted-foreground">
+                                            DWHR systems capture heat from shower drain water and use it to preheat incoming cold water, reducing hot water energy use by 20–40%.
+                                        </p>
+
+                                        <div className="space-y-2">
+                                            <h5 className="font-medium text-sm">How it works:</h5>
+                                            <p className="text-sm text-muted-foreground">When hot water goes down the drain (like from a shower), the DWHR unit uses a heat exchanger to transfer that thermal energy to the incoming cold water supply before it reaches your water heater.</p>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <h5 className="font-medium text-sm">Benefits:</h5>
+                                            <div className="text-sm text-muted-foreground space-y-1">
+                                                <p>• Reduces water heating energy consumption</p>
+                                                <p>• Lowers utility bills</p>
+                                                <p>• Contributes to overall building energy efficiency</p>
+                                                <p>• Works continuously with no maintenance required</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                    <Select value={selections.hasDWHR} onValueChange={value => setSelections(prev => ({
+                        ...prev,
+                        hasDWHR: value
+                    }))}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select yes or no" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background border shadow-lg z-50">
+                            <SelectItem value="yes">Yes</SelectItem>
+                            <SelectItem value="no">No</SelectItem>
+                        </SelectContent>
+                    </Select>
+
+                    <WarningButton warningId="mechanical-equipment-docs-9367" title="⚠️ Mechanical Equipment Documentation">
+                        <div className="text-xs text-white space-y-2">
+                            <p>
+                                The Authority Having Jurisdiction (AHJ) may request specific makes/models of the mechanical equipment being proposed for heating, cooling, domestic hot water and HRV systems. The AHJ may also request CSA F-280 heat loss & gain calculations.
+                            </p>
+                            <p>
+                                <strong>F280 calculations:</strong> A heating and cooling load calculation based on CSA Standard F280-12 (or updated versions), which is the Canadian standard for determining how much heating or cooling a home needs. It accounts for factors like insulation levels, windows, air leakage, and local climate.
+                            </p>
+                            <p>
+                                <strong>Benefits:</strong> Ensures HVAC systems are properly sized, improves comfort and efficiency, reduces energy costs, and is often required for building permits.
+                            </p>
+                            <div className="flex items-center gap-1 text-sm mt-3">
+                                <span>🔗</span>
+                                <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
+                                    More information
+                                </a>
+                            </div>
+                        </div>
+                    </WarningButton>
+                </div>
 
                 <div className="space-y-2">
                     <label className="text-sm font-medium">Heating Type</label>
@@ -721,58 +832,18 @@ const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, setSelect
                             <SelectItem value="furnace">Furnace</SelectItem>
                             <SelectItem value="boiler">Boiler</SelectItem>
                             <SelectItem value="heat-pump">Heat Pump</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
 
-                <div className="p-4 bg-muted border border-border rounded-md">
-                    <p className="text-sm font-medium text-slate-950">
-                        ⚠️ Mechanical Equipment Documentation
-                    </p>
-                    <p className="text-xs mt-1 text-slate-950">
-                        The Authority Having Jurisdiction (AHJ) may request specific makes/models of the mechanical equipment being proposed for heating, cooling, domestic hot water and HRV systems. The AHJ may also request CSA F-280 heat loss & gain calculations. More info at: <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">https://solinvictusenergyservices.com/cancsa-f28012</a>
-                    </p>
-                </div>
-
-                {selections.heatingType && selections.compliancePath as string === '9367' && <div className="space-y-2">
-                    <label className="text-sm font-medium">Heating System Make/Model</label>
-                    <Input type="text" placeholder="Input heating system make/model (e.g. Carrier 59TP6)" value={selections.heatingMakeModel || ""} onChange={e => setSelections(prev => ({
-                        ...prev,
-                        heatingMakeModel: e.target.value
-                    }))} />
-                </div>}
-
-                {selections.heatingType && selections.compliancePath as string !== '9367' && <div className="space-y-2">
-                    <label className="text-sm font-medium">Heating Efficiency</label>
-                    <Input type="text" placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.heatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
+                {selections.heatingType && <div className="space-y-2">
+                    <label className="text-sm font-medium">
+                        {selections.heatingType === 'furnace' ? 'Furnace' : selections.heatingType === 'boiler' ? 'Boiler' : selections.heatingType === 'heat-pump' ? 'Heat Pump' : 'Heating Efficiency'}
+                    </label>
+                    <Input type="text" placeholder={selections.heatingType === 'furnace' ? "Enter Furnace Make/Model" : selections.heatingType === 'boiler' ? "Enter Boiler Make/Model" : selections.heatingType === 'heat-pump' ? "Enter Heat Pump Make/Model" : "Enter heating equipment make/model"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
                         ...prev,
                         heatingEfficiency: e.target.value
                     }))} />
-                    {selections.heatingEfficiency && selections.heatingType !== 'heat-pump' && (() => {
-                        console.log('Heating efficiency validation - type:', selections.heatingType, 'efficiency:', selections.heatingEfficiency);
-                        const inputValue = parseFloat(selections.heatingEfficiency);
-                        let minValue = 0;
-                        let systemType = "";
-                        if (selections.heatingType === 'boiler') {
-                            minValue = 90;
-                            systemType = "Boiler (90 AFUE minimum)";
-                        } else {
-                            minValue = 95; // Furnace
-                            systemType = "Furnace (95% AFUE minimum)";
-                        }
-                        if (!isNaN(inputValue) && inputValue < minValue) {
-                            return <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-                                <p className="text-sm text-destructive font-medium">
-                                    ⚠️ Heating Efficiency Too Low
-                                </p>
-                                <p className="text-sm text-destructive/80 mt-1">
-                                    {systemType} - Your input of {inputValue} is below the minimum requirement.
-                                </p>
-                            </div>;
-                        }
-                        return null;
-                    })()}
                 </div>}
 
                 {selections.heatingType === 'boiler' && <div className="space-y-4">
@@ -817,114 +888,18 @@ const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, setSelect
                     </Select>
                 </div>
 
-
-                {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <>
+                {selections.coolingApplicable === "yes" && <div className="space-y-4">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Service Water Heater Type</label>
-                        <Select value={selections.waterHeater} onValueChange={value => setSelections(prev => ({
+                        <label className="text-sm font-medium">Cooling System Make/Model</label>
+                        <Input type="text" value={selections.coolingMakeModel} onChange={e => setSelections(prev => ({
                             ...prev,
-                            waterHeater: value
-                        }))}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select service water heater type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {waterHeaterOptions.map(option => <SelectItem key={option.value} value={option.value}>
-                                    <div className="flex justify-between items-center w-full">
-                                        <span>{option.label}</span>
-                                        <Badge variant={option.points > 0 ? "default" : "secondary"}>
-                                            {option.points} pts
-                                        </Badge>
-                                    </div>
-                                </SelectItem>)}
-                            </SelectContent>
-                        </Select>
+                            coolingMakeModel: e.target.value
+                        }))} placeholder="Enter cooling system make and model" />
                     </div>
+                </div>}
 
-                    {selections.waterHeater && selections.compliancePath as string === '9367' && <div className="space-y-2">
-                        <label className="text-sm font-medium">Water Heating Make/Model</label>
-                        <Input type="text" placeholder="Input water heating make/model (e.g. Rheem Pro Prestige)" value={selections.waterHeaterMakeModel || ""} onChange={e => setSelections(prev => ({
-                            ...prev,
-                            waterHeaterMakeModel: e.target.value
-                        }))} />
-                    </div>}
-
-                    {selections.waterHeater && selections.compliancePath as string !== '9367' && <div className="space-y-2">
-                        <label className="text-sm font-medium">Service Water Heater</label>
-                        <Input type="text" placeholder="Enter water heater efficiency, (e.g. .69 UEF)" value={selections.waterHeaterType} onChange={e => {
-                            console.log('Water heater efficiency updated:', e.target.value);
-                            setSelections(prev => ({
-                                ...prev,
-                                waterHeaterType: e.target.value
-                            }));
-                        }} />
-                    </div>}
-                </>}
-
-                <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                        <label className="text-sm font-medium">Is a drain water heat recovery system being installed?</label>
-                        <Dialog>
-                            <DialogTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-8 px-3 text-sm font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                    <Info className="h-3 w-3 mr-1" />
-                                    More Info
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                                <DialogHeader>
-                                    <DialogTitle>Drain Water Heat Recovery System Information</DialogTitle>
-                                </DialogHeader>
-                                <div className="space-y-4">
-                                    <div className="border-b pb-2">
-                                        <h4 className="font-medium text-sm">ℹ️ Drain Water Heat Recovery (DWHR)</h4>
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <p className="text-xs text-muted-foreground">
-                                            DWHR systems capture heat from shower drain water and use it to preheat incoming cold water, reducing hot water energy use by 20–40%.
-                                        </p>
-
-                                        <div className="space-y-2">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-green-600 text-xs">✅</span>
-                                                <span className="text-xs">Improves energy efficiency</span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-green-600 text-xs">✅</span>
-                                                <span className="text-xs">Helps earn NBC tiered compliance points</span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-green-600 text-xs">✅</span>
-                                                <span className="text-xs">Great for homes with frequent showers</span>
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-1 text-xs text-muted-foreground">
-                                            <p><strong>Estimated cost:</strong> $800–$1,200 installed</p>
-                                            <p><strong>Best fit:</strong> Homes with vertical drain stacks and electric or heat pump water heaters.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </DialogContent>
-                        </Dialog>
-                    </div>
-                    <Select value={selections.hasDWHR} onValueChange={value => setSelections(prev => ({
-                        ...prev,
-                        hasDWHR: value
-                    }))}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select yes or no" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-background border shadow-lg z-50">
-                            <SelectItem value="yes">Yes</SelectItem>
-                            <SelectItem value="no">No</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </>}
+            </>
+            }
         </>
     );
-};
-
-export default Prescriptive9368WithHrvSection;
+}

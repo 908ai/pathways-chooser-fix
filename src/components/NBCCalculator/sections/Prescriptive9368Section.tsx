@@ -15,12 +15,8 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
 import { Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { validateRSI } from "../utils/validation";
 
@@ -196,16 +192,24 @@ export default function Performance9368Section({
             <div className="space-y-2">
                 <div className="flex items-center gap-2">
                     <label className="text-sm font-medium">Windows - U-Value</label>
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                More Info
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[600px] max-h-[80vh] overflow-y-auto">
+                    <Dialog>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <DialogTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                        <Info className="h-4 w-4" />
+                                    </Button>
+                                </DialogTrigger>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>More Info</p>
+                            </TooltipContent>
+                        </Tooltip>
+                        <DialogContent className="w-[600px] max-h-[80vh] overflow-y-auto">
+                            <DialogHeader>
+                                <DialogTitle>Energy Efficiency Points for Windows & Doors</DialogTitle>
+                            </DialogHeader>
                             <div className="space-y-4">
-                                <h4 className="font-semibold text-lg">Energy Efficiency Points for Windows & Doors</h4>
-
                                 <p className="text-sm text-white">
                                     You can get extra energy efficiency points in the code if your windows and doors perform better than the minimum required by the building code (NBC 9.36). This means they either keep heat in better (low U-value) or let in helpful sunlight to reduce heating needs (high Energy Rating or ER).
                                 </p>
@@ -240,8 +244,8 @@ export default function Performance9368Section({
                                     </p>
                                 </div>
                             </div>
-                        </PopoverContent>
-                    </Popover>
+                        </DialogContent>
+                    </Dialog>
                 </div>
                 <Select value={selections.windowUValue} onValueChange={value => setSelections(prev => ({
                     ...prev,
@@ -322,16 +326,25 @@ export default function Performance9368Section({
             <div className="space-y-2">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium">Airtightness Level</label>
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                More Info
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[600px] max-h-[80vh] overflow-y-auto p-4" side="right" align="start">
+                    <Dialog>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <DialogTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                        <Info className="h-4 w-4" />
+                                    </Button>
+                                </DialogTrigger>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>More Info</p>
+                            </TooltipContent>
+                        </Tooltip>
+                        <DialogContent className="w-[600px] max-h-[80vh] overflow-y-auto p-4" side="right" align="start">
+                            <DialogHeader>
+                                <DialogTitle>What's a Blower Door Test?</DialogTitle>
+                            </DialogHeader>
                             <div className="space-y-4">
                                 <div>
-                                    <h4 className="font-semibold text-sm mb-2">What's a Blower Door Test?</h4>
                                     <p className="text-sm text-muted-foreground">A blower door test measures air leakage in a home. A fan is placed in an exterior door to pressurize or depressurize the building, and sensors track how much air is needed to maintain a pressure difference (usually 50 Pascals). This tells us how "leaky" the building is.</p>
                                 </div>
 
@@ -453,8 +466,8 @@ export default function Performance9368Section({
                                     </div>
                                 </div>
                             </div>
-                        </PopoverContent>
-                    </Popover>
+                        </DialogContent>
+                    </Dialog>
                 </div>
                 <Select value={selections.airtightness} onValueChange={value => setSelections(prev => ({
                     ...prev,
@@ -500,16 +513,18 @@ export default function Performance9368Section({
 
                 {/* Multi-Unit Exercise */}
                 <div className="space-y-3 pt-4 border-t border-border/20">
-                    <Popover>
-                        <PopoverTrigger asChild>
+                    <Dialog>
+                        <DialogTrigger asChild>
                             <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium bg-emerald-50/80 border-emerald-300/50 hover:bg-emerald-100/80 hover:border-emerald-400/60 backdrop-blur-sm">
                                 Learn more about points allocation for air-townhouse for MURB/Row/Town-homes
                             </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[700px] max-h-[80vh] overflow-y-auto p-4" align="center">
+                        </DialogTrigger>
+                        <DialogContent className="w-[700px] max-h-[80vh] overflow-y-auto p-4" >
+                            <DialogHeader>
+                                <DialogTitle>Understanding Airtightness Levels & Points: 4-Unit Row House Scenario</DialogTitle>
+                            </DialogHeader>
                             <div className="space-y-4">
                                 <div>
-                                    <h4 className="font-semibold text-sm mb-2">Understanding Airtightness Levels & Points: 4-Unit Row House Scenario</h4>
                                     <p className="text-sm text-muted-foreground">We're showing how a builder can earn energy efficiency points by improving airtightness—that is, how well a building keeps outside air from leaking in (or inside air from leaking out).</p>
                                     <p className="text-sm text-muted-foreground mt-2">Even though we're mainly focusing on single detached homes today, we're using a 4-unit row house in this example to show how things can get a bit more complex in real-world multi-unit builds.</p>
                                 </div>
@@ -651,8 +666,8 @@ export default function Performance9368Section({
                                     </div>
                                 </div>
                             </div>
-                        </PopoverContent>
-                    </Popover>
+                        </DialogContent>
+                    </Dialog>
                 </div>
 
                 {/* Mid-Construction Blower Door Test Checkbox */}
@@ -695,16 +710,25 @@ export default function Performance9368Section({
             <div className="space-y-3">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium">HRV/ERV System (Required for 9.36.8)</label>
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                More Info
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-96 p-4" side="right" align="start">
+                    <Dialog>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <DialogTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                        <Info className="h-4 w-4" />
+                                    </Button>
+                                </DialogTrigger>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>More Info</p>
+                            </TooltipContent>
+                        </Tooltip>
+                        <DialogContent className="w-96 p-4" >
+                            <DialogHeader>
+                                <DialogTitle>HRV/ERV Required for 9.36.8 Path</DialogTitle>
+                            </DialogHeader>
                             <div className="space-y-4">
                                 <div>
-                                    <h4 className="font-semibold text-sm mb-2">HRV/ERV Required for 9.36.8 Path</h4>
                                     <p className="text-xs text-muted-foreground">
                                         An HRV or ERV is mandatory for the 9.36.8 Tiered Prescriptive Path. This system brings in fresh outdoor air while recovering heat from the stale indoor air it exhausts.
                                     </p>
@@ -728,8 +752,8 @@ export default function Performance9368Section({
                                     </div>
                                 </div>
                             </div>
-                        </PopoverContent>
-                    </Popover>
+                        </DialogContent>
+                    </Dialog>
                 </div>
 
                 {/* Auto-set HRV to required for 9368 and show notification */}

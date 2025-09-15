@@ -8,10 +8,12 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -29,23 +31,25 @@ const EnerGuidePathwaySection: React.FC<Props> = ({ selections, setSelections })
                     <div className="space-y-2">
                         <div className="flex items-center gap-2">
                             <label className="text-sm font-medium">Would you like to pursue the EnerGuide Rating System (ERS) pathway in conjunction with the Performance Path?</label>
-                            <Popover>
+                            <Dialog>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
-                                        <PopoverTrigger asChild>
+                                        <DialogTrigger asChild>
                                             <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
                                                 <Info className="h-4 w-4" />
                                             </Button>
-                                        </PopoverTrigger>
+                                        </DialogTrigger>
                                     </TooltipTrigger>
                                     <TooltipContent>
                                         <p>More Info</p>
                                     </TooltipContent>
                                 </Tooltip>
-                                <PopoverContent className="w-[700px] max-h-[80vh] overflow-y-auto p-4" side="right" align="start">
+                                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                                    <DialogHeader>
+                                        <DialogTitle>What is the EnerGuide Pathway?</DialogTitle>
+                                    </DialogHeader>
                                     <div className="space-y-4">
                                         <div>
-                                            <h4 className="font-semibold text-base mb-3">What is the EnerGuide Pathway?</h4>
                                             <p>
                                                 The EnerGuide pathway is one way to show that a new home meets energy efficiency requirements under Canada's building code (NBC 2020). Instead of following a strict checklist of materials and specs, this approach uses energy modelling to test how well a home will perform.
                                             </p>
@@ -125,8 +129,8 @@ const EnerGuidePathwaySection: React.FC<Props> = ({ selections, setSelections })
                                             </p>
                                         </div>
                                     </div>
-                                </PopoverContent>
-                            </Popover>
+                                </DialogContent>
+                            </Dialog>
                         </div>
                         <Select value={selections.energuidePathway} onValueChange={value => setSelections(prev => ({
                             ...prev,

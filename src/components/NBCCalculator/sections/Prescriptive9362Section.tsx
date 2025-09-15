@@ -3,7 +3,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -562,23 +561,25 @@ export default function Prescriptive9362Section({
             <div className="space-y-2">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium">Airtightness Level (Unguarded Testing)</label>
-                    <Popover>
+                    <Dialog>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <PopoverTrigger asChild>
+                                <DialogTrigger asChild>
                                     <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
                                         <Info className="h-4 w-4" />
                                     </Button>
-                                </PopoverTrigger>
+                                </DialogTrigger>
                             </TooltipTrigger>
                             <TooltipContent>
                                 <p>More Info</p>
                             </TooltipContent>
                         </Tooltip>
-                        <PopoverContent className="w-[600px] max-h-[80vh] overflow-y-auto p-4" side="right" align="start">
+                        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                            <DialogHeader>
+                                <DialogTitle>What's a Blower Door Test?</DialogTitle>
+                            </DialogHeader>
                             <div className="space-y-4">
                                 <div>
-                                    <h4 className="font-semibold text-sm mb-2">What's a Blower Door Test?</h4>
                                     <p className="text-sm text-muted-foreground">A blower door test measures air leakage in a home. A fan is placed in an exterior door to pressurize or depressurize the building, and sensors track how much air is needed to maintain a pressure difference (usually 50 Pascals). This tells us how "leaky" the building is.</p>
                                 </div>
 
@@ -713,8 +714,8 @@ export default function Prescriptive9362Section({
                                     </div>
                                 </div>
                             </div>
-                        </PopoverContent>
-                    </Popover>
+                        </DialogContent>
+                    </Dialog>
                 </div>
                 <Input type="text" placeholder={`Min ${selections.province === "saskatchewan" ? "3.2" : "3.0"} ACH50 for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.airtightness} onChange={e => setSelections(prev => ({
                     ...prev,

@@ -15,11 +15,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
 import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -93,25 +88,24 @@ export default function Performance9365Section({
             {selections.buildingAddress && selections.buildingAddress.toLowerCase().includes("red deer") && selections.province === "alberta" && <div className="space-y-2">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
-                    <Popover>
+                    <Dialog>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <PopoverTrigger asChild>
+                                <DialogTrigger asChild>
                                     <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
                                         <Info className="h-4 w-4" />
                                     </Button>
-                                </PopoverTrigger>
+                                </DialogTrigger>
                             </TooltipTrigger>
                             <TooltipContent>
                                 <p>More Info</p>
                             </TooltipContent>
                         </Tooltip>
-                        <PopoverContent className="w-96 p-4" side="right" align="start">
+                        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                            <DialogHeader>
+                                <DialogTitle>What is an F280 Calculation?</DialogTitle>
+                            </DialogHeader>
                             <div className="space-y-4">
-                                <div className="border-b pb-2">
-                                    <h4 className="font-medium text-sm">ℹ️ What is an F280 Calculation?</h4>
-                                </div>
-
                                 <div className="space-y-3">
                                     <p className="text-sm text-muted-foreground">
                                         An F280 calculation is a heating and cooling load calculation based on CSA Standard F280-12 (or updated versions), which is the Canadian standard for determining how much heating or cooling a home needs. It accounts for factors like insulation levels, windows, air leakage, and local climate.
@@ -147,8 +141,8 @@ export default function Performance9365Section({
                                     </div>
                                 </div>
                             </div>
-                        </PopoverContent>
-                    </Popover>
+                        </DialogContent>
+                    </Dialog>
                 </div>
                 <Select value={selections.hasF280Calculation} onValueChange={value => setSelections(prev => ({
                     ...prev,
@@ -257,6 +251,17 @@ export default function Performance9365Section({
                         <span className="text-sm">Unheated Floor Above Frost Line (or walk-out basement)</span>
                     </label>
                     <label className="flex items-center gap-2">
+                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("heatedFloors")} onChange={e => {
+                            const value = "heatedFloors";
+                            setSelections(prev => ({
+                                ...prev,
+                                floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter(item => item !== value),
+                                hasInFloorHeat: e.target.checked ? "yes" : "no"
+                            }));
+                        }} className="w-4 h-4 text-primary" />
+                        <span className="text-sm">Heated Floors</span>
+                    </label>
+                    <label className="flex items-center gap-2">
                         <input type="checkbox" checked={selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting")} onChange={e => {
                             const value = "slabOnGradeIntegralFooting";
                             setSelections(prev => ({
@@ -330,7 +335,7 @@ export default function Performance9365Section({
 
             {selections.floorsSlabsSelected.includes("heatedFloors") && <div className="space-y-2">
                 <label className="text-sm font-medium">Heated Floors</label>
-                <Input type="text" placeholder="Enter insulation type & R-value (e.g., 2&quot; XPS&quot; or R10 Rigid)" value={selections.heatedFloorsRSI} onChange={e => setSelections(prev => ({
+                <Input type="text" placeholder="Enter insulation type & R-value (e.g., 2&quot; XPS or R10 Rigid)" value={selections.heatedFloorsRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     heatedFloorsRSI: e.target.value
                 }))} />
@@ -424,23 +429,25 @@ export default function Performance9365Section({
             <div className="space-y-2">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium">Airtightness Level</label>
-                    <Popover>
+                    <Dialog>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <PopoverTrigger asChild>
+                                <DialogTrigger asChild>
                                     <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
                                         <Info className="h-4 w-4" />
                                     </Button>
-                                </PopoverTrigger>
+                                </DialogTrigger>
                             </TooltipTrigger>
                             <TooltipContent>
                                 <p>More Info</p>
                             </TooltipContent>
                         </Tooltip>
-                        <PopoverContent className="w-[600px] max-h-[80vh] overflow-y-auto p-4" side="right" align="start">
+                        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                            <DialogHeader>
+                                <DialogTitle>What's a Blower Door Test?</DialogTitle>
+                            </DialogHeader>
                             <div className="space-y-4">
                                 <div>
-                                    <h4 className="font-semibold text-sm mb-2">What's a Blower Door Test?</h4>
                                     <p className="text-sm text-muted-foreground">A blower door test measures air leakage in a home. A fan is placed in an exterior door to pressurize or depressurize the building, and sensors track how much air is needed to maintain a pressure difference (usually 50 Pascals). This tells us how "leaky" the building is.</p>
                                 </div>
 
@@ -562,8 +569,8 @@ export default function Performance9365Section({
                                     </div>
                                 </div>
                             </div>
-                        </PopoverContent>
-                    </Popover>
+                        </DialogContent>
+                    </Dialog>
                 </div>
                 <Input type="text" placeholder={`Min ${selections.province === "saskatchewan" ? "3.2" : "3.0"} ACH50 for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.airtightness} onChange={e => setSelections(prev => ({
                     ...prev,
@@ -690,20 +697,23 @@ export default function Performance9365Section({
             <div className="space-y-2">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium">Is a drain water heat recovery system being installed?</label>
-                    <Popover>
+                    <Dialog>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <PopoverTrigger asChild>
+                                <DialogTrigger asChild>
                                     <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
                                         <Info className="h-4 w-4" />
                                     </Button>
-                                </PopoverTrigger>
+                                </DialogTrigger>
                             </TooltipTrigger>
                             <TooltipContent>
                                 <p>More Info</p>
                             </TooltipContent>
                         </Tooltip>
-                        <PopoverContent className="w-[500px] p-4" side="right" align="start">
+                        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                            <DialogHeader>
+                                <DialogTitle>Drain Water Heat Recovery System Information</DialogTitle>
+                            </DialogHeader>
                             <div className="space-y-4">
                                 <div className="border-b pb-2">
                                     <h4 className="font-medium text-sm">ℹ️ Drain Water Heat Recovery (DWHR)</h4>
@@ -730,8 +740,8 @@ export default function Performance9365Section({
                                     </div>
                                 </div>
                             </div>
-                        </PopoverContent>
-                    </Popover>
+                        </DialogContent>
+                    </Dialog>
                 </div>
                 <Select value={selections.hasDWHR} onValueChange={value => setSelections(prev => ({
                     ...prev,
