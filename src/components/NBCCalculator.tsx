@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -63,6 +63,7 @@ const NBCCalculator = ({
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const steps = ["Project Information", "Technical Specifications", "Documents & Submission"];
+  const formContainerRef = useRef<HTMLDivElement>(null);
 
   const [selections, setSelections] = useState({
     firstName: "",
@@ -554,6 +555,10 @@ const NBCCalculator = ({
   };
   const compliance = getTierCompliance();
 
+  const scrollToTop = () => {
+    formContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   const validateStep1 = () => {
     const { firstName, lastName, company, phoneNumber, buildingAddress, buildingType, province, compliancePath, climateZone } = selections;
     if (!firstName || !lastName || !company || !phoneNumber || !buildingAddress || !buildingType || !province || !compliancePath) {
@@ -573,12 +578,21 @@ const NBCCalculator = ({
     }
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
+      scrollToTop();
     }
   };
 
   const prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+      scrollToTop();
+    }
+  };
+
+  const handleStepClick = (step: number) => {
+    if (step < currentStep) {
+      setCurrentStep(step);
+      scrollToTop();
     }
   };
 
@@ -608,7 +622,7 @@ const NBCCalculator = ({
 
     {searchParams.get('edit') && <EditModeIndicator />}
 
-    <div className={`mx-auto space-y-6 relative z-10 transition-all duration-300 ${selections.compliancePath === "9368" ? "max-w-3xl mr-80" : "max-w-4xl"}`}>
+    <div ref={formContainerRef} className={`mx-auto space-y-6 relative z-10 transition-all duration-300 ${selections.compliancePath === "9368" ? "max-w-3xl mr-80" : "max-w-4xl"}`}>
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-3 mb-2">
           <Calculator className="h-8 w-8 text-teal-300" />
@@ -620,7 +634,7 @@ const NBCCalculator = ({
         </p>
       </div>
 
-      <Stepper steps={steps} currentStep={currentStep} />
+      <Stepper steps={steps} currentStep={currentStep} onStepClick={handleStepClick} />
 
       {currentStep === 1 && (
         <ProjectInformationSection
