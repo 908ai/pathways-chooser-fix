@@ -37,7 +37,7 @@ import Prescriptive9362Section from "./NBCCalculator/sections/Prescriptive9362Se
 import Performance9365Section from "./NBCCalculator/sections/Performance9365Section";
 import Performance9367Section from "./NBCCalculator/sections/Performance9367Section";
 import Prescriptive9368Section from "./NBCCalculator/sections/Prescriptive9368Section";
-import Prescriptive9368WithHrvSection from "./NBCCalculator/sections/Prescriptive9368WithHrvSection";
+import { Prescriptive9368WithHrvSection } from "./NBCCalculator/sections/Prescriptive9368WithHrvSection";
 import HrvAdditionalInfoSection from "./NBCCalculator/sections/HrvAdditionalInfoSection";
 import EnerGuidePathwaySection from "./NBCCalculator/sections/EnerGuidePathwaySection";
 import HelpDrawer from "@/components/HelpDrawer";
