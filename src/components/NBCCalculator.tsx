@@ -223,7 +223,7 @@ const NBCCalculator = ({
       if (companyError && companyError.code !== 'PGRST116') {
         console.error('Error loading company data:', companyError);
       }
-      
+
       if (project) {
         const namePart = project.project_name?.split(' - ')[0] || "";
         const nameParts = namePart.split(' ');
@@ -321,7 +321,7 @@ const NBCCalculator = ({
         setSelections(newSelections);
 
         if (project.uploaded_files && Array.isArray(project.uploaded_files) && project.uploaded_files.length > 0) {
-          const validFileMetadata = project.uploaded_files.filter((fileMetadata: any) => 
+          const validFileMetadata = project.uploaded_files.filter((fileMetadata: any) =>
             fileMetadata && typeof fileMetadata === 'object' && fileMetadata.name && (fileMetadata.url || fileMetadata.path)
           );
           if (validFileMetadata.length > 0) {
@@ -372,7 +372,7 @@ const NBCCalculator = ({
   const [expandedWarnings, setExpandedWarnings] = useState<{
     [key: string]: boolean;
   }>({});
-  
+
   const toggleWarning = (warningId: string) => {
     setExpandedWarnings(prev => ({
       ...prev,
@@ -400,9 +400,12 @@ const NBCCalculator = ({
         });
       } else {
         setAutoSaveTrigger(true);
+        const description = pathType === 'performance'
+          ? "Your application has been submitted successfully. Your project will be reviewed and energy modeling will begin within 1-2 business days."
+          : "Your application has been submitted successfully. Your application will be reviewed within 1-2 business days.";
         toast({
           title: "Application Submitted!",
-          description: "Your application has been submitted successfully. Redirecting to dashboard..."
+          description: description
         });
       }
     } catch (error: any) {
@@ -451,7 +454,7 @@ const NBCCalculator = ({
       </div>}
     </div>;
   };
-  
+
   const getPoints = (category: string, value: string): number => {
     if (category === "buildingVolume") {
       if (selections.isVolumeOver380 === "yes") return 0;
@@ -562,12 +565,12 @@ const NBCCalculator = ({
   const validateStep1 = () => {
     const { firstName, lastName, company, phoneNumber, buildingAddress, buildingType, province, compliancePath, climateZone } = selections;
     if (!firstName || !lastName || !company || !phoneNumber || !buildingAddress || !buildingType || !province || !compliancePath) {
-        toast({ title: "Missing Information", description: "Please fill out all required fields in this step.", variant: "destructive" });
-        return false;
+      toast({ title: "Missing Information", description: "Please fill out all required fields in this step.", variant: "destructive" });
+      return false;
     }
     if (province === 'alberta' && !climateZone) {
-        toast({ title: "Missing Information", description: "Please select a Climate Zone for Alberta.", variant: "destructive" });
-        return false;
+      toast({ title: "Missing Information", description: "Please select a Climate Zone for Alberta.", variant: "destructive" });
+      return false;
     }
     return true;
   };
@@ -667,8 +670,12 @@ const NBCCalculator = ({
       {currentStep === 3 && (
         <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
           <CardHeader>
-            <CardTitle className="text-white text-center">Documents & Submission</CardTitle>
-            <CardDescription className="text-slate-200">Upload supporting documents and submit your application.</CardDescription>
+            <CardTitle className="text-white text-center">
+              Documents & Submission
+            </CardTitle>
+            <CardDescription className="text-slate-200">
+              Upload supporting documents and submit your application.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-8">
             <FileUploadSection
@@ -677,24 +684,142 @@ const NBCCalculator = ({
               isUploading={isUploading}
               removeFile={removeFile}
             />
-            {(selections.compliancePath === "9365" || selections.compliancePath === "9367") && <EnerGuidePathwaySection selections={selections} setSelections={setSelections} />}
-            {selections.compliancePath && <HrvAdditionalInfoSection selections={selections} setSelections={setSelections} WarningButton={WarningButton} />}
-            
+
+            {(selections.compliancePath === "9365" ||
+              selections.compliancePath === "9367") && (
+                <EnerGuidePathwaySection
+                  selections={selections}
+                  setSelections={setSelections}
+                />
+              )}
+
+            {selections.compliancePath && (
+              <HrvAdditionalInfoSection
+                selections={selections}
+                setSelections={setSelections}
+                WarningButton={WarningButton}
+              />
+            )}
+
+            {/* Results */}
+            {selections.compliancePath === "9368" && (
+              <Card className="bg-slate-900/50 border-slate-600">
+                <CardHeader>
+                  <CardTitle className="text-white">Compliance Results</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="text-center">
+                    <p className="text-sm text-slate-300">Total Points</p>
+                    <p className="text-5xl font-bold text-primary">{totalPoints.toFixed(1)}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-slate-300">Compliance Tier</p>
+                    <p className={`text-2xl font-bold ${compliance.status === "success" ? "text-green-400" : compliance.status === "warning" ? "text-yellow-400" : "text-red-400"}`}>{compliance.tier}</p>
+                    <p className="text-xs text-slate-400">{compliance.description}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Submit section — conditional on path */}
             <div className="pt-6 border-t border-slate-600 space-y-4">
-              <div className="flex items-start space-x-3 p-4 bg-slate-900/50 border border-slate-600 rounded-lg">
-                <Checkbox id="agreement" checked={agreementChecked} onCheckedChange={checked => setAgreementChecked(checked as boolean)} />
-                <label htmlFor="agreement" className="text-sm text-slate-300 leading-relaxed cursor-pointer">
-                  I agree to notify my energy advisor or the Authority Having Jurisdiction (AHJ) before making any changes to the design, including envelope components, windows, or mechanical systems, to ensure the project remains compliant. I understand that design changes may result in additional charges and that failure to communicate changes could risk non-compliance or occupancy delays.
-                </label>
-              </div>
-              <div className="flex justify-center">
-                <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3" onClick={() => handleSubmitApplication(selections.compliancePath.startsWith('9362') || selections.compliancePath.startsWith('9368') ? 'prescriptive' : 'performance')} disabled={isSubmitting || !agreementChecked}>
-                  {isSubmitting ? 'Submitting...' : searchParams.get('edit') ? 'Update Application' : 'Submit Application'}
-                </Button>
-              </div>
-              <p className="text-sm text-slate-400 text-center mt-3">
-                Your application will be reviewed within 1-2 business days.
-              </p>
+              {selections.compliancePath === "9365" ||
+                selections.compliancePath === "9367" ? (
+                <>
+                  {/* Performance Path */}
+                  <div className="flex items-start space-x-3 p-4 bg-slate-900/50 border border-slate-600 rounded-lg">
+                    <Checkbox
+                      id="agreement-performance"
+                      checked={agreementChecked}
+                      onCheckedChange={(checked) =>
+                        setAgreementChecked(checked as boolean)
+                      }
+                    />
+                    <label
+                      htmlFor="agreement-performance"
+                      className="text-sm text-slate-300 leading-relaxed cursor-pointer"
+                    >
+                      I agree to notify my energy advisor before making any changes to
+                      the design, including envelope components, windows, or
+                      mechanical systems, to ensure the energy model remains accurate
+                      and the project stays compliant during construction. Failure to
+                      communicate design changes may result in non-compliance, which
+                      could put the project at risk of not meeting energy code
+                      requirements or delaying occupancy approval. Design changes may
+                      also result in additional charges. I commit to ensuring that the
+                      final building plans align with both the energy model and the
+                      as-constructed building.
+                    </label>
+                  </div>
+
+                  <div className="flex justify-center">
+                    <Button
+                      size="lg"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3"
+                      onClick={() => handleSubmitApplication("performance")}
+                      disabled={isSubmitting || !agreementChecked}
+                    >
+                      {isSubmitting
+                        ? "Submitting..."
+                        : searchParams.get("edit")
+                          ? "Update Performance Path Application"
+                          : "Submit Performance Path Application"}
+                    </Button>
+                  </div>
+
+                  <p className="text-sm text-slate-400 text-center mt-3">
+                    Your application will be reviewed and energy modeling will begin
+                    within 1-2 business days.
+                  </p>
+                </>
+              ) : (
+                <>
+                  {/* Prescriptive Path */}
+                  <div className="flex items-start space-x-3 p-4 bg-slate-900/50 border border-slate-600 rounded-lg">
+                    <Checkbox
+                      id="agreement-prescriptive"
+                      checked={agreementChecked}
+                      onCheckedChange={(checked) =>
+                        setAgreementChecked(checked as boolean)
+                      }
+                    />
+                    <label
+                      htmlFor="agreement-prescriptive"
+                      className="text-sm text-slate-300 leading-relaxed cursor-pointer"
+                    >
+                      I agree to notify the Authority Having Jurisdiction if any
+                      changes to the design occur, including envelope components,
+                      windows, or mechanical systems, to ensure the energy plan
+                      remains accurate and the project stays compliant during
+                      construction. Failure to communicate design changes may result
+                      in non-compliance, which could put the project at risk of not
+                      meeting energy code requirements or delaying occupancy approval.
+                      I commit to ensuring that the final building plans align with
+                      both the energy building permit application and the
+                      as-constructed building.
+                    </label>
+                  </div>
+
+                  <div className="flex justify-center">
+                    <Button
+                      size="lg"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3"
+                      onClick={() => handleSubmitApplication("prescriptive")}
+                      disabled={isSubmitting || !agreementChecked}
+                    >
+                      {isSubmitting
+                        ? "Submitting..."
+                        : searchParams.get("edit")
+                          ? "Update Prescriptive Path Application"
+                          : "Submit Prescriptive Path Application"}
+                    </Button>
+                  </div>
+
+                  <p className="text-sm text-slate-400 text-center mt-3">
+                    Your application will be reviewed within 1-2 business days.
+                  </p>
+                </>
+              )}
             </div>
           </CardContent>
         </Card>
