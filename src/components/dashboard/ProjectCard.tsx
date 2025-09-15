@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Edit, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Edit, AlertTriangle, CheckCircle, ArrowRight } from 'lucide-react';
 
 interface ProjectCardProps {
   project: any;
@@ -52,68 +52,86 @@ const ProjectCard = ({ project, status, handleViewProject, handleEditProject }: 
   const { clientName, location } = parseProjectInfo(project.project_name || project.name);
 
   return (
-    <Card className="hover:shadow-md transition-shadow cursor-pointer hover:border-primary" onClick={() => handleViewProject(project.id)}>
-      <CardHeader className="pb-3">
+    <Card 
+      className="flex flex-col justify-between hover:shadow-lg transition-shadow cursor-pointer hover:border-primary/50" 
+      onClick={() => handleViewProject(project.id)}
+    >
+      <CardHeader className="pb-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg font-semibold leading-tight mb-1">
+            <CardTitle className="text-lg font-bold leading-tight mb-1 text-foreground">
               {clientName}
             </CardTitle>
-            {location && <div className="text-sm text-muted-foreground mb-2 leading-relaxed">
-              📍 {location}
-            </div>}
-            <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant={status === 'complete' ? 'default' : 'secondary'} className="text-xs">
-                {project.selected_pathway === 'performance' ? 'Performance' : 'Prescriptive'}
-              </Badge>
-              <span className="text-xs text-muted-foreground capitalize">
-                {project.building_type?.replace('-', ' ') || project.type}
-              </span>
-            </div>
+            {location && (
+              <p className="text-sm text-muted-foreground mb-2 truncate">
+                {location}
+              </p>
+            )}
           </div>
-          {status === 'inProgress' && <div onClick={e => e.stopPropagation()} className="flex-shrink-0">
-            <Button variant="outline" size="sm" onClick={e => handleEditProject(project.id, e)} className="h-8 px-3 text-xs" type="button">
-              <Edit className="h-3 w-3 mr-1" />
-              Edit
-            </Button>
-          </div>}
+          {status === 'inProgress' && (
+            <div onClick={e => e.stopPropagation()} className="flex-shrink-0">
+              <Button variant="outline" size="sm" onClick={e => handleEditProject(project.id, e)} className="h-8 px-3 text-xs">
+                <Edit className="h-3 w-3 mr-1.5" />
+                Edit
+              </Button>
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-2 flex-wrap pt-2">
+          <Badge variant={project.selected_pathway === 'performance' ? 'secondary' : 'default'} className="text-xs">
+            {project.selected_pathway === 'performance' ? 'Performance' : 'Prescriptive'}
+          </Badge>
+          <span className="text-xs text-muted-foreground capitalize">
+            {project.building_type?.replace(/-/g, ' ') || project.type}
+          </span>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <p className="text-sm text-muted-foreground">
-              Last updated: {new Date(project.updated_at || project.date).toLocaleDateString()}
-            </p>
-            {status === 'complete' && <Badge variant="outline" className="text-xs">
-              Duplicate Ready
-            </Badge>}
-          </div>
-          {status === 'inProgress' && pendingItems.length > 0 && <div className="mt-3 p-3 bg-warning/10 border border-warning rounded-md">
-            <div className="flex items-center gap-2 mb-2">
-              <AlertTriangle className="h-4 w-4 text-warning" />
-              <span className="text-sm font-medium text-warning-foreground">
-                {pendingItems.length} item(s) pending
-              </span>
-            </div>
-            <div className="space-y-1">
-              {pendingItems.slice(0, 3).map((item, index) => <div key={index} className="flex items-center gap-2 text-xs text-muted-foreground">
-                <div className="h-1 w-1 bg-warning rounded-full"></div>
-                {item}
-              </div>)}
-              {pendingItems.length > 3 && <div className="text-xs text-warning-foreground font-medium">
-                +{pendingItems.length - 3} more items
-              </div>}
-            </div>
-          </div>}
-          {status === 'inProgress' && pendingItems.length === 0 && <div className="mt-3 p-2 bg-success/10 border border-success rounded-md">
+      <CardContent className="flex-grow">
+        {status === 'inProgress' && pendingItems.length > 0 && (
+          <div className="p-3 bg-warning/10 border border-warning/20 rounded-md animate-pulse-subtle">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-success" />
-              <span className="text-sm text-success-foreground">All items completed</span>
+              <AlertTriangle className="h-5 w-5 text-warning" />
+              <div>
+                <p className="text-sm font-semibold text-warning-foreground">
+                  {pendingItems.length} item(s) pending
+                </p>
+                <p className="text-xs text-muted-foreground">{pendingItems[0]}</p>
+              </div>
             </div>
-          </div>}
-        </div>
+          </div>
+        )}
+        {status === 'inProgress' && pendingItems.length === 0 && (
+          <div className="p-3 bg-success/10 border border-success/20 rounded-md">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-success" />
+              <div>
+                <p className="text-sm font-semibold text-success-foreground">Ready for Review</p>
+                <p className="text-xs text-muted-foreground">All items completed</p>
+              </div>
+            </div>
+          </div>
+        )}
+        {status === 'complete' && (
+           <div className="p-3 bg-secondary rounded-md">
+             <div className="flex items-center gap-2">
+               <CheckCircle className="h-5 w-5 text-muted-foreground" />
+               <div>
+                 <p className="text-sm font-semibold text-foreground">Project Complete</p>
+                 <p className="text-xs text-muted-foreground">Ready to duplicate</p>
+               </div>
+             </div>
+           </div>
+        )}
       </CardContent>
+      <CardFooter className="pt-4 flex justify-between items-center">
+        <p className="text-xs text-muted-foreground">
+          Updated: {new Date(project.updated_at || project.date).toLocaleDateString()}
+        </p>
+        <div className="flex items-center text-sm font-medium text-primary hover:underline">
+          View Details
+          <ArrowRight className="h-4 w-4 ml-1" />
+        </div>
+      </CardFooter>
     </Card>
   );
 };
