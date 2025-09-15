@@ -32,6 +32,7 @@ import { useFileUploads } from "./NBCCalculator/hooks/useFileUploads";
 import EditModeIndicator from "./NBCCalculator/sections/EditModeIndicator";
 import ContactSection from "./NBCCalculator/sections/ContactSection";
 import ProjectInformationSection from "./NBCCalculator/sections/ProjectInformationSection";
+import CompliancePathSection from "./NBCCalculator/sections/CompliancePathSection";
 
 import Prescriptive9362Section from "./NBCCalculator/sections/Prescriptive9362Section";
 import Performance9365Section from "./NBCCalculator/sections/Performance9365Section";
@@ -62,7 +63,7 @@ const NBCCalculator = ({
   const [autoSaveTrigger, setAutoSaveTrigger] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const steps = ["Project Information", "Technical Specifications", "Documents & Submission"];
+  const steps = ["Project Information", "Compliance Path", "Technical Specifications", "Documents & Submission"];
   const formContainerRef = useRef<HTMLDivElement>(null);
 
   const [selections, setSelections] = useState({
@@ -563,8 +564,8 @@ const NBCCalculator = ({
   };
 
   const validateStep1 = () => {
-    const { firstName, lastName, company, phoneNumber, buildingAddress, buildingType, province, compliancePath, climateZone } = selections;
-    if (!firstName || !lastName || !company || !phoneNumber || !buildingAddress || !buildingType || !province || !compliancePath) {
+    const { firstName, lastName, company, phoneNumber, buildingAddress, buildingType, province, climateZone } = selections;
+    if (!firstName || !lastName || !company || !phoneNumber || !buildingAddress || !buildingType || !province) {
       toast({ title: "Missing Information", description: "Please fill out all required fields in this step.", variant: "destructive" });
       return false;
     }
@@ -575,8 +576,20 @@ const NBCCalculator = ({
     return true;
   };
 
+  const validateStep2 = () => {
+    const { compliancePath } = selections;
+    if (!compliancePath) {
+      toast({ title: "Missing Information", description: "Please select a compliance path to continue.", variant: "destructive" });
+      return false;
+    }
+    return true;
+  };
+
   const nextStep = () => {
     if (currentStep === 1 && !validateStep1()) {
+      return;
+    }
+    if (currentStep === 2 && !validateStep2()) {
       return;
     }
     if (currentStep < steps.length) {
@@ -594,8 +607,15 @@ const NBCCalculator = ({
 
   const handleStepClick = (step: number) => {
     if (step < currentStep) {
-      setCurrentStep(step);
-      scrollToTop();
+      if (step === 1) {
+        setCurrentStep(1);
+        scrollToTop();
+        return;
+      }
+      if (step > 1 && validateStep1()) {
+        setCurrentStep(step);
+        scrollToTop();
+      }
     }
   };
 
@@ -643,11 +663,18 @@ const NBCCalculator = ({
         <ProjectInformationSection
           selections={selections}
           setSelections={setSelections}
-          onPathwayChange={onPathwayChange}
         />
       )}
 
       {currentStep === 2 && (
+        <CompliancePathSection
+          selections={selections}
+          setSelections={setSelections}
+          onPathwayChange={onPathwayChange}
+        />
+      )}
+
+      {currentStep === 3 && (
         <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
           <CardHeader>
             <CardTitle className="text-white text-center">
@@ -667,7 +694,7 @@ const NBCCalculator = ({
         </Card>
       )}
 
-      {currentStep === 3 && (
+      {currentStep === 4 && (
         <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
           <CardHeader>
             <CardTitle className="text-white text-center">
