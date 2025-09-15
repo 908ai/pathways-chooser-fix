@@ -1,12 +1,13 @@
 import {
   Drawer,
+  DrawerClose,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, X } from "lucide-react";
 
 const HelpDrawer = () => {
   return (
@@ -21,12 +22,21 @@ const HelpDrawer = () => {
         </Button>
       </DrawerTrigger>
       <DrawerContent className="bg-slate-900/95 text-white border-t border-slate-700 backdrop-blur-sm">
-        <div className="mx-auto w-full max-w-4xl">
+        <div className="mx-auto w-full max-w-4xl relative">
           <DrawerHeader>
             <DrawerTitle className="text-2xl font-bold text-center text-slate-100">
               Getting Started & Instructions
             </DrawerTitle>
           </DrawerHeader>
+          <DrawerClose asChild>
+            <Button
+              variant="ghost"
+              className="absolute top-3 right-3 rounded-full h-8 w-8 p-0 text-slate-300 hover:text-white hover:bg-slate-700"
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </Button>
+          </DrawerClose>
           <div className="p-4 pb-8 text-slate-200">
             <div className="space-y-4">
               <p>
