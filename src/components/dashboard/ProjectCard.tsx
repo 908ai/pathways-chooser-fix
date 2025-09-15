@@ -12,30 +12,45 @@ interface ProjectCardProps {
 
 const getPendingItems = (project: any) => {
   const pendingItems: string[] = [];
-  if (!project.uploaded_files || (Array.isArray(project.uploaded_files) && project.uploaded_files.length === 0)) {
+
+  // Basic Info
+  if (!project.building_type) pendingItems.push("Building type missing");
+  if (!project.location) pendingItems.push("Project location missing");
+
+  // File uploads
+  if (!project.uploaded_files || !Array.isArray(project.uploaded_files) || project.uploaded_files.length === 0) {
     pendingItems.push("Building plans upload");
   }
-  if (project.uploaded_files && Array.isArray(project.uploaded_files)) {
-    const hasWindowFiles = project.uploaded_files.some((file: any) => file.name?.toLowerCase().includes('window') || file.name?.toLowerCase().includes('door'));
-    if (!hasWindowFiles) {
-      pendingItems.push("Window/door schedule");
-    }
+  
+  if (!project.uploaded_files || !Array.isArray(project.uploaded_files) || !project.uploaded_files.some((file: any) => file && file.name && (file.name.toLowerCase().includes('window') || file.name.toLowerCase().includes('door')))) {
+    pendingItems.push("Window/door schedule");
   }
-  if (!project.heating_system_type || project.heating_system_type === '') {
+
+  // Envelope
+  if (!project.attic_rsi) pendingItems.push("Attic insulation details");
+  if (!project.wall_rsi) pendingItems.push("Wall insulation details");
+  if (!project.window_u_value) pendingItems.push("Window performance details");
+
+  // Performance
+  if (!project.floor_area) pendingItems.push("Floor area calculation");
+
+  // Mechanicals
+  if (!project.heating_system_type) {
     pendingItems.push("Heating system details");
   }
-  if (project.cooling_efficiency === null || project.cooling_efficiency === 0) {
+  
+  if (project.cooling_system_type && project.cooling_system_type !== 'None' && !project.cooling_efficiency) {
     pendingItems.push("Cooling system details");
   }
-  if (!project.water_heating_type || project.water_heating_type === '') {
+
+  if (!project.water_heating_type) {
     pendingItems.push("Water heater details");
   }
-  if (project.hrv_erv_type && project.hrv_erv_type !== 'None' && project.hrv_erv_efficiency === 0) {
+
+  if (project.hrv_erv_type && project.hrv_erv_type !== 'None' && !project.hrv_erv_efficiency) {
     pendingItems.push("HRV/ERV specifications");
   }
-  if (!project.floor_area || project.floor_area === 0) {
-    pendingItems.push("Floor area calculation");
-  }
+
   return pendingItems;
 };
 
