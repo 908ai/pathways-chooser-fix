@@ -26,7 +26,7 @@ export default function CompliancePathSection({
   return (
     <>
       {
-                <Card className="bg-gradient-to-r from-slate-700/40 to-teal-700/40 border-slate-400/50 backdrop-blur-sm shadow-lg">
+                <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px] shadow-lg">
                    <CardHeader className="pb-4">
                       <CardTitle className="text-lg flex items-center gap-2 text-white">
                         Compliance Path Selection
@@ -47,7 +47,7 @@ export default function CompliancePathSection({
                          {selections.buildingType && (selections.province !== "alberta" || selections.climateZone) && <>
                          <div className="space-y-2">
                           <div className="flex items-center gap-3">
-                            <label className="text-sm font-medium">Which compliance path are you using?</label>
+                            <label className="text-sm font-medium text-white">Which compliance path are you using?</label>
                             <InfoButton title="NBC Part 9 Energy Compliance – Simple Overview">
                                   <div>
                                     <h4 className="font-semibold text-sm mb-2">NBC Part 9 Energy Compliance – Simple Overview</h4>
@@ -212,7 +212,7 @@ export default function CompliancePathSection({
                           }));
                           onPathwayChange?.(getPathwayDisplayName(value));
                         }}>
-                           <SelectTrigger>
+                           <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                              <SelectValue placeholder="Select compliance path" />
                            </SelectTrigger>
                                 <SelectContent>
@@ -248,7 +248,7 @@ export default function CompliancePathSection({
                          {(selections.compliancePath === "9365" ||
                           selections.compliancePath === "9367") && <div className="space-y-2">
                              <div className="flex items-center gap-2">
-                               <label className="text-sm font-medium">Front Door Orientation</label>
+                               <label className="text-sm font-medium text-white">Front Door Orientation</label>
                                   <InfoButton title="Why Orientation Matters in Energy Efficiency">
                                       <div>
                                         <h4 className="font-semibold text-sm mb-2">Why Orientation Matters in Energy Efficiency</h4>
@@ -288,7 +288,7 @@ export default function CompliancePathSection({
                           ...prev,
                           frontDoorOrientation: value
                         }))}>
-                              <SelectTrigger>
+                              <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                                 <SelectValue placeholder="Select orientation" />
                               </SelectTrigger>
                               <SelectContent>
