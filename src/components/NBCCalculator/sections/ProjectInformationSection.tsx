@@ -5,16 +5,10 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger
-} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Info, FileText, Zap } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { FileText, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-import { getPathwayDisplayName, isSingleDetached } from "../utils/helpers";
+import InfoButton from "@/components/InfoButton";
 
 
 type Props = {
@@ -28,7 +22,6 @@ export default function ProjectInformationSection({
   selections,
   setSelections,
   validationErrors,
-  onPathwayChange,
 }: Props) {
 
   return (
@@ -200,24 +193,7 @@ export default function ProjectInformationSection({
                    {selections.province === "alberta" && <div className="space-y-2">
                        <div className="flex items-center gap-2">
                          <label className="text-sm font-medium text-slate-100">Climate Zone <span className="text-red-400 font-semibold">*</span></label>
-                         <Dialog>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <DialogTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-500/20">
-                                            <Info className="h-4 w-4" />
-                                        </Button>
-                                    </DialogTrigger>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>More Info</p>
-                                </TooltipContent>
-                            </Tooltip>
-                           <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                             <DialogHeader>
-                               <DialogTitle>Climate Zone Information</DialogTitle>
-                             </DialogHeader>
-                             <div className="space-y-4">
+                         <InfoButton title="Climate Zone Information">
                                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                                  <h4 className="font-semibold text-green-800 mb-2">Saskatchewan</h4>
                                  <p className="text-green-700">All of Saskatchewan is in Climate Zone 7A (5000 to 5999 HDD)</p>
@@ -230,9 +206,7 @@ export default function ProjectInformationSection({
                                    <p><strong>HDD:</strong> Heating Degree Days - a measure of how much (in degrees), and for how long (in days), the outside air temperature was below a certain level.</p>
                                  </div>
                                </div>
-                             </div>
-                           </DialogContent>
-                         </Dialog>
+                         </InfoButton>
                        </div>
                       <Select value={selections.climateZone} onValueChange={value => setSelections(prev => ({
                   ...prev,

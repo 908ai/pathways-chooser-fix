@@ -4,15 +4,11 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger
-} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Info, FileText, Zap } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { FileText, Zap } from "lucide-react";
+import InfoButton from "@/components/InfoButton";
 
-import { getPathwayDisplayName, isSingleDetached } from "../utils/helpers";
+import { getPathwayDisplayName } from "../utils/helpers";
 
 
 type Props = {
@@ -52,24 +48,7 @@ export default function CompliancePathSection({
                          <div className="space-y-2">
                           <div className="flex items-center gap-3">
                             <label className="text-sm font-medium">Which compliance path are you using?</label>
-                            <Dialog>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <DialogTrigger asChild>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-500/20">
-                                                <Info className="h-4 w-4" />
-                                            </Button>
-                                        </DialogTrigger>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        <p>More Info</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                                <DialogHeader>
-                                  <DialogTitle>NBC Part 9 Energy Compliance – Simple Overview</DialogTitle>
-                                </DialogHeader>
-                                <div className="space-y-4">
+                            <InfoButton title="NBC Part 9 Energy Compliance – Simple Overview">
                                   <div>
                                     <h4 className="font-semibold text-sm mb-2">NBC Part 9 Energy Compliance – Simple Overview</h4>
                                     <p className="text-sm text-muted-foreground mb-3">
@@ -152,9 +131,7 @@ export default function CompliancePathSection({
                                       <p>• Use 9.36.8 if you prefer a checklist/points-based approach to Tier compliance and are committed to installing an HRV.</p>
                                     </div>
                                   </div>
-                                </div>
-                              </DialogContent>
-                            </Dialog>
+                            </InfoButton>
                           </div>
                           
                           {/* Current pathway display */}
@@ -272,24 +249,7 @@ export default function CompliancePathSection({
                           selections.compliancePath === "9367") && <div className="space-y-2">
                              <div className="flex items-center gap-2">
                                <label className="text-sm font-medium">Front Door Orientation</label>
-                                  <Dialog>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <DialogTrigger asChild>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-500/20">
-                                                    <Info className="h-4 w-4" />
-                                                </Button>
-                                            </DialogTrigger>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>More Info</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                   <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                                     <DialogHeader>
-                                       <DialogTitle>Why Orientation Matters in Energy Efficiency</DialogTitle>
-                                     </DialogHeader>
-                                    <div className="space-y-4">
+                                  <InfoButton title="Why Orientation Matters in Energy Efficiency">
                                       <div>
                                         <h4 className="font-semibold text-sm mb-2">Why Orientation Matters in Energy Efficiency</h4>
                                       </div>
@@ -322,9 +282,7 @@ export default function CompliancePathSection({
                                           </ul>
                                         </div>
                                       </div>
-                                    </div>
-                                   </DialogContent>
-                                 </Dialog>
+                                   </InfoButton>
                              </div>
                             <Select value={selections.frontDoorOrientation} onValueChange={value => setSelections(prev => ({
                           ...prev,
