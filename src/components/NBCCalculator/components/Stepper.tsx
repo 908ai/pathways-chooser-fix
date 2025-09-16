@@ -38,7 +38,7 @@ const Stepper = ({ steps, currentStep, onStepClick, isSticky = false }: StepperP
                     isCompleted
                       ? "bg-green-500 border-green-500 text-white"
                       : isActive
-                      ? "bg-primary border-primary text-primary-foreground"
+                      ? "bg-primary border-[#617390] text-primary-foreground"
                       : "bg-slate-700 border-slate-600 text-slate-300",
                     isSticky ? "w-6 h-6" : "w-10 h-10"
                   )}
