@@ -69,6 +69,7 @@ const NBCCalculator = ({
   const [validationErrors, setValidationErrors] = useState<Record<string, boolean>>({});
   const [isSticky, setIsSticky] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const [isHelpDrawerOpen, setIsHelpDrawerOpen] = useState(false);
 
   const [selections, setSelections] = useState({
     firstName: "",
@@ -162,6 +163,14 @@ const NBCCalculator = ({
   const { uploadedFiles, setUploadedFiles, isUploading, uploadFile, removeFile } = useFileUploads(user);
 
   const [agreementChecked, setAgreementChecked] = useState(false);
+
+  useEffect(() => {
+    const showHelp = searchParams.get('showHelp');
+    const editProjectId = searchParams.get('edit');
+    if (showHelp === 'true' && !editProjectId) {
+      setIsHelpDrawerOpen(true);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -696,7 +705,7 @@ const NBCCalculator = ({
 
   return <div className="min-h-screen p-4 relative">
     <div ref={sentinelRef} className="absolute top-0 h-px" />
-    <HelpDrawer />
+    <HelpDrawer open={isHelpDrawerOpen} onOpenChange={setIsHelpDrawerOpen} />
 
     <Stepper steps={steps} currentStep={currentStep} onStepClick={handleStepClick} isSticky={isSticky} />
 

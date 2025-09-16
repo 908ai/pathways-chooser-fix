@@ -9,9 +9,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { HelpCircle, X } from "lucide-react";
 
-const HelpDrawer = () => {
+interface HelpDrawerProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+const HelpDrawer = ({ open, onOpenChange }: HelpDrawerProps) => {
   return (
-    <Drawer>
+    <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerTrigger asChild>
         <Button
           variant="default"

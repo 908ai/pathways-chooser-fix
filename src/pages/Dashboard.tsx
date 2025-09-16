@@ -59,7 +59,7 @@ const Dashboard = () => {
     loadProjects();
   }, [user, canViewAllProjects, roleLoading]);
 
-  const handleNewProject = () => navigate('/calculator');
+  const handleNewProject = () => navigate('/calculator?showHelp=true');
   const handleEditProject = (projectId: string, event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
