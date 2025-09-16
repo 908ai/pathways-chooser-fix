@@ -12,7 +12,7 @@ interface FileUploadProps {
 const FileUpload: React.FC<FileUploadProps> = ({
   onFileUploadRequest,
   uploading,
-  acceptedTypes = ['pdf', 'doc', 'docx', 'xlsx', 'xls', 'jpg', 'jpeg', 'png', 'gif', 'zip', 'txt', 'csv'],
+  acceptedTypes = ['pdf', 'dwg', 'jpg', 'jpeg', 'png', 'tiff', 'doc', 'docx', 'xls', 'xlsx', 'txt'],
   maxSizePerFile = 10 * 1024 * 1024 // 10MB
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -53,26 +53,27 @@ const FileUpload: React.FC<FileUploadProps> = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div>
       <div
-        className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center hover:border-muted-foreground/50 transition-colors"
+        className="border-2 border-dashed border-slate-400/50 rounded-lg p-8 text-center hover:border-slate-300/70 transition-colors bg-slate-900/50"
         onDrop={handleDrop}
         onDragOver={handleDragOver}
       >
-        <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+        <Upload className="mx-auto h-12 w-12 text-slate-300 mb-4" />
         <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-slate-300">
             Drag and drop files here, or click to select
           </p>
           <Button
             type="button"
-            variant="outline"
+            variant="secondary"
+            className="bg-slate-100 text-slate-900 hover:bg-slate-200"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
           >
             {uploading ? 'Uploading...' : 'Choose Files'}
           </Button>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-slate-400">
             Maximum file size: {formatFileSize(maxSizePerFile)} • 
             Accepted types: {acceptedTypes.join(', ')}
           </p>
