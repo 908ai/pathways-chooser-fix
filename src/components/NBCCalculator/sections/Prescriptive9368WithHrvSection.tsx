@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Info } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import InfoButton from "@/components/InfoButton";
 
 import { wallRSIOptions, belowGradeRSIOptions, windowUValueOptions, waterHeaterOptions, airtightnessOptions } from "../constants/options";
 import { validateRSI } from "../utils/validation";
@@ -23,61 +23,44 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">
                         <label className="text-sm font-medium text-slate-100">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
-                        <Dialog>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <DialogTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
-                                            <Info className="h-4 w-4" />
-                                        </Button>
-                                    </DialogTrigger>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>More Info</p>
-                                </TooltipContent>
-                            </Tooltip>
-                            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                                <DialogHeader>
-                                    <DialogTitle>What is an F280 Calculation?</DialogTitle>
-                                </DialogHeader>
-                                <div className="space-y-4">
-                                    <div className="space-y-3">
-                                        <p className="text-sm text-muted-foreground">
-                                            An F280 calculation is a heating and cooling load calculation based on CSA Standard F280-12 (or updated versions), which is the Canadian standard for determining how much heating or cooling a home needs. It accounts for factors like insulation levels, windows, air leakage, and local climate.
-                                        </p>
+                        <InfoButton title="What is an F280 Calculation?">
+                            <div className="space-y-4">
+                                <div className="space-y-3">
+                                    <p className="text-sm text-muted-foreground">
+                                        An F280 calculation is a heating and cooling load calculation based on CSA Standard F280-12 (or updated versions), which is the Canadian standard for determining how much heating or cooling a home needs. It accounts for factors like insulation levels, windows, air leakage, and local climate.
+                                    </p>
 
-                                        <div>
-                                            <p className="text-sm font-medium mb-2">Why it's beneficial:</p>
-                                            <div className="space-y-1">
-                                                <div className="flex items-start gap-2">
-                                                    <span className="text-green-600 text-sm">•</span>
-                                                    <span className="text-sm">Ensures HVAC systems are properly sized — not too big or too small.</span>
-                                                </div>
-                                                <div className="flex items-start gap-2">
-                                                    <span className="text-green-600 text-sm">•</span>
-                                                    <span className="text-sm">Improves comfort, efficiency, and equipment lifespan.</span>
-                                                </div>
-                                                <div className="flex items-start gap-2">
-                                                    <span className="text-green-600 text-sm">•</span>
-                                                    <span className="text-sm">Reduces energy costs and avoids overspending on unnecessary system capacity.</span>
-                                                </div>
-                                                <div className="flex items-start gap-2">
-                                                    <span className="text-green-600 text-sm">•</span>
-                                                    <span className="text-sm">Often required for building permits or energy code compliance in many jurisdictions.</span>
-                                                </div>
+                                    <div>
+                                        <p className="text-sm font-medium mb-2">Why it's beneficial:</p>
+                                        <div className="space-y-1">
+                                            <div className="flex items-start gap-2">
+                                                <span className="text-green-600 text-sm">•</span>
+                                                <span className="text-sm">Ensures HVAC systems are properly sized — not too big or too small.</span>
+                                            </div>
+                                            <div className="flex items-start gap-2">
+                                                <span className="text-green-600 text-sm">•</span>
+                                                <span className="text-sm">Improves comfort, efficiency, and equipment lifespan.</span>
+                                            </div>
+                                            <div className="flex items-start gap-2">
+                                                <span className="text-green-600 text-sm">•</span>
+                                                <span className="text-sm">Reduces energy costs and avoids overspending on unnecessary system capacity.</span>
+                                            </div>
+                                            <div className="flex items-start gap-2">
+                                                <span className="text-green-600 text-sm">•</span>
+                                                <span className="text-sm">Often required for building permits or energy code compliance in many jurisdictions.</span>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div className="p-3 bg-muted rounded-md">
-                                            <p className="text-sm font-medium mb-1">💡 Pro Tip:</p>
-                                            <p className="text-sm text-muted-foreground">
-                                                F280 calcs are especially valuable in energy-efficient homes where heating loads can be dramatically lower than traditional assumptions.
-                                            </p>
-                                        </div>
+                                    <div className="p-3 bg-muted rounded-md">
+                                        <p className="text-sm font-medium mb-1">💡 Pro Tip:</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            F280 calcs are especially valuable in energy-efficient homes where heating loads can be dramatically lower than traditional assumptions.
+                                        </p>
                                     </div>
                                 </div>
-                            </DialogContent>
-                        </Dialog>
+                            </div>
+                        </InfoButton>
                     </div>
                     <Select value={selections.hasF280Calculation} onValueChange={value => setSelections(prev => ({
                         ...prev,
