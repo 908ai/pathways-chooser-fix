@@ -51,7 +51,7 @@ export default function ProjectInformationSection({
            <CardContent className="space-y-6">
              {/* Personal/Contact Information */}
              <div className="space-y-4">
-               <h4 className="text-md font-medium text-white border-b border-slate-500 pb-2 tracking-wide">Personal & Contact Information <span className="text-red-500">(Required)</span></h4>
+               <h4 className="text-md font-medium text-white border-b border-slate-500 pb-2 tracking-wide">Personal & Contact Information <span className="text-red-400 font-semibold">(Required)</span></h4>
                
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <div className="space-y-2">
@@ -100,7 +100,7 @@ export default function ProjectInformationSection({
 
              {/* Building & Location Information */}
              <div className="space-y-4">
-               <h4 className="text-md font-medium text-white border-b border-slate-500 pb-2 tracking-wide">Building & Location Details <span className="text-red-500">(Required)</span></h4>
+               <h4 className="text-md font-medium text-white border-b border-slate-500 pb-2 tracking-wide">Building & Location Details <span className="text-red-400 font-semibold">(Required)</span></h4>
 
                <div className="space-y-2">
                  <label className="text-sm font-medium text-slate-100">Building/Project Address</label>
@@ -199,12 +199,12 @@ export default function ProjectInformationSection({
                    {/* Climate Zone Selection for Alberta */}
                    {selections.province === "alberta" && <div className="space-y-2">
                        <div className="flex items-center gap-2">
-                         <label className="text-sm font-medium text-slate-100">Climate Zone <span className="text-red-500">*</span></label>
+                         <label className="text-sm font-medium text-slate-100">Climate Zone <span className="text-red-400 font-semibold">*</span></label>
                          <Dialog>
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <DialogTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-slate-700">
                                             <Info className="h-4 w-4" />
                                         </Button>
                                     </DialogTrigger>
