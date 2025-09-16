@@ -26,7 +26,7 @@ export default function CompliancePathSection({
   return (
     <>
       {
-                <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px] shadow-lg">
+                <Card className="bg-slate-700/40">
                    <CardHeader className="pb-4">
                       <CardTitle className="text-lg flex items-center gap-2 text-white">
                         Compliance Path Selection

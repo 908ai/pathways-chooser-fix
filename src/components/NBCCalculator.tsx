@@ -675,7 +675,7 @@ const NBCCalculator = ({
 
     {searchParams.get('edit') && <EditModeIndicator />}
 
-    <div ref={formContainerRef} className={`mx-auto space-y-6 relative z-10 transition-all duration-300 ${selections.compliancePath === "9368" ? "max-w-3xl mr-80" : "max-w-4xl"}`}>
+    <div ref={formContainerRef} className={`mx-auto space-y-6 relative z-10 transition-all duration-300 p-5 backdrop-blur-[100px] border-slate-400/50 rounded-lg border shadow-lg ${selections.compliancePath === "9368" ? "max-w-3xl mr-80" : "max-w-4xl"}`}>
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-3 mb-2">
           <Calculator className="h-8 w-8 text-teal-300" />
@@ -706,7 +706,7 @@ const NBCCalculator = ({
       )}
 
       {currentStep === 3 && (
-        <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px] shadow-lg">
+        <Card className="bg-slate-700/40">
           <CardHeader>
             <CardTitle className="text-white text-center">
               {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? 'Prescriptive Building Requirements' : 'Performance Building Specifications'}
@@ -726,7 +726,7 @@ const NBCCalculator = ({
       )}
 
       {currentStep === 4 && (
-        <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px] shadow-lg">
+        <Card className="bg-slate-700/40">
           <CardHeader>
             <CardTitle className="text-white text-center">
               Documents & Submission
