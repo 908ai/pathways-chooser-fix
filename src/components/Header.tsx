@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import nbcLogo from '@/assets/NBC936-logo.png';
 
 interface HeaderProps {
   showSignOut?: boolean;
@@ -38,7 +39,7 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center gap-4">
           <div>
-            <h1 className="text-xl font-semibold">NBC2020 Energy Code Pathways Selector</h1>
+            <img src={nbcLogo} alt="NBC 9.36 Navigator Logo" className="h-10" />
           </div>
           {pathwayInfo && (
             <div className="flex items-center gap-2">
