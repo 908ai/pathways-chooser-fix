@@ -17,7 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import InfoButton from "@/components/InfoButton";
-import { Info } from "lucide-react";
+import { Info, ChevronDown } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 import { validateRSI } from "../utils/validation";
 
@@ -38,30 +39,16 @@ export default function Performance9368Section({
     selections: any;
     setSelections: any;
 }) {
-    // Local state for collapsible warnings
-    const [expandedWarnings, setExpandedWarnings] = useState<{
-        [key: string]: boolean;
-    }>({});
-
-    const toggleWarning = (warningId: string) => {
-        setExpandedWarnings((prev) => ({
-            ...prev,
-            [warningId]: !prev[warningId],
-        }));
-    };
-
-    const WarningButton = ({
-        warningId,
+    const InfoCollapsible = ({
         title,
         children,
         variant = "warning",
     }: {
-        warningId: string;
         title: string;
         children: React.ReactNode;
         variant?: "warning" | "destructive";
     }) => {
-        const isExpanded = expandedWarnings[warningId];
+        const [isOpen, setIsOpen] = useState(false);
         const bgColor =
             variant === "warning"
                 ? "bg-gradient-to-r from-slate-800/60 to-teal-800/60"
@@ -72,21 +59,15 @@ export default function Performance9368Section({
                 : "border-2 border-red-400";
 
         return (
-            <div
-                className={`p-4 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}
-            >
-                <button
-                    onClick={() => toggleWarning(warningId)}
-                    className="flex items-center gap-3 w-full text-left"
-                >
+            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-4 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
+                <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
                     <span className="text-lg font-bold text-white">{title}</span>
-                </button>
-                {isExpanded && (
-                    <div className="mt-4 animate-accordion-down">
-                        <div className="text-white font-semibold">{children}</div>
-                    </div>
-                )}
-            </div>
+                    <ChevronDown className={`h-5 w-5 text-white transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
+                    <div className="text-white font-semibold">{children}</div>
+                </CollapsibleContent>
+            </Collapsible>
         );
     };
 
@@ -127,19 +108,19 @@ export default function Performance9368Section({
                     const minRSI = selections.hasHrv === "with_hrv" ? 8.67 : 10.43;
                     const validation = validateRSI(selections.ceilingsAtticRSI, minRSI, `ceilings below attics ${selections.hasHrv === "with_hrv" ? "with HRV" : "without HRV"}`);
                     if (!validation.isValid && validation.warning) {
-                        return <WarningButton warningId={`ceilingsAtticRSI-${validation.warning.type}`} title={validation.warning.type === "rvalue-suspected" ? "R-Value Detected" : "RSI Value Too Low"} variant={validation.warning.type === "rvalue-suspected" ? "warning" : "destructive"}>
+                        return <InfoCollapsible title={validation.warning.type === "rvalue-suspected" ? "R-Value Detected" : "RSI Value Too Low"} variant={validation.warning.type === "rvalue-suspected" ? "warning" : "destructive"}>
                             <p className="text-sm text-white">
                                 {validation.warning.message}
                             </p>
-                        </WarningButton>;
+                        </InfoCollapsible>;
                     }
                     return null;
                 })()}
-                <WarningButton warningId="ceilingsAtticRSI-9368" title="Effective RSI/R-Value Required">
+                <InfoCollapsible title="Effective RSI/R-Value Required">
                     <p className="text-sm text-white">
                         You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                     </p>
-                </WarningButton>
+                </InfoCollapsible>
             </div>
 
             {/* Wall Insulation */}
@@ -158,11 +139,11 @@ export default function Performance9368Section({
                         </SelectItem>)}
                     </SelectContent>
                 </Select>
-                <WarningButton warningId="wallRSI-9368" title="Effective RSI/R-Value Required">
+                <InfoCollapsible title="Effective RSI/R-Value Required">
                     <p className="text-sm text-white">
                         You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                     </p>
-                </WarningButton>
+                </InfoCollapsible>
             </div>
 
             {/* Below Grade Walls */}
@@ -181,11 +162,11 @@ export default function Performance9368Section({
                         </SelectItem>)}
                     </SelectContent>
                 </Select>
-                <WarningButton warningId="belowGradeRSI-9368" title="Effective RSI/R-Value Required">
+                <InfoCollapsible title="Effective RSI/R-Value Required">
                     <p className="text-sm text-white">
                         You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                     </p>
-                </WarningButton>
+                </InfoCollapsible>
             </div>
 
             {/* Windows */}
@@ -244,11 +225,11 @@ export default function Performance9368Section({
                     </SelectContent>
                 </Select>
 
-                <WarningButton warningId="windowDoor-verification-9368-main" title="Window & Door Performance Verification">
+                <InfoCollapsible title="Window & Door Performance Verification">
                     <p className="text-xs text-white">
                         Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please only record the lowest performing window and door (U-Value (ie, highest U-value W/(m²×K)).
                     </p>
-                </WarningButton>
+                </InfoCollapsible>
                 {selections.windowUValue && <>
 
                     <div className="flex items-center gap-2">
@@ -451,7 +432,7 @@ export default function Performance9368Section({
                     </SelectContent>
                 </Select>
 
-                <WarningButton warningId="airtightness-caution-9368" title="Caution: Air-Tightness Targets Without Testing History">
+                <InfoCollapsible title="Caution: Air-Tightness Targets Without Testing History">
                     <div className="text-xs text-white space-y-2">
                         <p>
                             Choosing an air-tightness target lower than prescribed by NBC2020 without prior test results is risky.
@@ -477,7 +458,7 @@ export default function Performance9368Section({
                             </a>
                         </div>
                     </div>
-                </WarningButton>
+                </InfoCollapsible>
 
                 {/* Multi-Unit Exercise */}
                 <div className="space-y-3 pt-4 border-t border-border/20">
@@ -652,7 +633,7 @@ export default function Performance9368Section({
                         </div>
                     </div>
 
-                    <WarningButton warningId="mid-construction-blower-door-info-9368" title="Benefits of Mid-Construction Blower Door Testing">
+                    <InfoCollapsible title="Benefits of Mid-Construction Blower Door Testing">
                         <div className="text-xs text-white space-y-2">
                             <p className="font-medium">Benefits of a mid-construction (misconstruction) blower door test:</p>
                             <ul className="list-disc ml-4 space-y-1">
@@ -670,7 +651,7 @@ export default function Performance9368Section({
                                 </a>
                             </div>
                         </div>
-                    </WarningButton>
+                    </InfoCollapsible>
                 </div>
             </div>
 
