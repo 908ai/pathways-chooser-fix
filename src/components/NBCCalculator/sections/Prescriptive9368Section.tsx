@@ -15,8 +15,9 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import InfoButton from "@/components/InfoButton";
 import { Info } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { validateRSI } from "../utils/validation";
 
@@ -24,7 +25,6 @@ import {
     wallRSIOptions,
     windowUValueOptions,
     belowGradeRSIOptions,
-    buildingVolumeOptions,
     airtightnessOptions,
     hrvOptions,
     waterHeaterOptions,
@@ -192,60 +192,43 @@ export default function Performance9368Section({
             <div className="space-y-2">
                 <div className="flex items-center gap-2">
                     <label className="text-sm font-medium text-slate-100">Windows - U-Value</label>
-                    <Dialog>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <DialogTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-500/20">
-                                        <Info className="h-4 w-4" />
-                                    </Button>
-                                </DialogTrigger>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>More Info</p>
-                            </TooltipContent>
-                        </Tooltip>
-                        <DialogContent className="w-[600px] max-h-[80vh] overflow-y-auto">
-                            <DialogHeader>
-                                <DialogTitle>Energy Efficiency Points for Windows & Doors</DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-4">
-                                <p className="text-sm text-white">
-                                    You can get extra energy efficiency points in the code if your windows and doors perform better than the minimum required by the building code (NBC 9.36). This means they either keep heat in better (low U-value) or let in helpful sunlight to reduce heating needs (high Energy Rating or ER).
-                                </p>
+                    <InfoButton title="Energy Efficiency Points for Windows & Doors">
+                        <div className="space-y-4">
+                            <p className="text-sm text-white">
+                                You can get extra energy efficiency points in the code if your windows and doors perform better than the minimum required by the building code (NBC 9.36). This means they either keep heat in better (low U-value) or let in helpful sunlight to reduce heating needs (high Energy Rating or ER).
+                            </p>
 
-                                <p className="text-sm text-white">
-                                    But to use the Energy Rating (ER) method for windows or doors, the total glass/opening area on that wall must be less than 17% of the wall's area. The example in the image shows how to calculate that percentage:
-                                </p>
+                            <p className="text-sm text-white">
+                                But to use the Energy Rating (ER) method for windows or doors, the total glass/opening area on that wall must be less than 17% of the wall's area. The example in the image shows how to calculate that percentage:
+                            </p>
 
+                            <ul className="list-disc ml-5 space-y-1 text-sm text-white">
+                                <li>The wall is 48 m²</li>
+                                <li>The total area of the windows and doors is 7.75 m²</li>
+                                <li>7.75 ÷ 48 × 100 = 16%, so this wall qualifies for ER-based compliance.</li>
+                            </ul>
+
+                            <p className="text-sm text-white">
+                                If the openings are over 17%, you usually have to use U-values instead and follow a trade-off approach.
+                            </p>
+
+                            <div className="border-t pt-4">
+                                <h5 className="font-medium mb-2">Why this matters:</h5>
                                 <ul className="list-disc ml-5 space-y-1 text-sm text-white">
-                                    <li>The wall is 48 m²</li>
-                                    <li>The total area of the windows and doors is 7.75 m²</li>
-                                    <li>7.75 ÷ 48 × 100 = 16%, so this wall qualifies for ER-based compliance.</li>
+                                    <li>ER is good for cold climates – it considers how much sun a window lets in to help heat the home, along with how well it insulates and how airtight it is.</li>
+                                    <li>U-value only looks at insulation, not sun or air leaks.</li>
+                                    <li>Using ER lets you use things like patio doors or south-facing windows that bring in sun, even if their U-value isn't great—as long as they don't make up too much of the wall.</li>
                                 </ul>
-
-                                <p className="text-sm text-white">
-                                    If the openings are over 17%, you usually have to use U-values instead and follow a trade-off approach.
-                                </p>
-
-                                <div className="border-t pt-4">
-                                    <h5 className="font-medium mb-2">Why this matters:</h5>
-                                    <ul className="list-disc ml-5 space-y-1 text-sm text-white">
-                                        <li>ER is good for cold climates – it considers how much sun a window lets in to help heat the home, along with how well it insulates and how airtight it is.</li>
-                                        <li>U-value only looks at insulation, not sun or air leaks.</li>
-                                        <li>Using ER lets you use things like patio doors or south-facing windows that bring in sun, even if their U-value isn't great—as long as they don't make up too much of the wall.</li>
-                                    </ul>
-                                </div>
-
-                                <div className="border-t pt-4">
-                                    <img src="/lovable-uploads/7665f3ac-355b-4715-9121-ae5d822bc1f0.png" alt="Figure 9.36-20: Example of how to calculate the percent fenestration area" className="w-full h-auto border rounded" />
-                                    <p className="text-xs text-muted-foreground mt-2 italic">
-                                        Source: Housing and Small Buildings Illustrated User's Guide National Building Code of Canada 2020
-                                    </p>
-                                </div>
                             </div>
-                        </DialogContent>
-                    </Dialog>
+
+                            <div className="border-t pt-4">
+                                <img src="/lovable-uploads/7665f3ac-355b-4715-9121-ae5d822bc1f0.png" alt="Figure 9.36-20: Example of how to calculate the percent fenestration area" className="w-full h-auto border rounded" />
+                                <p className="text-xs text-muted-foreground mt-2 italic">
+                                    Source: Housing and Small Buildings Illustrated User's Guide National Building Code of Canada 2020
+                                </p>
+                            </div>
+                        </div>
+                    </InfoButton>
                 </div>
                 <Select value={selections.windowUValue} onValueChange={value => setSelections(prev => ({
                     ...prev,
@@ -326,161 +309,144 @@ export default function Performance9368Section({
             <div className="space-y-2">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium text-slate-100">Airtightness Level</label>
-                    <Dialog>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <DialogTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-500/20">
-                                        <Info className="h-4 w-4" />
-                                    </Button>
-                                </DialogTrigger>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>More Info</p>
-                            </TooltipContent>
-                        </Tooltip>
-                        <DialogContent className="w-[600px] max-h-[80vh] overflow-y-auto p-4">
-                            <DialogHeader>
-                                <DialogTitle>What's a Blower Door Test?</DialogTitle>
-                            </DialogHeader>
+                    <InfoButton title="What's a Blower Door Test?">
+                        <div className="space-y-4">
+                            <div>
+                                <p className="text-sm text-muted-foreground">A blower door test measures air leakage in a home. A fan is placed in an exterior door to pressurize or depressurize the building, and sensors track how much air is needed to maintain a pressure difference (usually 50 Pascals). This tells us how "leaky" the building is.</p>
+                            </div>
+
+                            <div className="w-full h-px bg-muted"></div>
+
                             <div className="space-y-4">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">A blower door test measures air leakage in a home. A fan is placed in an exterior door to pressurize or depressurize the building, and sensors track how much air is needed to maintain a pressure difference (usually 50 Pascals). This tells us how "leaky" the building is.</p>
+                                    <h5 className="font-medium text-sm mb-2">What Do the Numbers Mean?</h5>
+                                    <div className="space-y-3 text-sm text-muted-foreground">
+                                        <div>
+                                            <p className="font-medium">• ACH₅₀ (Air Changes per Hour @ 50 Pa):</p>
+                                            <p className="ml-4">How many times the air inside the home is replaced in one hour.</p>
+                                            <p className="ml-4">Lower is better — ≤1.0 is common for Net Zero Ready homes.</p>
+                                        </div>
+                                        <div>
+                                            <p className="font-medium">• NLA₁₀ (Normalized Leakage Area):</p>
+                                            <p className="ml-4">Total leak area per square metre of envelope.</p>
+                                            <p className="ml-4">Think: "This building leaks like it has a 10 cm² hole per m² of wall."</p>
+                                        </div>
+                                        <div>
+                                            <p className="font-medium">• NLR₅₀ (Normalized Leakage Rate):</p>
+                                            <p className="ml-4">Volume of air leaking per second per m² of surface at 50 Pa.</p>
+                                            <p className="ml-4">Useful for comparing attached units or small zones.</p>
+                                        </div>
+                                        <p className="font-medium text-primary">Lower values = tighter home = better performance</p>
+                                    </div>
                                 </div>
 
                                 <div className="w-full h-px bg-muted"></div>
 
-                                <div className="space-y-4">
-                                    <div>
-                                        <h5 className="font-medium text-sm mb-2">What Do the Numbers Mean?</h5>
-                                        <div className="space-y-3 text-sm text-muted-foreground">
-                                            <div>
-                                                <p className="font-medium">• ACH₅₀ (Air Changes per Hour @ 50 Pa):</p>
-                                                <p className="ml-4">How many times the air inside the home is replaced in one hour.</p>
-                                                <p className="ml-4">Lower is better — ≤1.0 is common for Net Zero Ready homes.</p>
-                                            </div>
-                                            <div>
-                                                <p className="font-medium">• NLA₁₀ (Normalized Leakage Area):</p>
-                                                <p className="ml-4">Total leak area per square metre of envelope.</p>
-                                                <p className="ml-4">Think: "This building leaks like it has a 10 cm² hole per m² of wall."</p>
-                                            </div>
-                                            <div>
-                                                <p className="font-medium">• NLR₅₀ (Normalized Leakage Rate):</p>
-                                                <p className="ml-4">Volume of air leaking per second per m² of surface at 50 Pa.</p>
-                                                <p className="ml-4">Useful for comparing attached units or small zones.</p>
-                                            </div>
-                                            <p className="font-medium text-primary">Lower values = tighter home = better performance</p>
-                                        </div>
+                                <div>
+                                    <h5 className="font-medium text-sm mb-2">What's a Zone?</h5>
+                                    <p className="text-sm text-muted-foreground mb-2">A zone is any part of a building tested for air leakage. It could be:</p>
+                                    <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                        <p>• A full detached house</p>
+                                        <p>• A single unit in a row house or duplex</p>
+                                        <p>• A section of a large home or multi-unit building</p>
                                     </div>
+                                    <p className="text-sm text-muted-foreground mt-2">Each zone is tested separately because leakage patterns vary.</p>
+                                </div>
 
-                                    <div className="w-full h-px bg-muted"></div>
+                                <div className="w-full h-px bg-muted"></div>
 
-                                    <div>
-                                        <h5 className="font-medium text-sm mb-2">What's a Zone?</h5>
-                                        <p className="text-sm text-muted-foreground mb-2">A zone is any part of a building tested for air leakage. It could be:</p>
-                                        <div className="text-sm text-muted-foreground ml-4 space-y-1">
-                                            <p>• A full detached house</p>
-                                            <p>• A single unit in a row house or duplex</p>
-                                            <p>• A section of a large home or multi-unit building</p>
-                                        </div>
-                                        <p className="text-sm text-muted-foreground mt-2">Each zone is tested separately because leakage patterns vary.</p>
-                                    </div>
+                                <div>
+                                    <h5 className="font-medium text-sm mb-2">What's an Attached Zone?</h5>
+                                    <p className="text-sm text-muted-foreground">Zones that share a wall, ceiling, or floor with another zone are attached zones. Air can leak through shared assemblies, so careful testing is important — especially in row houses, duplexes, and condos.</p>
+                                </div>
 
-                                    <div className="w-full h-px bg-muted"></div>
+                                <div className="w-full h-px bg-muted"></div>
 
-                                    <div>
-                                        <h5 className="font-medium text-sm mb-2">What's an Attached Zone?</h5>
-                                        <p className="text-sm text-muted-foreground">Zones that share a wall, ceiling, or floor with another zone are attached zones. Air can leak through shared assemblies, so careful testing is important — especially in row houses, duplexes, and condos.</p>
-                                    </div>
-
-                                    <div className="w-full h-px bg-muted"></div>
-
-                                    <div>
-                                        <h5 className="font-medium text-sm mb-2">Why Small Units Often Show Higher Leakage</h5>
-                                        <div className="text-sm text-muted-foreground ml-4 space-y-1">
-                                            <p>• Small homes have more corners and connections relative to their size.</p>
-                                            <p>• Mechanical equipment leaks the same amount — but it's a bigger deal in a small space.</p>
-                                            <p>• As a result, ACH₅₀ values tend to look worse in smaller units.</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="w-full h-px bg-muted"></div>
-
-                                    <div>
-                                        <h5 className="font-medium text-sm mb-2">Guarded vs. Unguarded Testing</h5>
-                                        <div className="space-y-3 text-sm text-muted-foreground">
-                                            <div>
-                                                <p className="font-medium">Unguarded Test</p>
-                                                <div className="ml-4 space-y-1">
-                                                    <p>• Tests one unit at a time, while neighbours are at normal pressure.</p>
-                                                    <p>• Includes leakage between units.</p>
-                                                    <p>• Easier to do (especially as units are completed and occupied), but can overestimate leakage.</p>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <p className="font-medium">Guarded Test</p>
-                                                <div className="ml-4 space-y-1">
-                                                    <p>• All adjacent units are depressurized at the same time.</p>
-                                                    <p>• Blocks airflow between units, giving a more accurate picture of leakage to the outside.</p>
-                                                    <p>• Ideal for multi-unit buildings, but more complex.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="w-full h-px bg-muted"></div>
-
-                                    <div>
-                                        <h5 className="font-medium text-sm mb-2">How Do You Pass?</h5>
-                                        <p className="text-sm text-muted-foreground mb-2">You can earn energy code points by hitting an Airtightness Level (AL). You only need to meet one of the three metrics (ACH, NLA, or NLR):</p>
-                                        <div className="text-sm text-muted-foreground ml-4 space-y-1">
-                                            <p>• Use Table 9.36.-A for guarded tests (stricter limits)</p>
-                                            <p>• Use Table 9.36.-B for unguarded tests (more lenient for attached buildings)</p>
-                                        </div>
-                                        <p className="text-sm text-muted-foreground mt-2">In multi-unit buildings, the worst-performing zone sets the final score.</p>
-                                    </div>
-
-                                    <div className="w-full h-px bg-muted"></div>
-
-                                    <div>
-                                        <h5 className="font-medium text-sm mb-2">Other Key Points</h5>
-                                        <div className="text-sm text-muted-foreground ml-4 space-y-1">
-                                            <p>• For energy modelling, a multi-point test is required, reporting ACH₅₀, pressure exponent, and leakage area.</p>
-                                            <p>• For basic code compliance, single- or two-point tests are fine — except NLA₁₀, which needs multi-point.</p>
-                                            <p>• Combining zones? You must test each one. Use the lowest Airtightness Level for scoring if they're different. Reference the Illustrated Guide for the image above.</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="w-full h-px bg-muted"></div>
-
-                                    <div>
-                                        <h5 className="font-medium text-sm mb-2">Potential Air Leakage Locations</h5>
-                                        <p className="text-sm text-muted-foreground mb-3">Common areas where air leakage occurs in buildings:</p>
-                                        <div className="mb-3">
-                                            <img src="/lovable-uploads/9d231144-3c4e-430b-9f8c-914698eae23e.png" alt="Figure 9.25-9 Potential air leakage locations in a house showing various points where air can escape including joints at attic hatches, ceiling light fixtures, windows, electrical outlets, around posts and columns, chimney leaks, plumbing stack penetrations, and more" className="w-full h-auto border border-border rounded" onLoad={() => console.log('Air leakage diagram loaded successfully')} onError={e => console.log('Failed to load air leakage diagram:', e)} />
-                                        </div>
-                                        <p className="text-xs text-muted-foreground">
-                                            Figure 9.25-9 from Housing and Small Buildings - Illustrated User's Guide, National Building Code of Canada 2020, Part 9 of Division B
-                                        </p>
+                                <div>
+                                    <h5 className="font-medium text-sm mb-2">Why Small Units Often Show Higher Leakage</h5>
+                                    <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                        <p>• Small homes have more corners and connections relative to their size.</p>
+                                        <p>• Mechanical equipment leaks the same amount — but it's a bigger deal in a small space.</p>
+                                        <p>• As a result, ACH₅₀ values tend to look worse in smaller units.</p>
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-2">
-                                        <p className="text-xs font-medium text-blue-800">📋 Helpful Resources:</p>
-                                        <div className="space-y-1">
-                                            <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 underline hover:text-blue-800 block">
-                                                View the Blower Door Checklist
-                                            </a>
-                                            <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 underline hover:text-blue-800 block">
-                                                More airtightness information
-                                            </a>
+                                <div className="w-full h-px bg-muted"></div>
+
+                                <div>
+                                    <h5 className="font-medium text-sm mb-2">Guarded vs. Unguarded Testing</h5>
+                                    <div className="space-y-3 text-sm text-muted-foreground">
+                                        <div>
+                                            <p className="font-medium">Unguarded Test</p>
+                                            <div className="ml-4 space-y-1">
+                                                <p>• Tests one unit at a time, while neighbours are at normal pressure.</p>
+                                                <p>• Includes leakage between units.</p>
+                                                <p>• Easier to do (especially as units are completed and occupied), but can overestimate leakage.</p>
+                                            </div>
                                         </div>
+                                        <div>
+                                            <p className="font-medium">Guarded Test</p>
+                                            <div className="ml-4 space-y-1">
+                                                <p>• All adjacent units are depressurized at the same time.</p>
+                                                <p>• Blocks airflow between units, giving a more accurate picture of leakage to the outside.</p>
+                                                <p>• Ideal for multi-unit buildings, but more complex.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="w-full h-px bg-muted"></div>
+
+                                <div>
+                                    <h5 className="font-medium text-sm mb-2">How Do You Pass?</h5>
+                                    <p className="text-sm text-muted-foreground mb-2">You can earn energy code points by hitting an Airtightness Level (AL). You only need to meet one of the three metrics (ACH, NLA, or NLR):</p>
+                                    <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                        <p>• Use Table 9.36.-A for guarded tests (stricter limits)</p>
+                                        <p>• Use Table 9.36.-B for unguarded tests (more lenient for attached buildings)</p>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground mt-2">In multi-unit buildings, the worst-performing zone sets the final score.</p>
+                                </div>
+
+                                <div className="w-full h-px bg-muted"></div>
+
+                                <div>
+                                    <h5 className="font-medium text-sm mb-2">Other Key Points</h5>
+                                    <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                        <p>• For energy modelling, a multi-point test is required, reporting ACH₅₀, pressure exponent, and leakage area.</p>
+                                        <p>• For basic code compliance, single- or two-point tests are fine — except NLA₁₀, which needs multi-point.</p>
+                                        <p>• Combining zones? You must test each one. Use the lowest Airtightness Level for scoring if they're different. Reference the Illustrated Guide for the image above.</p>
+                                    </div>
+                                </div>
+
+                                <div className="w-full h-px bg-muted"></div>
+
+                                <div>
+                                    <h5 className="font-medium text-sm mb-2">Potential Air Leakage Locations</h5>
+                                    <p className="text-sm text-muted-foreground mb-3">Common areas where air leakage occurs in buildings:</p>
+                                    <div className="mb-3">
+                                        <img src="/lovable-uploads/9d231144-3c4e-430b-9f8c-914698eae23e.png" alt="Figure 9.25-9 Potential air leakage locations in a house showing various points where air can escape including joints at attic hatches, ceiling light fixtures, windows, electrical outlets, around posts and columns, chimney leaks, plumbing stack penetrations, and more" className="w-full h-auto border border-border rounded" onLoad={() => console.log('Air leakage diagram loaded successfully')} onError={e => console.log('Failed to load air leakage diagram:', e)} />
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                        Figure 9.25-9 from Housing and Small Buildings - Illustrated User's Guide, National Building Code of Canada 2020, Part 9 of Division B
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-2">
+                                    <p className="text-xs font-medium text-blue-800">📋 Helpful Resources:</p>
+                                    <div className="space-y-1">
+                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 underline hover:text-blue-800 block">
+                                            View the Blower Door Checklist
+                                        </a>
+                                        <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 underline hover:text-blue-800 block">
+                                            More airtightness information
+                                        </a>
                                     </div>
                                 </div>
                             </div>
-                        </DialogContent>
-                    </Dialog>
+                        </div>
+                    </InfoButton>
                 </div>
                 <Select value={selections.airtightness} onValueChange={value => setSelections(prev => ({
                     ...prev,
@@ -723,50 +689,33 @@ export default function Performance9368Section({
             <div className="space-y-3">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium text-slate-100">HRV/ERV System (Required for 9.36.8)</label>
-                    <Dialog>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <DialogTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-500/20">
-                                        <Info className="h-4 w-4" />
-                                    </Button>
-                                </DialogTrigger>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>More Info</p>
-                            </TooltipContent>
-                        </Tooltip>
-                        <DialogContent className="w-96 p-4" >
-                            <DialogHeader>
-                                <DialogTitle>HRV/ERV Required for 9.36.8 Path</DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-4">
-                                <div>
-                                    <p className="text-xs text-muted-foreground">
-                                        An HRV or ERV is mandatory for the 9.36.8 Tiered Prescriptive Path. This system brings in fresh outdoor air while recovering heat from the stale indoor air it exhausts.
-                                    </p>
-                                </div>
+                    <InfoButton title="HRV/ERV Required for 9.36.8 Path">
+                        <div className="space-y-4">
+                            <div>
+                                <p className="text-xs text-muted-foreground">
+                                    An HRV or ERV is mandatory for the 9.36.8 Tiered Prescriptive Path. This system brings in fresh outdoor air while recovering heat from the stale indoor air it exhausts.
+                                </p>
+                            </div>
 
-                                <div>
-                                    <h5 className="font-medium text-sm mb-1">Benefits of HRV/ERV systems:</h5>
-                                    <ul className="text-xs text-muted-foreground space-y-1 ml-4 list-disc">
-                                        <li><strong>Better indoor air quality:</strong> Removes stale air, moisture, odors, and pollutants while bringing in fresh air.</li>
-                                        <li><strong>Energy savings:</strong> Recovery up to 80-90% of the heat from outgoing air, reducing heating costs.</li>
-                                        <li><strong>Comfort:</strong> Maintains consistent temperatures and humidity levels throughout your home.</li>
-                                        <li><strong>Code compliance:</strong> Required for this pathway and enables more flexible building envelope options.</li>
-                                    </ul>
-                                </div>
+                            <div>
+                                <h5 className="font-medium text-sm mb-1">Benefits of HRV/ERV systems:</h5>
+                                <ul className="text-xs text-muted-foreground space-y-1 ml-4 list-disc">
+                                    <li><strong>Better indoor air quality:</strong> Removes stale air, moisture, odors, and pollutants while bringing in fresh air.</li>
+                                    <li><strong>Energy savings:</strong> Recovery up to 80-90% of the heat from outgoing air, reducing heating costs.</li>
+                                    <li><strong>Comfort:</strong> Maintains consistent temperatures and humidity levels throughout your home.</li>
+                                    <li><strong>Code compliance:</strong> Required for this pathway and enables more flexible building envelope options.</li>
+                                </ul>
+                            </div>
 
-                                <div>
-                                    <h5 className="font-medium text-sm mb-1">HRV vs. ERV:</h5>
-                                    <div className="text-xs text-muted-foreground space-y-1">
-                                        <p><strong>HRV (Heat Recovery Ventilator):</strong> Recovers heat only. Best for cold, dry climates like most of Canada.</p>
-                                        <p><strong>ERV (Energy Recovery Ventilator):</strong> Recovers both heat and moisture. Better for humid climates or homes with high humidity issues.</p>
-                                    </div>
+                            <div>
+                                <h5 className="font-medium text-sm mb-1">HRV vs. ERV:</h5>
+                                <div className="text-xs text-muted-foreground space-y-1">
+                                    <p><strong>HRV (Heat Recovery Ventilator):</strong> Recovers heat only. Best for cold, dry climates like most of Canada.</p>
+                                    <p><strong>ERV (Energy Recovery Ventilator):</strong> Recovers both heat and moisture. Better for humid climates or homes with high humidity issues.</p>
                                 </div>
                             </div>
-                        </DialogContent>
-                    </Dialog>
+                        </div>
+                    </InfoButton>
                 </div>
 
                 {/* Auto-set HRV to required for 9368 and show notification */}
