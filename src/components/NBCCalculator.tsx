@@ -67,6 +67,8 @@ const NBCCalculator = ({
   const steps = ["Project Information", "Compliance Path", "Technical Specifications", "Documents & Submission"];
   const formContainerRef = useRef<HTMLDivElement>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, boolean>>({});
+  const [isSticky, setIsSticky] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   const [selections, setSelections] = useState({
     firstName: "",
@@ -160,6 +162,39 @@ const NBCCalculator = ({
   const { uploadedFiles, setUploadedFiles, isUploading, uploadFile, removeFile } = useFileUploads(user);
 
   const [agreementChecked, setAgreementChecked] = useState(false);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (window.innerWidth >= 1024) {
+          setIsSticky(!entry.isIntersecting);
+        } else {
+          setIsSticky(false);
+        }
+      },
+      { rootMargin: "0px" }
+    );
+
+    observer.observe(sentinel);
+
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setIsSticky(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      if (sentinel) {
+        observer.unobserve(sentinel);
+      }
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const ensureProjectExists = async (): Promise<string | null> => {
     if (projectId) return projectId;
@@ -660,6 +695,7 @@ const NBCCalculator = ({
   }
 
   return <div className="min-h-screen p-4 relative">
+    <div ref={sentinelRef} className="absolute top-0 h-px w-full" />
     <HelpDrawer />
 
     {selections.compliancePath === "9368" && <div className="fixed top-20 right-4 z-50 w-72">
@@ -688,7 +724,7 @@ const NBCCalculator = ({
         </p>
       </div> */}
 
-      <Stepper steps={steps} currentStep={currentStep} onStepClick={handleStepClick} />
+      <Stepper steps={steps} currentStep={currentStep} onStepClick={handleStepClick} isSticky={isSticky} />
 
       {currentStep === 1 && (
         <ProjectInformationSection

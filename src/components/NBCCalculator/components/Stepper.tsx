@@ -6,11 +6,15 @@ interface StepperProps {
   steps: string[];
   currentStep: number;
   onStepClick: (step: number) => void;
+  isSticky?: boolean;
 }
 
-const Stepper = ({ steps, currentStep, onStepClick }: StepperProps) => {
+const Stepper = ({ steps, currentStep, onStepClick, isSticky = false }: StepperProps) => {
   return (
-    <div className="lg:sticky top-0 z-30 bg-slate-800/50 backdrop-blur-lg -mx-5 -mt-5 mb-8 px-5 py-4 rounded-t-lg border-b border-slate-400/50">
+    <div className={cn(
+      "lg:sticky top-0 z-30 backdrop-blur-lg -mx-5 -mt-5 mb-8 px-5 py-4 rounded-t-lg border-b border-slate-400/50 transition-all duration-300",
+      isSticky ? "bg-slate-700/90" : "bg-slate-800/50"
+    )}>
       <div className="flex items-center justify-center w-full max-w-3xl mx-auto">
         {steps.map((step, index) => {
           const stepNumber = index + 1;
@@ -30,20 +34,22 @@ const Stepper = ({ steps, currentStep, onStepClick }: StepperProps) => {
               >
                 <div
                   className={cn(
-                    "flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-300",
+                    "flex items-center justify-center rounded-full border-2 transition-all duration-300",
                     isCompleted
                       ? "bg-green-500 border-green-500 text-white"
                       : isActive
                       ? "bg-primary border-primary text-primary-foreground"
-                      : "bg-slate-700 border-slate-600 text-slate-300"
+                      : "bg-slate-700 border-slate-600 text-slate-300",
+                    isSticky ? "w-6 h-6" : "w-10 h-10"
                   )}
                 >
-                  {isCompleted ? <CheckCircle className="w-6 h-6" /> : stepNumber}
+                  {isCompleted ? <CheckCircle className="w-5 h-5" /> : stepNumber}
                 </div>
                 <p
                   className={cn(
-                    "mt-2 text-sm font-medium transition-colors duration-300",
-                    isActive || isCompleted ? "text-white" : "text-slate-400"
+                    "mt-2 font-medium transition-all duration-300",
+                    isActive || isCompleted ? "text-white" : "text-slate-400",
+                    isSticky ? "text-xs" : "text-sm"
                   )}
                 >
                   {step}
