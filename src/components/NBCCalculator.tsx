@@ -765,15 +765,17 @@ const NBCCalculator = ({
                 <CardHeader>
                   <CardTitle className="text-white">Compliance Results</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-center">
-                    <p className="text-sm text-slate-300">Total Points</p>
-                    <p className="text-5xl font-bold text-primary">{totalPoints.toFixed(1)}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm text-slate-300">Compliance Tier</p>
-                    <p className={`text-2xl font-bold ${compliance.status === "success" ? "text-green-400" : compliance.status === "warning" ? "text-yellow-400" : "text-red-400"}`}>{compliance.tier}</p>
-                    <p className="text-xs text-slate-400">{compliance.description}</p>
+                <CardContent className="text-center py-8">
+                  <div className="space-y-6">
+                    <div>
+                      <p className="text-sm text-slate-300 uppercase tracking-wider">Total Points</p>
+                      <p className="text-7xl font-bold text-purple-400">{totalPoints.toFixed(1)}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-300 uppercase tracking-wider">Compliance Tier</p>
+                      <p className={`text-5xl font-bold ${compliance.status === "success" ? "text-green-400" : compliance.status === "warning" ? "text-yellow-400" : "text-red-400"}`}>{compliance.tier}</p>
+                      <p className="text-sm text-slate-400 mt-1">{compliance.description}</p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
