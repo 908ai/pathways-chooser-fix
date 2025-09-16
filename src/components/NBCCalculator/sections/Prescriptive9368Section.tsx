@@ -196,7 +196,7 @@ export default function Performance9368Section({
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <DialogTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-500/20">
                                         <Info className="h-4 w-4" />
                                     </Button>
                                 </DialogTrigger>
@@ -330,7 +330,7 @@ export default function Performance9368Section({
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <DialogTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-500/20">
                                         <Info className="h-4 w-4" />
                                     </Button>
                                 </DialogTrigger>
@@ -727,7 +727,7 @@ export default function Performance9368Section({
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <DialogTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-500/20">
                                         <Info className="h-4 w-4" />
                                     </Button>
                                 </DialogTrigger>

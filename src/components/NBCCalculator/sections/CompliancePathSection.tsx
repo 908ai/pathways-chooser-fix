@@ -56,7 +56,7 @@ export default function CompliancePathSection({
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <DialogTrigger asChild>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-500/20">
                                                 <Info className="h-4 w-4" />
                                             </Button>
                                         </DialogTrigger>
@@ -200,6 +200,8 @@ export default function CompliancePathSection({
                             floorsSlabsSelected: [],
                             foundationWallsRSI: "",
                             slabOnGradeRSI: "",
+                            slabOnGradeIntegralFootingRSI: "",
+                            floorsOverUnheatedSpacesRSI: "",
                             unheatedFloorBelowFrostRSI: "",
                             unheatedFloorAboveFrostRSI: "",
                             heatedFloorsRSI: "",
@@ -266,14 +268,15 @@ export default function CompliancePathSection({
                          </div>
                         
                          {/* Front Door Orientation for Performance Paths */}
-                         {(selections.compliancePath === "9365" || selections.compliancePath === "9367") && <div className="space-y-2">
+                         {(selections.compliancePath === "9365" ||
+                          selections.compliancePath === "9367") && <div className="space-y-2">
                              <div className="flex items-center gap-2">
                                <label className="text-sm font-medium">Front Door Orientation</label>
                                   <Dialog>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <DialogTrigger asChild>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-500/20">
                                                     <Info className="h-4 w-4" />
                                                 </Button>
                                             </DialogTrigger>

@@ -92,7 +92,7 @@ export default function Performance9365Section({
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <DialogTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-500/20">
                                         <Info className="h-4 w-4" />
                                     </Button>
                                 </DialogTrigger>
@@ -433,7 +433,7 @@ export default function Performance9365Section({
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <DialogTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-500/20">
                                         <Info className="h-4 w-4" />
                                     </Button>
                                 </DialogTrigger>
@@ -552,6 +552,19 @@ export default function Performance9365Section({
                                             <p>• For basic code compliance, single- or two-point tests are fine — except NLA₁₀, which needs multi-point.</p>
                                             <p>• Combining zones? You must test each one. Use the lowest Airtightness Level for scoring if they're different. Reference the Illustrated Guide for the image above.</p>
                                         </div>
+                                    </div>
+
+                                    <div className="w-full h-px bg-muted"></div>
+
+                                    <div>
+                                        <h5 className="font-medium text-sm mb-2">Potential Air Leakage Locations</h5>
+                                        <p className="text-sm text-muted-foreground mb-3">Common areas where air leakage occurs in buildings:</p>
+                                        <div className="mb-3">
+                                            <img src="/lovable-uploads/9d231144-3c4e-430b-9f8c-914698eae23e.png" alt="Figure 9.25-9 Potential air leakage locations in a house showing various points where air can escape including joints at attic hatches, ceiling light fixtures, windows, electrical outlets, around posts and columns, chimney leaks, plumbing stack penetrations, and more" className="w-full h-auto border border-border rounded" onLoad={() => console.log('Air leakage diagram loaded successfully')} onError={e => console.log('Failed to load air leakage diagram:', e)} />
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">
+                                            Figure 9.25-9 from Housing and Small Buildings - Illustrated User's Guide, National Building Code of Canada 2020, Part 9 of Division B
+                                        </p>
                                     </div>
                                 </div>
 
@@ -701,7 +714,7 @@ export default function Performance9365Section({
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <DialogTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-500/20">
                                         <Info className="h-4 w-4" />
                                     </Button>
                                 </DialogTrigger>
@@ -868,7 +881,7 @@ export default function Performance9365Section({
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <DialogTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-100">
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-500/20">
                                             <Info className="h-4 w-4" />
                                         </Button>
                                     </DialogTrigger>
@@ -908,7 +921,7 @@ export default function Performance9365Section({
                                 ...prev,
                                 hasSecondaryHrv: e.target.value,
                                 secondaryHrvEfficiency: "" // Reset when changing
-                            }))} className="w-4 h-4 text-primary" />
+                            }))} className="w-4 h-4 text-emerald-500" />
                             <span className="text-sm">Yes</span>
                         </label>
                         <label className="flex items-center gap-2">
@@ -916,7 +929,7 @@ export default function Performance9365Section({
                                 ...prev,
                                 hasSecondaryHrv: e.target.value,
                                 secondaryHrvEfficiency: ""
-                            }))} className="w-4 h-4 text-primary" />
+                            }))} className="w-4 h-4 text-emerald-500" />
                             <span className="text-sm">No</span>
                         </label>
                     </div>
