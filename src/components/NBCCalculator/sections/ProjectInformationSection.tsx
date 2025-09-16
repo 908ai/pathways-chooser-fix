@@ -28,7 +28,7 @@ export default function ProjectInformationSection({
     <>
       {
         <Card className="bg-slate-700/40">
-           <CardHeader className="pb-4">
+           {/* <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2 text-white">
                 📋 Project Information
                 {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? <Badge variant="outline" className="ml-2 border-orange-400 text-orange-300 bg-orange-900/30">
@@ -40,8 +40,8 @@ export default function ProjectInformationSection({
               <CardDescription className="text-slate-200">
                 Personal details, building location, and compliance path selection
               </CardDescription>
-           </CardHeader>
-           <CardContent className="space-y-6">
+           </CardHeader> */}
+           <CardContent className="space-y-6 pt-6">
              {/* Personal/Contact Information */}
              <div className="space-y-4">
                <h4 className="text-md font-medium text-white border-b border-slate-500 pb-2 tracking-wide">Personal & Contact Information <span className="text-red-400 font-semibold">(Required)</span></h4>
@@ -92,7 +92,7 @@ export default function ProjectInformationSection({
              </div>
 
              {/* Building & Location Information */}
-             <div className="space-y-4">
+             <div className="space-y-4 pt-10">
                <h4 className="text-md font-medium text-white border-b border-slate-500 pb-2 tracking-wide">Building & Location Details <span className="text-red-400 font-semibold">(Required)</span></h4>
 
                <div className="space-y-2">

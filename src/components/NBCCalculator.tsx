@@ -695,7 +695,7 @@ const NBCCalculator = ({
   }
 
   return <div className="min-h-screen p-4 relative">
-    <div ref={sentinelRef} className="absolute top-0 h-px w-full" />
+    <div ref={sentinelRef} className="absolute top-0 h-px" />
     <HelpDrawer />
 
     <Stepper steps={steps} currentStep={currentStep} onStepClick={handleStepClick} isSticky={isSticky} />
