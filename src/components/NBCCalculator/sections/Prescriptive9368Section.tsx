@@ -108,11 +108,11 @@ export default function Performance9368Section({
         <div className="space-y-6">
             {/* Ceiling/Attic Insulation */}
             <div className="space-y-2">
-                <label className="text-sm font-medium">Effective RSI - Ceilings below Attics</label>
+                <label className="text-sm font-medium text-slate-100">Effective RSI - Ceilings below Attics</label>
                 <Input type="number" step="0.01" min="0" placeholder={selections.compliancePath === "9368" ? "Min RSI 8.67 (R-49.2) with HRV" : selections.hasHrv === "with_hrv" ? "Min RSI 8.67 (R-49.2) with HRV" : selections.hasHrv === "without_hrv" ? "Min RSI 10.43 (R-59.2) without HRV" : "Min RSI 8.67 (R-49.2) with HRV, 10.43 (R-59.2) without HRV"} value={selections.ceilingsAtticRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     ceilingsAtticRSI: e.target.value
-                }))} />
+                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                 {(() => {
                     // Skip R-value validation for 9368 path - allow any input
                     if (selections.compliancePath === "9368") {
@@ -144,12 +144,12 @@ export default function Performance9368Section({
 
             {/* Wall Insulation */}
             <div className="space-y-2">
-                <label className="text-sm font-medium">Above Grade Walls - RSI Value</label>
+                <label className="text-sm font-medium text-slate-100">Above Grade Walls - RSI Value</label>
                 <Select value={selections.wallRSI} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     wallRSI: value
                 }))}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                         <SelectValue placeholder="Select wall insulation level (e.g., R20 Batt/2x6/16&quot;OC)" />
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px] overflow-y-auto">
@@ -167,12 +167,12 @@ export default function Performance9368Section({
 
             {/* Below Grade Walls */}
             <div className="space-y-2">
-                <label className="text-sm font-medium">Below Grade Walls - RSI Value</label>
+                <label className="text-sm font-medium text-slate-100">Below Grade Walls - RSI Value</label>
                 <Select value={selections.belowGradeRSI} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     belowGradeRSI: value
                 }))}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                         <SelectValue placeholder="Select below grade insulation (e.g., R12 Batt/2x4/24&quot;OC)" />
                     </SelectTrigger>
                     <SelectContent>
@@ -191,7 +191,7 @@ export default function Performance9368Section({
             {/* Windows */}
             <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                    <label className="text-sm font-medium">Windows - U-Value</label>
+                    <label className="text-sm font-medium text-slate-100">Windows - U-Value</label>
                     <Dialog>
                         <Tooltip>
                             <TooltipTrigger asChild>
@@ -251,7 +251,7 @@ export default function Performance9368Section({
                     ...prev,
                     windowUValue: value
                 }))}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                         <SelectValue placeholder="Select window performance" />
                     </SelectTrigger>
                     <SelectContent>
@@ -269,7 +269,7 @@ export default function Performance9368Section({
                 {selections.windowUValue && <>
 
                     <div className="flex items-center gap-2">
-                        <label className="text-sm font-medium">Energy Efficiency Points for Windows & Doors</label>
+                        <label className="text-sm font-medium text-slate-100">Energy Efficiency Points for Windows & Doors</label>
                         <Dialog>
                             <DialogTrigger asChild>
                                 <Button variant="outline" size="sm" className="h-8 px-3 text-sm font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
@@ -325,7 +325,7 @@ export default function Performance9368Section({
             {/* Airtightness */}
             <div className="space-y-2">
                 <div className="flex items-center gap-3">
-                    <label className="text-sm font-medium">Airtightness Level</label>
+                    <label className="text-sm font-medium text-slate-100">Airtightness Level</label>
                     <Dialog>
                         <Tooltip>
                             <TooltipTrigger asChild>
@@ -486,7 +486,7 @@ export default function Performance9368Section({
                     ...prev,
                     airtightness: value
                 }))}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                         <SelectValue placeholder="Select airtightness level" />
                     </SelectTrigger>
                     <SelectContent>
@@ -691,7 +691,7 @@ export default function Performance9368Section({
                             midConstructionBlowerDoorPlanned: e.target.checked
                         }))} className="w-4 h-4 text-primary mt-1" />
                         <div className="flex-1">
-                            <label htmlFor="midConstructionBlowerDoor-9368" className="text-sm font-medium cursor-pointer">
+                            <label htmlFor="midConstructionBlowerDoor-9368" className="text-sm font-medium cursor-pointer text-slate-100">
                                 Mid-Construction Blower Door Test Planned
                             </label>
                         </div>
@@ -722,7 +722,7 @@ export default function Performance9368Section({
             {/* HRV/ERV Section for 9368 - Mandatory */}
             <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                    <label className="text-sm font-medium">HRV/ERV System (Required for 9.36.8)</label>
+                    <label className="text-sm font-medium text-slate-100">HRV/ERV System (Required for 9.36.8)</label>
                     <Dialog>
                         <Tooltip>
                             <TooltipTrigger asChild>
@@ -777,7 +777,7 @@ export default function Performance9368Section({
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">HRV/ERV Efficiency</label>
+                    <label className="text-sm font-medium text-slate-100">HRV/ERV Efficiency</label>
                     <Select value={selections.hrvEfficiency || ""} onValueChange={value => {
                         setSelections(prev => ({
                             ...prev,
@@ -785,7 +785,7 @@ export default function Performance9368Section({
                             hrvEfficiency: value
                         }));
                     }}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                             <SelectValue placeholder="Select HRV/ERV efficiency range" />
                         </SelectTrigger>
                         <SelectContent className="bg-background border shadow-lg z-50">
@@ -801,12 +801,12 @@ export default function Performance9368Section({
 
             {/* Service Water Heater */}
             {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <div className="space-y-2">
-                <label className="text-sm font-medium">Service Water Heater</label>
+                <label className="text-sm font-medium text-slate-100">Service Water Heater</label>
                 <Select value={selections.waterHeater} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     waterHeater: value
                 }))}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                         <SelectValue placeholder="Select water heater type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -822,7 +822,7 @@ export default function Performance9368Section({
                 <h5 className="font-medium text-green-800">Multi-Unit Building Heating Systems</h5>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Will there be multiple heating systems in this building?</label>
+                    <label className="text-sm font-medium text-slate-100">Will there be multiple heating systems in this building?</label>
                     <div className="flex gap-4">
                         <label className="flex items-center gap-2">
                             <input type="radio" name="hasMurbMultipleHeating" value="yes" checked={selections.hasMurbMultipleHeating === "yes"} onChange={e => setSelections(prev => ({
@@ -834,7 +834,7 @@ export default function Performance9368Section({
                                 murbSecondIndirectTank: "",
                                 murbSecondIndirectTankSize: ""
                             }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm">Yes</span>
+                            <span className="text-sm text-slate-100">Yes</span>
                         </label>
                         <label className="flex items-center gap-2">
                             <input type="radio" name="hasMurbMultipleHeating" value="no" checked={selections.hasMurbMultipleHeating === "no"} onChange={e => setSelections(prev => ({
@@ -845,14 +845,14 @@ export default function Performance9368Section({
                                 murbSecondIndirectTank: "",
                                 murbSecondIndirectTankSize: ""
                             }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm">No</span>
+                            <span className="text-sm text-slate-100">No</span>
                         </label>
                     </div>
                 </div>
 
                 {selections.hasMurbMultipleHeating === "yes" && <div className="space-y-4">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Second Heating System Type</label>
+                        <label className="text-sm font-medium text-slate-100">Second Heating System Type</label>
                         <Select value={selections.murbSecondHeatingType} onValueChange={value => setSelections(prev => ({
                             ...prev,
                             murbSecondHeatingType: value,
@@ -861,7 +861,7 @@ export default function Performance9368Section({
                             murbSecondIndirectTank: "",
                             murbSecondIndirectTankSize: ""
                         }))}>
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                                 <SelectValue placeholder="Select heating type" />
                             </SelectTrigger>
                             <SelectContent className="bg-background border shadow-lg z-50">
@@ -873,11 +873,11 @@ export default function Performance9368Section({
                     </div>
 
                     {selections.murbSecondHeatingType && <div className="space-y-2">
-                        <label className="text-sm font-medium">Second Heating System Efficiency</label>
+                        <label className="text-sm font-medium text-slate-100">Second Heating System Efficiency</label>
                         <Input type="text" placeholder={selections.murbSecondHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.murbSecondHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.murbSecondHeatingEfficiency} onChange={e => setSelections(prev => ({
                             ...prev,
                             murbSecondHeatingEfficiency: e.target.value
-                        }))} />
+                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                         {selections.murbSecondHeatingEfficiency && selections.murbSecondHeatingType !== 'heat-pump' && (() => {
                             const inputValue = parseFloat(selections.murbSecondHeatingEfficiency);
                             let minValue = 0;
@@ -905,12 +905,12 @@ export default function Performance9368Section({
 
                     {selections.murbSecondHeatingType === 'boiler' && <div className="space-y-4">
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Are you installing an indirect tank for the second heating system?</label>
+                            <label className="text-sm font-medium text-slate-100">Are you installing an indirect tank for the second heating system?</label>
                             <Select value={selections.murbSecondIndirectTank} onValueChange={value => setSelections(prev => ({
                                 ...prev,
                                 murbSecondIndirectTank: value
                             }))}>
-                                <SelectTrigger>
+                                <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                                     <SelectValue placeholder="Select option" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background border shadow-lg z-50">
@@ -921,12 +921,12 @@ export default function Performance9368Section({
                         </div>
 
                         {selections.murbSecondIndirectTank === 'yes' && <div className="space-y-2">
-                            <label className="text-sm font-medium">Second System Indirect Tank Size</label>
+                            <label className="text-sm font-medium text-slate-100">Second System Indirect Tank Size</label>
                             <Select value={selections.murbSecondIndirectTankSize} onValueChange={value => setSelections(prev => ({
                                 ...prev,
                                 murbSecondIndirectTankSize: value
                             }))}>
-                                <SelectTrigger>
+                                <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                                     <SelectValue placeholder="Select tank size" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background border shadow-lg z-50">
@@ -947,7 +947,7 @@ export default function Performance9368Section({
                 <h5 className="font-medium text-orange-800">Multi-Unit Building Water Heating</h5>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Will there be multiple hot water system types in this building?</label>
+                    <label className="text-sm font-medium text-slate-100">Will there be multiple hot water system types in this building?</label>
                     <div className="flex gap-4">
                         <label className="flex items-center gap-2">
                             <input type="radio" name="hasMurbMultipleWaterHeaters" value="yes" checked={selections.hasMurbMultipleWaterHeaters === "yes"} onChange={e => setSelections(prev => ({
@@ -957,7 +957,7 @@ export default function Performance9368Section({
                                 // Reset when changing
                                 murbSecondWaterHeaterType: ""
                             }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm">Yes</span>
+                            <span className="text-sm text-slate-100">Yes</span>
                         </label>
                         <label className="flex items-center gap-2">
                             <input type="radio" name="hasMurbMultipleWaterHeaters" value="no" checked={selections.hasMurbMultipleWaterHeaters === "no"} onChange={e => setSelections(prev => ({
@@ -966,14 +966,14 @@ export default function Performance9368Section({
                                 murbSecondWaterHeater: "",
                                 murbSecondWaterHeaterType: ""
                             }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm">No</span>
+                            <span className="text-sm text-slate-100">No</span>
                         </label>
                     </div>
                 </div>
 
                 {selections.hasMurbMultipleWaterHeaters === "yes" && <div className="space-y-4">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Second Water Heater Type</label>
+                        <label className="text-sm font-medium text-slate-100">Second Water Heater Type</label>
                         <Select value={selections.murbSecondWaterHeaterType} onValueChange={value => {
                             setSelections(prev => ({
                                 ...prev,
@@ -981,7 +981,7 @@ export default function Performance9368Section({
                                 murbSecondWaterHeater: "" // Reset efficiency when type changes
                             }));
                         }}>
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                                 <SelectValue placeholder="Select water heater type" />
                             </SelectTrigger>
                             <SelectContent className="bg-background border shadow-lg z-50">
@@ -994,7 +994,7 @@ export default function Performance9368Section({
                     </div>
 
                     {selections.murbSecondWaterHeaterType && <div className="space-y-2">
-                        <label className="text-sm font-medium">Second Water Heater Efficiency</label>
+                        <label className="text-sm font-medium text-slate-100">Second Water Heater Efficiency</label>
                         <Input type="text" placeholder={(() => {
                             switch (selections.murbSecondWaterHeaterType) {
                                 case "gas-storage":
@@ -1013,7 +1013,7 @@ export default function Performance9368Section({
                         })()} value={selections.murbSecondWaterHeater} onChange={e => setSelections(prev => ({
                             ...prev,
                             murbSecondWaterHeater: e.target.value
-                        }))} />
+                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                     </div>}
                 </div>}
             </div>}

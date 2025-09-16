@@ -22,7 +22,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
             {<>
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">
-                        <label className="text-sm font-medium">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
+                        <label className="text-sm font-medium text-slate-100">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
                         <Dialog>
                             <Tooltip>
                                 <TooltipTrigger asChild>
@@ -83,7 +83,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                         ...prev,
                         hasF280Calculation: value
                     }))}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                             <SelectValue placeholder="Select option" />
                         </SelectTrigger>
                         <SelectContent className="bg-background border shadow-lg z-50">
@@ -96,13 +96,13 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
 
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Is there any cathedral ceilings or flat roof?</label>
+                    <label className="text-sm font-medium text-slate-100">Is there any cathedral ceilings or flat roof?</label>
                     <Select value={selections.hasCathedralOrFlatRoof} onValueChange={value => setSelections(prev => ({
                         ...prev,
                         hasCathedralOrFlatRoof: value,
                         cathedralFlatRSI: ""
                     }))}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                             <SelectValue placeholder="Select option" />
                         </SelectTrigger>
                         <SelectContent className="bg-background border shadow-lg z-50">
@@ -113,11 +113,11 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                 </div>
 
                 {selections.hasCathedralOrFlatRoof === "yes" && <div className="space-y-2">
-                    <label className="text-sm font-medium">Cathedral / Flat Roofs</label>
+                    <label className="text-sm font-medium text-slate-100">Cathedral / Flat Roofs</label>
                     <Input type="number" step="0.01" min="0" placeholder="Min RSI 5.02 or N/A" value={selections.cathedralFlatRSI} onChange={e => setSelections(prev => ({
                         ...prev,
                         cathedralFlatRSI: e.target.value
-                    }))} />
+                    }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                     {(() => {
                         const minRSI = 5.02;
                         const validation = validateRSI(selections.cathedralFlatRSI, minRSI, "cathedral/flat roofs");
@@ -138,12 +138,12 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                 </div>}
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Above Grade Walls</label>
+                    <label className="text-sm font-medium text-slate-100">Above Grade Walls</label>
                     <Select value={selections.wallRSI} onValueChange={value => setSelections(prev => ({
                         ...prev,
                         wallRSI: value
                     }))}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                             <SelectValue placeholder="Select wall RSI value (e.g., R20 Batt/2x6/16&quot;OC)" />
                         </SelectTrigger>
                         <SelectContent className="max-h-[300px] overflow-y-auto">
@@ -165,12 +165,12 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Below Grade Walls (Foundation Walls)</label>
+                    <label className="text-sm font-medium text-slate-100">Below Grade Walls (Foundation Walls)</label>
                     <Select value={selections.belowGradeRSI} onValueChange={value => setSelections(prev => ({
                         ...prev,
                         belowGradeRSI: value
                     }))}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                             <SelectValue placeholder="Select below grade RSI value (e.g., R12 Batt/2x4/24&quot;OC)" />
                         </SelectTrigger>
                         <SelectContent>
@@ -192,11 +192,11 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</label>
+                    <label className="text-sm font-medium text-slate-100">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</label>
                     <Input type="number" step="0.01" min="0" placeholder="Min. RSI 5.02 or N/A" value={selections.floorsUnheatedRSI} onChange={e => setSelections(prev => ({
                         ...prev,
                         floorsUnheatedRSI: e.target.value
-                    }))} />
+                    }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                     {selections.floorsUnheatedRSI && parseFloat(selections.floorsUnheatedRSI) < 5.02 && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
                         <p className="text-sm text-destructive font-medium">
                             ⚠️ Effective RSI/R-Value Required
@@ -213,11 +213,11 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Floors over Garage (Bonus Floor)</label>
+                    <label className="text-sm font-medium text-slate-100">Floors over Garage (Bonus Floor)</label>
                     <Input type="number" step="0.01" min="0" placeholder="Min RSI 4.86 or N/A" value={selections.floorsGarageRSI} onChange={e => setSelections(prev => ({
                         ...prev,
                         floorsGarageRSI: e.target.value
-                    }))} />
+                    }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                     {selections.floorsGarageRSI && parseFloat(selections.floorsGarageRSI) < 4.86 && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
                         <p className="text-sm text-destructive font-medium">
                             ⚠️ Effective RSI/R-Value Required
@@ -234,7 +234,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Does the house have a slab on grade with Integral Footing?</label>
+                    <label className="text-sm font-medium text-slate-100">Does the house have a slab on grade with Integral Footing?</label>
                     <Select value={selections.hasSlabOnGrade} onValueChange={value => {
                         setSelections(prev => ({
                             ...prev,
@@ -242,7 +242,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                             slabOnGradeRSI: ""
                         }));
                     }}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                             <SelectValue placeholder="Select yes or no" />
                         </SelectTrigger>
                         <SelectContent>
@@ -254,11 +254,11 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
 
                 {selections.hasSlabOnGrade === "yes" && <div className="space-y-4">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Slab on Grade with Integral Footing</label>
+                        <label className="text-sm font-medium text-slate-100">Slab on Grade with Integral Footing</label>
                         <Input type="number" step="0.01" min="0" placeholder="Min RSI 2.84 or N/A" value={selections.slabOnGradeRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             slabOnGradeRSI: e.target.value
-                        }))} />
+                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                         {selections.slabOnGradeRSI && parseFloat(selections.slabOnGradeRSI) < 2.84 && <WarningButton warningId="slabOnGradeRSI-low" title="RSI Value Too Low" variant="destructive">
                             <p className="text-xs text-destructive/80">
                                 The RSI value must be increased to at least 2.84 to meet NBC requirements for slab on grade with integral footing.
@@ -268,7 +268,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                 </div>}
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Is the house installing or roughing in in-floor heat?</label>
+                    <label className="text-sm font-medium text-slate-100">Is the house installing or roughing in in-floor heat?</label>
                     <Select value={selections.hasInFloorHeat} onValueChange={value => {
                         setSelections(prev => ({
                             ...prev,
@@ -278,7 +278,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                             heatedFloorsRSI: ""
                         }));
                     }}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                             <SelectValue placeholder="Select yes or no" />
                         </SelectTrigger>
                         <SelectContent>
@@ -296,11 +296,11 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                     </WarningButton>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Heated Floors</label>
+                        <label className="text-sm font-medium text-slate-100">Heated Floors</label>
                         <Input type="number" step="0.01" min="0" placeholder={`Enter RSI value (minimum ${selections.province === "saskatchewan" ? "2.84" : "1.34"})`} value={selections.heatedFloorsRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             heatedFloorsRSI: e.target.value
-                        }))} />
+                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                         {(() => {
                             const minRSI = selections.province === "saskatchewan" ? 2.84 : 1.34;
                             const validation = validateRSI(selections.heatedFloorsRSI, minRSI, `heated floors in ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`);
@@ -318,11 +318,11 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
 
                 {selections.hasInFloorHeat === "no" && <>
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Unheated Floor Below Frost Line</label>
+                        <label className="text-sm font-medium text-slate-100">Unheated Floor Below Frost Line</label>
                         <Input type="text" placeholder="Enter RSI value or 'uninsulated'" value={selections.unheatedFloorBelowFrostRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             unheatedFloorBelowFrostRSI: e.target.value
-                        }))} />
+                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                         <div className="p-3 bg-muted border border-border rounded-md">
                             <p className="text-sm text-foreground font-medium">
                                 ℹ️ Unheated Floor Below Frost Line
@@ -334,11 +334,11 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Unheated Floor Above Frost Line</label>
+                        <label className="text-sm font-medium text-slate-100">Unheated Floor Above Frost Line</label>
                         <Input type="number" step="0.01" min="0" placeholder="Min RSI 1.96 (R-11.1)" value={selections.unheatedFloorAboveFrostRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             unheatedFloorAboveFrostRSI: e.target.value
-                        }))} />
+                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                         {selections.unheatedFloorAboveFrostRSI && parseFloat(selections.unheatedFloorAboveFrostRSI) < 1.96 && <WarningButton warningId="unheatedFloorAboveFrostRSI-low" title="RSI Value Too Low" variant="destructive">
                             <p className="text-xs text-destructive/80">
                                 The RSI value must be increased to at least 1.96 to meet NBC requirements for unheated floor above frost line.
@@ -354,12 +354,12 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                 </WarningButton>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Window & Door U-Value (W/(m²·K))</label>
+                    <label className="text-sm font-medium text-slate-100">Window & Door U-Value (W/(m²·K))</label>
                     <Select value={selections.windowUValue} onValueChange={value => setSelections(prev => ({
                         ...prev,
                         windowUValue: value
                     }))}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                             <SelectValue placeholder="Select window U-value" />
                         </SelectTrigger>
                         <SelectContent>
@@ -381,7 +381,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                         </WarningButton>
 
                         <div className="flex items-center gap-2">
-                            <label className="text-sm font-medium">Energy Efficiency Points for Windows & Doors</label>
+                            <label className="text-sm font-medium text-slate-100">Energy Efficiency Points for Windows & Doors</label>
                             <Dialog>
                                 <DialogTrigger asChild>
                                     <Button variant="outline" size="sm" className="h-8 px-3 text-sm font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
@@ -444,7 +444,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">Does the house have skylights?</label>
+                    <label className="text-sm font-medium text-slate-100">Does the house have skylights?</label>
                     <Select value={selections.hasSkylights} onValueChange={value => {
                         setSelections(prev => ({
                             ...prev,
@@ -452,7 +452,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                             skylightUValue: ""
                         }));
                     }}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                             <SelectValue placeholder="Select if house has skylights" />
                         </SelectTrigger>
                         <SelectContent>
@@ -463,11 +463,11 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                 </div>
 
                 {selections.hasSkylights === "yes" && <div className="space-y-2">
-                    <label className="text-sm font-medium">Skylight U-Value</label>
+                    <label className="text-sm font-medium text-slate-100">Skylight U-Value</label>
                     <Input type="number" step="0.01" min="0" placeholder={`Enter U-value (maximum ${selections.province === "alberta" && selections.climateZone === "7B" ? "2.41" : "2.75"} W/(m²·K))`} value={selections.skylightUValue} onChange={e => setSelections(prev => ({
                         ...prev,
                         skylightUValue: e.target.value
-                    }))} />
+                    }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                     {(() => {
                         const maxUValue = selections.province === "alberta" && selections.climateZone === "7B" ? 2.41 : 2.75;
                         return selections.skylightUValue && parseFloat(selections.skylightUValue) > maxUValue && <WarningButton warningId="skylightUValue-high" title="U-Value Too High" variant="destructive">
