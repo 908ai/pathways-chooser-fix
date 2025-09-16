@@ -698,6 +698,8 @@ const NBCCalculator = ({
     <div ref={sentinelRef} className="absolute top-0 h-px w-full" />
     <HelpDrawer />
 
+    <Stepper steps={steps} currentStep={currentStep} onStepClick={handleStepClick} isSticky={isSticky} />
+
     {selections.compliancePath === "9368" && <div className="fixed top-20 right-4 z-50 w-72">
       <FloatingPointsSummary
         selections={selections}
@@ -724,7 +726,6 @@ const NBCCalculator = ({
         </p>
       </div> */}
 
-      <Stepper steps={steps} currentStep={currentStep} onStepClick={handleStepClick} isSticky={isSticky} />
 
       {currentStep === 1 && (
         <ProjectInformationSection

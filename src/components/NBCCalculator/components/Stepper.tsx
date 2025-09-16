@@ -13,9 +13,9 @@ const Stepper = ({ steps, currentStep, onStepClick, isSticky = false }: StepperP
   return (
     <div className={cn(
       "lg:sticky top-0 z-30 backdrop-blur-lg -mx-5 -mt-5 mb-8 px-5 py-4 rounded-t-lg border-b border-slate-400/50 transition-all duration-300",
-      isSticky ? "bg-slate-700/90" : "bg-slate-800/50"
+      isSticky ? "bg-slate-800/90" : "bg-slate-800/50"
     )}>
-      <div className="flex items-center justify-center w-full max-w-3xl mx-auto">
+      <div className="flex items-start justify-center w-full max-w-3xl mx-auto">
         {steps.map((step, index) => {
           const stepNumber = index + 1;
           const isCompleted = stepNumber < currentStep;
@@ -58,8 +58,9 @@ const Stepper = ({ steps, currentStep, onStepClick, isSticky = false }: StepperP
               {index < steps.length - 1 && (
                 <div
                   className={cn(
-                    "flex-1 h-1 transition-colors duration-500",
-                    isCompleted ? "bg-green-500" : "bg-slate-600"
+                    "flex-1 h-1 transition-all duration-500",
+                    isCompleted ? "bg-green-500" : "bg-slate-600",
+                    isSticky ? "mt-3" : "mt-5"
                   )}
                 />
               )}
