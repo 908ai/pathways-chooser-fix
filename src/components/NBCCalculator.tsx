@@ -30,7 +30,7 @@ import {
 
 import { useFileUploads } from "./NBCCalculator/hooks/useFileUploads";
 import EditModeIndicator from "./NBCCalculator/sections/EditModeIndicator";
-import ContactSection from "./NBCCalculator/sections/ContactSection";
+import ContactBanner from "./NBCCalculator/sections/ContactBanner";
 import ProjectInformationSection from "./NBCCalculator/sections/ProjectInformationSection";
 import CompliancePathSection from "./NBCCalculator/sections/CompliancePathSection";
 
@@ -718,6 +718,7 @@ const NBCCalculator = ({
       "mx-auto space-y-6 relative z-10 transition-all duration-300 p-5 backdrop-blur-[100px] border-slate-400/50 rounded-lg border shadow-lg",
       selections.compliancePath === "9368" ? "lg:max-w-3xl lg:mr-80" : "max-w-4xl"
     )}>
+      <ContactBanner />
       {currentStep === 1 && (
         <ProjectInformationSection
           selections={selections}
@@ -922,8 +923,6 @@ const NBCCalculator = ({
           <Button onClick={nextStep}>Next</Button>
         )}
       </div>
-
-      <ContactSection />
     </div>
 
     {showProjectSummary && (
