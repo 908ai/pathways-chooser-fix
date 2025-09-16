@@ -16,11 +16,11 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, 
     return (
         <>
             {
-                <div className="pt-6 border-t space-y-6">
-                    <h3 className="text-lg font-semibold text-foreground">HRV/ERV Information</h3>
+                <div className="pt-6 border-t border-slate-600 space-y-6">
+                    <h3 className="text-lg font-semibold text-white">HRV/ERV Information</h3>
                     <div className="space-y-2">
                         <div className="flex items-center gap-3">
-                            <label className="text-sm font-medium">Does this building include an HRV or ERV?</label>
+                            <label className="text-sm font-medium text-slate-100">Does this building include an HRV or ERV?</label>
                             <Dialog>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
@@ -78,7 +78,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, 
                             ...prev,
                             hasHrv: value
                         }))}>
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                                 <SelectValue placeholder="Select option" />
                             </SelectTrigger>
                             <SelectContent className="bg-background border shadow-lg z-50">
@@ -89,20 +89,20 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, 
                     </div>
 
                     {selections.hasHrv === "with_hrv" && <div className="space-y-2">
-                        <label className="text-sm font-medium">HRV/ERV Make/Model</label>
+                        <label className="text-sm font-medium text-slate-100">HRV/ERV Make/Model</label>
                         <Input type="text" placeholder="Input HRV/ERV make/model (e.g. Fantech SHR 1504)" value={selections.hrvEfficiency || ""} onChange={e => setSelections(prev => ({
                             ...prev,
                             hrvEfficiency: e.target.value
-                        }))} />
+                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                     </div>}
 
                     {/* Secondary Suite HRV - Show for buildings with multiple units */}
-                    {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && <div className="space-y-4 p-4 bg-muted border border-border rounded-md">
-                        <h5 className="font-medium text-foreground">Secondary Suite HRV/ERV</h5>
+                    {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
+                        <h5 className="font-medium text-white">Secondary Suite HRV/ERV</h5>
 
                         <div className="space-y-2">
                             <div className="flex items-center gap-3">
-                                <label className="text-sm font-medium">Will there be a second HRV/ERV for the secondary suite?</label>
+                                <label className="text-sm font-medium text-slate-100">Will there be a second HRV/ERV for the secondary suite?</label>
                                 <Dialog>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
@@ -149,7 +149,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, 
                                 ...prev,
                                 hasSecondaryHrv: value
                             }))}>
-                                <SelectTrigger>
+                                <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                                     <SelectValue placeholder="Select option" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background border shadow-lg z-50">
@@ -161,11 +161,11 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, 
                         </div>
 
                         {selections.hasSecondaryHrv === "separate" && <div className="space-y-2">
-                            <label className="text-sm font-medium">Secondary Suite HRV/ERV Make/Model</label>
+                            <label className="text-sm font-medium text-slate-100">Secondary Suite HRV/ERV Make/Model</label>
                             <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 secondaryHrvEfficiency: e.target.value
-                            }))} />
+                            }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                         </div>}
                     </div>}
 
@@ -195,7 +195,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, 
                     {/* Certification Interests */}
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
-                            <label className="text-sm font-medium">Are you interested in any of the following certifications or programs?</label>
+                            <label className="text-sm font-medium text-slate-100">Are you interested in any of the following certifications or programs?</label>
                             <Dialog>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
@@ -431,7 +431,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, 
                                 label: "Solar Ready",
                                 url: "https://natural-resources.canada.ca/sites/nrcan/files/canmetenergy/files/pubs/SolarReadyGuidelines_en.pdf",
                                 description: "Home design prepared for future solar panel installation"
-                            }].map(cert => <div key={cert.id} className="flex items-start gap-3 p-3 bg-muted/50 rounded-md">
+                            }].map(cert => <div key={cert.id} className="flex items-start gap-3 p-3 bg-slate-900/50 rounded-md">
                                 <input type="checkbox" id={cert.id} checked={selections.interestedCertifications.includes(cert.id)} onChange={e => {
                                     setSelections(prev => ({
                                         ...prev,
@@ -457,7 +457,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, 
                                     <img src="/lovable-uploads/solar-ready-sun-bw.png" alt="Solar Ready Sun Logo" className="h-12 w-auto" />
                                 </div>}
                                 <div className="flex-1">
-                                    <label htmlFor={cert.id} className="text-sm font-medium cursor-pointer">
+                                    <label htmlFor={cert.id} className="text-sm font-medium cursor-pointer text-slate-100">
                                         {cert.label}
                                     </label>
                                     <p className="text-xs text-muted-foreground mt-1">

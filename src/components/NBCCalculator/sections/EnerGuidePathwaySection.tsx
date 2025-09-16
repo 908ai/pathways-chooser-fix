@@ -25,12 +25,12 @@ interface Props {
 
 const EnerGuidePathwaySection: React.FC<Props> = ({ selections, setSelections }) => {
     return (
-        <Card>
+        <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px] shadow-lg">
             <CardContent className="pt-6">
                 <div className="space-y-4">
                     <div className="space-y-2">
                         <div className="flex items-center gap-2">
-                            <label className="text-sm font-medium">Would you like to pursue the EnerGuide Rating System (ERS) pathway in conjunction with the Performance Path?</label>
+                            <label className="text-sm font-medium text-slate-100">Would you like to pursue the EnerGuide Rating System (ERS) pathway in conjunction with the Performance Path?</label>
                             <Dialog>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
@@ -136,7 +136,7 @@ const EnerGuidePathwaySection: React.FC<Props> = ({ selections, setSelections })
                             ...prev,
                             energuidePathway: value
                         }))}>
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                                 <SelectValue placeholder="Select yes or no" />
                             </SelectTrigger>
                             <SelectContent className="bg-background border shadow-lg z-50">

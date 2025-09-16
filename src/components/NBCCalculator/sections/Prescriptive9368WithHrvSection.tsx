@@ -365,17 +365,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
 
                         <div className="flex items-center gap-2">
                             <label className="text-sm font-medium text-slate-100">Energy Efficiency Points for Windows & Doors</label>
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button variant="outline" size="sm" className="h-8 px-3 text-sm font-medium bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
-                                        <Info className="h-3 w-3 mr-1" />
-                                        More Info
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                                    <DialogHeader>
-                                        <DialogTitle>Energy Efficiency Points for Windows & Doors</DialogTitle>
-                                    </DialogHeader>
+                                <InfoButton title="Energy Efficiency Points for Windows & Doors">
                                     <div className="space-y-4">
                                         <p className="text-sm text-foreground/80">
                                             You can get extra energy efficiency points in the code if your windows and doors perform better than the minimum required by the building code (NBC 9.36). This means they either keep heat in better (low U-value) or let in helpful sunlight to reduce heating needs (high Energy Rating or ER).
@@ -411,8 +401,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                                             </p>
                                         </div>
                                     </div>
-                                </DialogContent>
-                            </Dialog>
+                                </InfoButton>
                         </div>
                     </>}
 
