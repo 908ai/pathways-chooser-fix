@@ -68,9 +68,6 @@ const NBCCalculator = ({
   const formContainerRef = useRef<HTMLDivElement>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, boolean>>({});
 
-  const [isSticky, setIsSticky] = useState(false);
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
   const [selections, setSelections] = useState({
     firstName: "",
     lastName: "",
@@ -163,37 +160,6 @@ const NBCCalculator = ({
   const { uploadedFiles, setUploadedFiles, isUploading, uploadFile, removeFile } = useFileUploads(user);
 
   const [agreementChecked, setAgreementChecked] = useState(false);
-
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (window.innerWidth >= 1024) {
-          setIsSticky(!entry.isIntersecting);
-        } else {
-          setIsSticky(false);
-        }
-      },
-      { rootMargin: "-20px 0px 0px 0px" } // Corresponds to top-5 (1.25rem)
-    );
-
-    observer.observe(sentinel);
-
-    const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        setIsSticky(false);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      observer.unobserve(sentinel);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
 
   const ensureProjectExists = async (): Promise<string | null> => {
     if (projectId) return projectId;
@@ -694,7 +660,6 @@ const NBCCalculator = ({
   }
 
   return <div className="min-h-screen p-4 relative">
-    <div ref={sentinelRef} className="absolute top-0 h-px w-full" />
     <HelpDrawer />
 
     {selections.compliancePath === "9368" && <div className="fixed top-20 right-4 z-50 w-72">
@@ -711,25 +676,17 @@ const NBCCalculator = ({
 
     {searchParams.get('edit') && <EditModeIndicator />}
 
-    <div ref={formContainerRef} className={cn(
-      "mx-auto space-y-6 relative z-10 transition-all duration-300 p-5 backdrop-blur-[100px] border-slate-400/50 rounded-lg border shadow-lg",
-      selections.compliancePath === "9368" ? "max-w-3xl mr-80" : "max-w-4xl",
-      "lg:sticky top-5"
-    )}>
-      <div className={cn("text-center mb-8 transition-all duration-300", isSticky ? "mb-4" : "mb-8")}>
-        <div className={cn("flex items-center justify-center gap-3 mb-2 transition-transform duration-300", isSticky ? "scale-90" : "scale-100")}>
+    <div ref={formContainerRef} className={`mx-auto space-y-6 relative z-10 transition-all duration-300 p-5 backdrop-blur-[100px] border-slate-400/50 rounded-lg border shadow-lg ${selections.compliancePath === "9368" ? "max-w-3xl mr-80" : "max-w-4xl"}`}>
+      {/* <div className="text-center mb-8">
+        <div className="flex items-center justify-center gap-3 mb-2">
           <Calculator className="h-8 w-8 text-teal-300" />
-          <h1 className={cn("font-bold bg-gradient-to-r from-slate-200 via-blue-200 to-teal-200 bg-clip-text text-transparent drop-shadow-lg transition-all duration-300", isSticky ? "text-3xl" : "text-4xl")}>
-            NBC2020 Energy Code Pathways Selector
-          </h1>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-200 via-blue-200 to-teal-200 bg-clip-text text-transparent drop-shadow-lg">NBC2020 Energy Code Pathways Selector</h1>
         </div>
-        <p className={cn("bg-gradient-to-r from-slate-300 to-teal-300 bg-clip-text text-transparent font-medium mb-4 drop-shadow-md transition-all duration-300", isSticky ? "text-lg" : "text-xl")}>
-          (Alberta & Saskatchewan)
-        </p>
-        <p className={cn("text-gray-200 drop-shadow-md transition-all duration-300", isSticky ? "text-base" : "text-lg")}>
+        <p className="text-xl bg-gradient-to-r from-slate-300 to-teal-300 bg-clip-text text-transparent font-medium mb-4 drop-shadow-md">(Alberta & Saskatchewan)</p>
+        <p className="text-gray-200 text-lg drop-shadow-md">
           National Building Code of Canada - Energy Performance Compliance Tool
         </p>
-      </div>
+      </div> */}
 
       <Stepper steps={steps} currentStep={currentStep} onStepClick={handleStepClick} />
 
