@@ -34,7 +34,7 @@ export default function ProjectInformationSection({
   return (
     <>
       {
-        <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-sm shadow-lg">
+        <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px] shadow-lg">
            <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2 text-white">
                 📋 Project Information
