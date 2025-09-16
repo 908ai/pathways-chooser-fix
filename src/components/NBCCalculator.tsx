@@ -706,7 +706,7 @@ const NBCCalculator = ({
       )}
 
       {currentStep === 3 && (
-        <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+        <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px] shadow-lg">
           <CardHeader>
             <CardTitle className="text-white text-center">
               {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? 'Prescriptive Building Requirements' : 'Performance Building Specifications'}
