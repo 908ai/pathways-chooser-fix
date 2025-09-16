@@ -2,6 +2,7 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import InfoButton from "@/components/InfoButton";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface Props {
     selections: any;
@@ -10,6 +11,51 @@ interface Props {
 }
 
 const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, WarningButton }) => {
+    const certifications = [
+        {
+            id: "energuide",
+            label: "EnerGuide",
+            imageUrl: "/lovable-uploads/7eafc507-a263-4914-a980-9adb84046e56.png",
+            url: "https://natural-resources.canada.ca/energy-efficiency/home-energy-efficiency/energuide-rated-new-homes",
+            description: "Official home energy rating system for Canada"
+        },
+        {
+            id: "chba-net-zero",
+            label: "CHBA Net Zero",
+            imageUrl: "/lovable-uploads/1aa4ac59-9662-45fa-8013-06a725025afa.png",
+            url: "https://www.chba.ca/net-zero/",
+            description: "Canadian Home Builders' Association Net Zero certification"
+        },
+        {
+            id: "built-green",
+            label: "Built Green",
+            imageUrl: "/lovable-uploads/ccb67952-2457-4aeb-806a-e595f87d6fe0.png",
+            url: "https://builtgreencanada.ca",
+            description: "National green building certification program"
+        },
+        {
+            id: "energy-star",
+            label: "ENERGY STAR",
+            imageUrl: "/lovable-uploads/4e1d3921-9d37-4dfa-85a3-8db2e13d50fb.png",
+            url: "https://natural-resources.canada.ca/energy-efficiency/energy-star/new-homes",
+            description: "High-efficiency homes certification"
+        },
+        ...(selections.province === "saskatchewan" ? [{
+            id: "sask-energy-beyond-codes",
+            label: "SaskEnergy Beyond Codes Rebate",
+            imageUrl: "/lovable-uploads/d890e038-24fc-4885-a732-d0055f89ff2e.png",
+            url: "https://www.saskenergy.com/homes-beyond-code-program",
+            description: "Saskatchewan-specific energy efficiency rebate program"
+        }] : []),
+        {
+            id: "solar-ready",
+            label: "Solar Ready",
+            imageUrl: "/lovable-uploads/solar-ready-sun-bw.png",
+            url: "https://natural-resources.canada.ca/sites/nrcan/files/canmetenergy/files/pubs/SolarReadyGuidelines_en.pdf",
+            description: "Home design prepared for future solar panel installation"
+        }
+    ];
+
     return (
         <>
             {
@@ -347,73 +393,33 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, 
                             </InfoButton>
                         </div>
                         <div className="space-y-3">
-                            {[{
-                                id: "energuide",
-                                label: "EnerGuide",
-                                url: "https://natural-resources.canada.ca/energy-efficiency/home-energy-efficiency/energuide-rated-new-homes",
-                                description: "Official home energy rating system for Canada"
-                            }, {
-                                id: "chba-net-zero",
-                                label: "CHBA Net Zero",
-                                url: "https://www.chba.ca/net-zero/",
-                                description: "Canadian Home Builders' Association Net Zero certification"
-                            }, {
-                                id: "built-green",
-                                label: "Built Green",
-                                url: "https://builtgreencanada.ca",
-                                description: "National green building certification program"
-                            }, {
-                                id: "energy-star",
-                                label: "ENERGY STAR",
-                                url: "https://natural-resources.canada.ca/energy-efficiency/energy-star/new-homes",
-                                description: "High-efficiency homes certification"
-                            }, ...(selections.province === "saskatchewan" ? [{
-                                id: "sask-energy-beyond-codes",
-                                label: "SaskEnergy Beyond Codes Rebate",
-                                url: "https://www.saskenergy.com/homes-beyond-code-program",
-                                description: "Saskatchewan-specific energy efficiency rebate program"
-                            }] : []), {
-                                id: "solar-ready",
-                                label: "Solar Ready",
-                                url: "https://natural-resources.canada.ca/sites/nrcan/files/canmetenergy/files/pubs/SolarReadyGuidelines_en.pdf",
-                                description: "Home design prepared for future solar panel installation"
-                            }].map(cert => <div key={cert.id} className="flex items-start gap-3 p-3 bg-slate-900/50 rounded-md">
-                                <input type="checkbox" id={cert.id} checked={selections.interestedCertifications.includes(cert.id)} onChange={e => {
-                                    setSelections(prev => ({
-                                        ...prev,
-                                        interestedCertifications: e.target.checked ? [...prev.interestedCertifications, cert.id] : prev.interestedCertifications.filter(id => id !== cert.id)
-                                    }));
-                                }} className="w-4 h-4 text-primary mt-1" />
-                                {cert.id === "energuide" && <div className="flex items-center mt-1">
-                                    <img src="/lovable-uploads/7eafc507-a263-4914-a980-9adb84046e56.png" alt="EnerGuide Logo" className="h-6 w-auto" />
-                                </div>}
-                                {cert.id === "chba-net-zero" && <div className="flex items-center mt-1">
-                                    <img src="/lovable-uploads/1aa4ac59-9662-45fa-8013-06a725025afa.png" alt="Net Zero Home Logo" className="h-6 w-auto" />
-                                </div>}
-                                {cert.id === "built-green" && <div className="flex items-center mt-1">
-                                    <img src="/lovable-uploads/ccb67952-2457-4aeb-806a-e595f87d6fe0.png" alt="Built Green Logo" className="h-6 w-auto" />
-                                </div>}
-                                {cert.id === "energy-star" && <div className="flex items-center mt-1">
-                                    <img src="/lovable-uploads/4e1d3921-9d37-4dfa-85a3-8db2e13d50fb.png" alt="Energy Star Logo" className="h-12 w-auto" />
-                                </div>}
-                                {cert.id === "sask-energy-beyond-codes" && <div className="flex items-center mt-1">
-                                    <img src="/lovable-uploads/d890e038-24fc-4885-a732-d0055f89ff2e.png" alt="SaskEnergy Logo" className="h-12 w-auto" />
-                                </div>}
-                                {cert.id === "solar-ready" && <div className="flex items-center mt-1">
-                                    <img src="/lovable-uploads/solar-ready-sun-bw.png" alt="Solar Ready Sun Logo" className="h-12 w-auto" />
-                                </div>}
-                                <div className="flex-1">
-                                    <label htmlFor={cert.id} className="text-sm font-medium cursor-pointer text-slate-100">
-                                        {cert.label}
-                                    </label>
-                                    <p className="text-xs text-muted-foreground mt-1">
-                                        {cert.description}
-                                    </p>
-                                    <a href={cert.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline hover:text-primary/80 mt-1 inline-block">
-                                        Learn more →
-                                    </a>
+                            {certifications.map(cert => (
+                                <div key={cert.id} className="flex items-center gap-4 p-4 bg-slate-900/50 rounded-lg border border-slate-600/50 transition-all hover:border-slate-500/80">
+                                    <Checkbox
+                                        id={cert.id}
+                                        checked={selections.interestedCertifications.includes(cert.id)}
+                                        onCheckedChange={(checked) => {
+                                            setSelections(prev => ({
+                                                ...prev,
+                                                interestedCertifications: checked ? [...prev.interestedCertifications, cert.id] : prev.interestedCertifications.filter(id => id !== cert.id)
+                                            }));
+                                        }}
+                                        className="h-6 w-6"
+                                    />
+                                    <div className="flex items-center gap-4 flex-1">
+                                        <div className="flex-shrink-0 w-28 h-14 flex items-center justify-center bg-white/5 rounded-md p-1">
+                                            <img src={cert.imageUrl} alt={`${cert.label} Logo`} className="max-h-full max-w-full object-contain" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <label htmlFor={cert.id} className="font-semibold text-white cursor-pointer block">{cert.label}</label>
+                                            <p className="text-sm text-slate-300">{cert.description}</p>
+                                            <a href={cert.url} target="_blank" rel="noopener noreferrer" className="text-sm text-teal-300 hover:text-teal-200 underline mt-1 inline-block">
+                                                Learn more →
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>)}
+                            ))}
                         </div>
                     </div>
 
