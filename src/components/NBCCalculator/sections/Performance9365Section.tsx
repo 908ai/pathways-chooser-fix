@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Info, ChevronDown } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import InfoButton from "@/components/InfoButton";
 
 export default function Performance9365Section({
     selections,
@@ -24,33 +25,47 @@ export default function Performance9365Section({
     uploadedFiles: File[];
     removeFile: (file: File) => void;
 }) {
-    const InfoCollapsible = ({
+    // Local state for collapsible warnings
+    const [expandedWarnings, setExpandedWarnings] = useState<{
+        [key: string]: boolean;
+    }>({});
+
+    const toggleWarning = (warningId: string) => {
+        setExpandedWarnings((prev) => ({
+            ...prev,
+            [warningId]: !prev[warningId],
+        }));
+    };
+
+    const WarningButton = ({
+        warningId,
         title,
         children,
         variant = "warning",
     }: {
+        warningId: string;
         title: string;
         children: React.ReactNode;
         variant?: "warning" | "destructive";
     }) => {
-        const [isOpen, setIsOpen] = useState(false);
+        const isExpanded = expandedWarnings[warningId];
         const bgColor =
             variant === "warning"
                 ? "bg-gradient-to-r from-slate-800/60 to-teal-800/60"
                 : "bg-gradient-to-r from-slate-800/60 to-red-800/60";
         const borderColor =
             variant === "warning"
-                ? "border border-orange-400"
+                ? "border-2 border-orange-400"
                 : "border-2 border-red-400";
 
         return (
-            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
+            <Collapsible open={isExpanded} onOpenChange={() => toggleWarning(warningId)} className={`p-4 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
                 <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
-                    <span className="text-xs font-bold text-white">{title}</span>
-                    <ChevronDown className={`h-5 w-5 text-white transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                    <span className="text-lg font-bold text-white">{title}</span>
+                    <ChevronDown className={`h-5 w-5 text-white transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
                 </CollapsibleTrigger>
                 <CollapsibleContent className="mt-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
-                    <div className="text-white text-xs">{children}</div>
+                    <div className="text-white font-semibold">{children}</div>
                 </CollapsibleContent>
             </Collapsible>
         );
@@ -61,7 +76,7 @@ export default function Performance9365Section({
             {selections.buildingAddress && selections.buildingAddress.toLowerCase().includes("red deer") && selections.province === "alberta" && <div className="space-y-2">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium text-slate-100">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
-                    <InfoCollapsible title="What is an F280 Calculation?">
+                    <InfoButton title="What is an F280 Calculation?">
                         <div className="space-y-4">
                             <div className="space-y-3">
                                 <p className="text-sm text-muted-foreground">
@@ -98,7 +113,7 @@ export default function Performance9365Section({
                                 </div>
                             </div>
                         </div>
-                    </InfoCollapsible>
+                    </InfoButton>
                 </div>
                 <Select value={selections.hasF280Calculation} onValueChange={value => setSelections(prev => ({
                     ...prev,
@@ -251,11 +266,11 @@ export default function Performance9365Section({
                 </Select>
             </div>
 
-            {selections.hasInFloorHeat9365 === "yes" && <InfoCollapsible title="In-Floor Heating Requirements">
+            {selections.hasInFloorHeat9365 === "yes" && <WarningButton warningId="inFloorHeating-9365-info" title="In-Floor Heating Requirements">
                 <p className="text-xs text-foreground/80">
                     Since the house has in-floor heating, all floors must be insulated to meet NBC requirements.
                 </p>
-            </InfoCollapsible>}
+            </WarningButton>}
 
             {selections.floorsSlabsSelected.includes("floorsUnheated") && <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</label>
@@ -295,11 +310,11 @@ export default function Performance9365Section({
                     ...prev,
                     heatedFloorsRSI: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                <InfoCollapsible title="⚠️ Hydronic Floor Insulation Required">
+                <WarningButton warningId="heatedFloorsRSI-hydronic-9365" title="⚠️ Hydronic Floor Insulation Required">
                     <p className="text-sm text-foreground/80">
                         Hydronic floors must be insulated to prevent heat loss to the ground or unheated areas below. The insulation should be installed between the heated floor and any unheated space, with proper vapor barrier placement. Minimum insulation values vary by province and specific application - consult local building codes and your mechanical designer for specific requirements.
                     </p>
-                </InfoCollapsible>
+                </WarningButton>
             </div>}
 
             {selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting") && <div className="space-y-2">
@@ -385,7 +400,7 @@ export default function Performance9365Section({
             <div className="space-y-2">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium text-slate-100">Airtightness Level</label>
-                    <InfoCollapsible title="What's a Blower Door Test?">
+                    <InfoButton title="What's a Blower Door Test?">
                         <div className="space-y-4">
                             <div>
                                 <p className="text-sm text-muted-foreground">A blower door test measures air leakage in a home. A fan is placed in an exterior door to pressurize or depressurize the building, and sensors track how much air is needed to maintain a pressure difference (usually 50 Pascals). This tells us how "leaky" the building is.</p>
@@ -522,14 +537,14 @@ export default function Performance9365Section({
                                 </div>
                             </div>
                         </div>
-                    </InfoCollapsible>
+                    </InfoButton>
                 </div>
                 <Input type="text" placeholder={`Min ${selections.province === "saskatchewan" ? "3.2" : "3.0"} ACH50 for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.airtightness} onChange={e => setSelections(prev => ({
                     ...prev,
                     airtightness: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
 
-                <InfoCollapsible title="Caution: Air-Tightness Targets Without Testing History">
+                <WarningButton warningId="airtightness-caution-9365" title="Caution: Air-Tightness Targets Without Testing History">
                     <div className="text-xs text-white space-y-2">
                         <p>
                             Choosing an air-tightness target lower than prescribed by NBC2020 without prior test results is risky.
@@ -555,7 +570,7 @@ export default function Performance9365Section({
                             </a>
                         </div>
                     </div>
-                </InfoCollapsible>
+                </WarningButton>
 
                 {(() => {
                     const airtightnessValue = parseFloat(selections.airtightness || "0");
@@ -598,7 +613,7 @@ export default function Performance9365Section({
                         </div>
                     </div>
 
-                    <InfoCollapsible title="Benefits of Mid-Construction Blower Door Testing">
+                    <WarningButton warningId="mid-construction-blower-door-info-9367-3" title="Benefits of Mid-Construction Blower Door Testing">
                         <div className="text-xs text-white space-y-2">
                             <p className="font-medium">Benefits of a mid-construction (misconstruction) blower door test:</p>
                             <ul className="list-disc ml-4 space-y-1">
@@ -616,7 +631,7 @@ export default function Performance9365Section({
                                 </a>
                             </div>
                         </div>
-                    </InfoCollapsible>
+                    </WarningButton>
                 </div>
             </div>
 
@@ -649,7 +664,7 @@ export default function Performance9365Section({
             <div className="space-y-2">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium text-slate-100">Is a drain water heat recovery system being installed?</label>
-                    <InfoCollapsible title="Drain Water Heat Recovery System Information">
+                    <InfoButton title="Drain Water Heat Recovery System Information">
                         <div className="space-y-4">
                             <div className="border-b pb-2">
                                 <h4 className="font-medium text-sm">ℹ️ Drain Water Heat Recovery (DWHR)</h4>
@@ -676,7 +691,7 @@ export default function Performance9365Section({
                                 </div>
                             </div>
                         </div>
-                    </InfoCollapsible>
+                    </InfoButton>
                 </div>
                 <Select value={selections.hasDWHR} onValueChange={value => setSelections(prev => ({
                     ...prev,
@@ -690,26 +705,6 @@ export default function Performance9365Section({
                         <SelectItem value="no">No</SelectItem>
                     </SelectContent>
                 </Select>
-
-                <InfoCollapsible title="⚠️ Mechanical Equipment Documentation">
-                    <div className="text-xs text-white space-y-2">
-                        <p>
-                            The Authority Having Jurisdiction (AHJ) may request specific makes/models of the mechanical equipment being proposed for heating, cooling, domestic hot water and HRV systems. The AHJ may also request CSA F-280 heat loss & gain calculations.
-                        </p>
-                        <p>
-                            <strong>F280 calculations:</strong> A heating and cooling load calculation based on CSA Standard F280-12 (or updated versions), which is the Canadian standard for determining how much heating or cooling a home needs. It accounts for factors like insulation levels, windows, air leakage, and local climate.
-                        </p>
-                        <p>
-                            <strong>Benefits:</strong> Ensures HVAC systems are properly sized, improves comfort and efficiency, reduces energy costs, and is often required for building permits.
-                        </p>
-                        <div className="flex items-center gap-1 text-sm mt-3">
-                            <span>🔗</span>
-                            <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
-                                More information
-                            </a>
-                        </div>
-                    </div>
-                </InfoCollapsible>
             </div>
 
             <div className="space-y-2">
@@ -728,6 +723,26 @@ export default function Performance9365Section({
                         <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                 </Select>
+
+                <WarningButton warningId="mechanical-equipment-docs-9365" title="⚠️ Mechanical Equipment Documentation">
+                    <div className="text-xs text-white space-y-2">
+                        <p>
+                            The Authority Having Jurisdiction (AHJ) may request specific makes/models of the mechanical equipment being proposed for heating, cooling, domestic hot water and HRV systems. The AHJ may also request CSA F-280 heat loss & gain calculations.
+                        </p>
+                        <p>
+                            <strong>F280 calculations:</strong> A heating and cooling load calculation based on CSA Standard F280-12 (or updated versions), which is the Canadian standard for determining how much heating or cooling a home needs. It accounts for factors like insulation levels, windows, air leakage, and local climate.
+                        </p>
+                        <p>
+                            <strong>Benefits:</strong> Ensures HVAC systems are properly sized, improves comfort and efficiency, reduces energy costs, and is often required for building permits.
+                        </p>
+                        <div className="flex items-center gap-1 text-sm mt-3">
+                            <span>🔗</span>
+                            <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
+                                More information
+                            </a>
+                        </div>
+                    </div>
+                </WarningButton>
             </div>
 
             {selections.heatingType && <div className="space-y-2">
@@ -799,7 +814,7 @@ export default function Performance9365Section({
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">
                         <label className="text-sm font-medium text-slate-100">Will there be a second HRV/ERV for the secondary suite?</label>
-                        <InfoCollapsible title="Secondary Suite HRV/ERV Information">
+                        <InfoButton title="Secondary Suite HRV/ERV Information">
                             <div className="space-y-4">
                                 <div>
                                     <h4 className="font-semibold text-sm mb-2">Independent HRV/ERV for Secondary Suite</h4>
@@ -818,7 +833,7 @@ export default function Performance9365Section({
                                     </ul>
                                 </div>
                             </div>
-                        </InfoCollapsible>
+                        </InfoButton>
                     </div>
                     <div className="flex gap-4">
                         <label className="flex items-center gap-2">
