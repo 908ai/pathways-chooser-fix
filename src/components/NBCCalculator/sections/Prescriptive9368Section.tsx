@@ -269,7 +269,7 @@ export default function Performance9368Section({
                                         Source: Housing and Small Buildings Illustrated User's Guide National Building Code of Canada 2020
                                     </p>
                                 </div>
-                            </div>                        
+                            </div>
                         </InfoButton>
                     </div>
                 </>}
