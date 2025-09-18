@@ -64,9 +64,9 @@ export default function CompliancePathSection({
                                           <p>This is the standard, minimum compliance route.</p>
                                           <p>You meet fixed insulation (RSI) values and HVAC/water heating system requirements — no energy modelling or points system required.</p>
                                           <p>An HRV is optional but influences which RSI values you must meet. No HRV means higher RSI requirements for your walls, foundation and attic.</p>
-                                          <p className="text-warning-foreground">⚠️ Warning: This path may lead to higher build costs due to limited flexibility. Assemblies must meet strict minimums without trade-offs, which can increase material and labour costs.</p>
+                                          <p className="bg-muted rounded-md p-2">⚠️ Warning: This path may lead to higher build costs due to limited flexibility. Assemblies must meet strict minimums without trade-offs, which can increase material and labour costs.</p>
                                           <p className="mt-2">
-                                            <strong>Trade-off Option (9.36.2.11):</strong> <a href="/reference/calgary-trade-off-calculator.xlsm" download className="text-emerald-300 underline hover:text-emerald-200">
+                                            <strong>Trade-off Option (9.36.2.11):</strong> <a href="/reference/calgary-trade-off-calculator.xlsm" download className="text-red-400 underline hover:text-red-600">
                                               Download Trade-off Calculator
                                             </a> - Allows flexibility to balance R-values between building components.
                                           </p>
@@ -116,7 +116,7 @@ export default function CompliancePathSection({
                                           <p>This is a points-based route to meet Tier 2 and above without energy modelling.</p>
                                           <p>Points are earned for upgrades to insulation, windows, airtightness, HVAC, and more.</p>
                                           <p>An HRV or ERV is mandatory — without it, you cannot use this path.</p>
-                                          <p className="text-warning-foreground">⚠️ Warning: May increase build costs due to rigid performance targets. Some flexibility for trade-offs with additional calculations required, otherwise every element must meet its specific upgrade requirement to claim points.</p>
+                                          <p className="bg-muted rounded-md p-2">⚠️ Warning: May increase build costs due to rigid performance targets. Some flexibility for trade-offs with additional calculations required, otherwise every element must meet its specific upgrade requirement to claim points.</p>
                                         </div>
                                         <div className="w-full h-px bg-muted mt-3" />
                                       </div>
