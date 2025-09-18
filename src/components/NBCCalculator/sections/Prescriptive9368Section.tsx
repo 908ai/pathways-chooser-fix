@@ -432,7 +432,7 @@ export default function Performance9368Section({
                     </SelectContent>
                 </Select>
 
-                <InfoCollapsible title="ℹ️ Caution: Air-Tightness Targets Without Testing History">
+                <InfoCollapsible title="⚠️ Caution: Air-Tightness Targets Without Testing History">
                     <div className="text-xs text-white space-y-2">
                         <p>
                             Choosing an air-tightness target lower than prescribed by NBC2020 without prior test results is risky.

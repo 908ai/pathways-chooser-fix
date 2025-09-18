@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Info, ChevronDown, AlertTriangle } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import InfoButton from "@/components/InfoButton";
@@ -56,17 +57,17 @@ export default function Performance9365Section({
                 : "bg-gradient-to-r from-slate-800/60 to-red-800/60";
         const borderColor =
             variant === "warning"
-                ? "border-2 border-orange-400"
+                ? "border border-orange-400"
                 : "border-2 border-red-400";
 
         return (
-            <Collapsible open={isExpanded} onOpenChange={() => toggleWarning(warningId)} className={`p-4 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
+            <Collapsible open={isExpanded} onOpenChange={() => toggleWarning(warningId)} className={`p-2 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
                 <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
-                    <span className="text-lg font-bold text-white">{title}</span>
+                    <span className="text-xs font-bold text-white">{title}</span>
                     <ChevronDown className={`h-5 w-5 text-white transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
                 </CollapsibleTrigger>
                 <CollapsibleContent className="mt-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
-                    <div className="text-white font-semibold">{children}</div>
+                    <div className="text-white">{children}</div>
                 </CollapsibleContent>
             </Collapsible>
         );
@@ -267,8 +268,8 @@ export default function Performance9365Section({
                 </Select>
             </div>
 
-            {selections.hasInFloorHeat9365 === "yes" && <WarningButton warningId="inFloorHeating-9365-info" title="In-Floor Heating Requirements">
-                <p className="text-xs text-foreground/80">
+            {selections.hasInFloorHeat9365 === "yes" && <WarningButton warningId="inFloorHeating-9365-info" title="ℹ️ In-Floor Heating Requirements">
+                <p className="text-xs text-white">
                     Since the house has in-floor heating, all floors must be insulated to meet NBC requirements.
                 </p>
             </WarningButton>}
@@ -312,7 +313,7 @@ export default function Performance9365Section({
                     heatedFloorsRSI: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                 <WarningButton warningId="heatedFloorsRSI-hydronic-9365" title="⚠️ Hydronic Floor Insulation Required">
-                    <p className="text-sm text-foreground/80">
+                    <p className="text-xs text-white space-y-2">
                         Hydronic floors must be insulated to prevent heat loss to the ground or unheated areas below. The insulation should be installed between the heated floor and any unheated space, with proper vapor barrier placement. Minimum insulation values vary by province and specific application - consult local building codes and your mechanical designer for specific requirements.
                     </p>
                 </WarningButton>
@@ -528,7 +529,7 @@ export default function Performance9365Section({
                                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-2">
                                     <p className="text-xs font-medium text-blue-800">📋 Helpful Resources:</p>
                                     <div className="space-y-1">
-                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 underline hover:text-blue-800 block">
+                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">
                                             View the Blower Door Checklist
                                         </a>
                                         <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 underline hover:text-blue-800 block">
@@ -545,7 +546,7 @@ export default function Performance9365Section({
                     airtightness: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
 
-                <WarningButton warningId="airtightness-caution-9365" title="Caution: Air-Tightness Targets Without Testing History">
+                <WarningButton warningId="airtightness-caution-9365" title="⚠️ Caution: Air-Tightness Targets Without Testing History">
                     <div className="text-xs text-white space-y-2">
                         <p>
                             Choosing an air-tightness target lower than prescribed by NBC2020 without prior test results is risky.
@@ -566,7 +567,7 @@ export default function Performance9365Section({
                         </p>
                         <div className="flex items-center gap-1 text-sm mt-3">
                             <span>🔗</span>
-                            <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
+                            <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">
                                 More information
                             </a>
                         </div>
@@ -588,7 +589,7 @@ export default function Performance9365Section({
                     }
                     const showWarning = airtightnessValue > 0 && airtightnessValue < minimumThreshold;
                     return showWarning ? (
-                        <Alert variant="destructive">
+                        <Alert variant="destructive" style={{ backgroundColor: 'beige' }}>
                             <AlertTriangle className="h-4 w-4" />
                             <AlertTitle>Blower Door Test Required</AlertTitle>
                             <AlertDescription>
@@ -600,19 +601,25 @@ export default function Performance9365Section({
 
                 {/* Mid-Construction Blower Door Test Checkbox */}
                 <div className="space-y-3 pt-4 border-t border-border/20">
-                    <div className="flex items-start gap-3">
-                        <input type="checkbox" id="midConstructionBlowerDoor-9367-3" checked={selections.midConstructionBlowerDoorPlanned} onChange={e => setSelections(prev => ({
-                            ...prev,
-                            midConstructionBlowerDoorPlanned: e.target.checked
-                        }))} className="w-4 h-4 text-primary mt-1" />
-                        <div className="flex-1">
-                            <label htmlFor="midConstructionBlowerDoor-9367-3" className="text-sm font-medium cursor-pointer text-slate-100">
-                                Mid-Construction Blower Door Test Planned
-                            </label>
-                        </div>
-                    </div>
+                    <Checkbox
+                        id="midConstructionBlowerDoor-9367-3"
+                        checked={selections.midConstructionBlowerDoorPlanned}
+                        onCheckedChange={(checked) => {
+                            setSelections((prev) => ({
+                                ...prev,
+                                midConstructionBlowerDoorPlanned: checked === true, // `checked` pode ser true | false | "indeterminate"
+                            }));
+                        }}
+                        className="h-4 w-4 text-primary"
+                    />
+                    <label
+                        htmlFor="midConstructionBlowerDoor-9367-3"
+                        className="ml-2 text-sm font-medium cursor-pointer text-slate-100"
+                    >
+                        Mid-Construction Blower Door Test Planned
+                    </label>
 
-                    <WarningButton warningId="mid-construction-blower-door-info-9367-3" title="Benefits of Mid-Construction Blower Door Testing">
+                    <WarningButton warningId="mid-construction-blower-door-info-9367-3" title="ℹ️ Benefits of Mid-Construction Blower Door Testing">
                         <div className="text-xs text-white space-y-2">
                             <p className="font-medium">Benefits of a mid-construction (misconstruction) blower door test:</p>
                             <ul className="list-disc ml-4 space-y-1">
@@ -625,7 +632,7 @@ export default function Performance9365Section({
                             </ul>
                             <div className="flex items-center gap-1 text-sm mt-3">
                                 <span>📄</span>
-                                <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
+                                <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">
                                     View the Blower Door Checklist
                                 </a>
                             </div>
@@ -736,7 +743,7 @@ export default function Performance9365Section({
                         </p>
                         <div className="flex items-center gap-1 text-sm mt-3">
                             <span>🔗</span>
-                            <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
+                            <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">
                                 More information
                             </a>
                         </div>
