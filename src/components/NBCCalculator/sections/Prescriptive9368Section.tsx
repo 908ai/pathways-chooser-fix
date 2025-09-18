@@ -55,17 +55,17 @@ export default function Performance9368Section({
                 : "bg-gradient-to-r from-slate-800/60 to-red-800/60";
         const borderColor =
             variant === "warning"
-                ? "border-2 border-orange-400"
+                ? "border border-orange-400"
                 : "border-2 border-red-400";
 
         return (
-            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-4 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
+            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
                 <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
-                    <span className="text-lg font-bold text-white">{title}</span>
+                    <span className="text-xs font-bold text-white">{title}</span>
                     <ChevronDown className={`h-5 w-5 text-white transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
                 </CollapsibleTrigger>
                 <CollapsibleContent className="mt-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
-                    <div className="text-white font-semibold">{children}</div>
+                    <div className="text-white text-xs">{children}</div>
                 </CollapsibleContent>
             </Collapsible>
         );
@@ -116,8 +116,8 @@ export default function Performance9368Section({
                     }
                     return null;
                 })()}
-                <InfoCollapsible title="Effective RSI/R-Value Required">
-                    <p className="text-sm text-white">
+                <InfoCollapsible title="ℹ️ Effective RSI/R-Value Required">
+                    <p className="text-xs text-white">
                         You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                     </p>
                 </InfoCollapsible>
@@ -139,8 +139,8 @@ export default function Performance9368Section({
                         </SelectItem>)}
                     </SelectContent>
                 </Select>
-                <InfoCollapsible title="Effective RSI/R-Value Required">
-                    <p className="text-sm text-white">
+                <InfoCollapsible title="ℹ️ Effective RSI/R-Value Required">
+                    <p className="text-xs text-white">
                         You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                     </p>
                 </InfoCollapsible>
@@ -162,9 +162,9 @@ export default function Performance9368Section({
                         </SelectItem>)}
                     </SelectContent>
                 </Select>
-                <InfoCollapsible title="Effective RSI/R-Value Required">
-                    <p className="text-sm text-white">
-                        You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
+                <InfoCollapsible title="ℹ️ Effective RSI/R-Value Required">
+                    <p className="text-xs text-white">
+                        You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                     </p>
                 </InfoCollapsible>
             </div>
@@ -175,27 +175,27 @@ export default function Performance9368Section({
                     <label className="text-sm font-medium text-slate-100">Windows - U-Value</label>
                     <InfoButton title="Energy Efficiency Points for Windows & Doors">
                         <div className="space-y-4">
-                            <p className="text-sm text-white">
+                            <p className="text-sm">
                                 You can get extra energy efficiency points in the code if your windows and doors perform better than the minimum required by the building code (NBC 9.36). This means they either keep heat in better (low U-value) or let in helpful sunlight to reduce heating needs (high Energy Rating or ER).
                             </p>
 
-                            <p className="text-sm text-white">
+                            <p className="text-sm">
                                 But to use the Energy Rating (ER) method for windows or doors, the total glass/opening area on that wall must be less than 17% of the wall's area. The example in the image shows how to calculate that percentage:
                             </p>
 
-                            <ul className="list-disc ml-5 space-y-1 text-sm text-white">
+                            <ul className="list-disc ml-5 space-y-1 text-sm">
                                 <li>The wall is 48 m²</li>
                                 <li>The total area of the windows and doors is 7.75 m²</li>
                                 <li>7.75 ÷ 48 × 100 = 16%, so this wall qualifies for ER-based compliance.</li>
                             </ul>
 
-                            <p className="text-sm text-white">
+                            <p className="text-sm">
                                 If the openings are over 17%, you usually have to use U-values instead and follow a trade-off approach.
                             </p>
 
                             <div className="border-t pt-4">
                                 <h5 className="font-medium mb-2">Why this matters:</h5>
-                                <ul className="list-disc ml-5 space-y-1 text-sm text-white">
+                                <ul className="list-disc ml-5 space-y-1 text-sm">
                                     <li>ER is good for cold climates – it considers how much sun a window lets in to help heat the home, along with how well it insulates and how airtight it is.</li>
                                     <li>U-value only looks at insulation, not sun or air leaks.</li>
                                     <li>Using ER lets you use things like patio doors or south-facing windows that bring in sun, even if their U-value isn't great—as long as they don't make up too much of the wall.</li>
@@ -225,7 +225,7 @@ export default function Performance9368Section({
                     </SelectContent>
                 </Select>
 
-                <InfoCollapsible title="Window & Door Performance Verification">
+                <InfoCollapsible title="ℹ️ Window & Door Performance Verification">
                     <p className="text-xs text-white">
                         Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please only record the lowest performing window and door (U-Value (ie, highest U-value W/(m²×K)).
                     </p>
@@ -432,7 +432,7 @@ export default function Performance9368Section({
                     </SelectContent>
                 </Select>
 
-                <InfoCollapsible title="Caution: Air-Tightness Targets Without Testing History">
+                <InfoCollapsible title="ℹ️ Caution: Air-Tightness Targets Without Testing History">
                     <div className="text-xs text-white space-y-2">
                         <p>
                             Choosing an air-tightness target lower than prescribed by NBC2020 without prior test results is risky.
@@ -453,7 +453,7 @@ export default function Performance9368Section({
                         </p>
                         <div className="flex items-center gap-1 text-sm mt-3">
                             <span>🔗</span>
-                            <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
+                            <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">
                                 More information
                             </a>
                         </div>
@@ -633,7 +633,7 @@ export default function Performance9368Section({
                         </div>
                     </div>
 
-                    <InfoCollapsible title="Benefits of Mid-Construction Blower Door Testing">
+                    <InfoCollapsible title="ℹ️ Benefits of Mid-Construction Blower Door Testing">
                         <div className="text-xs text-white space-y-2">
                             <p className="font-medium">Benefits of a mid-construction (misconstruction) blower door test:</p>
                             <ul className="list-disc ml-4 space-y-1">
@@ -646,7 +646,7 @@ export default function Performance9368Section({
                             </ul>
                             <div className="flex items-center gap-1 text-sm mt-3">
                                 <span>📄</span>
-                                <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
+                                <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">
                                     View the Blower Door Checklist
                                 </a>
                             </div>
