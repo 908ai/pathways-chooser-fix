@@ -8,9 +8,10 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Info, ChevronDown } from "lucide-react";
+import { Info, ChevronDown, AlertTriangle } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import InfoButton from "@/components/InfoButton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function Performance9365Section({
     selections,
@@ -586,17 +587,15 @@ export default function Performance9365Section({
                         thresholdText = "3.0";
                     }
                     const showWarning = airtightnessValue > 0 && airtightnessValue < minimumThreshold;
-                    return showWarning ? <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-md">
-                        <div className="flex items-start gap-2">
-                            <span className="text-destructive text-lg">⚠️</span>
-                            <div className="space-y-2">
-                                <h4 className="font-medium text-destructive">Blower Door Test Required</h4>
-                                <p className="text-sm text-destructive/80">
-                                    You've selected an air leakage rate below {thresholdText} ACH@50pa. A blower door test is required prior to occupancy to verify this result.
-                                </p>
-                            </div>
-                        </div>
-                    </div> : null;
+                    return showWarning ? (
+                        <Alert variant="destructive">
+                            <AlertTriangle className="h-4 w-4" />
+                            <AlertTitle>Blower Door Test Required</AlertTitle>
+                            <AlertDescription>
+                                You've selected an air leakage rate below {thresholdText} ACH@50pa. A blower door test is required prior to occupancy to verify this result.
+                            </AlertDescription>
+                        </Alert>
+                    ) : null;
                 })()}
 
                 {/* Mid-Construction Blower Door Test Checkbox */}
