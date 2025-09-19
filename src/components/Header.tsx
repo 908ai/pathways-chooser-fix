@@ -39,7 +39,7 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center gap-4">
           <div>
-            <img src={nbcLogo} alt="NBC 9.36 Navigator Logo" className="h-14" />
+            <img src={nbcLogo} alt="NBC 9.36 Navigator Logo" className="h-14 [filter:drop-shadow(0_0_15px_#FFF)_drop-shadow(0_0_30px_#fff)] [transition:filter_0.3s_ease]" />
           </div>
           {pathwayInfo && (
             <div className="flex items-center gap-2">

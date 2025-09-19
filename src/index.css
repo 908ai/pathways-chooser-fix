@@ -35,13 +35,13 @@ All colors MUST be HSL.
     --border: 270 15% 85%;
     --input: 270 15% 85%;
     --ring: 270 50% 25%;
-    
+
     --success: 142 71% 45%;
     --success-foreground: 0 0% 98%;
-    
+
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 98%;
-    
+
     --gradient-primary: linear-gradient(135deg, hsl(270 50% 25%), hsl(270 60% 35%));
     --gradient-subtle: linear-gradient(180deg, hsl(0 0% 98%), hsl(270 10% 95%));
     --gradient-purple-green: linear-gradient(135deg, hsl(280 70% 50%), hsl(140 70% 45%));
@@ -93,7 +93,7 @@ All colors MUST be HSL.
     --border: 270 20% 18%;
     --input: 270 20% 18%;
     --ring: 270 60% 70%;
-    
+
     --sidebar-background: 270 25% 6%;
     --sidebar-foreground: 0 0% 90%;
     --sidebar-primary: 270 60% 60%;
@@ -113,4 +113,32 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--secondary));
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--muted-foreground));
+  border-radius: 10px;
+  border: 3px solid hsl(var(--secondary));
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--accent-foreground));
+}
+
+html {
+  overflow-y: scroll;
+}
+
+html body[data-scroll-locked] {
+  margin-right: 0 !important;
+  position: initial !important;
 }
