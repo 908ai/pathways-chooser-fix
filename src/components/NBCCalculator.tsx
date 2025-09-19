@@ -794,7 +794,6 @@ const NBCCalculator = ({
               <HrvAdditionalInfoSection
                 selections={selections}
                 setSelections={setSelections}
-                WarningButton={WarningButton}
               />
             )}
 

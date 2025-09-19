@@ -1,16 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import InfoButton from "@/components/InfoButton";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown } from "lucide-react";
 
 interface Props {
     selections: any;
     setSelections: React.Dispatch<React.SetStateAction<any>>;
-    WarningButton: React.FC<any>;
 }
 
-const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, WarningButton }) => {
+const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }) => {
+    const InfoCollapsible = ({
+        title,
+        children,
+        variant = "warning",
+    }: {
+        title: string;
+        children: React.ReactNode;
+        variant?: "warning" | "destructive";
+    }) => {
+        const [isOpen, setIsOpen] = useState(false);
+        const bgColor =
+            variant === "warning"
+                ? "bg-gradient-to-r from-slate-800/60 to-teal-800/60"
+                : "bg-gradient-to-r from-slate-800/60 to-red-800/60";
+        const borderColor =
+            variant === "warning"
+                ? "border border-orange-400"
+                : "border-2 border-red-400";
+
+        return (
+            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
+                <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
+                    <span className="text-xs font-bold text-white">{title}</span>
+                    <ChevronDown className={`h-5 w-5 text-white transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
+                    <div className="text-white text-xs">{children}</div>
+                </CollapsibleContent>
+            </Collapsible>
+        );
+    };
+
     const certifications = [
         {
             id: "energuide",
@@ -424,7 +457,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, 
                     </div>
 
                     {/* Alert for certification interests */}
-                    {selections.interestedCertifications.length > 0 && <WarningButton warningId="performance-modelling-required" title="Performance Modelling Required">
+                    {selections.interestedCertifications.length > 0 && <InfoCollapsible title="Performance Modelling Required">
                         <div className="text-xs text-white space-y-2">
                             <p>
                                 Since you're interested in certifications, performance modelling (NBC 9.36.5 or 9.36.7) is required.
@@ -439,7 +472,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections, 
                                 Contact us to discuss how performance modelling can help achieve your certification goals.
                             </p>
                         </div>
-                    </WarningButton>}
+                    </InfoCollapsible>}
                 </div>
             }
         </>
