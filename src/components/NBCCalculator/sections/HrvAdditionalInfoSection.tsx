@@ -21,7 +21,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
         children: React.ReactNode;
         variant?: "warning" | "destructive";
     }) => {
-        const [isOpen, setIsOpen] = useState(false);
+        const [isOpen, setIsOpen] = useState(true);
         const bgColor =
             variant === "warning"
                 ? "bg-gradient-to-r from-slate-800/60 to-teal-800/60"
