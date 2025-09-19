@@ -529,7 +529,7 @@ export default function Performance9365Section({
                                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-2">
                                     <p className="text-xs font-medium text-blue-800">📋 Helpful Resources:</p>
                                     <div className="space-y-1">
-                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">
+                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 underline hover:text-blue-800 block">
                                             View the Blower Door Checklist
                                         </a>
                                         <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 underline hover:text-blue-800 block">

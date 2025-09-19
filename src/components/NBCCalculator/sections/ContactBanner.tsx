@@ -43,7 +43,7 @@ export default function ContactBanner() {
           </CollapsibleTrigger>
         </div>
       </div>
-      <CollapsibleContent>
+      <CollapsibleContent className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
         <div className="px-4 pb-4 pt-2 border-t border-slate-400/30">
           <p className="text-slate-200 text-sm">
             You'll speak to a real person from our small, local team. We're here to walk you through the process, answer your questions, and help make energy compliance easy and stress-free.

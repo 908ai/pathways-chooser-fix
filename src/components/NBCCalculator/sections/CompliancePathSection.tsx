@@ -50,7 +50,6 @@ export default function CompliancePathSection({
                             <label className="text-sm font-medium text-white">Which compliance path are you using?</label>
                             <InfoButton title="NBC Part 9 Energy Compliance – Simple Overview">
                                   <div>
-                                    <h4 className="font-semibold text-sm mb-2">NBC Part 9 Energy Compliance – Simple Overview</h4>
                                     <p className="text-sm text-muted-foreground mb-3">
                                       The National Building Code of Canada (NBC) offers four main pathways to show your building meets energy efficiency requirements:
                                     </p>
@@ -64,9 +63,9 @@ export default function CompliancePathSection({
                                           <p>This is the standard, minimum compliance route.</p>
                                           <p>You meet fixed insulation (RSI) values and HVAC/water heating system requirements — no energy modelling or points system required.</p>
                                           <p>An HRV is optional but influences which RSI values you must meet. No HRV means higher RSI requirements for your walls, foundation and attic.</p>
-                                          <p className="bg-muted rounded-md p-2">⚠️ Warning: This path may lead to higher build costs due to limited flexibility. Assemblies must meet strict minimums without trade-offs, which can increase material and labour costs.</p>
+                                          <p className="bg-muted rounded-md p-3">⚠️ Warning: This path may lead to higher build costs due to limited flexibility. Assemblies must meet strict minimums without trade-offs, which can increase material and labour costs.</p>
                                           <p className="mt-2">
-                                            <strong>Trade-off Option (9.36.2.11):</strong> <a href="/reference/calgary-trade-off-calculator.xlsm" download className="text-red-400 underline hover:text-red-600">
+                                            <strong>Trade-off Option (9.36.2.11):</strong> <a href="/reference/calgary-trade-off-calculator.xlsm" download className="text-blue-400 underline hover:text-red-600">
                                               Download Trade-off Calculator
                                             </a> - Allows flexibility to balance R-values between building components.
                                           </p>
@@ -116,13 +115,13 @@ export default function CompliancePathSection({
                                           <p>This is a points-based route to meet Tier 2 and above without energy modelling.</p>
                                           <p>Points are earned for upgrades to insulation, windows, airtightness, HVAC, and more.</p>
                                           <p>An HRV or ERV is mandatory — without it, you cannot use this path.</p>
-                                          <p className="bg-muted rounded-md p-2">⚠️ Warning: May increase build costs due to rigid performance targets. Some flexibility for trade-offs with additional calculations required, otherwise every element must meet its specific upgrade requirement to claim points.</p>
+                                          <p className="bg-muted rounded-md p-3">⚠️ Warning: May increase build costs due to rigid performance targets. Some flexibility for trade-offs with additional calculations required, otherwise every element must meet its specific upgrade requirement to claim points.</p>
                                         </div>
                                         <div className="w-full h-px bg-muted mt-3" />
                                       </div>
                                    </div>
 
-                                  <div className="p-3 bg-muted rounded-md">
+                                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-2">
                                     <p className="text-sm font-medium mb-1">In summary:</p>
                                     <div className="text-sm text-muted-foreground space-y-1">
                                       <p>• Use 9.36.2 for minimum code compliance with standard assemblies (least flexible).</p>
@@ -250,9 +249,6 @@ export default function CompliancePathSection({
                              <div className="flex items-center gap-2">
                                <label className="text-sm font-medium text-white">Front Door Orientation</label>
                                   <InfoButton title="Why Orientation Matters in Energy Efficiency">
-                                      <div>
-                                        <h4 className="font-semibold text-sm mb-2">Why Orientation Matters in Energy Efficiency</h4>
-                                      </div>
                                       <div className="space-y-4">
                                         <div>
                                           <h5 className="font-medium text-sm mb-1">Peak Cooling Loads:</h5>
