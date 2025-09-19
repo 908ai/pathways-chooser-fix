@@ -224,17 +224,6 @@ export default function Performance9365Section({
                         <span className="text-sm text-slate-100">Unheated Floor Above Frost Line (or walk-out basement)</span>
                     </label>
                     <label className="flex items-center gap-2">
-                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("heatedFloors")} onChange={e => {
-                            const value = "heatedFloors";
-                            setSelections(prev => ({
-                                ...prev,
-                                floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter(item => item !== value),
-                                hasInFloorHeat: e.target.checked ? "yes" : "no"
-                            }));
-                        }} className="w-4 h-4 text-primary" />
-                        <span className="text-sm text-slate-100">Heated Floors</span>
-                    </label>
-                    <label className="flex items-center gap-2">
                         <input type="checkbox" checked={selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting")} onChange={e => {
                             const value = "slabOnGradeIntegralFooting";
                             setSelections(prev => ({
@@ -814,8 +803,8 @@ export default function Performance9365Section({
             </div>}
 
             {/* Secondary Suite HRV - Show for buildings with multiple units */}
-            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && <div className="space-y-4 p-4 bg-muted border border-border rounded-md">
-                <h5 className="font-medium text-foreground">Secondary Suite HRV/ERV</h5>
+            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
+                <h5 className="font-medium text-white">Secondary Suite HRV/ERV</h5>
 
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">

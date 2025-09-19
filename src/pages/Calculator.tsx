@@ -22,7 +22,7 @@ const Calculator = () => {
         onSignOut={signOut} 
         pathwayInfo={pathwayInfo}
       />
-      <main className="flex-1 relative z-10">
+      <main className="flex-1 relative z-10 pb-12">
         {/* <div className="container mx-auto px-4 py-4">
           <button 
             onClick={handleBackToDashboard}

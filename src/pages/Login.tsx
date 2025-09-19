@@ -230,7 +230,7 @@ const Login = () => {
           <Card className="bg-background/95 backdrop-blur-sm border-white/20">
             <CardContent className="pt-6">
               <div className="text-center space-y-3">
-                <h2 className="text-xl font-semibold text-foreground">What is the Pathway Selector?</h2>
+                <h2 className="text-xl font-semibold text-foreground">What is the NBC 9.36 Navigator?</h2>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   A specialized tool for energy professionals and building owners to navigate NBC 9.36 compliance pathways. 
                   Quickly determine the most cost-effective approach for your building project while ensuring regulatory compliance 
@@ -242,7 +242,7 @@ const Login = () => {
           
           <Card className="bg-background/95 backdrop-blur-sm border-white/20">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl">NBC 9.36 Pathway Selector</CardTitle>
+              <CardTitle className="text-2xl">NBC 9.36 Navigator</CardTitle>
               <CardDescription>Sign in to your account</CardDescription>
             </CardHeader>
           <CardContent>

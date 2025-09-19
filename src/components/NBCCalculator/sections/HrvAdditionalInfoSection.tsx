@@ -440,7 +440,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                         className="h-6 w-6"
                                     />
                                     <div className="flex items-center gap-4 flex-1">
-                                        <div className="flex-shrink-0 w-28 h-14 flex items-center justify-center bg-white/5 rounded-md p-1">
+                                        <div className="flex-shrink-0 w-24 h-14 flex items-center justify-center bg-white/0 rounded-md p-1">
                                             <img src={cert.imageUrl} alt={`${cert.label} Logo`} className="max-h-full max-w-full object-contain" />
                                         </div>
                                         <div className="flex-1">
