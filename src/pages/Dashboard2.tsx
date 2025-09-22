@@ -8,7 +8,6 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
-import CreateProjectCard from '@/components/dashboard/CreateProjectCard';
 import ProjectToolbar from '@/components/dashboard/ProjectToolbar';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import ProjectKanbanView from '@/components/dashboard/ProjectKanbanView';
@@ -125,8 +124,6 @@ const Dashboard2 = () => {
         )}
 
         <div className="space-y-6">
-          <CreateProjectCard handleNewProject={handleNewProject} />
-          
           <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
             <CardHeader>
               <ProjectToolbar
@@ -138,6 +135,7 @@ const Dashboard2 = () => {
                 onSearchTermChange={setSearchTerm}
                 view={view}
                 onViewChange={setView}
+                onNewProjectClick={handleNewProject}
               />
             </CardHeader>
             <CardContent>

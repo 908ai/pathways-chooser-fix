@@ -95,7 +95,7 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
         <div className="flex justify-between items-start gap-4">
           <div className="flex-1 min-w-0">
             <CardTitle className="text-lg mb-1">{project.project_name}</CardTitle>
-            <CardDescription className="flex items-center gap-1.5 text-sm">
+            <CardDescription className="flex items-center gap-1.5 text-xs">
               <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
               <span className="truncate">{project.location || 'No location specified'}</span>
             </CardDescription>
