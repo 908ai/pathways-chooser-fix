@@ -11,7 +11,7 @@ interface ProjectKanbanViewProps {
 
 const ProjectKanbanView = ({ projects, onViewProject, onEditProject, onDuplicateProject, onDeleteProject }: ProjectKanbanViewProps) => {
   const statuses = [
-    { id: 'inProgress', title: 'In Progress' },
+    { id: 'draft', title: 'Draft' },
     { id: 'submitted', title: 'Submitted' },
     { id: 'complete', title: 'Complete' },
   ];
@@ -19,7 +19,7 @@ const ProjectKanbanView = ({ projects, onViewProject, onEditProject, onDuplicate
   const getProjectsByStatus = (statusId: string) => {
     return projects.filter(p => {
       const status = p.compliance_status;
-      if (statusId === 'inProgress') return status === null || status === 'pending';
+      if (statusId === 'draft') return status === 'draft';
       if (statusId === 'submitted') return status === 'submitted';
       if (statusId === 'complete') return status === 'pass' || status === 'Compliant' || status === 'fail';
       return false;

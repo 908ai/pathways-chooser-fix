@@ -43,7 +43,7 @@ const ProjectToolbar = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="inProgress">In Progress</SelectItem>
+            <SelectItem value="draft">Draft</SelectItem>
             <SelectItem value="submitted">Submitted</SelectItem>
             <SelectItem value="compliant">Compliant</SelectItem>
             <SelectItem value="non-compliant">Non-Compliant</SelectItem>

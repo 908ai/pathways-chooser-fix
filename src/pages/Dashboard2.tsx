@@ -65,7 +65,7 @@ const Dashboard2 = () => {
         // Status filter
         if (statusFilter === 'all') return true;
         const status = p.compliance_status;
-        if (statusFilter === 'inProgress') return status === null || status === 'pending';
+        if (statusFilter === 'draft') return status === 'draft';
         if (statusFilter === 'submitted') return status === 'submitted';
         if (statusFilter === 'compliant') return status === 'pass' || status === 'Compliant';
         if (statusFilter === 'non-compliant') return status === 'fail';
