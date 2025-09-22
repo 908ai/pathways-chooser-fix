@@ -12,6 +12,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 
 import { wallRSIOptions, belowGradeRSIOptions, windowUValueOptions, waterHeaterOptions, airtightnessOptions } from "../constants/options";
 import { validateRSI } from "../utils/validation";
+import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/EffectiveRSIWarning";
 
 interface Props {
     selections: any;
@@ -164,11 +165,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                             </InfoCollapsible>
                         ) : null;
                     })()}
-                    <InfoCollapsible title="ℹ️ Effective RSI/R-Value Required">
-                        <p className="text-xs text-white">
-                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
-                        </p>
-                    </InfoCollapsible>
+                    <EffectiveRSIWarning />
                 </div>}
 
                 <div className="space-y-2">
@@ -191,11 +188,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                             </SelectItem>)}
                         </SelectContent>
                     </Select>
-                    {selections.wallRSI && <InfoCollapsible title="ℹ️ Effective RSI/R-Value Required">
-                        <p className="text-xs text-white">
-                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
-                        </p>
-                    </InfoCollapsible>}
+                    {selections.wallRSI && <EffectiveRSIWarning />}
                 </div>
 
                 <div className="space-y-2">
@@ -218,11 +211,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                             </SelectItem>)}
                         </SelectContent>
                     </Select>
-                    {selections.belowGradeRSI && <InfoCollapsible title="ℹ️ Effective RSI/R-Value Required">
-                        <p className="text-xs text-white">
-                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
-                        </p>
-                    </InfoCollapsible>}
+                    {selections.belowGradeRSI && <EffectiveRSIWarning />}
                 </div>
 
                 <div className="space-y-2">
@@ -239,11 +228,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                             You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline hover:text-blue-900">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline hover:text-blue-900">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                         </p>
                     </div>}
-                    <InfoCollapsible title="ℹ️ Effective RSI/R-Value Required">
-                        <p className="text-xs text-white">
-                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
-                        </p>
-                    </InfoCollapsible>
+                    <EffectiveRSIWarning />
                 </div>
 
                 <div className="space-y-2">
@@ -260,11 +245,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                             You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline hover:text-blue-900">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline hover:text-blue-900">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                         </p>
                     </div>}
-                    <InfoCollapsible title="ℹ️ Effective RSI/R-Value Required">
-                        <p className="text-xs text-white">
-                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
-                        </p>
-                    </InfoCollapsible>
+                    <EffectiveRSIWarning />
                 </div>
 
                 <div className="space-y-2">
@@ -480,11 +461,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                 </>
                 )}
 
-                <InfoCollapsible title="ℹ️ Effective RSI/R-Value Required">
-                    <p className="text-xs text-white">
-                        You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
-                    </p>
-                </InfoCollapsible>
+                <EffectiveRSIWarning />
 
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Window & Door U-Value (W/(m²·K))</label>

@@ -10,6 +10,9 @@ import { Input } from "@/components/ui/input";
 import InfoButton from "@/components/InfoButton";
 import { Button } from "@/components/ui/button";
 import { Info } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ChevronDown, AlertTriangle } from "lucide-react";
 
 export default function Performance9367Section({
     selections,
@@ -37,65 +40,41 @@ export default function Performance9367Section({
     };
 
     const WarningButton = ({
-        warningId,
         title,
+        warningId,
         children,
         variant = "warning",
+        defaultOpen = false,
     }: {
-        warningId: string;
         title: string;
+        warningId: string;
         children: React.ReactNode;
         variant?: "warning" | "destructive";
+        defaultOpen?: boolean;
     }) => {
-        const isExpanded = expandedWarnings[warningId];
+        const [isOpen, setIsOpen] = useState(defaultOpen);
         const bgColor =
             variant === "warning"
                 ? "bg-gradient-to-r from-slate-800/60 to-teal-800/60"
                 : "bg-gradient-to-r from-slate-800/60 to-red-800/60";
         const borderColor =
-            variant === "warning"
-                ? "border-2 border-orange-400"
-                : "border-2 border-red-400";
+            variant === "warning" ? "border border-orange-400" : "border-2 border-red-400";
 
         return (
-            <div
-                className={`p-4 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}
-            >
-                <button
-                    onClick={() => toggleWarning(warningId)}
-                    className="flex items-center gap-3 w-full text-left"
-                >
-                    <span className="text-lg font-bold text-white">{title}</span>
-                </button>
-                {isExpanded && (
-                    <div className="mt-4 animate-accordion-down">
-                        <div className="text-white font-semibold">{children}</div>
-                    </div>
-                )}
-            </div>
+            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
+                <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
+                    <span className="text-xs font-bold text-white">{title}</span>
+                    <ChevronDown className={`h-5 w-5 text-white transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
+                    <div className="text-white text-xs">{children}</div>
+                </CollapsibleContent>
+            </Collapsible>
         );
     };
 
     return (
         <>
-            {/* Building volume section removed for 9.36.7 */}
-
-            <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-100">Ceilings below Attics</label>
-                <Input
-                    type="text"
-                    placeholder='Enter assembly info (e.g., R50 Loose-fill/2x10/16"OC)'
-                    value={selections.ceilingsAtticRSI}
-                    onChange={(e) =>
-                        setSelections((prev: any) => ({
-                            ...prev,
-                            ceilingsAtticRSI: e.target.value,
-                        }))
-                    }
-                    className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400"
-                />
-            </div>
-
             {
                 <>
                     {/* Building volume section removed for 9.36.7 */}
@@ -254,8 +233,8 @@ export default function Performance9367Section({
                             ...prev,
                             heatedFloorsRSI: e.target.value
                         }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                        <WarningButton warningId="inFloorHeating-tiered-info" title="In-Floor Heating Requirements">
-                            <p className="text-xs text-foreground/80">
+                        <WarningButton warningId="inFloorHeating-tiered-info" title="ℹ️ In-Floor Heating Requirements">
+                            <p className="text-xs">
                                 Since the house has in-floor heating, all floors must be insulated to meet NBC requirements.
                             </p>
                         </WarningButton>
@@ -315,8 +294,8 @@ export default function Performance9367Section({
                     </div>
 
                     <div className="space-y-2">
-                        <WarningButton warningId="windowUValue-9367" title="Window Schedule Required">
-                            <p className="text-sm text-white">
+                        <WarningButton warningId="windowUValue-9367" title="ℹ️ Window Schedule Required">
+                            <p className="text-xs text-white">
                                 Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value (ie, highest U-value W/(m²×K)).
                             </p>
                         </WarningButton>
@@ -346,8 +325,8 @@ export default function Performance9367Section({
                         </div>}
                     </div>
 
-                    {selections.hasSkylights === "yes" && <WarningButton warningId="skylight-shaft-insulation-9368" title="Important: Skylight Shaft Insulation">
-                        <p className="text-xs text-foreground/80">
+                    {selections.hasSkylights === "yes" && <WarningButton warningId="skylight-shaft-insulation-9368" title="⚠️ Important: Skylight Shaft Insulation">
+                        <p className="text-xs">
                             Skylight shafts must be insulated. Be prepared to provide further details upon request.
                         </p>
                     </WarningButton>}
@@ -510,20 +489,18 @@ export default function Performance9367Section({
                                 thresholdText = "3.2";
                             }
                             const showWarning = airtightnessValue > 0 && airtightnessValue < minimumThreshold;
-                            return showWarning ? <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-md">
-                                <div className="flex items-start gap-2">
-                                    <span className="text-destructive text-lg">⚠️</span>
-                                    <div className="space-y-2">
-                                        <h4 className="font-medium text-destructive">Airtightness Value Too Low</h4>
-                                        <p className="text-sm text-destructive/80">
-                                            The airtightness value must be at least {thresholdText} ACH50 for prescriptive unguarded testing in {selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}. Please increase your target value.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div> : null;
+                            return showWarning ? (
+                                <Alert variant="destructive" style={{ backgroundColor: 'beige' }}>
+                                    <AlertTriangle className="h-4 w-4" />
+                                    <AlertTitle>Airtightness Value Too Low</AlertTitle>
+                                    <AlertDescription>
+                                        The airtightness value must be at least {thresholdText} ACH50 for prescriptive unguarded testing in {selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}. Please increase your target value.
+                                    </AlertDescription>
+                                </Alert>
+                            ) : null;   
                         })()}
 
-                        <WarningButton warningId="airtightness-caution-9367" title="Caution: Air-Tightness Targets Without Testing History">
+                        <WarningButton warningId="airtightness-caution-9367" title="⚠️ Caution: Air-Tightness Targets Without Testing History">
                             <div className="text-xs text-white space-y-2">
                                 <p>
                                     Choosing an air-tightness target lower than prescribed by NBC2020 without prior test results is risky.
@@ -565,7 +542,7 @@ export default function Performance9367Section({
                                 </div>
                             </div>
 
-                            <WarningButton warningId="mid-construction-blower-door-info-9368" title="Benefits of Mid-Construction Blower Door Testing">
+                            <WarningButton warningId="mid-construction-blower-door-info-9368" title="ℹ️ Benefits of Mid-Construction Blower Door Testing">
                                 <div className="text-xs text-white space-y-2">
                                     <p className="font-medium">Benefits of a mid-construction (misconstruction) blower door test:</p>
                                     <ul className="list-disc ml-4 space-y-1">
@@ -578,7 +555,7 @@ export default function Performance9367Section({
                                     </ul>
                                     <div className="flex items-center gap-1 text-sm mt-3">
                                         <span>📄</span>
-                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
+                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300">
                                             View the Blower Door Checklist
                                         </a>
                                     </div>
@@ -669,7 +646,7 @@ export default function Performance9367Section({
                                 </p>
                                 <div className="flex items-center gap-1 text-sm mt-3">
                                     <span>🔗</span>
-                                    <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">
+                                    <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">
                                         More information
                                     </a>
                                 </div>
