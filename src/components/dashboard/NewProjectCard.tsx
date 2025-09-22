@@ -72,14 +72,14 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
   }
 
   return (
-    <Card className="w-full overflow-visible relative transition-all hover:shadow-lg hover:-translate-y-1 rounded-lg border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 cursor-pointer" onClick={() => onView(project.id)}>
-      <div className={cn("h-2 w-full rounded-t-lg", statusInfo.color)} />
+    <Card className="w-full overflow-hidden relative transition-all hover:shadow-lg hover:-translate-y-1 rounded-lg border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 cursor-pointer" onClick={() => onView(project.id)}>
+      <div className={cn("h-2 w-full", statusInfo.color)} />
       
       <Badge className={cn(
-        "absolute top-2 right-4 px-3 py-1 text-xs font-semibold shadow-md",
+        "absolute top-0 right-0 px-2 py-1 text-xs font-semibold shadow-md rounded-none rounded-bl-[15px]",
         project.selected_pathway === 'performance' 
-          ? 'bg-blue-100 text-blue-800 border border-blue-200' 
-          : 'bg-orange-100 text-orange-800 border border-orange-200'
+          ? 'bg-blue-100 text-blue-800' 
+          : 'bg-orange-100 text-orange-800'
       )}>
         {formatPathway(project.selected_pathway)}
       </Badge>
