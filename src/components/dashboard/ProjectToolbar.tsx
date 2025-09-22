@@ -72,7 +72,7 @@ const ProjectToolbar = ({
                   "rounded-r-none",
                   view === 'kanban'
                     ? 'bg-white text-primary hover:bg-white/90'
-                    : 'bg-transparent text-white hover:bg-yellow-800'
+                    : 'bg-transparent text-white hover:bg-yellow-300'
                 )}
               >
                 <LayoutGrid className="h-4 w-4" />
@@ -92,7 +92,7 @@ const ProjectToolbar = ({
                   "rounded-l-none -ml-px",
                   view === 'table'
                     ? 'bg-white text-primary hover:bg-white/90'
-                    : 'bg-transparent text-white hover:bg-yellow-800'
+                    : 'bg-transparent text-white hover:bg-yellow-300'
                 )}
               >
                 <List className="h-4 w-4" />
