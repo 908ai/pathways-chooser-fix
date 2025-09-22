@@ -7,6 +7,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { MoreHorizontal, Edit, Copy, Trash2, Building, Calendar, AlertTriangle, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -135,15 +140,27 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
             </div>
             <Progress value={progress} className="h-2" />
             {pending.length > 0 && (
-              <div className="mt-2 p-1.5 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/30">
-                <div className="flex items-start gap-2 text-xs text-orange-700 dark:text-orange-300">
-                  <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5 animate-bounce text-orange-500" />
-                  <p>
-                    <span className="font-semibold">Pending ({pending.length}):</span> {pending.slice(0, 2).join(', ')}
-                    {pending.length > 2 && `, +${pending.length - 2} more`}
-                  </p>
-                </div>
-              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="mt-2 p-1.5 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/30">
+                    <div className="flex items-start gap-2 text-xs text-orange-700 dark:text-orange-300">
+                      <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5 animate-bounce text-orange-500" />
+                      <p>
+                        <span className="font-semibold">Pending ({pending.length}):</span> {pending.slice(0, 2).join(', ')}
+                        {pending.length > 2 && `, +${pending.length - 2} more`}
+                      </p>
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="p-2">
+                    <p className="font-semibold mb-2">All Pending Items:</p>
+                    <ul className="list-disc list-inside space-y-1 text-xs">
+                      {pending.map(item => <li key={item}>{item}</li>)}
+                    </ul>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
             )}
           </div>
         )}
