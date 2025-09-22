@@ -71,7 +71,7 @@ const ProjectToolbar = ({
                 className={cn(
                   "rounded-r-none",
                   view === 'kanban'
-                    ? 'bg-white text-primary-foreground hover:bg-white/90'
+                    ? 'bg-white text-primary hover:bg-white/90'
                     : 'bg-transparent text-white hover:bg-slate-700'
                 )}
               >
@@ -91,7 +91,7 @@ const ProjectToolbar = ({
                 className={cn(
                   "rounded-l-none -ml-px",
                   view === 'table'
-                    ? 'bg-white text-primary-foreground hover:bg-white/90'
+                    ? 'bg-white text-primary hover:bg-white/90'
                     : 'bg-transparent text-white hover:bg-slate-700'
                 )}
               >
