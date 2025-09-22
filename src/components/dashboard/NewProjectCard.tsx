@@ -1,5 +1,4 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import {
@@ -8,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Edit, Copy, Trash2, FileText, Building, Calendar, AlertTriangle } from 'lucide-react';
+import { MoreHorizontal, Edit, Copy, Trash2, FileText, Building, Calendar, AlertTriangle, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NewProjectCardProps {
@@ -23,13 +22,13 @@ const getStatusInfo = (status: string | null) => {
   switch (status) {
     case 'pass':
     case 'Compliant':
-      return { text: 'Compliant', color: 'bg-green-500 text-green-50' };
+      return { text: 'Compliant', color: 'bg-green-500' };
     case 'fail':
-      return { text: 'Non-Compliant', color: 'bg-red-500 text-red-50' };
+      return { text: 'Non-Compliant', color: 'bg-red-500' };
     case 'submitted':
-      return { text: 'Submitted', color: 'bg-blue-500 text-blue-50' };
+      return { text: 'Submitted', color: 'bg-blue-500' };
     default:
-      return { text: 'In Progress', color: 'bg-orange-500 text-orange-50' };
+      return { text: 'In Progress', color: 'bg-orange-500' };
   }
 };
 
@@ -59,13 +58,16 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
   const { pending, progress, completedCount, totalItems } = getPendingItems(project);
 
   return (
-    <Card className="w-full overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 rounded-lg border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" onClick={() => onView(project.id)}>
+    <Card className="w-full overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 rounded-lg border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 cursor-pointer" onClick={() => onView(project.id)}>
       <div className={cn("h-2 w-full", statusInfo.color)} />
       <CardHeader>
         <div className="flex justify-between items-start gap-4">
-          <div>
+          <div className="flex-1 min-w-0">
             <CardTitle className="text-lg mb-1">{project.project_name}</CardTitle>
-            <CardDescription>{project.location || 'No location specified'}</CardDescription>
+            <CardDescription className="flex items-center gap-1.5 text-sm">
+              <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
+              <span className="truncate">{project.location || 'No location specified'}</span>
+            </CardDescription>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -88,23 +90,23 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <div className="space-y-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <FileText className="h-4 w-4" />
-            <span>{project.selected_pathway || 'N/A'}</span>
+            <FileText className="h-4 w-4 flex-shrink-0" />
+            <span className="truncate">Pathway: <strong>{project.selected_pathway || 'N/A'}</strong></span>
           </div>
           <div className="flex items-center gap-2">
-            <Building className="h-4 w-4" />
-            <span>{project.building_type || 'N/A'}</span>
+            <Building className="h-4 w-4 flex-shrink-0" />
+            <span className="truncate">Type: <strong>{project.building_type || 'N/A'}</strong></span>
           </div>
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            <span>{new Date(project.updated_at).toLocaleDateString()}</span>
+            <Calendar className="h-4 w-4 flex-shrink-0" />
+            <span className="truncate">Updated: <strong>{new Date(project.updated_at).toLocaleDateString()}</strong></span>
           </div>
         </div>
         
-        {statusInfo.text === 'In Progress' ? (
-          <div className="space-y-2">
+        {statusInfo.text === 'In Progress' && (
+          <div className="space-y-2 pt-2 border-t border-border/50">
             <div className="flex justify-between items-center text-xs text-muted-foreground">
               <span>Compliance Checklist</span>
               <span>{completedCount}/{totalItems} Complete</span>
@@ -119,10 +121,6 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
                 </p>
               </div>
             )}
-          </div>
-        ) : (
-          <div className="text-center p-2 bg-muted rounded-md">
-            <Badge className={cn("text-sm", statusInfo.color)}>{statusInfo.text}</Badge>
           </div>
         )}
       </CardContent>
