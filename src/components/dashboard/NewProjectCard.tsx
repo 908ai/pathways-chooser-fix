@@ -57,6 +57,19 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
   const statusInfo = getStatusInfo(project.compliance_status);
   const { pending, progress, completedCount, totalItems } = getPendingItems(project);
 
+  const formatBuildingType = (type: string | null) => {
+    if (!type) return 'N/A';
+    return type
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  const formatPathway = (pathway: string | null) => {
+      if (!pathway) return 'N/A';
+      return pathway.charAt(0).toUpperCase() + pathway.slice(1);
+  }
+
   return (
     <Card className="w-full overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 rounded-lg border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 cursor-pointer" onClick={() => onView(project.id)}>
       <div className={cn("h-2 w-full", statusInfo.color)} />
@@ -93,15 +106,14 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
         <div className="space-y-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <FileText className="h-4 w-4 flex-shrink-0" />
-            <span className="truncate">Pathway: <strong>{project.selected_pathway || 'N/A'}</strong></span>
-          </div>
-          <div className="flex items-center gap-2">
+            <strong className="truncate">{formatPathway(project.selected_pathway)}</strong>
+            <span className="text-muted-foreground mx-1">|</span>
             <Building className="h-4 w-4 flex-shrink-0" />
-            <span className="truncate">Type: <strong>{project.building_type || 'N/A'}</strong></span>
+            <strong className="truncate">{formatBuildingType(project.building_type)}</strong>
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 flex-shrink-0" />
-            <span className="truncate">Updated: <strong>{new Date(project.updated_at).toLocaleDateString()}</strong></span>
+            <span>Updated: <strong>{new Date(project.updated_at).toLocaleDateString()}</strong></span>
           </div>
         </div>
         
