@@ -13,8 +13,7 @@ const ProjectKanbanView = ({ projects, onViewProject, onEditProject, onDuplicate
   const statuses = [
     { id: 'inProgress', title: 'In Progress' },
     { id: 'submitted', title: 'Submitted' },
-    { id: 'compliant', title: 'Compliant' },
-    { id: 'non-compliant', title: 'Non-Compliant' },
+    { id: 'complete', title: 'Complete' },
   ];
 
   const getProjectsByStatus = (statusId: string) => {
@@ -22,14 +21,13 @@ const ProjectKanbanView = ({ projects, onViewProject, onEditProject, onDuplicate
       const status = p.compliance_status;
       if (statusId === 'inProgress') return status === null || status === 'pending';
       if (statusId === 'submitted') return status === 'submitted';
-      if (statusId === 'compliant') return status === 'pass' || status === 'Compliant';
-      if (statusId === 'non-compliant') return status === 'fail';
+      if (statusId === 'complete') return status === 'pass' || status === 'Compliant' || status === 'fail';
       return false;
     });
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {statuses.map(status => {
         const statusProjects = getProjectsByStatus(status.id);
         return (
