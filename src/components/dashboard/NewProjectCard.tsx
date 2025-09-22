@@ -114,7 +114,7 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-2 text-sm text-muted-foreground">
+        <div className="space-y-2 text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
             <Building className="h-4 w-4 flex-shrink-0" />
             <strong className="truncate">{formatBuildingType(project.building_type)}</strong>
