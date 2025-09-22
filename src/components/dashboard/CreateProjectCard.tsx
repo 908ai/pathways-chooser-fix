@@ -8,7 +8,7 @@ interface CreateProjectCardProps {
 
 const CreateProjectCard = ({ handleNewProject }: CreateProjectCardProps) => {
   return (
-    <Card className="rounded-lg border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <Card className="bg-slate-800/60 border-slate-400/30 backdrop-blur-md">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-white">
           <Plus className="h-5 w-5" />
