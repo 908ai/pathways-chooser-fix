@@ -18,7 +18,7 @@ const Footer = () => {
           >
             <Phone className="h-4 w-4" />
             <div className="text-left">
-              <p className="text-xs">Need Help? Contact Us</p>
+              <p className="text-xs">Need Help? Call Us</p>
               <p className="font-semibold">403-872-2441</p>
             </div>
           </Button>
