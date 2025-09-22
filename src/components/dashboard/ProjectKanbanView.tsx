@@ -35,7 +35,7 @@ const ProjectKanbanView = ({ projects, onViewProject, onEditProject, onDuplicate
         return (
           <div key={status.id}>
             <h3 className="text-lg font-semibold mb-4 text-white px-2">{status.title} ({statusProjects.length})</h3>
-            <div className="space-y-4 p-2 rounded-lg h-[60vh] overflow-y-auto">
+            <div className="space-y-4 p-2 rounded-lg h-[60vh] overflow-y-auto bg-black/10">
               {statusProjects.length > 0 ? (
                 statusProjects.map(project => (
                   <NewProjectCard

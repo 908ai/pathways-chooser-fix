@@ -127,7 +127,7 @@ const Dashboard2 = () => {
         <div className="space-y-6">
           <CreateProjectCard handleNewProject={handleNewProject} />
           
-          <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-sm">
+          <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
             <CardHeader>
               <ProjectToolbar
                 statusFilter={statusFilter}
