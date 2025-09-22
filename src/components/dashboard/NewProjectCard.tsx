@@ -59,7 +59,7 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
   const { pending, progress, completedCount, totalItems } = getPendingItems(project);
 
   return (
-    <Card className="w-full overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1" onClick={() => onView(project.id)}>
+    <Card className="w-full overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 bg-slate-700/40 border-slate-400/50 backdrop-blur-sm" onClick={() => onView(project.id)}>
       <div className={cn("h-2 w-full", statusInfo.color)} />
       <CardHeader>
         <div className="flex justify-between items-start gap-4">
