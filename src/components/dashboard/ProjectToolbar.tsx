@@ -3,6 +3,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Search, ArrowUpDown, LayoutGrid, List, Plus } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ProjectToolbarProps {
   statusFilter: string;
@@ -56,12 +61,26 @@ const ProjectToolbar = ({
           Sort by {sortBy === 'updated_at' ? 'Date' : 'Name'}
         </Button>
         <ToggleGroup type="single" value={view} onValueChange={(value) => { if (value) onViewChange(value as 'kanban' | 'table') }}>
-          <ToggleGroupItem value="kanban" aria-label="Kanban view" className="data-[state=off]:text-white">
-            <LayoutGrid className="h-4 w-4" />
-          </ToggleGroupItem>
-          <ToggleGroupItem value="table" aria-label="Table view" className="data-[state=off]:text-white">
-            <List className="h-4 w-4" />
-          </ToggleGroupItem>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <ToggleGroupItem value="kanban" aria-label="Kanban view" className="data-[state=off]:text-white data-[state=off]:hover:bg-primary/20">
+                <LayoutGrid className="h-4 w-4" />
+              </ToggleGroupItem>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Kanban View</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <ToggleGroupItem value="table" aria-label="Table view" className="data-[state=off]:text-white data-[state=off]:hover:bg-primary/20">
+                <List className="h-4 w-4" />
+              </ToggleGroupItem>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Table View</p>
+            </TooltipContent>
+          </Tooltip>
         </ToggleGroup>
         <Button onClick={onNewProjectClick} className="border border-white animate-glow-pulse">
           <Plus className="mr-2 h-4 w-4" />
