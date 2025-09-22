@@ -7,8 +7,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Edit, Copy, Trash2, FileText, Building, Calendar, AlertTriangle, MapPin } from 'lucide-react';
+import { MoreHorizontal, Edit, Copy, Trash2, Building, Calendar, AlertTriangle, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 
 interface NewProjectCardProps {
   project: any;
@@ -71,8 +72,18 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
   }
 
   return (
-    <Card className="w-full overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 rounded-lg border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 cursor-pointer" onClick={() => onView(project.id)}>
-      <div className={cn("h-2 w-full", statusInfo.color)} />
+    <Card className="w-full overflow-visible relative transition-all hover:shadow-lg hover:-translate-y-1 rounded-lg border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 cursor-pointer" onClick={() => onView(project.id)}>
+      <div className={cn("h-2 w-full rounded-t-lg", statusInfo.color)} />
+      
+      <Badge className={cn(
+        "absolute top-0 right-4 -translate-y-1/2 px-3 py-1 text-xs font-semibold shadow-md",
+        project.selected_pathway === 'performance' 
+          ? 'bg-blue-100 text-blue-800 border border-blue-200' 
+          : 'bg-orange-100 text-orange-800 border border-orange-200'
+      )}>
+        {formatPathway(project.selected_pathway)}
+      </Badge>
+
       <CardHeader>
         <div className="flex justify-between items-start gap-4">
           <div className="flex-1 min-w-0">
@@ -105,9 +116,6 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
       <CardContent className="space-y-4">
         <div className="space-y-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <FileText className="h-4 w-4 flex-shrink-0" />
-            <strong className="truncate">{formatPathway(project.selected_pathway)}</strong>
-            <span className="text-muted-foreground mx-1">|</span>
             <Building className="h-4 w-4 flex-shrink-0" />
             <strong className="truncate">{formatBuildingType(project.building_type)}</strong>
           </div>
