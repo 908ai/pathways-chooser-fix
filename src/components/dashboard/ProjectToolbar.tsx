@@ -2,12 +2,12 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, ArrowUpDown, LayoutGrid, List, Plus } from "lucide-react";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 interface ProjectToolbarProps {
   statusFilter: string;
@@ -60,12 +60,23 @@ const ProjectToolbar = ({
           <ArrowUpDown className="mr-2 h-4 w-4" />
           Sort by {sortBy === 'updated_at' ? 'Date' : 'Name'}
         </Button>
-        <ToggleGroup type="single" value={view} onValueChange={(value) => { if (value) onViewChange(value as 'kanban' | 'table') }}>
+        
+        <div className="flex items-center">
           <Tooltip>
             <TooltipTrigger asChild>
-              <ToggleGroupItem value="kanban" aria-label="Kanban view" className="data-[state=on]:bg-white data-[state=on]:text-primary-foreground data-[state=off]:bg-transparent data-[state=off]:text-white data-[state=off]:hover:bg-slate-700">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => onViewChange('kanban')}
+                className={cn(
+                  "rounded-r-none",
+                  view === 'kanban'
+                    ? 'bg-white text-primary-foreground hover:bg-white/90'
+                    : 'bg-transparent text-white hover:bg-slate-700'
+                )}
+              >
                 <LayoutGrid className="h-4 w-4" />
-              </ToggleGroupItem>
+              </Button>
             </TooltipTrigger>
             <TooltipContent>
               <p>Kanban View</p>
@@ -73,15 +84,26 @@ const ProjectToolbar = ({
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <ToggleGroupItem value="table" aria-label="Table view" className="data-[state=on]:bg-white data-[state=on]:text-primary-foreground data-[state=off]:bg-transparent data-[state=off]:text-white data-[state=off]:hover:bg-slate-700">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => onViewChange('table')}
+                className={cn(
+                  "rounded-l-none -ml-px",
+                  view === 'table'
+                    ? 'bg-white text-primary-foreground hover:bg-white/90'
+                    : 'bg-transparent text-white hover:bg-slate-700'
+                )}
+              >
                 <List className="h-4 w-4" />
-              </ToggleGroupItem>
+              </Button>
             </TooltipTrigger>
             <TooltipContent>
               <p>Table View</p>
             </TooltipContent>
           </Tooltip>
-        </ToggleGroup>
+        </div>
+
         <Button onClick={onNewProjectClick} className="border border-white animate-glow-pulse">
           <Plus className="mr-2 h-4 w-4" />
           New Project
