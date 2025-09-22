@@ -1,86 +1,119 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
-import { User, Building, FileText, Info, Shield } from 'lucide-react';
+import { Shield, Building } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
+import CreateProjectCard from '@/components/dashboard/CreateProjectCard';
+import ProjectToolbar from '@/components/dashboard/ProjectToolbar';
 import NewProjectCard from '@/components/dashboard/NewProjectCard';
-import ProjectList from '@/components/dashboard/ProjectList';
-import AccountInfoTab from '@/components/dashboard/AccountInfoTab';
-import BuildingOfficialsTab from '@/components/dashboard/BuildingOfficialsTab';
-import ResourcesTab from '@/components/dashboard/ResourcesTab';
-import FaqTab from '@/components/dashboard/FaqTab';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 const Dashboard2 = () => {
   const { user, signOut } = useAuth();
-  const { canViewAllProjects, userRole, loading: roleLoading } = useUserRole();
+  const { canViewAllProjects, loading: roleLoading } = useUserRole();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [projects, setProjects] = useState<{
-    inProgress: any[];
-    complete: any[];
-  }>({
-    inProgress: [],
-    complete: []
-  });
-
-  const activeTab = searchParams.get('tab') || 'projects';
-
-  const handleTabChange = (value: string) => {
-    setSearchParams({ tab: value });
-  };
+  
+  const [allProjects, setAllProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Filtering and sorting state
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('updated_at'); // 'updated_at' or 'project_name'
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const loadProjects = async () => {
       if (!user || roleLoading) return;
+      setLoading(true);
       try {
         let query = supabase.from('project_summaries').select('*');
         if (!canViewAllProjects) {
           query = query.eq('user_id', user.id);
         }
-        const { data, error } = await query;
+        const { data, error } = await query.order('updated_at', { ascending: false });
         if (error) throw error;
-
-        const projectsData = data || [];
-        setProjects({
-          inProgress: projectsData.filter((p: any) => p.compliance_status === null || p.compliance_status === 'pending' || p.compliance_status === 'submitted'),
-          complete: projectsData.filter((p: any) => p.compliance_status === 'pass' || p.compliance_status === 'fail' || p.compliance_status === 'Compliant')
-        });
+        setAllProjects(data || []);
       } catch (error) {
         console.error('Error loading projects:', error);
+        toast({ title: "Error", description: "Failed to load projects.", variant: "destructive" });
+      } finally {
+        setLoading(false);
       }
     };
     loadProjects();
-  }, [user, canViewAllProjects, roleLoading]);
+  }, [user, canViewAllProjects, roleLoading, toast]);
+
+  const filteredAndSortedProjects = useMemo(() => {
+    return allProjects
+      .filter(p => {
+        // Search filter
+        const lowerSearch = searchTerm.toLowerCase();
+        const nameMatch = p.project_name?.toLowerCase().includes(lowerSearch);
+        const locationMatch = p.location?.toLowerCase().includes(lowerSearch);
+        if (searchTerm && !nameMatch && !locationMatch) {
+          return false;
+        }
+
+        // Status filter
+        if (statusFilter === 'all') return true;
+        const status = p.compliance_status;
+        if (statusFilter === 'inProgress') return status === null || status === 'pending' || status === 'submitted';
+        if (statusFilter === 'submitted') return status === 'submitted';
+        if (statusFilter === 'compliant') return status === 'pass' || status === 'Compliant';
+        if (statusFilter === 'non-compliant') return status === 'fail';
+        return false;
+      })
+      .sort((a, b) => {
+        if (sortBy === 'project_name') {
+          return a.project_name.localeCompare(b.project_name);
+        }
+        // Default sort by updated_at (descending)
+        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+      });
+  }, [allProjects, searchTerm, statusFilter, sortBy]);
 
   const handleNewProject = () => navigate('/calculator?showHelp=true');
-  const handleEditProject = (projectId: string, event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (roleLoading || !userRole) {
-      toast({ title: "Please Wait", description: "Loading user permissions..." });
-      return;
-    }
+  const handleViewProject = (projectId: string) => navigate(`/project/${projectId}`);
+  const handleEditProject = (projectId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     navigate(`/calculator?edit=${projectId}`);
   };
-  const handleViewProject = (projectId: string) => navigate(`/project/${projectId}`);
+  const handleDuplicateProject = async (projectId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Add duplication logic here
+    toast({ title: "Coming Soon!", description: "Project duplication will be available shortly." });
+  };
+  const handleDeleteProject = async (projectId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm('Are you sure you want to delete this project? This cannot be undone.')) return;
+    
+    try {
+      const { error } = await supabase.from('project_summaries').delete().eq('id', projectId);
+      if (error) throw error;
+      setAllProjects(prev => prev.filter(p => p.id !== projectId));
+      toast({ title: "Project Deleted", description: "The project has been successfully deleted." });
+    } catch (error: any) {
+      toast({ title: "Error", description: `Failed to delete project: ${error.message}`, variant: "destructive" });
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
       <Header showSignOut={true} onSignOut={signOut} pathwayInfo="" />
       <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-3 text-white drop-shadow-lg">Project Dashboard</h1>
+          <h1 className="text-4xl font-bold mb-3 text-white drop-shadow-lg">Project Dashboard V2</h1>
           <p className="text-gray-200 text-lg drop-shadow-md">
             Manage your NBC 9.36 compliance projects and account information
           </p>
         </div>
+        
         {canViewAllProjects && (
           <div className="mb-6 p-4 bg-blue-900/30 border border-blue-400/50 rounded-lg text-center flex items-center justify-center gap-3">
             <Shield className="h-5 w-5 text-blue-300" />
@@ -89,31 +122,49 @@ const Dashboard2 = () => {
             </p>
           </div>
         )}
-        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="projects" className="flex items-center gap-2"><Building className="h-4 w-4" />Projects</TabsTrigger>
-            <TabsTrigger value="building-officials" className="flex items-center gap-2"><Building className="h-4 w-4" />Building Officials</TabsTrigger>
-            <TabsTrigger value="resources" className="flex items-center gap-2"><FileText className="h-4 w-4" />Resources</TabsTrigger>
-            <TabsTrigger value="faq" className="flex items-center gap-2"><Info className="h-4 w-4" />FAQ</TabsTrigger>
-            <TabsTrigger value="account" className="flex items-center gap-2"><User className="h-4 w-4" />Account Information</TabsTrigger>
-          </TabsList>
-          <TabsContent value="projects" className="space-y-6">
-            <NewProjectCard handleNewProject={handleNewProject} />
-            <ProjectList projects={projects} handleViewProject={handleViewProject} handleEditProject={handleEditProject} />
-          </TabsContent>
-          <TabsContent value="building-officials" className="space-y-6">
-            <BuildingOfficialsTab />
-          </TabsContent>
-          <TabsContent value="resources" className="space-y-6">
-            <ResourcesTab />
-          </TabsContent>
-          <TabsContent value="faq" className="space-y-6">
-            <FaqTab />
-          </TabsContent>
-          <TabsContent value="account" className="space-y-6">
-            <AccountInfoTab />
-          </TabsContent>
-        </Tabs>
+
+        <div className="space-y-6">
+          <CreateProjectCard handleNewProject={handleNewProject} />
+          
+          <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+            <CardHeader>
+              <ProjectToolbar
+                statusFilter={statusFilter}
+                onStatusFilterChange={setStatusFilter}
+                sortBy={sortBy}
+                onSortByChange={setSortBy}
+                searchTerm={searchTerm}
+                onSearchTermChange={setSearchTerm}
+              />
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="text-center py-12 text-white">Loading projects...</div>
+              ) : filteredAndSortedProjects.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredAndSortedProjects.map(project => (
+                    <NewProjectCard
+                      key={project.id}
+                      project={project}
+                      onView={handleViewProject}
+                      onEdit={handleEditProject}
+                      onDuplicate={handleDuplicateProject}
+                      onDelete={handleDeleteProject}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 text-white">
+                  <Building className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-xl font-semibold">No Projects Found</h3>
+                  <p className="text-muted-foreground mt-2">
+                    {searchTerm || statusFilter !== 'all' ? 'Try adjusting your filters.' : 'Get started by creating a new project.'}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </main>
       <Footer />
     </div>
