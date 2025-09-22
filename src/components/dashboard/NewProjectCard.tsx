@@ -76,7 +76,7 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
       <div className={cn("h-2 w-full rounded-t-lg", statusInfo.color)} />
       
       <Badge className={cn(
-        "absolute top-4 right-4 px-3 py-1 text-xs font-semibold shadow-md",
+        "absolute top-2 right-4 px-3 py-1 text-xs font-semibold shadow-md",
         project.selected_pathway === 'performance' 
           ? 'bg-blue-100 text-blue-800 border border-blue-200' 
           : 'bg-orange-100 text-orange-800 border border-orange-200'
