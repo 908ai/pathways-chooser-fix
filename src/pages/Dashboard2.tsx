@@ -108,7 +108,7 @@ const Dashboard2 = () => {
       <Header showSignOut={true} onSignOut={signOut} pathwayInfo="" />
       <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-3 text-white drop-shadow-lg">Project Dashboard V2</h1>
+          <h1 className="text-4xl font-bold mb-3 text-white drop-shadow-lg">Project Dashboard</h1>
           <p className="text-gray-200 text-lg drop-shadow-md">
             Manage your NBC 9.36 compliance projects and account information
           </p>
