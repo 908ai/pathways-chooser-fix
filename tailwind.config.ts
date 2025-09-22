@@ -101,12 +101,23 @@ export default {
           from: { height: 'var(--radix-collapsible-content-height)' },
           to: { height: '0' },
         },
+        'glow-pulse': {
+          '0%, 100%': { 
+            boxShadow: '0 0 0 0 hsl(var(--primary) / 0.7)',
+            borderColor: 'hsl(var(--primary))'
+          },
+          '50%': { 
+            boxShadow: '0 0 12px 3px hsl(var(--primary) / 0)',
+            borderColor: 'hsl(var(--primary) / 0.5)'
+          },
+        },
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
         'collapsible-down': 'collapsible-down 0.2s ease-out',
         'collapsible-up': 'collapsible-up 0.2s ease-out',
+        'glow-pulse': 'glow-pulse 2.5s infinite',
 			}
 		}
 	},
