@@ -63,7 +63,7 @@ const ProjectToolbar = ({
         <ToggleGroup type="single" value={view} onValueChange={(value) => { if (value) onViewChange(value as 'kanban' | 'table') }}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <ToggleGroupItem value="kanban" aria-label="Kanban view" className="data-[state=off]:text-white data-[state=off]:hover:bg-primary/20 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+              <ToggleGroupItem value="kanban" aria-label="Kanban view" className="data-[state=off]:text-white data-[state=off]:hover:bg-primary/20 data-[state=on]:bg-white data-[state=on]:text-primary">
                 <LayoutGrid className="h-4 w-4" />
               </ToggleGroupItem>
             </TooltipTrigger>
@@ -73,7 +73,7 @@ const ProjectToolbar = ({
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <ToggleGroupItem value="table" aria-label="Table view" className="data-[state=off]:text-white data-[state=off]:hover:bg-primary/20 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+              <ToggleGroupItem value="table" aria-label="Table view" className="data-[state=off]:text-white data-[state=off]:hover:bg-primary/20 data-[state=on]:bg-white data-[state=on]:text-primary">
                 <List className="h-4 w-4" />
               </ToggleGroupItem>
             </TooltipTrigger>
