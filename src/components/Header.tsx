@@ -46,7 +46,7 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
               {pathwayInfo.includes('Prescriptive') && (
                 <Badge 
                   variant="outline" 
-                  className="text-sm font-medium border-2 border-orange-500 text-orange-700 bg-orange-50 dark:border-orange-400 dark:text-orange-300 dark:bg-orange-950/30 px-3 py-1 flex items-center gap-1.5"
+                  className="text-sm font-medium border-2 border-orange-500 text-orange-700 bg-orange-50 dark:border-orange-400 dark:text-orange-300 dark:bg-orange-950/30 px-3 py-1 flex items-center gap-1.5 hover:bg-orange-50 dark:hover:bg-orange-950/30"
                 >
                   <FileText className="h-3.5 w-3.5" />
                   Prescriptive Path
@@ -55,7 +55,7 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
               {pathwayInfo.includes('Performance') && (
                 <Badge 
                   variant="outline" 
-                  className="text-sm font-medium border-2 border-blue-500 text-blue-700 bg-blue-50 dark:border-blue-400 dark:text-blue-300 dark:bg-blue-950/30 px-3 py-1 flex items-center gap-1.5"
+                  className="text-sm font-medium border-2 border-blue-500 text-blue-700 bg-blue-50 dark:border-blue-400 dark:text-blue-300 dark:bg-blue-950/30 px-3 py-1 flex items-center gap-1.5 hover:bg-blue-50 dark:hover:bg-blue-950/30"
                 >
                   <Zap className="h-3.5 w-3.5" />
                   Performance Path

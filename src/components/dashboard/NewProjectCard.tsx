@@ -78,8 +78,8 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
       <Badge className={cn(
         "absolute top-0 right-0 px-2 py-1 text-xs font-semibold shadow-md rounded-none rounded-bl-[15px]",
         project.selected_pathway === 'performance' 
-          ? 'bg-blue-100 text-blue-800' 
-          : 'bg-orange-100 text-orange-800'
+          ? 'bg-blue-100 text-blue-800 hover:bg-blue-100' 
+          : 'bg-orange-100 text-orange-800 hover:bg-orange-100'
       )}>
         {formatPathway(project.selected_pathway)}
       </Badge>
