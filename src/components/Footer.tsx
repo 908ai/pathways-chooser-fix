@@ -9,9 +9,7 @@ const Footer = () => {
   return (
     <footer className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mt-auto">
       <div className="container mx-auto px-4 py-6">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">© 2025</p>
-          
+        <div className="relative flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-4">
           <Button 
             onClick={handleCallContact}
             variant="outline" 
@@ -24,6 +22,8 @@ const Footer = () => {
               <p className="font-semibold">403-872-2441</p>
             </div>
           </Button>
+          
+          <p className="text-sm text-muted-foreground sm:absolute sm:left-1/2 sm:-translate-x-1/2">© 2025</p>
         </div>
       </div>
     </footer>
