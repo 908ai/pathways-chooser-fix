@@ -71,13 +71,13 @@ const ProjectTableView = ({ projects, onViewProject, onEditProject, onDuplicateP
   return (
     <Table>
       <TableHeader>
-        <TableRow>
-          <TableHead>Project Name</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Pathway</TableHead>
-          <TableHead>Progress</TableHead>
-          <TableHead>Last Updated</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
+        <TableRow className="border-b border-slate-400/50 hover:bg-transparent">
+          <TableHead className="text-white">Project Name</TableHead>
+          <TableHead className="text-white">Status</TableHead>
+          <TableHead className="text-white">Pathway</TableHead>
+          <TableHead className="text-white">Progress</TableHead>
+          <TableHead className="text-white">Last Updated</TableHead>
+          <TableHead className="text-right text-white">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -85,16 +85,16 @@ const ProjectTableView = ({ projects, onViewProject, onEditProject, onDuplicateP
           const statusInfo = getStatusInfo(project.compliance_status);
           const { pending, progress } = getPendingItems(project);
           return (
-            <TableRow key={project.id} onClick={() => onViewProject(project.id)} className="cursor-pointer">
+            <TableRow key={project.id} onClick={() => onViewProject(project.id)} className="cursor-pointer bg-slate-700/40 border-b border-slate-400/50 backdrop-blur-md hover:bg-slate-600/50">
               <TableCell>
-                <div className="font-medium">{project.project_name}</div>
-                <div className="text-sm text-muted-foreground">{project.location}</div>
+                <div className="font-medium text-white">{project.project_name}</div>
+                <div className="text-sm text-slate-300">{project.location}</div>
               </TableCell>
               <TableCell>
                 <Badge className={cn(statusInfo.color)}>{statusInfo.text}</Badge>
               </TableCell>
               <TableCell>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 text-white">
                   {project.selected_pathway === 'performance' ? <Zap className="h-4 w-4 text-blue-400" /> : <FileText className="h-4 w-4 text-orange-400" />}
                   <span className="capitalize">{project.selected_pathway}</span>
                 </div>
@@ -123,14 +123,14 @@ const ProjectTableView = ({ projects, onViewProject, onEditProject, onDuplicateP
                     </Tooltip>
                   </TooltipProvider>
                 ) : (
-                  <span>-</span>
+                  <span className="text-slate-300">-</span>
                 )}
               </TableCell>
-              <TableCell>{new Date(project.updated_at).toLocaleDateString()}</TableCell>
+              <TableCell className="text-slate-300">{new Date(project.updated_at).toLocaleDateString()}</TableCell>
               <TableCell className="text-right">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={e => e.stopPropagation()}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-white" onClick={e => e.stopPropagation()}>
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
