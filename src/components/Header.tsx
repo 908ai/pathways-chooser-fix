@@ -72,11 +72,6 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
                   Dashboard
                 </Button>
               </Link>
-              <Link to="/dashboard2">
-                <Button variant={location.pathname === '/dashboard2' ? 'default' : 'ghost'} size="sm">
-                  Dashboard V2
-                </Button>
-              </Link>
               <Link to="/calculator">
                 <Button variant={location.pathname === '/calculator' ? 'default' : 'ghost'} size="sm">
                   Calculator
