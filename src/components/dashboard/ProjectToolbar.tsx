@@ -56,10 +56,10 @@ const ProjectToolbar = ({
           Sort by {sortBy === 'updated_at' ? 'Date' : 'Name'}
         </Button>
         <ToggleGroup type="single" value={view} onValueChange={(value) => { if (value) onViewChange(value as 'kanban' | 'table') }}>
-          <ToggleGroupItem value="kanban" aria-label="Kanban view">
+          <ToggleGroupItem value="kanban" aria-label="Kanban view" className="data-[state=off]:text-white">
             <LayoutGrid className="h-4 w-4" />
           </ToggleGroupItem>
-          <ToggleGroupItem value="table" aria-label="Table view">
+          <ToggleGroupItem value="table" aria-label="Table view" className="data-[state=off]:text-white">
             <List className="h-4 w-4" />
           </ToggleGroupItem>
         </ToggleGroup>
