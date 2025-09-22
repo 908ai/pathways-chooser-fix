@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import InfoButton from "@/components/InfoButton";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown } from "lucide-react";
 
 import { validateRSI_9362 } from "../utils/validation";
 
@@ -12,27 +14,16 @@ export default function Prescriptive9362Section({
     selections: any;
     setSelections: any;
 }) {
-    const [expandedWarnings, setExpandedWarnings] = useState<{ [key: string]: boolean }>({});
-
-    const toggleWarning = (warningId: string) => {
-        setExpandedWarnings((prev) => ({
-            ...prev,
-            [warningId]: !prev[warningId],
-        }));
-    };
-
     const WarningButton = ({
-        warningId,
         title,
         children,
         variant = "warning",
     }: {
-        warningId: string;
         title: string;
         children: React.ReactNode;
         variant?: "warning" | "destructive";
     }) => {
-        const isExpanded = expandedWarnings[warningId];
+        const [isOpen, setIsOpen] = useState(false);
         const bgColor =
             variant === "warning"
                 ? "bg-gradient-to-r from-slate-800/60 to-teal-800/60"
@@ -41,19 +32,15 @@ export default function Prescriptive9362Section({
             variant === "warning" ? "border-2 border-orange-400" : "border-2 border-red-400";
 
         return (
-            <div className={`p-4 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
-                <button
-                    onClick={() => toggleWarning(warningId)}
-                    className="flex items-center gap-3 w-full text-left"
-                >
+            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-4 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
+                <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
                     <span className="text-lg font-bold text-white">{title}</span>
-                </button>
-                {isExpanded && (
-                    <div className="mt-4 animate-accordion-down">
-                        <div className="text-white font-semibold">{children}</div>
-                    </div>
-                )}
-            </div>
+                    <ChevronDown className={`h-5 w-5 text-white transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
+                    <div className="text-white font-semibold">{children}</div>
+                </CollapsibleContent>
+            </Collapsible>
         );
     };
 
@@ -189,7 +176,7 @@ export default function Prescriptive9362Section({
                     const minRSI = selections.hasHrv === "with_hrv" ? 8.67 : selections.hasHrv === "without_hrv" ? 10.43 : 8.67;
                     const validation = validateRSI_9362(selections.ceilingsAtticRSI, minRSI, `ceilings below attics`);
                     if (!validation.isValid && validation.warning) {
-                        return <WarningButton warningId="ceilingsAtticRSI-9362-low" title="RSI Value Too Low" variant="destructive">
+                        return <WarningButton title="RSI Value Too Low" variant="destructive">
                             <p className="text-sm text-destructive/80">
                                 {`The RSI value must be increased to at least ${selections.hasHrv === "with_hrv" ? "8.67 with HRV" : selections.hasHrv === "without_hrv" ? "10.43 without HRV" : "8.67 with HRV or 10.43 without HRV"} to meet NBC 9.36.2 requirements.`}
                             </p>
@@ -197,7 +184,7 @@ export default function Prescriptive9362Section({
                     }
                     return null;
                 })()}
-                {selections.buildingType !== "single-detached-secondary" && <WarningButton warningId="ceilingsAtticRSI-9362" title="Effective RSI/R-Value Required">
+                {selections.buildingType !== "single-detached-secondary" && <WarningButton title="Effective RSI/R-Value Required">
                     <p className="text-sm text-white">
                         You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-emerald-400 underline hover:text-emerald-300">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-emerald-400 underline hover:text-emerald-300">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                     </p>
@@ -232,7 +219,7 @@ export default function Prescriptive9362Section({
                     const minRSI = 5.02;
                     const validation = validateRSI_9362(selections.cathedralFlatRSIValue, minRSI, `cathedral/flat roofs`);
                     if (!validation.isValid && validation.warning) {
-                        return <WarningButton warningId="cathedralFlatRSI-9362-low" title="RSI Value Too Low" variant="destructive">
+                        return <WarningButton title="RSI Value Too Low" variant="destructive">
                             <p className="text-sm text-destructive/80">
                                 {`The RSI value must be increased to at least 5.02 to meet NBC 9.36.2 requirements for cathedral/flat roofs.`}
                             </p>
@@ -240,7 +227,7 @@ export default function Prescriptive9362Section({
                     }
                     return null;
                 })()}
-                <WarningButton warningId="cathedralFlatRSI-9362" title="Effective RSI Value Required">
+                <WarningButton title="Effective RSI Value Required">
                     <p className="text-sm text-white">
                         You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                     </p>
@@ -257,7 +244,7 @@ export default function Prescriptive9362Section({
                     const minRSI = selections.hasHrv === "with_hrv" ? 2.97 : 3.69;
                     const validation = validateRSI_9362(selections.wallRSI, minRSI, `above grade walls`);
                     if (!validation.isValid && validation.warning) {
-                        return <WarningButton warningId="wallRSI-9362-low" title="RSI Value Too Low" variant="destructive">
+                        return <WarningButton title="RSI Value Too Low" variant="destructive">
                             <p className="text-sm text-destructive/80">
                                 {`The RSI value must be increased to at least ${selections.hasHrv === "with_hrv" ? "2.97 with HRV" : "3.69 without HRV"} to meet NBC 9.36.2 requirements for above grade walls.`}
                             </p>
@@ -265,7 +252,7 @@ export default function Prescriptive9362Section({
                     }
                     return null;
                 })()}
-                <WarningButton warningId="wallRSI-9362" title="Effective RSI/R-Value Required">
+                <WarningButton title="Effective RSI/R-Value Required">
                     <p className="text-sm text-white">
                         You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                     </p>
@@ -282,7 +269,7 @@ export default function Prescriptive9362Section({
                     const minRSI = selections.hasHrv === "with_hrv" ? 2.98 : 3.46;
                     const validation = validateRSI_9362(selections.belowGradeRSI, minRSI, `below grade walls`);
                     if (!validation.isValid && validation.warning) {
-                        return <WarningButton warningId="belowGradeRSI-9362-low" title="RSI Value Too Low" variant="destructive">
+                        return <WarningButton title="RSI Value Too Low" variant="destructive">
                             <p className="text-sm text-destructive/80">
                                 {`The RSI value must be increased to at least ${selections.hasHrv === "with_hrv" ? "2.98 with HRV" : "3.46 without HRV"} to meet NBC 9.36.2 requirements for below grade walls.`}
                             </p>
@@ -290,7 +277,7 @@ export default function Prescriptive9362Section({
                     }
                     return null;
                 })()}
-                <WarningButton warningId="belowGradeRSI-9362" title="Effective RSI/R-Value Required">
+                <WarningButton title="Effective RSI/R-Value Required">
                     <p className="text-sm text-white">
                         You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                     </p>
@@ -364,7 +351,7 @@ export default function Prescriptive9362Section({
                     const minRSI = selections.province === "saskatchewan" ? 2.84 : 1.34;
                     const validation = validateRSI_9362(selections.inFloorHeatRSI, minRSI, `heated floors`);
                     if (!validation.isValid && validation.warning) {
-                        return <WarningButton warningId="inFloorHeatRSI-9362-low" title="RSI Value Too Low" variant="destructive">
+                        return <WarningButton title="RSI Value Too Low" variant="destructive">
                             <p className="text-sm text-destructive/80">
                                 The RSI value must be increased to at least {minRSI} to meet NBC 9.36.2 requirements for heated floors in {selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}.
                             </p>
@@ -372,7 +359,7 @@ export default function Prescriptive9362Section({
                     }
                     return null;
                 })()}
-                <WarningButton warningId="inFloorHeatRSI-9362" title="Effective RSI/R-Value Required">
+                <WarningButton title="Effective RSI/R-Value Required">
                     <p className="text-sm text-white">
                         You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                     </p>
@@ -385,13 +372,13 @@ export default function Prescriptive9362Section({
                     ...prev,
                     slabOnGradeIntegralFootingRSI: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                <WarningButton warningId="slabOnGradeIntegralFootingRSI-9362" title="Effective RSI/R-Value Required">
+                <WarningButton title="Effective RSI/R-Value Required">
                     <p className="text-sm text-white">
                         You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                     </p>
                 </WarningButton>
 
-                {selections.slabOnGradeIntegralFootingRSI && !isNaN(parseFloat(selections.slabOnGradeIntegralFootingRSI)) && parseFloat(selections.slabOnGradeIntegralFootingRSI) < 2.84 && <WarningButton warningId="slabOnGradeIntegralFootingRSI-min" title="RSI Value Too Low" variant="destructive">
+                {selections.slabOnGradeIntegralFootingRSI && !isNaN(parseFloat(selections.slabOnGradeIntegralFootingRSI)) && parseFloat(selections.slabOnGradeIntegralFootingRSI) < 2.84 && <WarningButton title="RSI Value Too Low" variant="destructive">
                     <p className="text-xs text-destructive/80">
                         The RSI value must be at least 2.84 to meet NBC 9.36.2 minimum requirements for slab on grade with integral footing.
                     </p>
@@ -404,7 +391,7 @@ export default function Prescriptive9362Section({
                     ...prev,
                     floorsOverUnheatedSpacesRSI: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                <WarningButton warningId="floorsOverUnheatedSpacesRSI-9362" title="Effective RSI/R-Value Required">
+                <WarningButton title="Effective RSI/R-Value Required">
                     <p className="text-sm text-white">
                         You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                     </p>
@@ -433,12 +420,12 @@ export default function Prescriptive9362Section({
                     ...prev,
                     unheatedFloorAboveFrostRSI: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                {selections.unheatedFloorAboveFrostRSI && parseFloat(selections.unheatedFloorAboveFrostRSI) < 1.96 && <WarningButton warningId="unheatedFloorAboveFrostRSI-low" title="RSI Value Too Low" variant="destructive">
+                {selections.unheatedFloorAboveFrostRSI && parseFloat(selections.unheatedFloorAboveFrostRSI) < 1.96 && <WarningButton title="RSI Value Too Low" variant="destructive">
                     <p className="text-xs text-destructive/80">
                         The RSI value must be increased to at least 1.96 to meet NBC requirements for unheated floor above frost line.
                     </p>
                 </WarningButton>}
-                <WarningButton warningId="unheatedFloorAboveFrostRSI-9362" title="Effective RSI/R-Value Required">
+                <WarningButton title="Effective RSI/R-Value Required">
                     <p className="text-sm text-white">
                         You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                     </p>
@@ -457,7 +444,7 @@ export default function Prescriptive9362Section({
                     if (inputValue) {
                         const numValue = parseFloat(inputValue);
                         if (!isNaN(numValue) && numValue > 1.61) {
-                            return <WarningButton warningId="windowUValue-9362-high" title="U-Value Too High" variant="destructive">
+                            return <WarningButton title="U-Value Too High" variant="destructive">
                                 <p className="text-sm text-destructive/80">
                                     The U-value must be 1.61 W/(m²·K) or lower to meet NBC 9.36.2 requirements for windows and doors.
                                 </p>
@@ -466,7 +453,7 @@ export default function Prescriptive9362Section({
                     }
                     return null;
                 })()}
-                <WarningButton warningId="windowDoor-verification-9362" title="Window & Door Performance Verification">
+                <WarningButton title="Window & Door Performance Verification">
                     <p className="text-sm text-white">
                         Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value (ie, highest U-value W/(m²×K).
                     </p>
@@ -493,7 +480,7 @@ export default function Prescriptive9362Section({
                 </div>
             </div>
 
-            <WarningButton warningId="skylight-shaft-insulation-9362" title="Important: Skylight Shaft Insulation">
+            <WarningButton title="Important: Skylight Shaft Insulation">
                 <p className="text-xs text-white">
                     Skylight shafts must be insulated. Be prepared to provide further details upon request.
                 </p>
@@ -507,7 +494,7 @@ export default function Prescriptive9362Section({
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                 {(() => {
                     const maxUValue = selections.province === "alberta" && selections.climateZone === "7B" ? 2.41 : 2.75;
-                    return selections.skylightUValue && parseFloat(selections.skylightUValue) > maxUValue && <WarningButton warningId="skylightUValue-high-9362" title="U-Value Too High" variant="destructive">
+                    return selections.skylightUValue && parseFloat(selections.skylightUValue) > maxUValue && <WarningButton title="U-Value Too High" variant="destructive">
                         <p className="text-sm text-destructive/80">
                             The U-value must be reduced to {maxUValue} or lower to meet NBC requirements for skylights in your climate zone.
                         </p>
@@ -515,7 +502,7 @@ export default function Prescriptive9362Section({
                 })()}
             </div>}
 
-            {selections.hasSkylights === "yes" && <WarningButton warningId="skylight-shaft-insulation-9362-2" title="Important: Skylight Shaft Insulation">
+            {selections.hasSkylights === "yes" && <WarningButton title="Important: Skylight Shaft Insulation">
                 <p className="text-xs text-white">
                     Skylight shafts must be insulated. Be prepared to provide further details upon request.
                 </p>
@@ -668,7 +655,7 @@ export default function Prescriptive9362Section({
                     airtightness: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
 
-                <WarningButton warningId="airtightness-caution-9362" title="Caution: Air-Tightness Targets Without Testing History">
+                <WarningButton title="Caution: Air-Tightness Targets Without Testing History">
                     <div className="text-xs text-white space-y-2">
                         <p>
                             Choosing an air-tightness target lower than prescribed by NBC2020 without prior test results is risky.
@@ -734,7 +721,7 @@ export default function Prescriptive9362Section({
                         </div>
                     </div>
 
-                    <WarningButton warningId="mid-construction-blower-door-info-9362" title="Benefits of Mid-Construction Blower Door Testing">
+                    <WarningButton title="Benefits of Mid-Construction Blower Door Testing">
                         <div className="text-xs text-white space-y-2">
                             <p className="font-medium">Benefits of a mid-construction (misconstruction) blower door test:</p>
                             <ul className="list-disc ml-4 space-y-1">

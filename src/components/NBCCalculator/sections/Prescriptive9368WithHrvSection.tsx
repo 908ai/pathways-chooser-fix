@@ -21,38 +21,40 @@ interface Props {
 
 export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, setSelections, WarningButton }) => {
 
-        // Collapsible component for warnings/info
-        const InfoCollapsible = ({
-            title,
-            children,
-            variant = "warning",
-        }: {
-            title: string;
-            children: React.ReactNode;
-            variant?: "warning" | "destructive";
-        }) => {
-            const [isOpen, setIsOpen] = useState(false);
-            const bgColor =
-                variant === "warning"
-                    ? "bg-gradient-to-r from-slate-800/60 to-teal-800/60"
-                    : "bg-gradient-to-r from-slate-800/60 to-red-800/60";
-            const borderColor =
-                variant === "warning"
-                    ? "border border-orange-400"
-                    : "border-2 border-red-400";
-    
-            return (
-                <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
-                    <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
-                        <span className="text-xs font-bold text-white">{title}</span>
-                        <ChevronDown className={`h-5 w-5 text-white transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="mt-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
-                        <div className="text-white text-xs">{children}</div>
-                    </CollapsibleContent>
-                </Collapsible>
-            );
-        };
+    // Collapsible component for warnings/info
+    const InfoCollapsible = ({
+        title,
+        children,
+        variant = "warning",
+        defaultOpen = false,
+    }: {
+        title: React.ReactNode;
+        children: React.ReactNode;
+        variant?: "warning" | "destructive";
+        defaultOpen?: boolean;
+    }) => {
+        const [isOpen, setIsOpen] = useState(defaultOpen);
+        const bgColor =
+            variant === "warning"
+                ? "bg-gradient-to-r from-slate-800/60 to-teal-800/60"
+                : "bg-gradient-to-r from-slate-800/60 to-red-800/60";
+        const borderColor =
+            variant === "warning"
+                ? "border border-orange-400"
+                : "border-2 border-red-400";
+
+        return (
+            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
+                <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
+                    <span className="text-xs font-bold text-white">{title}</span>
+                    <ChevronDown className={`h-5 w-5 text-white transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
+                    <div className="text-white text-xs">{children}</div>
+                </CollapsibleContent>
+            </Collapsible>
+        );
+    };
 
     return (
         <>
@@ -141,18 +143,30 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                     {(() => {
                         const minRSI = 5.02;
                         const validation = validateRSI(selections.cathedralFlatRSI, minRSI, "cathedral/flat roofs");
-                        if (!validation.isValid && validation.warning) {
-                            return <WarningButton warningId={`cathedralFlatRSI-${validation.warning.type}`} title={validation.warning.type === "rvalue-suspected" ? "R-Value Detected" : "RSI Value Too Low"} variant={validation.warning.type === "rvalue-suspected" ? "warning" : "destructive"}>
-                                <p className="text-sm text-white">
+
+                        const showWarning = !validation.isValid && validation.warning;
+
+                        return showWarning ? (
+                            <InfoCollapsible
+                                title={
+                                    <span className="text-sm">
+                                        {validation.warning.type === "rvalue-suspected"
+                                            ? "R-Value Detected"
+                                            : "🛑 RSI Value Too Low"}
+                                    </span>
+                                }
+                                variant={validation.warning.type === "rvalue-suspected" ? "warning" : "destructive"}
+                                defaultOpen={true}
+                            >
+                                <p className="text-xs">
                                     {validation.warning.message}
                                 </p>
-                            </WarningButton>;
-                        }
-                        return null;
+                            </InfoCollapsible>
+                        ) : null;
                     })()}
                     <InfoCollapsible title="ℹ️ Effective RSI/R-Value Required">
                         <p className="text-xs text-white">
-                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
+                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                         </p>
                     </InfoCollapsible>
                 </div>}
@@ -179,7 +193,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                     </Select>
                     {selections.wallRSI && <InfoCollapsible title="ℹ️ Effective RSI/R-Value Required">
                         <p className="text-xs text-white">
-                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
+                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                         </p>
                     </InfoCollapsible>}
                 </div>
@@ -206,7 +220,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                     </Select>
                     {selections.belowGradeRSI && <InfoCollapsible title="ℹ️ Effective RSI/R-Value Required">
                         <p className="text-xs text-white">
-                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
+                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                         </p>
                     </InfoCollapsible>}
                 </div>
@@ -217,17 +231,17 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                         ...prev,
                         floorsUnheatedRSI: e.target.value
                     }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                    {selections.floorsUnheatedRSI && parseFloat(selections.floorsUnheatedRSI) < 5.02 && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+                    {selections.floorsUnheatedRSI && parseFloat(selections.floorsUnheatedRSI) < 5.02 && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md" style={{ backgroundColor: 'beige' }}>
                         <p className="text-sm text-destructive font-medium">
                             ⚠️ Effective RSI/R-Value Required
                         </p>
-                        <p className="text-sm text-destructive/80 mt-1">
-                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
+                        <p className="text-sm text-destructive/100 mt-1">
+                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline hover:text-blue-900">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline hover:text-blue-900">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                         </p>
                     </div>}
                     <InfoCollapsible title="ℹ️ Effective RSI/R-Value Required">
-                        <p className="text-xs text-foreground/80">
-                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
+                        <p className="text-xs text-white">
+                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                         </p>
                     </InfoCollapsible>
                 </div>
@@ -238,17 +252,17 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                         ...prev,
                         floorsGarageRSI: e.target.value
                     }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                    {selections.floorsGarageRSI && parseFloat(selections.floorsGarageRSI) < 4.86 && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+                    {selections.floorsGarageRSI && parseFloat(selections.floorsGarageRSI) < 4.86 && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md" style={{ backgroundColor: 'beige' }}>
                         <p className="text-sm text-destructive font-medium">
                             ⚠️ Effective RSI/R-Value Required
                         </p>
-                        <p className="text-sm text-destructive/80 mt-1">
-                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
+                        <p className="text-sm text-destructive/100 mt-1">
+                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline hover:text-blue-900">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline hover:text-blue-900">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                         </p>
                     </div>}
                     <InfoCollapsible title="ℹ️ Effective RSI/R-Value Required">
                         <p className="text-xs text-white">
-                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
+                            You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                         </p>
                     </InfoCollapsible>
                 </div>
@@ -272,20 +286,44 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                     </Select>
                 </div>
 
-                {selections.hasSlabOnGrade === "yes" && <div className="space-y-4">
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Slab on Grade with Integral Footing</label>
-                        <Input type="number" step="0.01" min="0" placeholder="Min RSI 2.84 or N/A" value={selections.slabOnGradeRSI} onChange={e => setSelections(prev => ({
-                            ...prev,
-                            slabOnGradeRSI: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                        {selections.slabOnGradeRSI && parseFloat(selections.slabOnGradeRSI) < 2.84 && <WarningButton warningId="slabOnGradeRSI-low" title="RSI Value Too Low" variant="destructive">
-                            <p className="text-xs text-white">
-                                The RSI value must be increased to at least 2.84 to meet NBC requirements for slab on grade with integral footing.
-                            </p>
-                        </WarningButton>}
+                {selections.hasSlabOnGrade === "yes" && (
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-slate-100">
+                                Slab on Grade with Integral Footing
+                            </label>
+
+                            <Input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                placeholder="Min RSI 2.84 or N/A"
+                                value={selections.slabOnGradeRSI}
+                                onChange={(e) =>
+                                    setSelections((prev) => ({
+                                        ...prev,
+                                        slabOnGradeRSI: e.target.value,
+                                    }))
+                                }
+                                className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400"
+                            />
+
+                            {selections.slabOnGradeRSI &&
+                                parseFloat(selections.slabOnGradeRSI) < 2.84 && (
+                                    <InfoCollapsible
+                                        title={<span className="text-sm">🛑 RSI Value Too Low</span>}
+                                        variant="destructive"
+                                        defaultOpen={true}
+                                    >
+                                        <p className="text-xs">
+                                            The RSI value must be increased to at least 2.84 to meet NBC
+                                            requirements for slab on grade with integral footing.
+                                        </p>
+                                    </InfoCollapsible>
+                                )}
+                        </div>
                     </div>
-                </div>}
+                )}
 
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Is the house installing or roughing in in-floor heat?</label>
@@ -308,68 +346,143 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                     </Select>
                 </div>
 
-                {(selections.hasInFloorHeat === "yes" || selections.floorsSlabsSelected.includes('heatedFloors')) && <>
-                    <InfoCollapsible title="ℹ️ In-Floor Heating Requirements">
+                {(selections.hasInFloorHeat === "yes" ||
+                    selections.floorsSlabsSelected.includes("heatedFloors")) && (
+                        <>
+                            <InfoCollapsible title="ℹ️ In-Floor Heating Requirements" defaultOpen={false}>
+                                <p className="text-xs text-white">
+                                    Since the house has in-floor heating, all floors must be insulated to
+                                    meet NBC requirements.
+                                </p>
+                            </InfoCollapsible>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-slate-100">
+                                    Heated Floors
+                                </label>
+
+                                <Input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    placeholder={`Enter RSI value (minimum ${selections.province === "saskatchewan" ? "2.84" : "1.34"
+                                        })`}
+                                    value={selections.heatedFloorsRSI}
+                                    onChange={(e) =>
+                                        setSelections((prev) => ({
+                                            ...prev,
+                                            heatedFloorsRSI: e.target.value,
+                                        }))
+                                    }
+                                    className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400"
+                                />
+
+                                {(() => {
+                                    const minRSI =
+                                        selections.province === "saskatchewan" ? 2.84 : 1.34;
+                                    const validation = validateRSI(
+                                        selections.heatedFloorsRSI,
+                                        minRSI,
+                                        `heated floors in ${selections.province === "saskatchewan"
+                                            ? "Saskatchewan"
+                                            : "Alberta"
+                                        }`
+                                    );
+
+                                    const showWarning = !validation.isValid && validation.warning;
+
+                                    return showWarning ? (
+                                        <InfoCollapsible
+                                            title={
+                                                <span className="text-sm">
+                                                    {validation.warning.type === "rvalue-suspected"
+                                                        ? "R-Value Detected"
+                                                        : "🛑 RSI Value Too Low"}
+                                                </span>
+                                            }
+                                            variant={
+                                                validation.warning.type === "rvalue-suspected"
+                                                    ? "warning"
+                                                    : "destructive"
+                                            }
+                                            defaultOpen={true}
+                                        >
+                                            <p className="text-xs">{validation.warning.message}</p>
+                                        </InfoCollapsible>
+                                    ) : null;
+                                })()}
+                            </div>
+                        </>
+                    )}
+
+                {selections.hasInFloorHeat === "no" && (
+                <>
+                    <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">
+                        Unheated Floor Below Frost Line
+                    </label>
+                    <Input
+                        type="text"
+                        placeholder="Enter RSI value or 'uninsulated'"
+                        value={selections.unheatedFloorBelowFrostRSI}
+                        onChange={(e) =>
+                        setSelections((prev) => ({
+                            ...prev,
+                            unheatedFloorBelowFrostRSI: e.target.value,
+                        }))
+                        }
+                        className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400"
+                    />
+
+                    <InfoCollapsible title="ℹ️ Unheated Floor Below Frost Line" defaultOpen={false}>
                         <p className="text-xs text-white">
-                            Since the house has in-floor heating, all floors must be insulated to meet NBC requirements.
+                        This assembly typically remains uninsulated as per NBC requirements
+                        but can be insulated to improve comfort in these areas. Enter
+                        <code className="px-1">uninsulated</code> or specify an RSI value if
+                        insulation is provided.
                         </p>
                     </InfoCollapsible>
-
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Heated Floors</label>
-                        <Input type="number" step="0.01" min="0" placeholder={`Enter RSI value (minimum ${selections.province === "saskatchewan" ? "2.84" : "1.34"})`} value={selections.heatedFloorsRSI} onChange={e => setSelections(prev => ({
-                            ...prev,
-                            heatedFloorsRSI: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                        {(() => {
-                            const minRSI = selections.province === "saskatchewan" ? 2.84 : 1.34;
-                            const validation = validateRSI(selections.heatedFloorsRSI, minRSI, `heated floors in ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`);
-                            if (!validation.isValid && validation.warning) {
-                                return <WarningButton warningId={`heatedFloorsRSI-${validation.warning.type}`} title={validation.warning.type === "rvalue-suspected" ? "R-Value Detected" : "RSI Value Too Low"} variant={validation.warning.type === "rvalue-suspected" ? "warning" : "destructive"}>
-                                    <p className="text-xs text-white">
-                                        {validation.warning.message}
-                                    </p>
-                                </WarningButton>;
-                            }
-                            return null;
-                        })()}
-                    </div>
-                </>}
-
-                {selections.hasInFloorHeat === "no" && <>
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Unheated Floor Below Frost Line</label>
-                        <Input type="text" placeholder="Enter RSI value or 'uninsulated'" value={selections.unheatedFloorBelowFrostRSI} onChange={e => setSelections(prev => ({
-                            ...prev,
-                            unheatedFloorBelowFrostRSI: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                        <div className="p-3 bg-muted border border-border rounded-md">
-                            <p className="text-sm text-foreground font-medium">
-                                ℹ️ Unheated Floor Below Frost Line
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                This assembly typically remains uninsulated as per NBC requirements but can be insulated to improve comfort in these areas. Enter 'uninsulated' or specify an RSI value if insulation is provided.
-                            </p>
-                        </div>
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Unheated Floor Above Frost Line</label>
-                        <Input type="number" step="0.01" min="0" placeholder="Min RSI 1.96 (R-11.1)" value={selections.unheatedFloorAboveFrostRSI} onChange={e => setSelections(prev => ({
+                    <label className="text-sm font-medium text-slate-100">
+                        Unheated Floor Above Frost Line
+                    </label>
+                    <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="Min RSI 1.96 (R-11.1)"
+                        value={selections.unheatedFloorAboveFrostRSI}
+                        onChange={(e) =>
+                        setSelections((prev) => ({
                             ...prev,
-                            unheatedFloorAboveFrostRSI: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                        {selections.unheatedFloorAboveFrostRSI && parseFloat(selections.unheatedFloorAboveFrostRSI) < 1.96 && <WarningButton warningId="unheatedFloorAboveFrostRSI-low" title="RSI Value Too Low" variant="destructive">
-                            <p className="text-xs text-white">
-                                The RSI value must be increased to at least 1.96 to meet NBC requirements for unheated floor above frost line.
+                            unheatedFloorAboveFrostRSI: e.target.value,
+                        }))
+                        }
+                        className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400"
+                    />
+
+                    {selections.unheatedFloorAboveFrostRSI &&
+                        parseFloat(selections.unheatedFloorAboveFrostRSI) < 1.96 && (
+                        <InfoCollapsible
+                            title={<span className="text-sm">🛑 RSI Value Too Low</span>}
+                            variant="destructive"
+                            defaultOpen={true}
+                        >
+                            <p className="text-xs">
+                            The RSI value must be increased to at least 1.96 to meet NBC
+                            requirements for unheated floor above frost line.
                             </p>
-                        </WarningButton>}
+                        </InfoCollapsible>
+                        )}
                     </div>
-                </>}
+                </>
+                )}
 
                 <InfoCollapsible title="ℹ️ Effective RSI/R-Value Required">
                     <p className="text-xs text-white">
-                        You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
+                        You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/homes/make-your-home-more-energy-efficient/keeping-the-heat-in/keeping-the-heat-in-chapter-4-insulation/maintaining-effective-thermal-resistance/15631" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
                     </p>
                 </InfoCollapsible>
 
@@ -771,13 +884,13 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                         const showWarning = !isNaN(inputValue) && inputValue < minValue;
 
                         return showWarning ? (
-                        <Alert variant="destructive" style={{ backgroundColor: 'beige' }}>
-                            <AlertTriangle className="h-4 w-4" />
-                            <AlertTitle>Heating Efficiency Too Low</AlertTitle>
-                            <AlertDescription>
-                            {systemType} – Your input of {inputValue} is below the minimum requirement.
-                            </AlertDescription>
-                        </Alert>
+                            <Alert variant="destructive" style={{ backgroundColor: 'beige' }}>
+                                <AlertTriangle className="h-4 w-4" />
+                                <AlertTitle>Heating Efficiency Too Low</AlertTitle>
+                                <AlertDescription>
+                                    {systemType} – Your input of {inputValue} is below the minimum requirement.
+                                </AlertDescription>
+                            </Alert>
                         ) : null;
                     })()}
                 </div>}
@@ -871,39 +984,39 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">
                         <label className="text-sm font-medium text-slate-100">Is a drain water heat recovery system being installed?</label>
-                            <InfoButton title="Drain Water Heat Recovery System Information">
-                                <div className="space-y-4">
-                                    <div className="border-b pb-2">
-                                        <h4 className="font-medium text-sm">ℹ️ Drain Water Heat Recovery (DWHR)</h4>
+                        <InfoButton title="Drain Water Heat Recovery System Information">
+                            <div className="space-y-4">
+                                <div className="border-b pb-2">
+                                    <h4 className="font-medium text-sm">ℹ️ Drain Water Heat Recovery (DWHR)</h4>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <p className="text-xs text-muted-foreground">
+                                        DWHR systems capture heat from shower drain water and use it to preheat incoming cold water, reducing hot water energy use by 20–40%.
+                                    </p>
+
+                                    <div className="space-y-2">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-green-600 text-xs">✅</span>
+                                            <span className="text-xs">Improves energy efficiency</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-green-600 text-xs">✅</span>
+                                            <span className="text-xs">Helps earn NBC tiered compliance points</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-green-600 text-xs">✅</span>
+                                            <span className="text-xs">Great for homes with frequent showers</span>
+                                        </div>
                                     </div>
 
-                                    <div className="space-y-3">
-                                        <p className="text-xs text-muted-foreground">
-                                            DWHR systems capture heat from shower drain water and use it to preheat incoming cold water, reducing hot water energy use by 20–40%.
-                                        </p>
-
-                                        <div className="space-y-2">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-green-600 text-xs">✅</span>
-                                                <span className="text-xs">Improves energy efficiency</span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-green-600 text-xs">✅</span>
-                                                <span className="text-xs">Helps earn NBC tiered compliance points</span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-green-600 text-xs">✅</span>
-                                                <span className="text-xs">Great for homes with frequent showers</span>
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-1 text-xs text-muted-foreground">
-                                            <p><strong>Estimated cost:</strong> $800–$1,200 installed</p>
-                                            <p><strong>Best fit:</strong> Homes with vertical drain stacks and electric or heat pump water heaters.</p>
-                                        </div>
+                                    <div className="space-y-1 text-xs text-muted-foreground">
+                                        <p><strong>Estimated cost:</strong> $800–$1,200 installed</p>
+                                        <p><strong>Best fit:</strong> Homes with vertical drain stacks and electric or heat pump water heaters.</p>
                                     </div>
                                 </div>
-                            </InfoButton>
+                            </div>
+                        </InfoButton>
                     </div>
                     <Select value={selections.hasDWHR} onValueChange={value => setSelections(prev => ({
                         ...prev,
