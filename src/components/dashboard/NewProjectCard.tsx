@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import {
@@ -28,6 +28,8 @@ const getStatusInfo = (status: string | null) => {
       return { text: 'Non-Compliant', color: 'bg-red-500' };
     case 'submitted':
       return { text: 'Submitted', color: 'bg-blue-500' };
+    case 'draft':
+      return { text: 'Draft', color: 'bg-gray-500' };
     default:
       return { text: 'In Progress', color: 'bg-orange-500' };
   }
@@ -125,7 +127,7 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
           </div>
         </div>
         
-        {statusInfo.text === 'In Progress' && (
+        {(statusInfo.text === 'In Progress' || statusInfo.text === 'Draft') && (
           <div className="space-y-2 pt-2 border-t border-border/50">
             <div className="flex justify-between items-center text-xs text-muted-foreground">
               <span>Compliance Checklist</span>
@@ -133,12 +135,14 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
             </div>
             <Progress value={progress} className="h-2" />
             {pending.length > 0 && (
-              <div className="flex items-start gap-2 pt-2 text-xs text-orange-500">
-                <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                <p>
-                  <span className="font-semibold">Pending:</span> {pending.slice(0, 2).join(', ')}
-                  {pending.length > 2 && `, +${pending.length - 2} more`}
-                </p>
+              <div className="mt-2 p-1.5 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/30">
+                <div className="flex items-start gap-2 text-xs text-orange-700 dark:text-orange-300">
+                  <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5 animate-bounce text-orange-500" />
+                  <p>
+                    <span className="font-semibold">Pending ({pending.length}):</span> {pending.slice(0, 2).join(', ')}
+                    {pending.length > 2 && `, +${pending.length - 2} more`}
+                  </p>
+                </div>
               </div>
             )}
           </div>
