@@ -132,7 +132,7 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
           </div>
         </div>
         
-        {(statusInfo.text === 'In Progress' || statusInfo.text === 'Draft') && (
+        {(statusInfo.text === 'In Progress' || statusInfo.text === 'Draft' || statusInfo.text === 'Submitted') && (
           <div className="space-y-2 pt-2 border-t border-border/50">
             <div className="flex justify-between items-center text-xs text-muted-foreground">
               <span>Compliance Checklist</span>
