@@ -63,7 +63,7 @@ const ProjectToolbar = ({
             <List className="h-4 w-4" />
           </ToggleGroupItem>
         </ToggleGroup>
-        <Button onClick={onNewProjectClick} className="border animate-glow-pulse">
+        <Button onClick={onNewProjectClick} className="border border-primary animate-glow-pulse">
           <Plus className="mr-2 h-4 w-4" />
           New Project
         </Button>
