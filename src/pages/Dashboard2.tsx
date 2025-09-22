@@ -10,8 +10,9 @@ import { supabase } from '@/integrations/supabase/client';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 import CreateProjectCard from '@/components/dashboard/CreateProjectCard';
 import ProjectToolbar from '@/components/dashboard/ProjectToolbar';
-import NewProjectCard from '@/components/dashboard/NewProjectCard';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import ProjectKanbanView from '@/components/dashboard/ProjectKanbanView';
+import ProjectTableView from '@/components/dashboard/ProjectTableView';
 
 const Dashboard2 = () => {
   const { user, signOut } = useAuth();
@@ -22,7 +23,8 @@ const Dashboard2 = () => {
   const [allProjects, setAllProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
-  // Filtering and sorting state
+  // View, filtering and sorting state
+  const [view, setView] = useState<'kanban' | 'table'>('kanban');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('updated_at'); // 'updated_at' or 'project_name'
   const [searchTerm, setSearchTerm] = useState('');
@@ -63,7 +65,7 @@ const Dashboard2 = () => {
         // Status filter
         if (statusFilter === 'all') return true;
         const status = p.compliance_status;
-        if (statusFilter === 'inProgress') return status === null || status === 'pending' || status === 'submitted';
+        if (statusFilter === 'inProgress') return status === null || status === 'pending';
         if (statusFilter === 'submitted') return status === 'submitted';
         if (statusFilter === 'compliant') return status === 'pass' || status === 'Compliant';
         if (statusFilter === 'non-compliant') return status === 'fail';
@@ -86,7 +88,6 @@ const Dashboard2 = () => {
   };
   const handleDuplicateProject = async (projectId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    // Add duplication logic here
     toast({ title: "Coming Soon!", description: "Project duplication will be available shortly." });
   };
   const handleDeleteProject = async (projectId: string, e: React.MouseEvent) => {
@@ -135,24 +136,31 @@ const Dashboard2 = () => {
                 onSortByChange={setSortBy}
                 searchTerm={searchTerm}
                 onSearchTermChange={setSearchTerm}
+                view={view}
+                onViewChange={setView}
               />
             </CardHeader>
             <CardContent>
               {loading ? (
                 <div className="text-center py-12 text-white">Loading projects...</div>
               ) : filteredAndSortedProjects.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredAndSortedProjects.map(project => (
-                    <NewProjectCard
-                      key={project.id}
-                      project={project}
-                      onView={handleViewProject}
-                      onEdit={handleEditProject}
-                      onDuplicate={handleDuplicateProject}
-                      onDelete={handleDeleteProject}
-                    />
-                  ))}
-                </div>
+                view === 'kanban' ? (
+                  <ProjectKanbanView 
+                    projects={filteredAndSortedProjects}
+                    onViewProject={handleViewProject}
+                    onEditProject={handleEditProject}
+                    onDuplicateProject={handleDuplicateProject}
+                    onDeleteProject={handleDeleteProject}
+                  />
+                ) : (
+                  <ProjectTableView 
+                    projects={filteredAndSortedProjects}
+                    onViewProject={handleViewProject}
+                    onEditProject={handleEditProject}
+                    onDuplicateProject={handleDuplicateProject}
+                    onDeleteProject={handleDeleteProject}
+                  />
+                )
               ) : (
                 <div className="text-center py-12 text-white">
                   <Building className="mx-auto h-12 w-12 text-muted-foreground mb-4" />

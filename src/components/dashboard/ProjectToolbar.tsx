@@ -1,7 +1,8 @@
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Search, ArrowUpDown } from "lucide-react";
+import { Search, ArrowUpDown, LayoutGrid, List } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface ProjectToolbarProps {
   statusFilter: string;
@@ -10,6 +11,8 @@ interface ProjectToolbarProps {
   onSortByChange: (value: string) => void;
   searchTerm: string;
   onSearchTermChange: (value: string) => void;
+  view: 'kanban' | 'table';
+  onViewChange: (view: 'kanban' | 'table') => void;
 }
 
 const ProjectToolbar = ({
@@ -19,6 +22,8 @@ const ProjectToolbar = ({
   onSortByChange,
   searchTerm,
   onSearchTermChange,
+  view,
+  onViewChange,
 }: ProjectToolbarProps) => {
   return (
     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -48,6 +53,14 @@ const ProjectToolbar = ({
           <ArrowUpDown className="mr-2 h-4 w-4" />
           Sort by {sortBy === 'updated_at' ? 'Date' : 'Name'}
         </Button>
+        <ToggleGroup type="single" value={view} onValueChange={(value) => { if (value) onViewChange(value as 'kanban' | 'table') }}>
+          <ToggleGroupItem value="kanban" aria-label="Kanban view">
+            <LayoutGrid className="h-4 w-4" />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="table" aria-label="Table view">
+            <List className="h-4 w-4" />
+          </ToggleGroupItem>
+        </ToggleGroup>
       </div>
     </div>
   );
