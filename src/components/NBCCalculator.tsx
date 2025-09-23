@@ -723,10 +723,24 @@ const NBCCalculator = ({
 
     {searchParams.get('edit') && <EditModeIndicator />}
 
+    <div className={`mx-auto space-y-6 relative z-10 transition-all duration-300 ${selections.compliancePath === "9368" ? "max-w-3xl mr-80" : "max-w-4xl"}`}>
+      <div className="text-center mb-8">
+        <div className="flex items-center justify-center gap-3 mb-2">
+          <Calculator className="h-8 w-8 text-teal-300" />
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-200 via-blue-200 to-teal-200 bg-clip-text text-transparent drop-shadow-lg">NBC 9.36 Energy Code Pathways Selector</h1>
+        </div>
+        <p className="text-xl bg-gradient-to-r from-slate-300 to-teal-300 bg-clip-text text-transparent font-medium mb-4 drop-shadow-md">(Alberta & Saskatchewan)</p>
+        <p className="text-gray-200 text-lg drop-shadow-md">
+          National Building Code of Canada - Energy Performance Compliance Tool
+        </p>
+      </div>
+    </div>
+
     <div ref={formContainerRef} className={cn(
       "mx-auto space-y-6 relative z-10 transition-all duration-300 p-5 backdrop-blur-[100px] border-slate-400/50 rounded-lg border shadow-lg",
       selections.compliancePath === "9368" ? "lg:max-w-3xl lg:mr-80" : "max-w-4xl"
     )}>
+
       <ContactBanner />
       {currentStep === 1 && (
         <ProjectInformationSection

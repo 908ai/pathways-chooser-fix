@@ -14,6 +14,8 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import nbcLogo from '@/assets/NBC936-logo.png';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface HeaderProps {
   showSignOut?: boolean;
@@ -25,6 +27,27 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [userName, setUserName] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      if (user) {
+        const { data: companyData, error: companyError } = await supabase
+          .from('companies')
+          .select('company_name')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (companyData && companyData.company_name) {
+          setUserName(companyData.company_name);
+        } else if (companyError && companyError.code !== 'PGRST116') {
+          console.error("Error fetching company name:", companyError);
+        }
+      }
+    };
+
+    fetchUserName();
+  }, [user]);
 
   const handleAccountClick = () => {
     navigate('/account');
@@ -116,7 +139,9 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">My Account</p>
+                    <p className="text-sm font-medium leading-none">
+                      {userName ? `Welcome, ${userName}!` : 'Welcome!'}
+                    </p>
                     <p className="text-xs leading-none text-muted-foreground">
                       {user.email}
                     </p>
