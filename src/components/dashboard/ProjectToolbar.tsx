@@ -79,7 +79,7 @@ const ProjectToolbar = ({
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Kanban View</p>
+              <p>Card View</p>
             </TooltipContent>
           </Tooltip>
           <Tooltip>
