@@ -3,7 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/hooks/useAuth';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
-import { Button } from '@/components/ui/button';
+import BuildingOfficialContact from '@/components/BuildingOfficialContact';
 
 const BuildingOfficialsPage = () => {
   const { signOut } = useAuth();
@@ -139,17 +139,7 @@ const BuildingOfficialsPage = () => {
               </div>
             </div>
 
-            <div className="p-4 bg-slate-800/60 border border-blue-400/30 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-300 mb-4">Need to Verify Something?</h3>
-              <p className="text-sm text-slate-300 mb-4">
-                We welcome questions from plan reviewers or inspectors.
-              </p>
-              <Button variant="outline" className="w-full sm:w-auto text-slate-800" asChild>
-                <a href="mailto:info@sies.energy?subject=Building Official Inquiry">
-                  Contact Our Team
-                </a>
-              </Button>
-            </div>
+            <BuildingOfficialContact />
           </CardContent>
         </Card>
       </main>
