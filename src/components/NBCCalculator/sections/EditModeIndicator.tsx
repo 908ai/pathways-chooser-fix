@@ -1,19 +1,25 @@
 import { Edit } from "lucide-react";
 
-export default function EditModeIndicator() {
+interface EditModeIndicatorProps {
+  projectName?: string | null;
+}
+
+export default function EditModeIndicator({ projectName }: EditModeIndicatorProps) {
   return (
-    <>
-      {
-        <div className="mb-4 p-4 bg-gradient-to-r from-slate-600/20 to-teal-600/20 backdrop-blur-md border border-slate-400/50 rounded-xl relative z-10">
-          <div className="flex items-center gap-2">
-            <Edit className="h-5 w-5 text-slate-300" />
-            <div>
-              <div className="font-medium text-slate-100">Editing Project</div>
-              <div className="text-sm text-slate-200">Make your changes and resubmit to update the project.</div>
-            </div>
+    <div className="mb-6 p-4 bg-yellow-400/10 backdrop-blur-sm border-l-4 border-yellow-400 rounded-r-lg relative z-10">
+      <div className="flex items-center gap-4">
+        <div className="flex-shrink-0">
+          <Edit className="h-6 w-6 text-yellow-300" />
+        </div>
+        <div>
+          <div className="font-semibold text-lg text-white">
+            Editing: <span className="font-bold">{projectName || 'Project'}</span>
           </div>
-        </div>        
-      }
-    </>
+          <p className="text-sm text-yellow-200">
+            Make your changes below and proceed to the final step to save and update the project.
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }

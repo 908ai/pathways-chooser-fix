@@ -59,6 +59,7 @@ const NBCCalculator = ({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [projectId, setProjectId] = useState<string | null>(null);
+  const [editingProjectName, setEditingProjectName] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showProjectSummary, setShowProjectSummary] = useState(false);
   const [autoSaveTrigger, setAutoSaveTrigger] = useState(false);
@@ -279,6 +280,7 @@ const NBCCalculator = ({
       if (!project) {
         throw new Error('Project not found');
       }
+      setEditingProjectName(project.project_name);
 
       const {
         data: companyData,
@@ -721,7 +723,7 @@ const NBCCalculator = ({
       />
     </div>}
 
-    {searchParams.get('edit') && <EditModeIndicator />}
+    {searchParams.get('edit') && <EditModeIndicator projectName={editingProjectName} />}
 
     <div className={`mx-auto space-y-6 relative z-10 transition-all duration-300 ${selections.compliancePath === "9368" ? "max-w-3xl mr-80" : "max-w-4xl"}`}>
       <div className="text-center mb-8">
