@@ -753,7 +753,7 @@ const NBCCalculator = ({
     }
   };
 
-  const showSaveDraftButton = !editingProjectStatus || (editingProjectStatus !== 'pass' && editingProjectStatus !== 'fail' && editingProjectStatus !== 'Compliant');
+  const showSaveDraftButton = !editingProjectStatus || (editingProjectStatus !== 'pass' && editingProjectStatus !== 'fail' && editingProjectStatus !== 'Compliant' && editingProjectStatus !== 'submitted');
 
   if (isLoading) {
     return <div className="min-h-screen p-4 flex items-center justify-center">
