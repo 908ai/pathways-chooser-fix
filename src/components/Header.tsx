@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import nbcLogo from '@/assets/NBC936-logo.png';
+import { cn } from '@/lib/utils';
 
 interface HeaderProps {
   showSignOut?: boolean;
@@ -33,6 +34,8 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
     if (!email) return 'U';
     return email.substring(0, 2).toUpperCase();
   }
+
+  const isLinkActive = (path: string) => location.pathname === path;
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -66,32 +69,39 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
         </div>
         <div className="flex items-center gap-4">
           {showSignOut && (
-            <nav className="flex items-center gap-2 mr-4">
-              <Link to="/dashboard">
-                <Button variant={location.pathname === '/dashboard' ? 'default' : 'ghost'} size="sm">
-                  Dashboard
-                </Button>
-              </Link>
-              <Link to="/calculator">
-                <Button variant={location.pathname === '/calculator' ? 'default' : 'ghost'} size="sm">
-                  Calculator
-                </Button>
-              </Link>
-              <Link to="/building-officials">
-                <Button variant={location.pathname === '/building-officials' ? 'default' : 'ghost'} size="sm">
-                  Building Officials
-                </Button>
-              </Link>
-              <Link to="/resources">
-                <Button variant={location.pathname === '/resources' ? 'default' : 'ghost'} size="sm">
-                  Resources
-                </Button>
-              </Link>
-              <Link to="/faq">
-                <Button variant={location.pathname === '/faq' ? 'default' : 'ghost'} size="sm">
-                  FAQ
-                </Button>
-              </Link>
+            <nav className="flex items-center gap-4 mr-4">
+              {/* Primary Buttons */}
+              <div className="flex items-center gap-2">
+                <Link to="/dashboard">
+                  <Button variant={isLinkActive('/dashboard') ? 'default' : 'secondary'} size="sm">
+                    Dashboard
+                  </Button>
+                </Link>
+                <Link to="/calculator">
+                  <Button variant={isLinkActive('/calculator') ? 'default' : 'secondary'} size="sm">
+                    Calculator
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Secondary Links */}
+              <div className="flex items-center gap-1">
+                <Link to="/building-officials">
+                  <Button variant="ghost" size="sm" className={cn("text-xs", isLinkActive('/building-officials') && "underline")}>
+                    Building Officials
+                  </Button>
+                </Link>
+                <Link to="/resources">
+                  <Button variant="ghost" size="sm" className={cn("text-xs", isLinkActive('/resources') && "underline")}>
+                    Resources
+                  </Button>
+                </Link>
+                <Link to="/faq">
+                  <Button variant="ghost" size="sm" className={cn("text-xs", isLinkActive('/faq') && "underline")}>
+                    FAQ
+                  </Button>
+                </Link>
+              </div>
             </nav>
           )}
           {showSignOut && user && (
