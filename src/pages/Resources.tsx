@@ -19,7 +19,7 @@ const ResourcesPage = () => {
           </p>
         </div>
         <div className="space-y-6">
-          <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+          <Card className="bg-slate-800/60 backdrop-blur-[100px] border-slate-400/30 shadow-2xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-blue-400">
                 <Clock className="h-5 w-5" />
@@ -63,7 +63,7 @@ const ResourcesPage = () => {
           </Card>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+            <Card className="bg-slate-800/60 backdrop-blur-[100px] border-slate-400/30 shadow-2xl">
               <CardHeader>
                 <CardTitle className="text-white">Energy Code Resources</CardTitle>
                 <CardDescription className="text-slate-200">
@@ -101,7 +101,7 @@ const ResourcesPage = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+            <Card className="bg-slate-800/60 backdrop-blur-[100px] border-slate-400/30 shadow-2xl">
               <CardHeader>
                 <CardTitle className="text-white">Technical Services</CardTitle>
                 <CardDescription className="text-slate-200">
