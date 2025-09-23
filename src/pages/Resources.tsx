@@ -15,7 +15,7 @@ const ResourcesPage = () => {
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold mb-3 text-white drop-shadow-lg">Resources</h1>
           <p className="text-gray-200 text-lg drop-shadow-md">
-            Guides, timelines, and technical services for NBC 2020 compliance.
+            Guides, timelines, and technical services for NBC 9.36 compliance.
           </p>
         </div>
         <div className="space-y-6">
