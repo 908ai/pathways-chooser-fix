@@ -77,6 +77,11 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
                   Calculator
                 </Button>
               </Link>
+              <Link to="/building-officials">
+                <Button variant={location.pathname === '/building-officials' ? 'default' : 'ghost'} size="sm">
+                  Building Officials
+                </Button>
+              </Link>
               <Link to="/faq">
                 <Button variant={location.pathname === '/faq' ? 'default' : 'ghost'} size="sm">
                   FAQ
