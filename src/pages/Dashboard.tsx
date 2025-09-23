@@ -11,7 +11,6 @@ import { supabase } from '@/integrations/supabase/client';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 import CreateProjectCard from '@/components/dashboard/CreateProjectCard';
 import ProjectList from '@/components/dashboard/ProjectList';
-import AccountInfoTab from '@/components/dashboard/AccountInfoTab';
 import BuildingOfficialsTab from '@/components/dashboard/BuildingOfficialsTab';
 import ResourcesTab from '@/components/dashboard/ResourcesTab';
 import FaqTab from '@/components/dashboard/FaqTab';
@@ -30,7 +29,10 @@ const Dashboard = () => {
     complete: []
   });
 
-  const activeTab = searchParams.get('tab') || 'projects';
+  let activeTab = searchParams.get('tab') || 'projects';
+  if (activeTab === 'account') {
+    activeTab = 'projects';
+  }
 
   const handleTabChange = (value: string) => {
     setSearchParams({ tab: value });
@@ -90,12 +92,11 @@ const Dashboard = () => {
           </div>
         )}
         <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="projects" className="flex items-center gap-2"><Building className="h-4 w-4" />Projects</TabsTrigger>
             <TabsTrigger value="building-officials" className="flex items-center gap-2"><Building className="h-4 w-4" />Building Officials</TabsTrigger>
             <TabsTrigger value="resources" className="flex items-center gap-2"><FileText className="h-4 w-4" />Resources</TabsTrigger>
             <TabsTrigger value="faq" className="flex items-center gap-2"><Info className="h-4 w-4" />FAQ</TabsTrigger>
-            <TabsTrigger value="account" className="flex items-center gap-2"><User className="h-4 w-4" />Account Information</TabsTrigger>
           </TabsList>
           <TabsContent value="projects" className="space-y-6">
             <CreateProjectCard handleNewProject={handleNewProject} />
@@ -109,9 +110,6 @@ const Dashboard = () => {
           </TabsContent>
           <TabsContent value="faq" className="space-y-6">
             <FaqTab />
-          </TabsContent>
-          <TabsContent value="account" className="space-y-6">
-            <AccountInfoTab />
           </TabsContent>
         </Tabs>
       </main>

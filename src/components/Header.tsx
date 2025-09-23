@@ -26,7 +26,7 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
   const { user } = useAuth();
 
   const handleAccountClick = () => {
-    navigate('/dashboard?tab=account');
+    navigate('/account');
   };
 
   const getInitials = (email: string) => {
