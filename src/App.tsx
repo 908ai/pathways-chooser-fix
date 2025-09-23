@@ -14,6 +14,7 @@ import MockEditor from "./pages/MockEditor";
 import TestUpload from "./pages/TestUpload";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
+import FaqPage from "./pages/Faq";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/project/:id" element={<ProtectedRoute><ProjectDetail /></ProtectedRoute>} />
             <Route path="/test-upload" element={<ProtectedRoute><TestUpload /></ProtectedRoute>} />
             <Route path="/editor" element={<MockEditor />} />
+            <Route path="/faq" element={<ProtectedRoute><FaqPage /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
