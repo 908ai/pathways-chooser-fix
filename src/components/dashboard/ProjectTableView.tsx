@@ -21,7 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Edit, Copy, Trash2, FileText, Zap, AlertTriangle } from 'lucide-react';
+import { MoreHorizontal, Edit, Copy, Trash2, FileText, Zap, AlertTriangle, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ProjectTableViewProps {
@@ -135,6 +135,9 @@ const ProjectTableView = ({ projects, onViewProject, onEditProject, onDuplicateP
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onViewProject(project.id); }}>
+                      <Eye className="mr-2 h-4 w-4" /> View
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={(e) => onEditProject(project.id, e)}>
                       <Edit className="mr-2 h-4 w-4" /> Edit
                     </DropdownMenuItem>

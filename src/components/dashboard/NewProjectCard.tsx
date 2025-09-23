@@ -12,7 +12,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { MoreHorizontal, Edit, Copy, Trash2, Building, Calendar, AlertTriangle, MapPin } from 'lucide-react';
+import { MoreHorizontal, Edit, Copy, Trash2, Building, Calendar, AlertTriangle, MapPin, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 
@@ -107,6 +107,9 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onView(project.id); }}>
+                <Eye className="mr-2 h-4 w-4" /> View
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={(e) => onEdit(project.id, e)}>
                 <Edit className="mr-2 h-4 w-4" /> Edit
               </DropdownMenuItem>
