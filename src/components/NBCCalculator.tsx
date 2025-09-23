@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Calculator, AlertTriangle, Edit } from "lucide-react";
+import { Calculator, AlertTriangle, Edit, Save } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -71,6 +71,8 @@ const NBCCalculator = ({
   const [isSticky, setIsSticky] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [isHelpDrawerOpen, setIsHelpDrawerOpen] = useState(false);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [editingProjectStatus, setEditingProjectStatus] = useState<string | null>(null);
 
   const [selections, setSelections] = useState({
     firstName: "",
@@ -281,6 +283,7 @@ const NBCCalculator = ({
         throw new Error('Project not found');
       }
       setEditingProjectName(project.project_name);
+      setEditingProjectStatus(project.compliance_status);
 
       const {
         data: companyData,
@@ -493,6 +496,60 @@ const NBCCalculator = ({
     }
   };
 
+  const handleSaveDraft = async () => {
+    if (!user) {
+      toast({ title: "Authentication Error", description: "You must be logged in to save a draft.", variant: "destructive" });
+      return;
+    }
+
+    setIsSavingDraft(true);
+
+    try {
+      const currentProjectId = projectId || await ensureProjectExists();
+      if (!currentProjectId) {
+        throw new Error("Could not create or find a project to save.");
+      }
+      
+      const draftData = {
+        project_name: selections.buildingAddress ? `${selections.firstName} ${selections.lastName} - ${selections.buildingAddress}` : editingProjectName || `Draft Project - ${new Date().toLocaleString()}`,
+        building_type: selections.buildingType,
+        location: selections.buildingAddress,
+        selected_pathway: selections.compliancePath.includes('9362') || selections.compliancePath.includes('9368') ? 'prescriptive' : 'performance',
+        attic_rsi: parseFloat(selections.ceilingsAtticRSI) || null,
+        wall_rsi: parseFloat(selections.wallRSI) || null,
+        below_grade_rsi: parseFloat(selections.belowGradeRSI || selections.foundationWallsRSI) || null,
+        floor_rsi: parseFloat(selections.floorsUnheatedRSI || selections.floorsOverUnheatedSpacesRSI) || null,
+        window_u_value: parseFloat(selections.windowUValue) || null,
+        heating_system_type: selections.heatingType,
+        heating_efficiency: parseFloat(selections.heatingEfficiency) || null,
+        cooling_system_type: selections.coolingApplicable === 'yes' ? 'Central AC' : 'None',
+        cooling_efficiency: parseFloat(selections.coolingEfficiency) || null,
+        water_heating_type: selections.waterHeater || selections.waterHeaterType,
+        hrv_erv_type: selections.hasHrv === 'with_hrv' ? selections.hrv || 'HRV' : 'None',
+        hrv_erv_efficiency: parseFloat(selections.hrvEfficiency) || null,
+        airtightness_al: parseFloat(selections.airtightness || selections.customAirtightness) || null,
+        building_volume: parseFloat(selections.buildingVolume) || null,
+        compliance_status: 'draft',
+        total_points: totalPoints,
+      };
+
+      const { error } = await supabase
+        .from('project_summaries')
+        .update(draftData)
+        .eq('id', currentProjectId);
+
+      if (error) throw error;
+
+      toast({ title: "Draft Saved", description: "Your progress has been saved successfully." });
+
+    } catch (error: any) {
+      console.error("Error saving draft:", error);
+      toast({ title: "Save Failed", description: error.message, variant: "destructive" });
+    } finally {
+      setIsSavingDraft(false);
+    }
+  };
+
   const WarningButton = ({
     warningId,
     title,
@@ -695,6 +752,8 @@ const NBCCalculator = ({
       }
     }
   };
+
+  const showSaveDraftButton = !editingProjectStatus || (editingProjectStatus !== 'pass' && editingProjectStatus !== 'fail' && editingProjectStatus !== 'Compliant');
 
   if (isLoading) {
     return <div className="min-h-screen p-4 flex items-center justify-center">
@@ -940,6 +999,11 @@ const NBCCalculator = ({
       <div className="flex justify-center gap-4 mt-8">
         {currentStep > 1 && (
           <Button variant="outline" onClick={prevStep}>Back</Button>
+        )}
+        {showSaveDraftButton && (
+          <Button variant="secondary" onClick={handleSaveDraft} disabled={isSavingDraft}>
+            {isSavingDraft ? 'Saving...' : 'Save Draft'}
+          </Button>
         )}
         {currentStep < steps.length && (
           <Button onClick={nextStep}>Next</Button>
