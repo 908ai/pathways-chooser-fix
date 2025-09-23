@@ -124,7 +124,7 @@ const AccountPage = () => {
           </p>
         </div>
         <div className="max-w-4xl mx-auto space-y-6">
-          <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+          <Card className="bg-slate-800/60 backdrop-blur-[100px] border-slate-400/30 shadow-2xl">
             <CardHeader>
               <CardTitle className="text-white">Account Information</CardTitle>
               <CardDescription className="text-slate-200">
@@ -190,7 +190,7 @@ const AccountPage = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+          <Card className="bg-slate-800/60 backdrop-blur-[100px] border-slate-400/30 shadow-2xl">
             <CardHeader>
               <CardTitle className="text-white">Company Information</CardTitle>
               <CardDescription className="text-slate-200">
