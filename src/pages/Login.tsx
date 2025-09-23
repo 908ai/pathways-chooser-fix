@@ -185,7 +185,7 @@ const Login = () => {
         <div className="absolute inset-0 bg-black/40"></div>
         <Header />
         <div className="flex-1 flex items-center justify-center px-4 relative z-10">
-          <Card className="w-full max-w-md bg-slate-800/60 backdrop-blur-[100px] border-slate-400/30 shadow-2xl">
+          <Card className="w-full max-w-md bg-slate-800/60 backdrop-blur-[100px] border-slate-400/50 shadow-2xl">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl text-white">Set New Password</CardTitle>
               <CardDescription className="text-slate-200">Enter your new password below</CardDescription>
@@ -240,7 +240,7 @@ const Login = () => {
             </CardContent>
           </Card>
           
-          <Card className="bg-slate-800/60 backdrop-blur-[100px] border-slate-400/30 shadow-2xl">
+          <Card className="bg-slate-800/60 backdrop-blur-[100px] border-slate-400/50 shadow-2xl">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl text-white">NBC 9.36 Navigator</CardTitle>
               <CardDescription className="text-slate-200">Sign in to your account</CardDescription>
