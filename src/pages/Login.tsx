@@ -240,7 +240,7 @@ const Login = () => {
             </CardContent>
           </Card>
           
-          <Card className="bg-slate-800/60 backdrop-blur-[100px] border-slate-400/50 shadow-2xl">
+          <Card className="bg-slate-650/60 backdrop-blur-[100px] border-slate-400/50 shadow-2xl">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl text-white">NBC 9.36 Navigator</CardTitle>
               <CardDescription className="text-slate-200">Sign in to your account</CardDescription>

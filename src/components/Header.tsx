@@ -100,7 +100,7 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
                     Dashboard
                   </Button>
                 </Link>
-                <Link to="/calculator">
+                <Link to="/calculator?showHelp=true">
                   <Button variant={isLinkActive('/calculator') ? 'default' : 'secondary'} size="sm">
                     Calculator
                   </Button>
