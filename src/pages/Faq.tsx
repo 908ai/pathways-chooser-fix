@@ -17,7 +17,7 @@ const FaqPage = () => {
             Common questions about energy compliance and our services
           </p>
         </div>
-        <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+        <Card className="bg-slate-800/60 backdrop-blur-[100px] border-slate-400/30 shadow-2xl">
           <CardContent className="text-slate-200 space-y-4 pt-6">
             <div className="space-y-4">
               <div className="p-4 bg-slate-800/60 border border-blue-400/30 rounded-lg">
