@@ -10,12 +10,12 @@ const Footer = () => {
     <footer className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mt-auto">
       <div className="container mx-auto px-4 py-6">
         <div className="relative flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-sm text-primary/80">
             <MapPin className="h-4 w-4" />
             <span>Alberta & Saskatchewan</span>
           </div>
           
-          <p className="text-sm text-muted-foreground sm:absolute sm:left-1/2 sm:-translate-x-1/2">© 2025</p>
+          <p className="text-sm text-primary/80 sm:absolute sm:left-1/2 sm:-translate-x-1/2">© 2025 NBC 9.36 Navigator</p>
 
           <Button 
             onClick={handleCallContact}
