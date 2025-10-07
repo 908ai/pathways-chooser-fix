@@ -949,7 +949,7 @@ const ProjectDetail = () => {
                   <FolderOpen className="h-5 w-5" />
                   Project Documents
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-slate-200">
                   Upload and manage project files including building plans, reports, and compliance documents
                 </CardDescription>
               </CardHeader>
