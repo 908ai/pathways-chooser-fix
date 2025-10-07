@@ -669,7 +669,7 @@ const ProjectDetail = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-white">
                     <Building className="h-5 w-5" />
                     Project Information
                   </CardTitle>
@@ -693,7 +693,7 @@ const ProjectDetail = () => {
                           </SelectContent>
                         </Select>
                       ) : (
-                        <p className="font-medium">{project.building_type || 'Not specified'}</p>
+                        <p className="font-medium text-white">{project.building_type || 'Not specified'}</p>
                       )}
                     </div>
                     <div>
@@ -705,7 +705,7 @@ const ProjectDetail = () => {
                           placeholder="Enter location"
                         />
                       ) : (
-                        <p className="font-medium">{project.location || 'Not specified'}</p>
+                        <p className="font-medium text-white">{project.location || 'Not specified'}</p>
                       )}
                     </div>
                     <div>
@@ -718,7 +718,7 @@ const ProjectDetail = () => {
                           placeholder="Enter floor area (m²)"
                         />
                       ) : (
-                        <p className="font-medium">{project.floor_area ? `${project.floor_area} m²` : 'Not specified'}</p>
+                        <p className="font-medium text-white">{project.floor_area ? `${project.floor_area} m²` : 'Not specified'}</p>
                       )}
                     </div>
                     <div>
@@ -734,7 +734,7 @@ const ProjectDetail = () => {
                           </SelectContent>
                         </Select>
                       ) : (
-                        <p className="font-medium">
+                        <p className="font-medium text-white">
                           {project.selected_pathway === 'performance' ? 'Performance Path' : 'Prescriptive Path'}
                         </p>
                       )}
@@ -745,7 +745,7 @@ const ProjectDetail = () => {
 
               <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-white">
                     <FileText className="h-5 w-5" />
                     Project Summary
                   </CardTitle>
@@ -754,17 +754,17 @@ const ProjectDetail = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="text-sm font-medium text-white drop-shadow-md">Total Points</label>
-                      <p className="font-medium">{project.total_points || 'TBD'}</p>
+                      <p className="font-medium text-white">{project.total_points || 'TBD'}</p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-white drop-shadow-md">Upgrade Costs</label>
-                      <p className="font-medium">
+                      <p className="font-medium text-white">
                         {project.upgrade_costs ? `$${project.upgrade_costs.toLocaleString()}` : 'TBD'}
                       </p>
                     </div>
                     <div className="col-span-2">
                       <label className="text-sm font-medium text-white drop-shadow-md">Performance Result</label>
-                      <p className="font-medium">{project.performance_compliance_result || 'Under review'}</p>
+                      <p className="font-medium text-white">{project.performance_compliance_result || 'Under review'}</p>
                     </div>
                     <div className="col-span-2">
                       <label className="text-sm font-medium text-white drop-shadow-md">Status</label>
@@ -780,7 +780,7 @@ const ProjectDetail = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-white">
                     <Thermometer className="h-5 w-5" />
                     Building Envelope
                   </CardTitle>
@@ -798,7 +798,7 @@ const ProjectDetail = () => {
                           className="w-20 h-6 text-xs"
                         />
                       ) : (
-                        <span className="font-medium">{project.attic_rsi || 'N/A'}</span>
+                        <span className="font-medium text-white">{project.attic_rsi || 'N/A'}</span>
                       )}
                     </div>
                     <div className="flex justify-between">
@@ -812,7 +812,7 @@ const ProjectDetail = () => {
                           className="w-20 h-6 text-xs"
                         />
                       ) : (
-                        <span className="font-medium">{project.wall_rsi || 'N/A'}</span>
+                        <span className="font-medium text-white">{project.wall_rsi || 'N/A'}</span>
                       )}
                     </div>
                     <div className="flex justify-between">
@@ -826,7 +826,7 @@ const ProjectDetail = () => {
                           className="w-20 h-6 text-xs"
                         />
                       ) : (
-                        <span className="font-medium">{project.floor_rsi || 'N/A'}</span>
+                        <span className="font-medium text-white">{project.floor_rsi || 'N/A'}</span>
                       )}
                     </div>
                     <div className="flex justify-between">
@@ -840,7 +840,7 @@ const ProjectDetail = () => {
                           className="w-20 h-6 text-xs"
                         />
                       ) : (
-                        <span className="font-medium">{project.below_grade_rsi || 'N/A'}</span>
+                        <span className="font-medium text-white">{project.below_grade_rsi || 'N/A'}</span>
                       )}
                     </div>
                     <div className="flex justify-between col-span-2">
@@ -854,7 +854,7 @@ const ProjectDetail = () => {
                           className="w-20 h-6 text-xs"
                         />
                       ) : (
-                        <span className="font-medium">{project.window_u_value || 'N/A'}</span>
+                        <span className="font-medium text-white">{project.window_u_value || 'N/A'}</span>
                       )}
                     </div>
                   </div>
@@ -863,7 +863,7 @@ const ProjectDetail = () => {
 
               <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-white">
                     <Zap className="h-5 w-5" />
                     Mechanical Systems
                   </CardTitle>
@@ -872,23 +872,23 @@ const ProjectDetail = () => {
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-200 drop-shadow-sm">Heating System:</span>
-                      <span className="font-medium">{project.heating_system_type || 'N/A'}</span>
+                      <span className="font-medium text-white">{project.heating_system_type || 'N/A'}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-200 drop-shadow-sm">Heating Efficiency:</span>
-                      <span className="font-medium">{project.heating_efficiency || 'N/A'}</span>
+                      <span className="font-medium text-white">{project.heating_efficiency || 'N/A'}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-200 drop-shadow-sm">Cooling System:</span>
-                      <span className="font-medium">{project.cooling_system_type || 'N/A'}</span>
+                      <span className="font-medium text-white">{project.cooling_system_type || 'N/A'}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-200 drop-shadow-sm">Water Heating:</span>
-                      <span className="font-medium">{project.water_heating_type || 'N/A'}</span>
+                      <span className="font-medium text-white">{project.water_heating_type || 'N/A'}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-200 drop-shadow-sm">HRV/ERV Type:</span>
-                      <span className="font-medium">{project.hrv_erv_type || 'N/A'}</span>
+                      <span className="font-medium text-white">{project.hrv_erv_type || 'N/A'}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -899,40 +899,40 @@ const ProjectDetail = () => {
           <TabsContent value="compliance" className="mt-6">
             <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <FileText className="h-5 w-5" />
                   NBC 9.36 Compliance Details
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  <div className="text-center p-4 bg-blue-50 rounded-lg">
-                    <h4 className="font-semibold text-blue-900 mb-2">Total Points</h4>
-                    <p className="text-2xl font-bold text-blue-700">{project.total_points || 'TBD'}</p>
-                    <p className="text-sm text-blue-600 mt-1">Required: 50+ points</p>
+                  <div className="text-center p-4 bg-blue-900/30 rounded-lg">
+                    <h4 className="font-semibold text-blue-300 mb-2">Total Points</h4>
+                    <p className="text-2xl font-bold text-blue-200">{project.total_points || 'TBD'}</p>
+                    <p className="text-sm text-blue-300 mt-1">Required: 50+ points</p>
                   </div>
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <h4 className="font-semibold text-green-900 mb-2">Status</h4>
+                  <div className="text-center p-4 bg-green-900/30 rounded-lg">
+                    <h4 className="font-semibold text-green-300 mb-2">Status</h4>
                     <div className="flex justify-center mb-2">{getComplianceStatusBadge()}</div>
-                    <p className="text-sm text-green-600">{project.performance_compliance_result || 'Under review'}</p>
+                    <p className="text-sm text-green-300">{project.performance_compliance_result || 'Under review'}</p>
                   </div>
-                  <div className="text-center p-4 bg-purple-50 rounded-lg">
-                    <h4 className="font-semibold text-purple-200 drop-shadow-md mb-2">Upgrade Costs</h4>
-                    <p className="text-2xl font-bold text-purple-100 drop-shadow-lg">
+                  <div className="text-center p-4 bg-purple-900/30 rounded-lg">
+                    <h4 className="font-semibold text-purple-300 drop-shadow-md mb-2">Upgrade Costs</h4>
+                    <p className="text-2xl font-bold text-purple-200 drop-shadow-lg">
                       {project.upgrade_costs ? `$${project.upgrade_costs.toLocaleString()}` : 'TBD'}
                     </p>
-                    <p className="text-sm text-purple-200 drop-shadow-sm mt-1">Estimated investment</p>
+                    <p className="text-sm text-purple-300 drop-shadow-sm mt-1">Estimated investment</p>
                   </div>
                 </div>
                 
                 {project.recommendations && project.recommendations.length > 0 && (
                   <div>
-                    <h4 className="font-semibold mb-3">Recommendations</h4>
+                    <h4 className="font-semibold mb-3 text-white">Recommendations</h4>
                     <div className="space-y-2">
                       {project.recommendations.map((rec: string, index: number) => (
-                        <div key={index} className="flex items-start gap-2 p-3 bg-gray-50 rounded-md">
+                        <div key={index} className="flex items-start gap-2 p-3 bg-slate-800/60 rounded-md">
                           <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                          <p className="text-sm">{rec}</p>
+                          <p className="text-sm text-slate-200">{rec}</p>
                         </div>
                       ))}
                     </div>
@@ -945,7 +945,7 @@ const ProjectDetail = () => {
           <TabsContent value="documents" className="mt-6">
             <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <FolderOpen className="h-5 w-5" />
                   Project Documents
                 </CardTitle>
@@ -957,7 +957,7 @@ const ProjectDetail = () => {
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
                   <Upload className="h-8 w-8 text-gray-400 mx-auto mb-4" />
                   <div className="space-y-2">
-                    <p className="text-sm font-medium">Upload project documents</p>
+                    <p className="text-sm font-medium text-white">Upload project documents</p>
                     <p className="text-xs text-gray-200 drop-shadow-sm">
                       Supported formats: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG (Max 10MB per file)
                     </p>
@@ -996,18 +996,18 @@ const ProjectDetail = () => {
                       
                       return (
                         <div key={category}>
-                          <h4 className="font-semibold mb-3 flex items-center gap-2">
+                          <h4 className="font-semibold mb-3 flex items-center gap-2 text-white">
                             <FolderOpen className="h-4 w-4" />
                             {category} ({categoryFiles.length})
                           </h4>
                           <div className="space-y-2">
                             {categoryFiles.map((file: any, index: number) => (
-                              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors">
+                              <div key={index} className="flex items-center justify-between p-3 bg-slate-800/60 rounded-md hover:bg-slate-700/60 transition-colors">
                                 <div className="flex items-center gap-3 flex-1 min-w-0">
                                   {getFileIcon(file.name)}
                                   <div className="flex-1 min-w-0">
-                                    <p className="font-medium text-sm truncate">{file.name}</p>
-                                    <div className="flex items-center gap-4 text-xs text-gray-200 drop-shadow-sm">
+                                    <p className="font-medium text-sm truncate text-white">{file.name}</p>
+                                    <div className="flex items-center gap-4 text-xs text-gray-400 drop-shadow-sm">
                                       <span className="flex items-center gap-1">
                                         <Calendar className="h-3 w-3" />
                                         {file.uploadedAt ? new Date(file.uploadedAt).toLocaleDateString() : 'N/A'}
