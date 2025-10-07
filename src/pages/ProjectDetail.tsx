@@ -10,11 +10,22 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Droplets, Wind, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User } from 'lucide-react';
+import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Droplets, Wind, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User, AlertTriangle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const ProjectDetail = () => {
   const { id } = useParams();
@@ -167,9 +178,10 @@ const ProjectDetail = () => {
       const duplicateData = {
         ...restOfProject,
         project_name: `${project.project_name} (Copy)`,
-        compliance_status: null,
+        compliance_status: 'draft',
         performance_compliance_result: null,
-        user_id: user.id, // Ensure it's assigned to the current user
+        uploaded_files: null,
+        user_id: user.id,
       };
 
       const { error } = await supabase
@@ -180,7 +192,7 @@ const ProjectDetail = () => {
 
       toast({
         title: "Project Duplicated",
-        description: "A copy of this project has been created and moved to 'In Progress'.",
+        description: "A copy of this project has been created and moved to 'Draft'.",
       });
       navigate('/dashboard');
 
@@ -598,10 +610,37 @@ const ProjectDetail = () => {
                 </div>
               ) : null}
               
-              <Button onClick={handleDuplicate} disabled={duplicating} className="animate-fade-in">
-                <Copy className="h-4 w-4 mr-2" />
-                {duplicating ? 'Duplicating...' : 'Duplicate Project'}
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button disabled={duplicating} className="animate-fade-in">
+                    <Copy className="h-4 w-4 mr-2" />
+                    {duplicating ? 'Duplicating...' : 'Duplicate Project'}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Duplicate This Project</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Create a copy of this project with all specifications intact. The duplicate will be placed in your "In Progress" section with a reset compliance status, allowing you to modify it as needed for new projects.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-md p-4">
+                    <div className="flex items-start gap-3">
+                      <AlertTriangle className="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-yellow-200 mb-1">Important Notice</p>
+                        <p className="text-sm text-yellow-300">
+                          <span className="font-semibold">New building plans and window schedule must be uploaded</span> to accompany the duplicated project. The existing project files will not be carried over and fresh documentation is required for compliance review.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDuplicate}>Duplicate</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
         </div>
@@ -1021,35 +1060,6 @@ const ProjectDetail = () => {
             </Card>
           </TabsContent>
         </Tabs>
-
-        <Card className="mt-6 animate-fade-in bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
-          <CardContent className="p-6">
-            <div className="flex items-start gap-3 mb-4">
-              <Copy className="h-5 w-5 text-orange-600 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-white mb-2">Duplicate This Project</h3>
-                <p className="text-sm text-slate-200 mb-4">
-                  Create a copy of this project with all specifications intact. The duplicate will be placed in your "In Progress" section with a reset compliance status, allowing you to modify it as needed for new projects.
-                </p>
-                
-                <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
-                  <div className="flex items-start gap-2">
-                    <div className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-yellow-800 text-xs font-bold">!</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-yellow-800 mb-1">Important Notice</p>
-                      <p className="text-sm text-yellow-700">
-                        <span className="font-medium">New building plans and window schedule must be uploaded</span> to accompany the duplicated project. The existing project files will not be carried over and fresh documentation is required for compliance review.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
       </main>
 
       <Footer />
