@@ -626,10 +626,10 @@ const ProjectDetail = () => {
                   </AlertDialogHeader>
                   <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-md p-4">
                     <div className="flex items-start gap-3">
-                      <AlertTriangle className="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                      <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-sm font-medium text-yellow-200 mb-1">Important Notice</p>
-                        <p className="text-sm text-yellow-300">
+                        <p className="text-sm font-medium text-red-600 mb-1">Important Notice</p>
+                        <p className="text-sm text-red-600">
                           <span className="font-semibold">New building plans and window schedule must be uploaded</span> to accompany the duplicated project. The existing project files will not be carried over and fresh documentation is required for compliance review.
                         </p>
                       </div>
@@ -667,7 +667,7 @@ const ProjectDetail = () => {
 
           <TabsContent value="overview" className="mt-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
+              <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Building className="h-5 w-5" />
@@ -743,7 +743,7 @@ const ProjectDetail = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <FileText className="h-5 w-5" />
@@ -778,7 +778,7 @@ const ProjectDetail = () => {
 
           <TabsContent value="technical" className="mt-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
+              <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Thermometer className="h-5 w-5" />
@@ -861,7 +861,7 @@ const ProjectDetail = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Zap className="h-5 w-5" />
@@ -897,7 +897,7 @@ const ProjectDetail = () => {
           </TabsContent>
 
           <TabsContent value="compliance" className="mt-6">
-            <Card>
+            <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5" />
@@ -943,7 +943,7 @@ const ProjectDetail = () => {
           </TabsContent>
 
           <TabsContent value="documents" className="mt-6">
-            <Card>
+            <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FolderOpen className="h-5 w-5" />
