@@ -10,10 +10,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Droplets, Wind, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User, Code, Sparkles } from 'lucide-react';
+import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Droplets, Wind, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import CodePreviewModal from '@/components/CodePreviewModal';
 import { supabase } from '@/integrations/supabase/client';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 
@@ -562,28 +561,6 @@ const ProjectDetail = () => {
                             <Edit className="h-4 w-4 mr-2" />
                             Edit Project
                           </Button>
-                          
-                          <CodePreviewModal
-                            triggerText="AI Code Editor"
-                            projectId={project.id}
-                            initialCode={`// Project: ${project.project_name}\n// Building Type: ${project.building_type}\n// Location: ${project.location}\n\nconst projectData = ${JSON.stringify(project, null, 2)};\n\n// Add your AI-generated code here\nconsole.log('Project loaded:', projectData);`}
-                            onCodeSaved={(code) => {
-                              console.log('Code saved for project:', project.id);
-                              toast({
-                                title: "AI Code Saved",
-                                description: "Your AI-generated code has been saved.",
-                              });
-                            }}
-                          >
-                            <Button 
-                              variant="outline"
-                              className="animate-fade-in gap-2"
-                            >
-                              <Sparkles className="h-4 w-4" />
-                              <Code className="h-4 w-4" />
-                              AI Code Editor
-                            </Button>
-                          </CodePreviewModal>
                         </>
                       )}
                       {((project.compliance_status !== 'pass' && project.compliance_status !== 'fail') || canDeleteProjects) && (
