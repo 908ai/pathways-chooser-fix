@@ -42,9 +42,12 @@ export default function ProjectSummaryModal({
             lastName: selections.lastName,
             company: selections.company,
             phoneNumber: selections.phoneNumber,
+            streetAddress: selections.streetAddress,
+            unitNumber: selections.unitNumber,
+            city: selections.city,
+            postalCode: selections.postalCode,
             province: selections.province,
             occupancyClass: selections.occupancyClass,
-            buildingAddress: selections.buildingAddress,
             frontDoorOrientation: selections.compliancePath === "9365" || selections.compliancePath === "9367" ? selections.frontDoorOrientation : "",
             energuidePathway: selections.energuidePathway,
             // Original envelope values as strings (not parsed)
@@ -60,9 +63,9 @@ export default function ProjectSummaryModal({
             windowUValue: selections.windowUValue,
             skylightUValue: selections.skylightUValue,
             // Processed data for calculations
-            projectName: `${selections.firstName} ${selections.lastName} - ${selections.buildingAddress}`,
+            projectName: `${selections.firstName} ${selections.lastName} - ${selections.streetAddress}, ${selections.city}`,
             buildingType: selections.buildingType,
-            location: selections.buildingAddress,
+            location: [selections.streetAddress, selections.city, selections.province].filter(Boolean).join(', '),
             floorArea: parseFloat(selections.buildingVolume) || 0,
             selectedPathway: selections.compliancePath === '9362' ? 'prescriptive' : selections.compliancePath === '9368' ? 'prescriptive' : 'performance',
             // Building Envelope Data - works for all pathways

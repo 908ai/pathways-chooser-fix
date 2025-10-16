@@ -79,7 +79,10 @@ const NBCCalculator = ({
     lastName: "",
     company: "",
     companyAddress: "",
-    buildingAddress: "",
+    streetAddress: "",
+    unitNumber: "",
+    city: "",
+    postalCode: "",
     buildingType: "",
     phoneNumber: "",
     frontDoorOrientation: "",
@@ -303,11 +306,14 @@ const NBCCalculator = ({
           lastName: lastName || companyData?.company_name?.split(' ').slice(1).join(' ') || "",
           company: companyData?.company_name || "",
           companyAddress: companyData?.address || "",
-          buildingAddress: project.location || "",
+          streetAddress: project.street_address || project.location || "",
+          unitNumber: project.unit_number || "",
+          city: project.city || "",
+          postalCode: project.postal_code || "",
+          province: project.province || "",
           buildingType: project.building_type || "",
           phoneNumber: companyData?.phone || "",
           frontDoorOrientation: "",
-          province: "",
           climateZone: "",
           occupancyClass: "",
           compliancePath: project.selected_pathway === 'performance' ? '9365' : '9362',
@@ -511,9 +517,14 @@ const NBCCalculator = ({
       }
       
       const draftData = {
-        project_name: selections.buildingAddress ? `${selections.firstName} ${selections.lastName} - ${selections.buildingAddress}` : editingProjectName || `Draft Project - ${new Date().toLocaleString()}`,
+        project_name: selections.streetAddress ? `${selections.firstName} ${selections.lastName} - ${selections.streetAddress}, ${selections.city}` : editingProjectName || `Draft Project - ${new Date().toLocaleString()}`,
         building_type: selections.buildingType,
-        location: selections.buildingAddress,
+        street_address: selections.streetAddress,
+        unit_number: selections.unitNumber,
+        city: selections.city,
+        postal_code: selections.postalCode,
+        province: selections.province,
+        location: [selections.streetAddress, selections.city, selections.province].filter(Boolean).join(', '),
         selected_pathway: selections.compliancePath.includes('9362') || selections.compliancePath.includes('9368') ? 'prescriptive' : 'performance',
         attic_rsi: parseFloat(selections.ceilingsAtticRSI) || null,
         wall_rsi: parseFloat(selections.wallRSI) || null,
@@ -686,7 +697,7 @@ const NBCCalculator = ({
   };
 
   const validateStep1 = () => {
-    const { firstName, lastName, company, phoneNumber, buildingAddress, buildingType, province, climateZone, companyAddress } = selections;
+    const { firstName, lastName, company, phoneNumber, streetAddress, city, postalCode, buildingType, province, climateZone, companyAddress } = selections;
     const errors: Record<string, boolean> = {};
 
     if (!firstName) errors.firstName = true;
@@ -694,7 +705,9 @@ const NBCCalculator = ({
     if (!company) errors.company = true;
     if (!companyAddress) errors.companyAddress = true;
     if (!phoneNumber) errors.phoneNumber = true;
-    if (!buildingAddress) errors.buildingAddress = true;
+    if (!streetAddress) errors.streetAddress = true;
+    if (!city) errors.city = true;
+    if (!postalCode) errors.postalCode = true;
     if (!buildingType) errors.buildingType = true;
     if (!province) errors.province = true;
     if (province === 'alberta' && !climateZone) errors.climateZone = true;
