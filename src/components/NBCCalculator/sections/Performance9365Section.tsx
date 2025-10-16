@@ -75,7 +75,7 @@ export default function Performance9365Section({
 
     return (
         <>
-            {selections.buildingAddress && selections.buildingAddress.toLowerCase().includes("red deer") && selections.province === "alberta" && <div className="space-y-2">
+            {selections.city && selections.city.toLowerCase().trim() === "red deer" && selections.province === "alberta" && <div className="space-y-2">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium text-slate-100">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
                     <InfoButton title="What is an F280 Calculation?">

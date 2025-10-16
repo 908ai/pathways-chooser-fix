@@ -92,126 +92,69 @@ export default function ProjectInformationSection({
              </div>
 
              {/* Building & Location Information */}
-             <div className="space-y-4 pt-10">
-               <h4 className="text-md font-medium text-white border-b border-slate-500 pb-2 tracking-wide">Building & Location Details <span className="text-red-400 font-semibold">(Required)</span></h4>
+              <div className="space-y-4 pt-10">
+                <h4 className="text-md font-medium text-white border-b border-slate-500 pb-2 tracking-wide">Building & Location Details <span className="text-red-400 font-semibold">(Required)</span></h4>
 
-               <div className="space-y-2">
-                 <label className="text-sm font-medium text-slate-100">Building/Project Address</label>
-                 <Input type="text" placeholder="Enter building/project address" value={selections.buildingAddress} onChange={e => setSelections(prev => ({
-                ...prev,
-                buildingAddress: e.target.value
-              }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.buildingAddress && "border-red-500 ring-2 ring-red-500")} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Street Address</label>
+                    <Input type="text" placeholder="e.g., 123 Main St" value={selections.streetAddress} onChange={e => setSelections(prev => ({ ...prev, streetAddress: e.target.value }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.streetAddress && "border-red-500 ring-2 ring-red-500")} />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Unit Number (Optional)</label>
+                    <Input type="text" placeholder="e.g., Apt, Unit, Suite" value={selections.unitNumber} onChange={e => setSelections(prev => ({ ...prev, unitNumber: e.target.value }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-100">Building Type</label>
-                  <Select value={selections.buildingType} onValueChange={value => setSelections(prev => ({
-                ...prev,
-                buildingType: value
-              }))}>
-                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.buildingType && "border-red-500 ring-2 ring-red-500")}>
-                      <SelectValue placeholder="Select building type" />
-                    </SelectTrigger>
-                     <SelectContent className="bg-background border shadow-lg z-50">
-                       <SelectItem value="single-detached">Single-detached home</SelectItem>
-                       <SelectItem value="single-detached-secondary">Single-detached home with a secondary suite</SelectItem>
-                       <SelectItem value="multi-unit">Multi-Unit Residential Building or Town/Row-House</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-sm font-medium text-slate-100">City</label>
+                    <Input type="text" placeholder="Enter city" value={selections.city} onChange={e => setSelections(prev => ({ ...prev, city: e.target.value }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.city && "border-red-500 ring-2 ring-red-500")} />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Province</label>
+                    <Select value={selections.province} onValueChange={value => {
+                      setSelections(prev => ({
+                        ...prev,
+                        province: value,
+                        climateZone: "", // Reset climate zone when province changes
+                      }));
+                    }}>
+                      <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.province && "border-red-500 ring-2 ring-red-500")}>
+                        <SelectValue placeholder="Select province" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="saskatchewan">Saskatchewan</SelectItem>
+                        <SelectItem value="alberta">Alberta</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-100">Province</label>
-                    <Select value={selections.province} onValueChange={value => {
-                  setSelections(prev => ({
-                    ...prev,
-                    province: value,
-                    // Reset technical selections when province changes
-                    compliancePath: "",
-                    hasHrv: "",
-                    isVolumeOver380: "",
-                    buildingVolume: "",
-                    ceilingsAtticRSI: "",
-                    hasCathedralOrFlatRoof: "",
-                    cathedralFlatRSI: "",
-                    wallRSI: "",
-                    floorsUnheatedRSI: "",
-                    floorsGarageRSI: "",
-                    hasSkylights: "",
-                    skylightUValue: "",
-                    hasSlabOnGrade: "",
-                    hasInFloorHeat: "",
-                    floorsSlabsSelected: [],
-                    foundationWallsRSI: "",
-                    slabOnGradeRSI: "",
-                    slabOnGradeIntegralFootingRSI: "",
-                    floorsOverUnheatedSpacesRSI: "",
-                    unheatedFloorBelowFrostRSI: "",
-                    unheatedFloorAboveFrostRSI: "",
-                    heatedFloorsRSI: "",
-                    windowUValue: "",
-                    belowGradeRSI: "",
-                    airtightness: "",
-                    atticRSI: "",
-                    hrv: "",
-                    hasSecondaryHrv: "",
-                    secondaryHrvEfficiency: "",
-                    hasSecondaryHeating: "",
-                    secondaryHeatingType: "",
-                    secondaryHeatingEfficiency: "",
-                    secondaryIndirectTank: "",
-                    secondaryIndirectTankSize: "",
-                    hasMurbMultipleHeating: "",
-                    murbSecondHeatingType: "",
-                    murbSecondHeatingEfficiency: "",
-                    murbSecondIndirectTank: "",
-                    murbSecondIndirectTankSize: "",
-                    waterHeater: "",
-                    waterHeaterType: "",
-                    hasSecondaryWaterHeater: "",
-                    secondaryWaterHeaterSameAsMain: "",
-                    secondaryWaterHeater: "",
-                    secondaryWaterHeaterType: "",
-                    hasMurbMultipleWaterHeaters: "",
-                    murbSecondWaterHeater: "",
-                    murbSecondWaterHeaterType: "",
-                    hasDWHR: ""
-                  }));
-                }}>
-                     <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.province && "border-red-500 ring-2 ring-red-500")}>
-                       <SelectValue placeholder="Select your province" />
-                     </SelectTrigger>
-                     <SelectContent>
-                       <SelectItem value="saskatchewan">Saskatchewan</SelectItem>
-                       <SelectItem value="alberta">Alberta</SelectItem>
-                     </SelectContent>
-                   </Select>
+                    <label className="text-sm font-medium text-slate-100">Postal Code</label>
+                    <Input type="text" placeholder="Enter postal code" value={selections.postalCode} onChange={e => setSelections(prev => ({ ...prev, postalCode: e.target.value }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.postalCode && "border-red-500 ring-2 ring-red-500")} />
                   </div>
-
-                   {/* Climate Zone Selection for Alberta */}
-                   {selections.province === "alberta" && <div className="space-y-2">
-                       <div className="flex items-center gap-2">
-                         <label className="text-sm font-medium text-slate-100">Climate Zone <span className="text-red-400 font-semibold">*</span></label>
-                         <InfoButton title="Climate Zone Information">
-                               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                                 <h4 className="font-semibold text-green-800 mb-2">Saskatchewan</h4>
-                                 <p className="text-green-700">All of Saskatchewan is in Climate Zone 7A (5000 to 5999 HDD)</p>
-                               </div>
-                               
-                               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                 <h4 className="font-semibold text-blue-800 mb-2">Alberta Climate Zones</h4>
-                                 <img src="/lovable-uploads/9b289384-01b6-4f5f-a713-ddcae27167db.png" alt="Climate Zone Map for Alberta showing Zone 6, 7A, 7B, and 8 with corresponding cities and HDD ranges" className="w-full h-auto rounded-lg border border-gray-200" />
-                                 <div className="mt-4 text-xs text-blue-600">
-                                   <p><strong>HDD:</strong> Heating Degree Days - a measure of how much (in degrees), and for how long (in days), the outside air temperature was below a certain level.</p>
-                                 </div>
-                               </div>
-                         </InfoButton>
-                       </div>
-                      <Select value={selections.climateZone} onValueChange={value => setSelections(prev => ({
-                  ...prev,
-                  climateZone: value
-                }))}>
+                  {selections.province === "alberta" && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <label className="text-sm font-medium text-slate-100">Climate Zone</label>
+                        <InfoButton title="Climate Zone Information">
+                          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <h4 className="font-semibold text-green-800 mb-2">Saskatchewan</h4>
+                            <p className="text-green-700">All of Saskatchewan is in Climate Zone 7A (5000 to 5999 HDD)</p>
+                          </div>
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <h4 className="font-semibold text-blue-800 mb-2">Alberta Climate Zones</h4>
+                            <img src="/lovable-uploads/9b289384-01b6-4f5f-a713-ddcae27167db.png" alt="Climate Zone Map for Alberta showing Zone 6, 7A, 7B, and 8 with corresponding cities and HDD ranges" className="w-full h-auto rounded-lg border border-gray-200" />
+                            <div className="mt-4 text-xs text-blue-600">
+                              <p><strong>HDD:</strong> Heating Degree Days - a measure of how much (in degrees), and for how long (in days), the outside air temperature was below a certain level.</p>
+                            </div>
+                          </div>
+                        </InfoButton>
+                      </div>
+                      <Select value={selections.climateZone} onValueChange={value => setSelections(prev => ({ ...prev, climateZone: value }))}>
                         <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.climateZone && "border-red-500 ring-2 ring-red-500")}>
                           <SelectValue placeholder="Select climate zone" />
                         </SelectTrigger>
@@ -220,16 +163,29 @@ export default function ProjectInformationSection({
                           <SelectItem value="7B">Zone 7B (6000-6999 HDD)</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>}
+                    </div>
+                  )}
+                </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                   <label className="text-sm font-medium text-slate-100">Occupancy Class</label>
-                   <Input type="text" placeholder="C" value={selections.occupancyClass} onChange={e => setSelections(prev => ({
-                  ...prev,
-                  occupancyClass: e.target.value
-                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                 </div>
-               </div>
+                    <label className="text-sm font-medium text-slate-100">Building Type</label>
+                    <Select value={selections.buildingType} onValueChange={value => setSelections(prev => ({ ...prev, buildingType: value }))}>
+                      <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.buildingType && "border-red-500 ring-2 ring-red-500")}>
+                        <SelectValue placeholder="Select building type" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="single-detached">Single-detached home</SelectItem>
+                        <SelectItem value="single-detached-secondary">Single-detached home with a secondary suite</SelectItem>
+                        <SelectItem value="multi-unit">Multi-Unit Residential Building or Town/Row-House</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Occupancy Class</label>
+                    <Input type="text" placeholder="C" value={selections.occupancyClass} onChange={e => setSelections(prev => ({ ...prev, occupancyClass: e.target.value }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                  </div>
+                </div>
              </div>
            </CardContent>
         </Card>        

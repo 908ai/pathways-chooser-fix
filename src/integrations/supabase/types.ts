@@ -96,6 +96,7 @@ export type Database = {
           below_grade_rsi: number | null
           building_type: string | null
           building_volume: number | null
+          city: string | null
           compliance_status: string | null
           cooling_efficiency: number | null
           cooling_points: number | null
@@ -117,10 +118,14 @@ export type Database = {
           id: string
           location: string | null
           performance_compliance_result: string | null
+          postal_code: string | null
           project_name: string
+          province: string | null
           recommendations: string[] | null
           selected_pathway: string | null
+          street_address: string | null
           total_points: number | null
+          unit_number: string | null
           updated_at: string
           upgrade_costs: number | null
           uploaded_files: Json | null
@@ -144,6 +149,7 @@ export type Database = {
           below_grade_rsi?: number | null
           building_type?: string | null
           building_volume?: number | null
+          city?: string | null
           compliance_status?: string | null
           cooling_efficiency?: number | null
           cooling_points?: number | null
@@ -165,10 +171,14 @@ export type Database = {
           id?: string
           location?: string | null
           performance_compliance_result?: string | null
+          postal_code?: string | null
           project_name: string
+          province?: string | null
           recommendations?: string[] | null
           selected_pathway?: string | null
+          street_address?: string | null
           total_points?: number | null
+          unit_number?: string | null
           updated_at?: string
           upgrade_costs?: number | null
           uploaded_files?: Json | null
@@ -192,6 +202,7 @@ export type Database = {
           below_grade_rsi?: number | null
           building_type?: string | null
           building_volume?: number | null
+          city?: string | null
           compliance_status?: string | null
           cooling_efficiency?: number | null
           cooling_points?: number | null
@@ -213,10 +224,14 @@ export type Database = {
           id?: string
           location?: string | null
           performance_compliance_result?: string | null
+          postal_code?: string | null
           project_name?: string
+          province?: string | null
           recommendations?: string[] | null
           selected_pathway?: string | null
+          street_address?: string | null
           total_points?: number | null
+          unit_number?: string | null
           updated_at?: string
           upgrade_costs?: number | null
           uploaded_files?: Json | null
