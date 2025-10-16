@@ -107,7 +107,7 @@ export default function ProjectInformationSection({
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2 md:col-span-2">
+                  <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">City</label>
                     <Input type="text" placeholder="Enter city" value={selections.city} onChange={e => setSelections(prev => ({ ...prev, city: e.target.value }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.city && "border-red-500 ring-2 ring-red-500")} />
                   </div>
@@ -129,12 +129,29 @@ export default function ProjectInformationSection({
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Postal Code</label>
                     <Input type="text" placeholder="Enter postal code" value={selections.postalCode} onChange={e => setSelections(prev => ({ ...prev, postalCode: e.target.value }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.postalCode && "border-red-500 ring-2 ring-red-500")} />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Building Type</label>
+                    <Select value={selections.buildingType} onValueChange={value => setSelections(prev => ({ ...prev, buildingType: value }))}>
+                      <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.buildingType && "border-red-500 ring-2 ring-red-500")}>
+                        <SelectValue placeholder="Select building type" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="single-detached">Single-detached home</SelectItem>
+                        <SelectItem value="single-detached-secondary">Single-detached home with a secondary suite</SelectItem>
+                        <SelectItem value="multi-unit">Multi-Unit Residential Building or Town/Row-House</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Occupancy Class</label>
+                    <Input type="text" placeholder="C" value={selections.occupancyClass} onChange={e => setSelections(prev => ({ ...prev, occupancyClass: e.target.value }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                   </div>
                   {selections.province === "alberta" && (
                     <div className="space-y-2">
@@ -165,26 +182,6 @@ export default function ProjectInformationSection({
                       </Select>
                     </div>
                   )}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-100">Building Type</label>
-                    <Select value={selections.buildingType} onValueChange={value => setSelections(prev => ({ ...prev, buildingType: value }))}>
-                      <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.buildingType && "border-red-500 ring-2 ring-red-500")}>
-                        <SelectValue placeholder="Select building type" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-background border shadow-lg z-50">
-                        <SelectItem value="single-detached">Single-detached home</SelectItem>
-                        <SelectItem value="single-detached-secondary">Single-detached home with a secondary suite</SelectItem>
-                        <SelectItem value="multi-unit">Multi-Unit Residential Building or Town/Row-House</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-100">Occupancy Class</label>
-                    <Input type="text" placeholder="C" value={selections.occupancyClass} onChange={e => setSelections(prev => ({ ...prev, occupancyClass: e.target.value }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                  </div>
                 </div>
              </div>
            </CardContent>
