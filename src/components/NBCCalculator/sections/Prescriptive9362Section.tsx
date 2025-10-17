@@ -608,13 +608,13 @@ export default function Prescriptive9362Section({
 
                             <div className="space-y-2">
                                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-2">
-                                    <p className="text-xs font-medium text-blue-800">📋 Helpful Resources:</p>
+                                    <p className="text-sm font-medium text-blue-800">📋 Helpful Resources:</p>
                                     <div className="space-y-1">
-                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 underline hover:text-blue-800 block">
-                                            View the Blower Door Checklist
+                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-700 hover:text-red-800 block">
+                                            🔗 View the Blower Door Checklist
                                         </a>
-                                        <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 underline hover:text-blue-800 block">
-                                            More airtightness information
+                                        <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-700 hover:text-red-800 block">
+                                            🔗 More airtightness information
                                         </a>
                                     </div>
                                 </div>
@@ -644,7 +644,7 @@ export default function Prescriptive9362Section({
                             <li>Face expensive late-stage upgrades or rework</li>
                         </ul>
                         <p>
-                            <strong>Good news:</strong> We track airtightness results across all projects so we can help you set realistic targets, reduce build costs, and optimize performance from day one.
+                            <strong>Tip:</strong> Track airtightness results across all projects to set realistic targets, reduce build costs & optimize performance from day one.
                         </p>
                         <div className="flex items-center gap-1 text-sm mt-3">
                             <span>🔗</span>
@@ -704,9 +704,9 @@ export default function Prescriptive9362Section({
                             </ul>
                             <div className="flex items-center gap-1 text-sm mt-3">
                                 <span>📄</span>
-                                <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">
-                                    View the Blower Door Checklist
-                                </a>
+                                <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-purple-300 hover:text-yellow-300/80">
+                                    🔗 View the Blower Door Checklist
+                                </a>  
                             </div>
                         </div>
                     </WarningButton>
@@ -735,7 +735,7 @@ export default function Prescriptive9362Section({
                     ⚠️ Mechanical Equipment Documentation
                 </p>
                 <p className="text-sm text-white mt-1">
-                    The Authority Having Jurisdiction (AHJ) may request specific makes/models of the mechanical equipment being proposed for heating, cooling, domestic hot water and HRV systems. The AHJ may also request CSA F-280 heat loss & gain calculations. More info at: <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">https://solinvictusenergyservices.com/cancsa-f28012</a>
+                    The Authority Having Jurisdiction (AHJ) may verify specific makes/models of the mechanical equipment being proposed for heating, cooling, domestic hot water and HRV systems. The AHJ may also request CSA F-280 heat loss & gain calculations. More info at: <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">https://solinvictusenergyservices.com/cancsa-f28012</a>
                 </p>
             </div>
 

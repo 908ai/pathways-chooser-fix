@@ -41,6 +41,8 @@ const getStatusInfo = (status: string | null) => {
       return { text: 'Non-Compliant', color: 'bg-red-500 text-red-50' };
     case 'submitted':
       return { text: 'Submitted', color: 'bg-blue-500 text-blue-50' };
+    case 'draft':
+      return { text: 'Draft', color: 'bg-gray-500 text-gray-50' };
     default:
       return { text: 'In Progress', color: 'bg-orange-500 text-orange-50' };
   }

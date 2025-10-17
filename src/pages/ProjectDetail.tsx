@@ -508,6 +508,8 @@ const ProjectDetail = () => {
         return <Badge className="bg-red-100 text-red-800">Non-Compliant</Badge>;
       case 'submitted':
         return <Badge className="bg-blue-100 text-blue-800">Submitted for Review</Badge>;
+      case 'draft':
+        return <Badge className="bg-gray-100 text-gray-800">Draft</Badge>;
       default:
         return <Badge className="bg-orange-100 text-orange-800">Under Review</Badge>;
     }

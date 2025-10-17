@@ -469,7 +469,7 @@ export default function Performance9365Section({
                                         <div>
                                             <p className="font-medium">Guarded Test</p>
                                             <div className="ml-4 space-y-1">
-                                                <p>• All adjacent units are depressurized at the same time.</p>
+                                                <p>• All adjacent units are depressurized (or pressurized) at the same time.</p>
                                                 <p>• Blocks airflow between units, giving a more accurate picture of leakage to the outside.</p>
                                                 <p>• Ideal for multi-unit buildings, but more complex.</p>
                                             </div>
@@ -486,6 +486,7 @@ export default function Performance9365Section({
                                         <p>• Use Table 9.36.-A for guarded tests (stricter limits)</p>
                                         <p>• Use Table 9.36.-B for unguarded tests (more lenient for attached buildings)</p>
                                     </div>
+                                    <p className="text-sm text-muted-foreground mt-2">The design air leakage rate, established by the builder and energy modeller, is incorporated into the energy model and later verified through testing at either the mid-construction or final stage. If the measured air changes per hour (ACH, if chosen) exceed the code-specified airtightness level, the building fails; if the measured ACH is lower, it passes.</p>
                                     <p className="text-sm text-muted-foreground mt-2">In multi-unit buildings, the worst-performing zone sets the final score.</p>
                                 </div>
 
@@ -516,13 +517,13 @@ export default function Performance9365Section({
 
                             <div className="space-y-2">
                                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-2">
-                                    <p className="text-xs font-medium text-blue-800">📋 Helpful Resources:</p>
+                                    <p className="text-sm font-medium text-blue-800">📋 Helpful Resources:</p>
                                     <div className="space-y-1">
-                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 underline hover:text-blue-800 block">
-                                            View the Blower Door Checklist
+                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-700 hover:text-red-800 block">
+                                            🔗 View the Blower Door Checklist
                                         </a>
-                                        <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 underline hover:text-blue-800 block">
-                                            More airtightness information
+                                        <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-700 hover:text-red-800 block">
+                                            🔗 More airtightness information
                                         </a>
                                     </div>
                                 </div>
@@ -552,7 +553,7 @@ export default function Performance9365Section({
                             <li>Face expensive late-stage upgrades or rework</li>
                         </ul>
                         <p>
-                            <strong>Good news:</strong> We track airtightness results across all projects so we can help you set realistic targets, reduce build costs, and optimize performance from day one.
+                            <strong>Tip:</strong> Track airtightness results across all projects to set realistic targets, reduce build costs & optimize performance from day one.
                         </p>
                         <div className="flex items-center gap-1 text-sm mt-3">
                             <span>🔗</span>
@@ -621,9 +622,9 @@ export default function Performance9365Section({
                             </ul>
                             <div className="flex items-center gap-1 text-sm mt-3">
                                 <span>📄</span>
-                                <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">
-                                    View the Blower Door Checklist
-                                </a>
+                                <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-purple-300 hover:text-yellow-300/80">
+                                    🔗 View the Blower Door Checklist
+                                </a>                                
                             </div>
                         </div>
                     </WarningButton>
@@ -722,7 +723,7 @@ export default function Performance9365Section({
                 <WarningButton warningId="mechanical-equipment-docs-9365" title="⚠️ Mechanical Equipment Documentation">
                     <div className="text-xs text-white space-y-2">
                         <p>
-                            The Authority Having Jurisdiction (AHJ) may request specific makes/models of the mechanical equipment being proposed for heating, cooling, domestic hot water and HRV systems. The AHJ may also request CSA F-280 heat loss & gain calculations.
+                            The Authority Having Jurisdiction (AHJ) may verify specific makes/models of the mechanical equipment being proposed for heating, cooling, domestic hot water and HRV systems. The AHJ may also request CSA F-280 heat loss & gain calculations.
                         </p>
                         <p>
                             <strong>F280 calculations:</strong> A heating and cooling load calculation based on CSA Standard F280-12 (or updated versions), which is the Canadian standard for determining how much heating or cooling a home needs. It accounts for factors like insulation levels, windows, air leakage, and local climate.

@@ -65,7 +65,7 @@ export default function CompliancePathSection({
                                           <p>An HRV is optional but influences which RSI values you must meet. No HRV means higher RSI requirements for your walls, foundation and attic.</p>
                                           <p className="bg-muted rounded-md p-3">⚠️ Warning: This path may lead to higher build costs due to limited flexibility. Assemblies must meet strict minimums without trade-offs, which can increase material and labour costs.</p>
                                           <p className="mt-2">
-                                            <strong>Trade-off Option (9.36.2.11):</strong> <a href="/reference/calgary-trade-off-calculator.xlsm" download className="text-blue-400 underline hover:text-red-600">
+                                            <strong>Trade-off Option (9.36.2.11):</strong> 🔗 <a href="https://www.calgary.ca/content/dam/www/pda/pd/documents/building/green/9.36-trade-off-report.xlsm" download className="text-blue-500 underline hover:text-red-600">
                                               Download Trade-off Calculator
                                             </a> - Allows flexibility to balance R-values between building components.
                                           </p>
@@ -78,8 +78,9 @@ export default function CompliancePathSection({
                                        <div className="text-sm text-muted-foreground space-y-1">
                                          <p>Your design is modelled against a "reference house" which is the exact same house physically that you intend to build, but with all the specifications that meet minimum prescriptive requirements. If your house performs as well or better, it passes.</p>
                                          <p>✅ This path is now the minimum requirement in many jurisdictions for basic code compliance.</p>
-                                         <p>✅ Estimated savings of up to $6,000 are possible on a 2,000 sq ft detached home, even when aiming for Tier 2, thanks to flexible trade-offs (e.g., using R20 walls instead of R24 with better airtightness).</p>
-                                         <p>✅ More information: solinvictusenergyservices.com/energy-hack</p>
+                                         <p>✅ Estimated savings* of up to $5,000 are possible on a 2,000 sq ft detached home, even when aiming for Tier 2, thanks to flexible trade-offs (e.g., using R20 walls instead of R24 with better airtightness). <small><i>*Actual savings may vary depending on local pricing and builder practices.</i></small></p>
+                                         
+                                         <p>✅ More information: 🔗 <a href="https://solinvictusenergyservices.com/energy-hack" download className="text-blue-500 underline hover:text-red-600">Energy Code Hack</a></p>
                                          <p className="font-medium mt-2">Benefits:</p>
                                          <div className="ml-2 space-y-1">
                                            <p>• Greater design flexibility (e.g., trade-offs between walls, windows, or systems)</p>
@@ -261,7 +262,7 @@ export default function CompliancePathSection({
                                         <div>
                                           <h5 className="font-medium text-sm mb-1">Glazing Area Impacts Compliance:</h5>
                                           <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
-                                            <li>Reference houses assume a 17–22% window-to-wall ratio.</li>
+                                            <li>Reference house assume a 17–22% window-to-wall ratio.</li>
                                             <li>Homes with less glazing than the reference benefit from reduced heat loss and can earn additional performance credits.</li>
                                           </ul>
                                         </div>
@@ -272,8 +273,8 @@ export default function CompliancePathSection({
                                         <div>
                                           <h5 className="font-medium text-sm mb-1">Additional Benefits:</h5>
                                           <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
-                                            <li>Smart solar gain strategies can earn "bonus points" by offsetting heating loads in the energy model.</li>
-                                            <li>Designs with less glazing than the reference earn performance credits due to reduced heat loss.</li>
+                                            {/* <li>Smart solar gain strategies can earn "bonus points" by offsetting heating loads in the energy model.</li> */}
+                                            {/* <li>Designs with less glazing than the reference earn performance credits due to reduced heat loss.</li> */}
                                             <li>Orientation and glazing strategies are low-cost design choices that help meet Tier 1, Tier 2, or even Net Zero Ready targets more easily.</li>
                                           </ul>
                                         </div>
