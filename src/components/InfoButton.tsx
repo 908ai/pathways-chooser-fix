@@ -26,7 +26,7 @@ const InfoButton: React.FC<InfoButtonProps> = ({ title, children, dialogClassNam
                 <TooltipTrigger asChild>
                     <DialogTrigger asChild>
                         <Button variant="ghost" size="icon" className={cn("hover:bg-blue-500/20 h-6 w-6", className)}>
-                            <Info className={cn("text-primary-foreground fill-primary", iconClassName)} />
+                            <Info className={cn("h-5 w-5 text-primary-foreground fill-primary", iconClassName)} />
                         </Button>
                     </DialogTrigger>
                 </TooltipTrigger>
