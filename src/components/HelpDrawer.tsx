@@ -87,10 +87,10 @@ const HelpDrawer = ({ open, onOpenChange }: HelpDrawerProps) => {
                  
                   <div className="mt-4 p-4 bg-slate-800/50 border border-slate-600 rounded-lg">
                     <div className="space-y-3">
-                      <h4 className="text-lg font-bold text-slate-100">
+                      <h5 className="font-bold text-slate-100">
                         Application Processing Notice
-                      </h4>
-                      <p className="font-semibold text-slate-200">
+                      </h5>
+                      <p className="text-slate-200">
                         Incomplete applications may delay results for both Prescriptive & Performance Path. Our team may follow up if additional info is needed.
                       </p>
                     </div>

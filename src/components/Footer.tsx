@@ -15,7 +15,7 @@ const Footer = () => {
             <span>Alberta & Saskatchewan</span>
           </div>
           
-          <p className="text-sm text-primary/80 sm:absolute sm:left-1/2 sm:-translate-x-1/2">© 2025 NBC 9.36 Navigator</p>
+          <p className="text-sm text-primary/80 sm:absolute sm:left-1/2 sm:-translate-x-1/2">© 2025 Energy Navigator 9.36</p>
 
           <Button 
             onClick={handleCallContact}
