@@ -697,7 +697,7 @@ const NBCCalculator = ({
   };
 
   const validateStep1 = () => {
-    const { firstName, lastName, company, phoneNumber, streetAddress, unitNumber, city, postalCode, buildingType, province, climateZone, companyAddress } = selections;
+    const { firstName, lastName, company, phoneNumber, streetAddress, city, postalCode, buildingType, province, climateZone, companyAddress } = selections;
     const errors: Record<string, boolean> = {};
 
     if (!firstName) errors.firstName = true;
@@ -706,7 +706,6 @@ const NBCCalculator = ({
     if (!companyAddress) errors.companyAddress = true;
     if (!phoneNumber) errors.phoneNumber = true;
     if (!streetAddress) errors.streetAddress = true;
-    if (!unitNumber) errors.unitNumber = true;
     if (!city) errors.city = true;
     if (!postalCode) errors.postalCode = true;
     if (!buildingType) errors.buildingType = true;

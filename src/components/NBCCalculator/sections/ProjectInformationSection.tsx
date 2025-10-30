@@ -101,7 +101,7 @@ export default function ProjectInformationSection({
                     <Input type="text" placeholder="e.g., 123 Main St" value={selections.streetAddress} onChange={e => setSelections(prev => ({ ...prev, streetAddress: e.target.value }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.streetAddress && "border-red-500 ring-2 ring-red-500")} />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-100">Unit Number</label>
+                    <label className="text-sm font-medium text-slate-100">Unit Number <span className="text-slate-400 font-normal">(Optional)</span></label>
                     <Input type="text" placeholder="e.g., Apt, Unit, Suite" value={selections.unitNumber} onChange={e => setSelections(prev => ({ ...prev, unitNumber: e.target.value }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.unitNumber && "border-red-500 ring-2 ring-red-500")} />
                   </div>
                 </div>
