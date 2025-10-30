@@ -17,16 +17,26 @@ interface InfoButtonProps {
     dialogClassName?: string;
     className?: string;
     iconClassName?: string;
+    size?: 'default' | 'large';
 }
 
-const InfoButton: React.FC<InfoButtonProps> = ({ title, children, dialogClassName, className, iconClassName }) => {
+const InfoButton: React.FC<InfoButtonProps> = ({ title, children, dialogClassName, className, iconClassName, size = 'default' }) => {
+    const buttonSizes = {
+        default: "h-6 w-6",
+        large: "h-10 w-10"
+    };
+    const iconSizes = {
+        default: "h-5 w-5",
+        large: "h-8 w-8"
+    };
+
     return (
         <Dialog>
             <Tooltip>
                 <TooltipTrigger asChild>
                     <DialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className={cn("hover:bg-blue-500/20 h-6 w-6", className)}>
-                            <Info className={cn("h-5 w-5 text-primary-foreground fill-primary", iconClassName)} />
+                        <Button variant="ghost" size="icon" className={cn("hover:bg-blue-500/20", buttonSizes[size], className)}>
+                            <Info className={cn("text-primary-foreground fill-primary", iconSizes[size], iconClassName)} />
                         </Button>
                     </DialogTrigger>
                 </TooltipTrigger>
