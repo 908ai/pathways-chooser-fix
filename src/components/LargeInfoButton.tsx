@@ -26,7 +26,7 @@ const LargeInfoButton: React.FC<LargeInfoButtonProps> = ({ title, children, dial
                 <TooltipTrigger asChild>
                     <DialogTrigger asChild>
                         <Button variant="ghost" size="icon" className={cn("hover:bg-blue-500/20 h-10 w-10", className)}>
-                            <Info className={cn("h-8 w-8 text-primary-foreground fill-primary", iconClassName)} />
+                            <Info className={cn("!h-8 !w-8 text-primary-foreground fill-primary", iconClassName)} />
                         </Button>
                     </DialogTrigger>
                 </TooltipTrigger>
