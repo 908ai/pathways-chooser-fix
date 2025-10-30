@@ -11,7 +11,7 @@ import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-interface InfoButtonProps {
+interface LargeInfoButtonProps {
     title: string;
     children: React.ReactNode;
     dialogClassName?: string;
@@ -19,14 +19,14 @@ interface InfoButtonProps {
     iconClassName?: string;
 }
 
-const InfoButton: React.FC<InfoButtonProps> = ({ title, children, dialogClassName, className, iconClassName }) => {
+const LargeInfoButton: React.FC<LargeInfoButtonProps> = ({ title, children, dialogClassName, className, iconClassName }) => {
     return (
         <Dialog>
             <Tooltip>
                 <TooltipTrigger asChild>
                     <DialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className={cn("hover:bg-blue-500/20 h-6 w-6", className)}>
-                            <Info className={cn("h-5 w-5 text-primary-foreground fill-primary", iconClassName)} />
+                        <Button variant="ghost" size="icon" className={cn("hover:bg-blue-500/20 h-10 w-10", className)}>
+                            <Info className={cn("h-8 w-8 text-primary-foreground fill-primary", iconClassName)} />
                         </Button>
                     </DialogTrigger>
                 </TooltipTrigger>
@@ -46,4 +46,4 @@ const InfoButton: React.FC<InfoButtonProps> = ({ title, children, dialogClassNam
     );
 };
 
-export default InfoButton;
+export default LargeInfoButton;

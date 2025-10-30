@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Zap } from "lucide-react";
+import LargeInfoButton from "@/components/LargeInfoButton";
 import InfoButton from "@/components/InfoButton";
 
 import { getPathwayDisplayName } from "../utils/helpers";
@@ -48,9 +49,8 @@ export default function CompliancePathSection({
                          <div className="space-y-2">
                           <div className="flex items-center gap-3">
                             <label className="text-sm font-medium text-white">Which compliance path are you using?</label>
-                            <InfoButton
+                            <LargeInfoButton
                               title="NBC Part 9 Energy Compliance – Simple Overview"
-                              size="large"
                               className="animate-glow-pulse rounded-full border-2 border-primary"
                             >
                                   <div>
@@ -135,7 +135,7 @@ export default function CompliancePathSection({
                                       <p>• Use 9.36.8 if you prefer a checklist/points-based approach to Tier compliance and are committed to installing an HRV.</p>
                                     </div>
                                   </div>
-                            </InfoButton>
+                            </LargeInfoButton>
                           </div>
                           
                           {/* Current pathway display */}
