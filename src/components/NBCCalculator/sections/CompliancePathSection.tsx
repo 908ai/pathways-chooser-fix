@@ -54,7 +54,7 @@ export default function CompliancePathSection({
                               className="animate-glow-pulse rounded-full border-2 border-white"
                             >
                                   <div>
-                                    <p className="text-sm text-muted-foreground mb-3">
+                                    <p className="text-base text-muted-foreground mb-3">
                                       The National Building Code of Canada (NBC) offers four main pathways to show your building meets energy efficiency requirements:
                                     </p>
                                     <div className="w-full h-px bg-muted mb-3" />
@@ -62,8 +62,8 @@ export default function CompliancePathSection({
                                   
                                    <div className="space-y-4">
                                      <div>
-                                        <h5 className="font-medium text-sm mb-1">1. NBC 2020 9.36.2 – 9.36.4: Base Prescriptive Path</h5>
-                                        <div className="text-sm text-muted-foreground space-y-1">
+                                        <h5 className="font-medium text-base mb-1">1. NBC 2020 9.36.2 – 9.36.4: Base Prescriptive Path</h5>
+                                        <div className="text-base text-muted-foreground space-y-1">
                                           <p>This is the standard, minimum compliance route.</p>
                                           <p>You meet fixed insulation (RSI) values and HVAC/water heating system requirements — no energy modelling or points system required.</p>
                                           <p>An HRV is optional but influences which RSI values you must meet. No HRV means higher RSI requirements for your walls, foundation and attic.</p>
@@ -78,8 +78,8 @@ export default function CompliancePathSection({
                                      </div>
 
                                      <div>
-                                       <h5 className="font-medium text-sm mb-1">2. NBC 9.36.5 – Performance Modelling (Most builders choose this path)</h5>
-                                       <div className="text-sm text-muted-foreground space-y-1">
+                                       <h5 className="font-medium text-base mb-1">2. NBC 9.36.5 – Performance Modelling (Most builders choose this path)</h5>
+                                       <div className="text-base text-muted-foreground space-y-1">
                                          <p>Your design is modelled against a "reference house" which is the exact same house physically that you intend to build, but with all the specifications that meet minimum prescriptive requirements. If your house performs as well or better, it passes.</p>
                                          <p>✅ This path is now the minimum requirement in many jurisdictions for basic code compliance.</p>
                                          <p>✅ Estimated savings* of up to $5,000 are possible on a 2,000 sq ft detached home, even when aiming for Tier 2, thanks to flexible trade-offs (e.g., using R20 walls instead of R24 with better airtightness). <small><i>*Actual savings may vary depending on local pricing and builder practices.</i></small></p>
@@ -98,8 +98,8 @@ export default function CompliancePathSection({
                                      </div>
 
                                       <div>
-                                        <h5 className="font-medium text-sm mb-1">3. NBC 9.36.7 – Tiered Performance Path <span className="inline-block ml-2 px-2 py-1 bg-gradient-to-r from-emerald-500 to-blue-500 text-white text-xs font-bold rounded">(Tier 2-5)</span></h5>
-                                        <div className="text-sm text-muted-foreground space-y-1">
+                                        <h5 className="font-medium text-base mb-1">3. NBC 9.36.7 – Tiered Performance Path <span className="inline-block ml-2 px-2 py-1 bg-gradient-to-r from-emerald-500 to-blue-500 text-white text-xs font-bold rounded">(Tier 2-5)</span></h5>
+                                        <div className="text-base text-muted-foreground space-y-1">
                                           <p>An extension of the 9.36.5 performance method that targets higher energy performance tiers (Tier 2 and above).</p>
                                           <p>Requires modelling reductions in energy use, heat loss, and peak cooling.</p>
                                           <p className="font-medium mt-2">Benefits:</p>
@@ -115,8 +115,8 @@ export default function CompliancePathSection({
                                       </div>
 
                                       <div>
-                                        <h5 className="font-medium text-sm mb-1">4. NBC 9.36.8 – Tiered Prescriptive Path <span className="inline-block ml-2 px-2 py-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-bold rounded">(Tier 2-5)</span></h5>
-                                        <div className="text-sm text-muted-foreground space-y-1">
+                                        <h5 className="font-medium text-base mb-1">4. NBC 9.36.8 – Tiered Prescriptive Path <span className="inline-block ml-2 px-2 py-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-bold rounded">(Tier 2-5)</span></h5>
+                                        <div className="text-base text-muted-foreground space-y-1">
                                           <p>This is a points-based route to meet Tier 2 and above without energy modelling.</p>
                                           <p>Points are earned for upgrades to insulation, windows, airtightness, HVAC, and more.</p>
                                           <p>An HRV or ERV is mandatory — without it, you cannot use this path.</p>
@@ -127,8 +127,8 @@ export default function CompliancePathSection({
                                    </div>
 
                                   <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-2">
-                                    <p className="text-sm font-medium mb-1">In summary:</p>
-                                    <div className="text-sm text-muted-foreground space-y-1">
+                                    <p className="text-base font-medium mb-1">In summary:</p>
+                                    <div className="text-base text-muted-foreground space-y-1">
                                       <p>• Use 9.36.2 for minimum code compliance with standard assemblies (least flexible).</p>
                                       <p>• Use 9.36.5 for the most flexibility, lower costs, and now the most common path to Tier 1 compliance.</p>
                                       <p>• Use 9.36.7 if you're aiming for Tier 2+ using simulation and want more control over your design.</p>
@@ -256,27 +256,27 @@ export default function CompliancePathSection({
                                   <InfoButton title="Why Orientation Matters in Energy Efficiency">
                                       <div className="space-y-4">
                                         <div>
-                                          <h5 className="font-medium text-sm mb-1">Peak Cooling Loads:</h5>
-                                          <p className="text-sm text-muted-foreground">Orientation impacts solar gains throughout the year. In summer and shoulder seasons, limiting solar gain helps prevent overheating—an explicit requirement of the Tiered Energy Codes. In winter, optimizing solar gain helps reduce heating loads, improving performance without sacrificing comfort.</p>
+                                          <h5 className="font-medium text-base mb-1">Peak Cooling Loads:</h5>
+                                          <p className="text-base text-muted-foreground">Orientation impacts solar gains throughout the year. In summer and shoulder seasons, limiting solar gain helps prevent overheating—an explicit requirement of the Tiered Energy Codes. In winter, optimizing solar gain helps reduce heating loads, improving performance without sacrificing comfort.</p>
                                         </div>
                                         <div>
-                                          <h5 className="font-medium text-sm mb-1">Optimizes Performance Modelling:</h5>
-                                          <p className="text-sm text-muted-foreground">Strategic solar design can earn "bonus points" in energy models by reducing heating demand—advantages not available in the prescriptive path.</p>
+                                          <h5 className="font-medium text-base mb-1">Optimizes Performance Modelling:</h5>
+                                          <p className="text-base text-muted-foreground">Strategic solar design can earn "bonus points" in energy models by reducing heating demand—advantages not available in the prescriptive path.</p>
                                         </div>
                                         <div>
-                                          <h5 className="font-medium text-sm mb-1">Glazing Area Impacts Compliance:</h5>
-                                          <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+                                          <h5 className="font-medium text-base mb-1">Glazing Area Impacts Compliance:</h5>
+                                          <ul className="list-disc pl-5 space-y-1 text-base text-muted-foreground">
                                             <li>Reference house assume a 17–22% window-to-wall ratio.</li>
                                             <li>Homes with less glazing than the reference benefit from reduced heat loss and can earn additional performance credits.</li>
                                           </ul>
                                         </div>
                                         <div>
-                                          <h5 className="font-medium text-sm mb-1">Supports Higher Tier Compliance:</h5>
-                                          <p className="text-sm text-muted-foreground">Smart orientation and glazing design are low-cost, high-impact strategies that improve energy performance and help meet Tier 1, Tier 2, or Net Zero Ready targets.</p>
+                                          <h5 className="font-medium text-base mb-1">Supports Higher Tier Compliance:</h5>
+                                          <p className="text-base text-muted-foreground">Smart orientation and glazing design are low-cost, high-impact strategies that improve energy performance and help meet Tier 1, Tier 2, or Net Zero Ready targets.</p>
                                         </div>
                                         <div>
-                                          <h5 className="font-medium text-sm mb-1">Additional Benefits:</h5>
-                                          <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+                                          <h5 className="font-medium text-base mb-1">Additional Benefits:</h5>
+                                          <ul className="list-disc pl-5 space-y-1 text-base text-muted-foreground">
                                             {/* <li>Smart solar gain strategies can earn "bonus points" by offsetting heating loads in the energy model.</li> */}
                                             {/* <li>Designs with less glazing than the reference earn performance credits due to reduced heat loss.</li> */}
                                             <li>Orientation and glazing strategies are low-cost design choices that help meet Tier 1, Tier 2, or even Net Zero Ready targets more easily.</li>

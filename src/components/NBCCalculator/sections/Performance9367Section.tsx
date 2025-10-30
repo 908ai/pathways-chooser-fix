@@ -40,14 +40,14 @@ export default function Performance9367Section({
     };
 
     const WarningButton = ({
-        title,
         warningId,
+        title,
         children,
         variant = "warning",
         defaultOpen = false,
     }: {
-        title: string;
         warningId: string;
+        title: string;
         children: React.ReactNode;
         variant?: "warning" | "destructive";
         defaultOpen?: boolean;
@@ -233,9 +233,9 @@ export default function Performance9367Section({
                             ...prev,
                             heatedFloorsRSI: e.target.value
                         }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                        <WarningButton warningId="inFloorHeating-tiered-info" title="ℹ️ In-Floor Heating Requirements">
-                            <p className="text-xs">
-                                Since the house has in-floor heating, all floors must be insulated to meet NBC requirements.
+                        <WarningButton warningId="heatedFloorsRSI-hydronic-9365" title="⚠️ Hydronic Floor Insulation Required">
+                            <p className="text-xs text-white space-y-2">
+                                Hydronic floors must be insulated to prevent heat loss to the ground or unheated areas below. The insulation should be installed between the heated floor and any unheated space, with proper vapor barrier placement. Minimum insulation values vary by province and specific application - consult local building codes and your mechanical designer for specific requirements.
                             </p>
                         </WarningButton>
                     </div>}
@@ -337,15 +337,15 @@ export default function Performance9367Section({
                             <InfoButton title="What's a Blower Door Test?">
                                 <div className="space-y-4">
                                     <div>
-                                        <p className="text-sm text-muted-foreground">A blower door test measures air leakage in a home. A fan is placed in an exterior door to pressurize or depressurize the building, and sensors track how much air is needed to maintain a pressure difference (usually 50 Pascals). This tells us how "leaky" the building is.</p>
+                                        <p className="text-base text-muted-foreground">A blower door test measures air leakage in a home. A fan is placed in an exterior door to pressurize or depressurize the building, and sensors track how much air is needed to maintain a pressure difference (usually 50 Pascals). This tells us how "leaky" the building is.</p>
                                     </div>
 
                                     <div className="w-full h-px bg-muted"></div>
 
                                     <div className="space-y-4">
                                         <div>
-                                            <h5 className="font-medium text-sm mb-2">What Do the Numbers Mean?</h5>
-                                            <div className="space-y-3 text-sm text-muted-foreground">
+                                            <h5 className="font-medium text-base mb-2">What Do the Numbers Mean?</h5>
+                                            <div className="space-y-3 text-base text-muted-foreground">
                                                 <div>
                                                     <p className="font-medium">• ACH₅₀ (Air Changes per Hour @ 50 Pa):</p>
                                                     <p className="ml-4">How many times the air inside the home is replaced in one hour.</p>
@@ -368,28 +368,28 @@ export default function Performance9367Section({
                                         <div className="w-full h-px bg-muted"></div>
 
                                         <div>
-                                            <h5 className="font-medium text-sm mb-2">What's a Zone?</h5>
-                                            <p className="text-sm text-muted-foreground mb-2">A zone is any part of a building tested for air leakage. It could be:</p>
-                                            <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                            <h5 className="font-medium text-base mb-2">What's a Zone?</h5>
+                                            <p className="text-base text-muted-foreground mb-2">A zone is any part of a building tested for air leakage. It could be:</p>
+                                            <div className="text-base text-muted-foreground ml-4 space-y-1">
                                                 <p>• A full detached house</p>
                                                 <p>• A single unit in a row house or duplex</p>
                                                 <p>• A section of a large home or multi-unit building</p>
                                             </div>
-                                            <p className="text-sm text-muted-foreground mt-2">Each zone is tested separately because leakage patterns vary.</p>
+                                            <p className="text-base text-muted-foreground mt-2">Each zone is tested separately because leakage patterns vary.</p>
                                         </div>
 
                                         <div className="w-full h-px bg-muted"></div>
 
                                         <div>
-                                            <h5 className="font-medium text-sm mb-2">What's an Attached Zone?</h5>
-                                            <p className="text-sm text-muted-foreground">Zones that share a wall, ceiling, or floor with another zone are attached zones. Air can leak through shared assemblies, so careful testing is important — especially in row houses, duplexes, and condos.</p>
+                                            <h5 className="font-medium text-base mb-2">What's an Attached Zone?</h5>
+                                            <p className="text-base text-muted-foreground">Zones that share a wall, ceiling, or floor with another zone are attached zones. Air can leak through shared assemblies, so careful testing is important — especially in row houses, duplexes, and condos.</p>
                                         </div>
 
                                         <div className="w-full h-px bg-muted"></div>
 
                                         <div>
-                                            <h5 className="font-medium text-sm mb-2">Why Small Units Often Show Higher Leakage</h5>
-                                            <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                            <h5 className="font-medium text-base mb-2">Why Small Units Often Show Higher Leakage</h5>
+                                            <div className="text-base text-muted-foreground ml-4 space-y-1">
                                                 <p>• Small homes have more corners and connections relative to their size.</p>
                                                 <p>• Mechanical equipment leaks the same amount — but it's a bigger deal in a small space.</p>
                                                 <p>• As a result, ACH₅₀ values tend to look worse in smaller units.</p>
@@ -399,8 +399,8 @@ export default function Performance9367Section({
                                         <div className="w-full h-px bg-muted"></div>
 
                                         <div>
-                                            <h5 className="font-medium text-sm mb-2">Guarded vs. Unguarded Testing</h5>
-                                            <div className="space-y-3 text-sm text-muted-foreground">
+                                            <h5 className="font-medium text-base mb-2">Guarded vs. Unguarded Testing</h5>
+                                            <div className="space-y-3 text-base text-muted-foreground">
                                                 <div>
                                                     <p className="font-medium">Unguarded Test</p>
                                                     <div className="ml-4 space-y-1">
@@ -423,21 +423,21 @@ export default function Performance9367Section({
                                         <div className="w-full h-px bg-muted"></div>
 
                                         <div>
-                                            <h5 className="font-medium text-sm mb-2">How Do You Pass?</h5>
-                                            <p className="text-sm text-muted-foreground mb-2">You can earn energy code points by hitting an Airtightness Level (AL). You only need to meet one of the three metrics (ACH, NLA, or NLR):</p>
-                                            <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                            <h5 className="font-medium text-base mb-2">How Do You Pass?</h5>
+                                            <p className="text-base text-muted-foreground mb-2">You can earn energy code points by hitting an Airtightness Level (AL). You only need to meet one of the three metrics (ACH, NLA, or NLR):</p>
+                                            <div className="text-base text-muted-foreground ml-4 space-y-1">
                                                 <p>• Use Table 9.36.-A for guarded tests (stricter limits)</p>
                                                 <p>• Use Table 9.36.-B for unguarded tests (more lenient for attached buildings)</p>
                                             </div>
-                                            <p className="text-sm text-muted-foreground mt-2">The design air leakage rate, established by the builder and energy modeller, is incorporated into the energy model and later verified through testing at either the mid-construction or final stage. If the measured air changes per hour (ACH, if chosen) exceed the code-specified airtightness level, the building fails; if the measured ACH is lower, it passes.</p>                                            
-                                            <p className="text-sm text-muted-foreground mt-2">In multi-unit buildings, the worst-performing zone sets the final score.</p>
+                                            <p className="text-base text-muted-foreground mt-2">The design air leakage rate, established by the builder and energy modeller, is incorporated into the energy model and later verified through testing at either the mid-construction or final stage. If the measured air changes per hour (ACH, if chosen) exceed the code-specified airtightness level, the building fails; if the measured ACH is lower, it passes.</p>                                            
+                                            <p className="text-base text-muted-foreground mt-2">In multi-unit buildings, the worst-performing zone sets the final score.</p>
                                         </div>
 
                                         <div className="w-full h-px bg-muted"></div>
 
                                         <div>
-                                            <h5 className="font-medium text-sm mb-2">Other Key Points</h5>
-                                            <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                            <h5 className="font-medium text-base mb-2">Other Key Points</h5>
+                                            <div className="text-base text-muted-foreground ml-4 space-y-1">
                                                 <p>• For energy modelling, a multi-point test is required, reporting ACH₅₀, pressure exponent, and leakage area.</p>
                                                 <p>• For basic code compliance, single- or two-point tests are fine — except NLA₁₀, which needs multi-point.</p>
                                                 <p>• Combining zones? You must test each one. Use the lowest Airtightness Level for scoring if they're different. Reference the Illustrated Guide for the image above.</p>
@@ -447,8 +447,8 @@ export default function Performance9367Section({
                                         <div className="w-full h-px bg-muted"></div>
 
                                         <div>
-                                            <h5 className="font-medium text-sm mb-2">Potential Air Leakage Locations</h5>
-                                            <p className="text-sm text-muted-foreground mb-3">Common areas where air leakage occurs in buildings:</p>
+                                            <h5 className="font-medium text-base mb-2">Potential Air Leakage Locations</h5>
+                                            <p className="text-base text-muted-foreground mb-3">Common areas where air leakage occurs in buildings:</p>
                                             <div className="mb-3">
                                                 <img src="/lovable-uploads/9d231144-3c4e-430b-9f8c-914698eae23e.png" alt="Figure 9.25-9 Potential air leakage locations in a house showing various points where air can escape including joints at attic hatches, ceiling light fixtures, windows, electrical outlets, around posts and columns, chimney leaks, plumbing stack penetrations, and more" className="w-full h-auto border border-border rounded" onLoad={() => console.log('Air leakage diagram loaded successfully')} onError={e => console.log('Failed to load air leakage diagram:', e)} />
                                             </div>
@@ -460,12 +460,12 @@ export default function Performance9367Section({
 
                                     <div className="space-y-2">
                                         <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-2">
-                                            <p className="text-sm font-medium text-blue-800">📋 Helpful Resources:</p>
+                                            <p className="text-base font-medium text-blue-800">📋 Helpful Resources:</p>
                                             <div className="space-y-1">
-                                                <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-700 hover:text-red-800 block">
+                                                <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-base text-blue-700 hover:text-red-800 block">
                                                     🔗 View the Blower Door Checklist
                                                 </a>
-                                                <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-700 hover:text-red-800 block">
+                                                <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-base text-blue-700 hover:text-red-800 block">
                                                     🔗 More airtightness information
                                                 </a>
                                             </div>
@@ -595,22 +595,22 @@ export default function Performance9367Section({
                             <InfoButton title="Drain Water Heat Recovery System Information">
                                 <div className="space-y-4">
                                     <div className="border-b pb-2">
-                                        <h4 className="font-medium text-sm">ℹ️ Drain Water Heat Recovery (DWHR)</h4>
+                                        <h4 className="font-medium text-base">ℹ️ Drain Water Heat Recovery (DWHR)</h4>
                                     </div>
 
                                     <div className="space-y-3">
-                                        <p className="text-sm text-muted-foreground">
+                                        <p className="text-base text-muted-foreground">
                                             DWHR systems capture heat from shower drain water and use it to preheat incoming cold water, reducing hot water energy use by 20–40%.
                                         </p>
 
                                         <div className="space-y-2">
-                                            <h5 className="font-medium text-sm">How it works:</h5>
-                                            <p className="text-sm text-muted-foreground">When hot water goes down the drain (like from a shower), the DWHR unit uses a heat exchanger to transfer that thermal energy to the incoming cold water supply before it reaches your water heater.</p>
+                                            <h5 className="font-medium text-base">How it works:</h5>
+                                            <p className="text-base text-muted-foreground">When hot water goes down the drain (like from a shower), the DWHR unit uses a heat exchanger to transfer that thermal energy to the incoming cold water supply before it reaches your water heater.</p>
                                         </div>
 
                                         <div className="space-y-2">
-                                            <h5 className="font-medium text-sm">Benefits:</h5>
-                                            <div className="text-sm text-muted-foreground space-y-1">
+                                            <h5 className="font-medium text-base">Benefits:</h5>
+                                            <div className="text-base text-muted-foreground space-y-1">
                                                 <p>• Reduces water heating energy consumption</p>
                                                 <p>• Lowers utility bills</p>
                                                 <p>• Contributes to overall building energy efficiency</p>
@@ -633,26 +633,6 @@ export default function Performance9367Section({
                                 <SelectItem value="no">No</SelectItem>
                             </SelectContent>
                         </Select>
-
-                        <WarningButton warningId="mechanical-equipment-docs-9367" title="⚠️ Mechanical Equipment Documentation">
-                            <div className="text-xs text-white space-y-2">
-                                <p>
-                                    The Authority Having Jurisdiction (AHJ) may verify specific makes/models of the mechanical equipment being proposed for heating, cooling, domestic hot water and HRV systems. The AHJ may also request CSA F-280 heat loss & gain calculations.
-                                </p>
-                                <p>
-                                    <strong>F280 calculations:</strong> A heating and cooling load calculation based on CSA Standard F280-12 (or updated versions), which is the Canadian standard for determining how much heating or cooling a home needs. It accounts for factors like insulation levels, windows, air leakage, and local climate.
-                                </p>
-                                <p>
-                                    <strong>Benefits:</strong> Ensures HVAC systems are properly sized, improves comfort and efficiency, reduces energy costs, and is often required for building permits.
-                                </p>
-                                <div className="flex items-center gap-1 text-sm mt-3">
-                                    <span>🔗</span>
-                                    <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-400">
-                                        More information
-                                    </a>
-                                </div>
-                            </div>
-                        </WarningButton>
                     </div>
 
                     <div className="space-y-2">
@@ -668,8 +648,29 @@ export default function Performance9367Section({
                                 <SelectItem value="furnace">Furnace</SelectItem>
                                 <SelectItem value="boiler">Boiler</SelectItem>
                                 <SelectItem value="heat-pump">Heat Pump</SelectItem>
+                                <SelectItem value="other">Other</SelectItem>
                             </SelectContent>
                         </Select>
+
+                        <WarningButton warningId="mechanical-equipment-docs-9365" title="⚠️ Mechanical Equipment Documentation">
+                            <div className="text-xs text-white space-y-2">
+                                <p>
+                                    The Authority Having Jurisdiction (AHJ) may verify specific makes/models of the mechanical equipment being proposed for heating, cooling, domestic hot water and HRV systems. The AHJ may also request CSA F-280 heat loss & gain calculations.
+                                </p>
+                                <p>
+                                    <strong>F280 calculations:</strong> A heating and cooling load calculation based on CSA Standard F280-12 (or updated versions), which is the Canadian standard for determining how much heating or cooling a home needs. It accounts for factors like insulation levels, windows, air leakage, and local climate.
+                                </p>
+                                <p>
+                                    <strong>Benefits:</strong> Ensures HVAC systems are properly sized, improves comfort and efficiency, reduces energy costs, and is often required for building permits.
+                                </p>
+                                <div className="flex items-center gap-1 text-sm mt-3">
+                                    <span>🔗</span>
+                                    <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">
+                                        More information
+                                    </a>
+                                </div>
+                            </div>
+                        </WarningButton>
                     </div>
 
                     {selections.heatingType && <div className="space-y-2">
@@ -734,6 +735,62 @@ export default function Performance9367Section({
                         </div>
                     </div>}
 
+                    {/* Secondary Suite HRV - Show for buildings with multiple units */}
+                    {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
+                        <h5 className="font-medium text-white">Secondary Suite HRV/ERV</h5>
+
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-3">
+                                <label className="text-sm font-medium text-slate-100">Will there be a second HRV/ERV for the secondary suite?</label>
+                                <InfoButton title="Secondary Suite HRV/ERV Information">
+                                    <div className="space-y-4">
+                                        <div>
+                                            <h4 className="font-semibold text-base mb-2">Independent HRV/ERV for Secondary Suite</h4>
+                                            <p className="text-base text-muted-foreground">
+                                                A secondary suite may require its own HRV/ERV system to ensure adequate ventilation and maintain indoor air quality independently from the main dwelling unit.
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <h5 className="font-medium text-base mb-1">When a second HRV/ERV is needed:</h5>
+                                            <ul className="text-base text-muted-foreground space-y-1 ml-4 list-disc">
+                                                <li><strong>Separate ventilation zones:</strong> When the secondary suite requires independent air quality control.</li>
+                                                <li><strong>Building code requirements:</strong> Some jurisdictions require separate ventilation systems for secondary suites.</li>
+                                                <li><strong>Different occupancy patterns:</strong> When main and secondary units have different ventilation needs.</li>
+                                                <li><strong>Privacy and control:</strong> Allowing tenants to control their own indoor air quality.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </InfoButton>
+                            </div>
+                            <div className="flex gap-4">
+                                <label className="flex items-center gap-2">
+                                    <input type="radio" name="hasSecondaryHrv" value="yes" checked={selections.hasSecondaryHrv === "yes"} onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        hasSecondaryHrv: e.target.value,
+                                        secondaryHrvEfficiency: "" // Reset when changing
+                                    }))} className="w-4 h-4 text-emerald-500" />
+                                    <span className="text-sm text-slate-100">Yes</span>
+                                </label>
+                                <label className="flex items-center gap-2">
+                                    <input type="radio" name="hasSecondaryHrv" value="no" checked={selections.hasSecondaryHrv === "no"} onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        hasSecondaryHrv: e.target.value,
+                                        secondaryHrvEfficiency: ""
+                                    }))} className="w-4 h-4 text-emerald-500" />
+                                    <span className="text-sm text-slate-100">No</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        {selections.hasSecondaryHrv === "yes" && <div className="space-y-2">
+                            <label className="text-sm font-medium text-slate-100">Secondary Suite HRV/ERV Efficiency</label>
+                            <Input type="text" placeholder="Input HRV/ERV efficiency (e.g. SRE 65%)" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
+                                ...prev,
+                                secondaryHrvEfficiency: e.target.value
+                            }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                        </div>}
+                    </div>}
                 </>
             }
         </>

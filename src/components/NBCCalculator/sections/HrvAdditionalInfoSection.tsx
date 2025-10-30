@@ -100,15 +100,15 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                             <InfoButton title="Should I include an HRV (Heat Recovery Ventilator)?">
                                 <div className="space-y-4">
                                     <div>
-                                        <h4 className="font-semibold text-sm mb-2">Should I include an HRV (Heat Recovery Ventilator)?</h4>
-                                        <p className="text-xs text-muted-foreground">
+                                        <h4 className="font-semibold text-base mb-2">Should I include an HRV (Heat Recovery Ventilator)?</h4>
+                                        <p className="text-base text-muted-foreground">
                                             An HRV is a system that brings in fresh outdoor air while recovering heat from the stale indoor air it exhausts. It improves indoor air quality and energy efficiency — especially in airtight homes.
                                         </p>
                                     </div>
 
                                     <div>
-                                        <h5 className="font-medium text-sm mb-1">Why you should consider an HRV:</h5>
-                                        <ul className="text-xs text-muted-foreground space-y-1 ml-4 list-disc">
+                                        <h5 className="font-medium text-base mb-1">Why you should consider an HRV:</h5>
+                                        <ul className="text-base text-muted-foreground space-y-1 ml-4 list-disc">
                                             <li><strong>Better indoor air quality:</strong> Removes stale air, moisture, odors, and pollutants while bringing in fresh air.</li>
                                             <li><strong>Energy savings:</strong> Recovery up to 80-90% of the heat from outgoing air, reducing heating costs.</li>
                                             <li><strong>Comfort:</strong> Maintains consistent temperatures and humidity levels throughout your home.</li>
@@ -117,15 +117,15 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                     </div>
 
                                     <div>
-                                        <h5 className="font-medium text-sm mb-1">When is an HRV required?</h5>
-                                        <p className="text-xs text-muted-foreground">
+                                        <h5 className="font-medium text-base mb-1">When is an HRV required?</h5>
+                                        <p className="text-base text-muted-foreground">
                                             While not always mandatory, HRVs are required or strongly recommended for homes with very low air leakage rates (typically below 2.5 ACH50) to ensure adequate ventilation. They're also required for certain energy efficiency programs.
                                         </p>
                                     </div>
 
                                     <div>
-                                        <h5 className="font-medium text-sm mb-1">HRV vs. ERV:</h5>
-                                        <div className="text-xs text-muted-foreground space-y-1">
+                                        <h5 className="font-medium text-base mb-1">HRV vs. ERV:</h5>
+                                        <div className="text-base text-muted-foreground space-y-1">
                                             <p><strong>HRV (Heat Recovery Ventilator):</strong> Recovers heat only. Best for cold, dry climates like most of Canada.</p>
                                             <p><strong>ERV (Energy Recovery Ventilator):</strong> Recovers both heat and moisture. Better for humid climates or homes with high humidity issues.</p>
                                         </div>
@@ -165,22 +165,22 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                 <InfoButton title="Secondary Suite HRV/ERV Information">
                                     <div className="space-y-4">
                                         <div>
-                                            <h4 className="font-semibold text-sm mb-2">Secondary Suite HRV/ERV Options</h4>
-                                            <p className="text-xs text-muted-foreground">
+                                            <h4 className="font-semibold text-base mb-2">Secondary Suite HRV/ERV Options</h4>
+                                            <p className="text-base text-muted-foreground">
                                                 For buildings with secondary suites, you have options for ventilation systems.
                                             </p>
                                         </div>
 
                                         <div>
-                                            <h5 className="font-medium text-sm mb-1">Option 1: Shared System</h5>
-                                            <p className="text-xs text-muted-foreground">
+                                            <h5 className="font-medium text-base mb-1">Option 1: Shared System</h5>
+                                            <p className="text-base text-muted-foreground">
                                                 Use one larger HRV/ERV system to serve both the main dwelling and secondary suite, with proper ducting and controls.
                                             </p>
                                         </div>
 
                                         <div>
-                                            <h5 className="font-medium text-sm mb-1">Option 2: Separate Systems</h5>
-                                            <p className="text-xs text-muted-foreground">
+                                            <h5 className="font-medium text-base mb-1">Option 2: Separate Systems</h5>
+                                            <p className="text-base text-muted-foreground">
                                                 Install separate HRV/ERV systems for each unit to provide independent control and operation.
                                             </p>
                                         </div>
@@ -217,12 +217,12 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                             <span className="text-orange-600 text-lg">⚠️</span>
                             <div className="space-y-2">
                                 <h4 className="font-medium text-orange-800">MURB/Secondary Suite Mechanical Systems</h4>
-                                <p className="text-sm text-orange-700">
+                                <p className="text-base text-orange-700">
                                     For {selections.buildingType === "multi-unit" ? "multi-unit residential buildings (MURBs)" : "homes with secondary suites"},
                                     please ensure you list all mechanical system types, make/models, and any other relevant information
                                     in the comments section below. This includes:
                                 </p>
-                                <ul className="list-disc ml-4 text-sm text-orange-700 space-y-1">
+                                <ul className="list-disc ml-4 text-base text-orange-700 space-y-1">
                                     <li>Secondary heating system type and make/model (if applicable)</li>
                                     <li>Secondary/multiple service water heating systems</li>
                                     <li>Secondary HRV/ERV systems</li>
@@ -239,12 +239,12 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                         <div className="flex items-center gap-2">
                             <label className="text-sm font-medium text-slate-100">Are you interested in any of the following certifications or programs?</label>
                             <InfoButton title="Certification Information">
-                                <div className="space-y-6 text-sm">
+                                <div className="space-y-6 text-base">
                                     {/* Summary Table */}
                                     <div className="bg-muted/30 p-4 rounded-lg">
-                                        <h3 className="font-semibold text-base mb-4">Summary Table: Benefits at a Glance</h3>
+                                        <h3 className="font-semibold text-lg mb-4">Summary Table: Benefits at a Glance</h3>
                                         <div className="overflow-x-auto">
-                                            <table className="w-full text-sm">
+                                            <table className="w-full text-base">
                                                 <thead>
                                                     <tr className="border-b">
                                                         <th className="text-left py-2 pr-4 font-medium">Program / Feature</th>
@@ -289,7 +289,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                     </div>
 
                                     <div>
-                                        <h3 className="font-semibold text-base mb-3">1. EnerGuide Certification (Natural Resources Canada)</h3>
+                                        <h3 className="font-semibold text-lg mb-3">1. EnerGuide Certification (Natural Resources Canada)</h3>
                                         <div className="space-y-3">
                                             <div>
                                                 <h4 className="font-medium">Homeowner Benefits:</h4>
@@ -314,7 +314,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                     </div>
 
                                     <div className="border-t pt-4">
-                                        <h3 className="font-semibold text-base mb-3">2. Net Zero and Net Zero Ready (CHBA)</h3>
+                                        <h3 className="font-semibold text-lg mb-3">2. Net Zero and Net Zero Ready (CHBA)</h3>
                                         <div className="space-y-3">
                                             <div>
                                                 <h4 className="font-medium">Homeowner Benefits:</h4>
@@ -336,7 +336,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                     </div>
 
                                     <div className="border-t pt-4">
-                                        <h3 className="font-semibold text-base mb-3">3. Built Green Certification</h3>
+                                        <h3 className="font-semibold text-lg mb-3">3. Built Green Certification</h3>
                                         <div className="space-y-3">
                                             <div>
                                                 <h4 className="font-medium">Homeowner Benefits:</h4>
@@ -357,7 +357,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                     </div>
 
                                     <div className="border-t pt-4">
-                                        <h3 className="font-semibold text-base mb-3">4. ENERGY STAR for New Homes</h3>
+                                        <h3 className="font-semibold text-lg mb-3">4. ENERGY STAR for New Homes</h3>
                                         <div className="space-y-3">
                                             <div>
                                                 <h4 className="font-medium">Homeowner Benefits:</h4>
@@ -378,7 +378,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                     </div>
 
                                     <div className="border-t pt-4">
-                                        <h3 className="font-semibold text-base mb-3">5. SaskEnergy Residential Rebates</h3>
+                                        <h3 className="font-semibold text-lg mb-3">5. SaskEnergy Residential Rebates</h3>
                                         <div className="space-y-3">
                                             <div>
                                                 <h4 className="font-medium">Homeowner Benefits:</h4>
@@ -401,7 +401,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                     </div>
 
                                     <div className="border-t pt-4">
-                                        <h3 className="font-semibold text-base mb-3">6. Building a Solar-Ready Home</h3>
+                                        <h3 className="font-semibold text-lg mb-3">6. Building a Solar-Ready Home</h3>
                                         <div className="space-y-3">
                                             <div>
                                                 <h4 className="font-medium">Homeowner Benefits:</h4>

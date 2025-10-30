@@ -36,7 +36,7 @@ const EnerGuidePathwaySection: React.FC<Props> = ({ selections, setSelections })
                                     </div>
 
                                     <div className="border-t pt-4">
-                                        <h3 className="font-semibold text-base mb-3">How Does It Work?</h3>
+                                        <h3 className="font-semibold text-lg mb-3">How Does It Work?</h3>
                                         <ul className="list-disc pl-5 space-y-1">
                                             <li>A trained Energy Advisor creates a computer model of your home's design.</li>
                                             <li>That model is compared to a "reference house" built to basic code standards.</li>
@@ -46,7 +46,7 @@ const EnerGuidePathwaySection: React.FC<Props> = ({ selections, setSelections })
                                     </div>
 
                                     <div className="border-t pt-4">
-                                        <h3 className="font-semibold text-base mb-3">What's Involved?</h3>
+                                        <h3 className="font-semibold text-lg mb-3">What's Involved?</h3>
                                         <div className="space-y-3">
                                             <div>
                                                 <p>The advisor uses special software (usually HOT2000) to calculate things like:</p>
@@ -64,13 +64,13 @@ const EnerGuidePathwaySection: React.FC<Props> = ({ selections, setSelections })
                                                     <li>As-built report/label (shows what was actually built, submitted for occupancy)</li>
                                                     <li>A mid-construction report is optional.</li>
                                                 </ul>
-                                                <p className="mt-3 text-sm">Note: There is an incremental cost for the final data collection & air-tightness test.</p>
+                                                <p className="mt-3 text-base">Note: There is an incremental cost for the final data collection & air-tightness test.</p>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="border-t pt-4">
-                                        <h3 className="font-semibold text-base mb-3">Who Does What?</h3>
+                                        <h3 className="font-semibold text-lg mb-3">Who Does What?</h3>
                                         <ul className="list-disc pl-5 space-y-1">
                                             <li><strong>Energy Advisor:</strong> Builds the model, runs tests, creates compliance documents.</li>
                                             <li><strong>Builder:</strong> Must build what's in the model and ensure it meets the code.</li>
@@ -79,14 +79,14 @@ const EnerGuidePathwaySection: React.FC<Props> = ({ selections, setSelections })
                                     </div>
 
                                     <div className="border-t pt-4">
-                                        <h3 className="font-semibold text-base mb-3">Why Is Airtightness Important?</h3>
+                                        <h3 className="font-semibold text-lg mb-3">Why Is Airtightness Important?</h3>
                                         <p>
                                             Airtight homes lose less heat and use less energy. In higher code tiers (like Tier 4 or 5), airtightness targets are mandatory and can't be traded off for other upgrades.
                                         </p>
                                     </div>
 
                                     <div className="border-t pt-4">
-                                        <h3 className="font-semibold text-base mb-3">How It Fits Into the Tiered Code</h3>
+                                        <h3 className="font-semibold text-lg mb-3">How It Fits Into the Tiered Code</h3>
                                         <div className="space-y-2">
                                             <p>Canada's new energy code has tiers: the higher the tier, the more efficient the home. Builders can choose between:</p>
                                             <ul className="list-disc pl-5 space-y-1">
@@ -98,7 +98,7 @@ const EnerGuidePathwaySection: React.FC<Props> = ({ selections, setSelections })
                                     </div>
 
                                     <div className="border-t pt-4">
-                                        <h3 className="font-semibold text-base mb-3">Bottom Line</h3>
+                                        <h3 className="font-semibold text-lg mb-3">Bottom Line</h3>
                                         <p>
                                             The EnerGuide performance path is a flexible, model-based way to prove your new home is energy efficient. It's widely used, especially in places like Saskatchewan, where 90% of projects use this method—often because it's more adaptable, accurate, and rebate-friendly.
                                         </p>

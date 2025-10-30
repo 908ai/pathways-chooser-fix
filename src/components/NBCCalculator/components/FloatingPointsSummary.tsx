@@ -96,7 +96,7 @@ export default function FloatingPointsSummary({
                     <h4 className="text-sm font-medium text-white">Cost Estimates</h4>
                     <InfoButton title="How Cost Estimates Are Calculated" dialogClassName="bg-slate-800 border-slate-600 z-[100]">
                         <div className="space-y-3">
-                          <div className="text-sm text-slate-300 space-y-2">
+                          <div className="text-base text-slate-300 space-y-2">
                             <p><strong>Prescriptive Path:</strong> Based on baseline construction costs plus upgrades required to meet minimum NBC2020 requirements for each building component.</p>
                             <p><strong>Performance Path:</strong> Calculated using optimized component selections that achieve the same energy performance at potentially lower cost through strategic trade-offs.</p>
                             <p><strong>Estimates Include:</strong> Materials, labor, and installation for insulation, windows, HVAC systems, and air sealing measures.</p>
