@@ -48,7 +48,10 @@ export default function CompliancePathSection({
                          <div className="space-y-2">
                           <div className="flex items-center gap-3">
                             <label className="text-sm font-medium text-white">Which compliance path are you using?</label>
-                            <InfoButton title="NBC Part 9 Energy Compliance – Simple Overview">
+                            <InfoButton
+                              title="NBC Part 9 Energy Compliance – Simple Overview"
+                              className="h-8 w-8 animate-glow-pulse rounded-full border-2 border-primary"
+                            >
                                   <div>
                                     <p className="text-sm text-muted-foreground mb-3">
                                       The National Building Code of Canada (NBC) offers four main pathways to show your building meets energy efficiency requirements:

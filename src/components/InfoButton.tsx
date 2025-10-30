@@ -15,16 +15,17 @@ interface InfoButtonProps {
     title: string;
     children: React.ReactNode;
     dialogClassName?: string;
+    className?: string;
 }
 
-const InfoButton: React.FC<InfoButtonProps> = ({ title, children, dialogClassName }) => {
+const InfoButton: React.FC<InfoButtonProps> = ({ title, children, dialogClassName, className }) => {
     return (
         <Dialog>
             <Tooltip>
                 <TooltipTrigger asChild>
                     <DialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="hover:bg-blue-500/20 h-6 w-6">
-                            <Info className="text-white fill-blue-400" />
+                        <Button variant="ghost" size="icon" className={cn("hover:bg-blue-500/20 h-6 w-6", className)}>
+                            <Info className="text-primary-foreground fill-primary" />
                         </Button>
                     </DialogTrigger>
                 </TooltipTrigger>
