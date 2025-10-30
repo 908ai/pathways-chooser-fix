@@ -103,12 +103,12 @@ export default {
         },
         'glow-pulse': {
           '0%, 100%': { 
-            boxShadow: '0 0 0 0 hsl(var(--primary) / 0.7)',
-            borderColor: 'hsl(var(--primary))'
+            boxShadow: '0 0 0 0 hsl(0 0% 100% / 0.7)',
+            borderColor: 'hsl(0 0% 100%)'
           },
           '50%': { 
-            boxShadow: '0 0 12px 3px hsl(var(--primary) / 0)',
-            borderColor: 'hsl(var(--primary) / 0.5)'
+            boxShadow: '0 0 12px 3px hsl(0 0% 100% / 0)',
+            borderColor: 'hsl(0 0% 100% / 0.5)'
           },
         },
 			},

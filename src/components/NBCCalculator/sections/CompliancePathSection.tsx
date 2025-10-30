@@ -51,7 +51,7 @@ export default function CompliancePathSection({
                             <label className="text-sm font-medium text-white">Which compliance path are you using?</label>
                             <LargeInfoButton
                               title="NBC Part 9 Energy Compliance – Simple Overview"
-                              className="animate-glow-pulse rounded-full border-2 border-primary"
+                              className="animate-glow-pulse rounded-full border-2 border-white"
                             >
                                   <div>
                                     <p className="text-sm text-muted-foreground mb-3">
