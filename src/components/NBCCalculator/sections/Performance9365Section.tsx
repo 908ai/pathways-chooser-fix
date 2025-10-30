@@ -73,6 +73,8 @@ export default function Performance9365Section({
         );
     };
 
+    const disableUnheatedFloorOptions = selections.hasInFloorHeat9365 === 'fully-installed' || selections.hasInFloorHeat9365 === 'roughing-in';
+
     return (
         <>
             {selections.city && selections.city.toLowerCase().trim() === "red deer" && selections.province === "alberta" && <div className="space-y-2">
@@ -203,8 +205,8 @@ export default function Performance9365Section({
                         }} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Floors above Garages</span>
                     </label>
-                    <label className="flex items-center gap-2">
-                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} onChange={e => {
+                    <label className={`flex items-center gap-2 ${disableUnheatedFloorOptions ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} disabled={disableUnheatedFloorOptions} onChange={e => {
                             const value = "unheatedBelowFrost";
                             setSelections(prev => ({
                                 ...prev,
@@ -213,8 +215,8 @@ export default function Performance9365Section({
                         }} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Unheated Floor Below Frostline</span>
                     </label>
-                    <label className="flex items-center gap-2">
-                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedAboveFrost")} onChange={e => {
+                    <label className={`flex items-center gap-2 ${disableUnheatedFloorOptions ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedAboveFrost")} disabled={disableUnheatedFloorOptions} onChange={e => {
                             const value = "unheatedAboveFrost";
                             setSelections(prev => ({
                                 ...prev,
@@ -250,14 +252,33 @@ export default function Performance9365Section({
             {/* In-Floor Heat Dropdown for 9365 */}
             <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Are you installing or roughing in in-floor heat?</label>
-                <Select value={selections.hasInFloorHeat9365} onValueChange={value => setSelections(prev => ({
-                    ...prev,
-                    hasInFloorHeat9365: value,
-                    // Add to floorsSlabsSelected if 'fully-installed' or 'roughing-in', remove if 'no'
-                    floorsSlabsSelected: (value === 'fully-installed' || value === 'roughing-in') ? [...prev.floorsSlabsSelected.filter(item => item !== 'heatedFloors'), 'heatedFloors'] : prev.floorsSlabsSelected.filter(item => item !== 'heatedFloors'),
-                    // Clear heated floors RSI if selecting 'no'
-                    heatedFloorsRSI: value === 'no' ? '' : prev.heatedFloorsRSI
-                }))}>
+                <Select value={selections.hasInFloorHeat9365} onValueChange={value => {
+                    setSelections(prev => {
+                        let newFloorsSlabsSelected = [...prev.floorsSlabsSelected];
+                        
+                        if (value === 'fully-installed' || value === 'roughing-in') {
+                            // Add 'heatedFloors' if not present
+                            if (!newFloorsSlabsSelected.includes('heatedFloors')) {
+                                newFloorsSlabsSelected.push('heatedFloors');
+                            }
+                            // Remove unheated floor options
+                            newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'unheatedBelowFrost' && item !== 'unheatedAboveFrost');
+                        } else { // value is 'no'
+                            // Remove 'heatedFloors'
+                            newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'heatedFloors');
+                        }
+
+                        return {
+                            ...prev,
+                            hasInFloorHeat9365: value,
+                            floorsSlabsSelected: newFloorsSlabsSelected,
+                            heatedFloorsRSI: value === 'no' ? '' : prev.heatedFloorsRSI,
+                            // Also clear the input values for the unheated floors when they are disabled
+                            unheatedFloorBelowFrostRSI: (value === 'fully-installed' || value === 'roughing-in') ? '' : prev.unheatedFloorBelowFrostRSI,
+                            unheatedFloorAboveFrostRSI: (value === 'fully-installed' || value === 'roughing-in') ? '' : prev.unheatedFloorAboveFrostRSI,
+                        };
+                    });
+                }}>
                     <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                         <SelectValue placeholder="Select an option" />
                     </SelectTrigger>
