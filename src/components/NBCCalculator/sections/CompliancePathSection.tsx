@@ -51,7 +51,7 @@ export default function CompliancePathSection({
                             <InfoButton
                               title="NBC Part 9 Energy Compliance – Simple Overview"
                               className="h-10 w-10 animate-glow-pulse rounded-full border-2 border-primary"
-                              iconClassName="h-6 w-6"
+                              iconClassName="h-8 w-8"
                             >
                                   <div>
                                     <p className="text-sm text-muted-foreground mb-3">
