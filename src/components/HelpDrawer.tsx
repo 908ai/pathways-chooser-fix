@@ -55,7 +55,7 @@ const HelpDrawer = ({ open, onOpenChange }: HelpDrawerProps) => {
                   <div>
                     <h5 className="font-medium text-slate-100 mb-2">1. Choose Your Code Pathway:</h5>
                      <ul className="list-disc ml-6 space-y-1 text-sm text-slate-300">
-                       <li>You can follow either the Prescriptive Path (NBC 9.36.2–9.36.4 or 9.36.8) or the Performance Path (NBC 9.36.5 or 9.36.7).</li>
+                       <li>You can follow either the Prescriptive Path (NBC 9.36.2–9.36.4 or 9.36.8 including the Trade-Off option - Article 9.36.2.11) or the Performance Path (NBC 9.36.5 or 9.36.7).</li>
                        <li>Look for the info icons to learn more about how each option affects your project. If you see an orange warning icon, click it to view important details or additional information required for that choice.</li>
                        <li>If you're unsure, we recommend starting with inputs and reviewing your results before deciding or giving us a call directly.</li>
                      </ul>
@@ -65,21 +65,21 @@ const HelpDrawer = ({ open, onOpenChange }: HelpDrawerProps) => {
                     <h5 className="font-medium text-slate-100 mb-2">2. Enter Your Building Details:</h5>
                     <ul className="list-disc ml-6 space-y-1 text-sm text-slate-300">
                       <li>Input values for insulation (attic, walls, slab), mechanical systems (heating, cooling, hot water, ventilation), and windows/doors.</li>
-                      <li>Select values as accurately as possible. Estimated or placeholder values are okay — we'll flag anything that needs clarification.</li>
+                      <li>Select values as accurately as possible. Estimated or placeholder values are okay - we'll flag anything that needs clarification.</li>
                     </ul>
                   </div>
                   
                   <div>
                     <h5 className="font-medium text-slate-100 mb-2">3. Understand What You'll See:</h5>
                      <ul className="list-disc ml-6 space-y-1 text-sm text-slate-300">
-                       <li>As you make your selections, the app will calculate compliance and cost estimates for both pathways in the background. You'll see upgrade cost comparisons and energy performance insights to help guide your decisions. Results can be tailored to reflect your specific project details.</li>
+                       <li>As you make your selections, the app will calculate compliance and high-level cost estimates for both pathways in the background. You'll see upgrade cost comparisons and energy performance insights to help guide your decisions. Results can be tailored to reflect your specific project details.</li>
                      </ul>
                   </div>
                   
                   <div>
                     <h5 className="font-medium text-slate-100 mb-2">4. Need Help?</h5>
                     <ul className="list-disc ml-6 space-y-1 text-sm text-slate-300">
-                      <li>If you have any questions, just click the "Contact Us" button. You'll talk to a real person from our local team — we're here to help you understand your options.</li>
+                      <li>If you have any questions, just click the "Contact Us" button. You'll talk to a real person from our local team - we're here to help you understand your options.</li>
                     </ul>
                   </div>
                 </div>
@@ -91,7 +91,7 @@ const HelpDrawer = ({ open, onOpenChange }: HelpDrawerProps) => {
                         Application Processing Notice
                       </h4>
                       <p className="font-semibold text-slate-200">
-                        Incomplete applications may delay results for Performance Path. Our team may follow up if additional info is needed.
+                        Incomplete applications may delay results for both Prescriptive & Performance Path. Our team may follow up if additional info is needed.
                       </p>
                     </div>
                   </div>
