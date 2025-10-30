@@ -50,7 +50,7 @@ export default function Performance9365Section({
         children: React.ReactNode;
         variant?: "warning" | "destructive";
     }) => {
-        const isExpanded = expandedWarnings[warningId];
+        const [isOpen, setIsOpen] = useState(false);
         const bgColor =
             variant === "warning"
                 ? "bg-gradient-to-r from-slate-800/60 to-teal-800/60"
@@ -61,10 +61,10 @@ export default function Performance9365Section({
                 : "border-2 border-red-400";
 
         return (
-            <Collapsible open={isExpanded} onOpenChange={() => toggleWarning(warningId)} className={`p-2 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
+            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
                 <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
                     <span className="text-xs font-bold text-white">{title}</span>
-                    <ChevronDown className={`h-5 w-5 text-white transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
+                    <ChevronDown className={`h-5 w-5 text-white transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
                 </CollapsibleTrigger>
                 <CollapsibleContent className="mt-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
                     <div className="text-white">{children}</div>
@@ -224,6 +224,17 @@ export default function Performance9365Section({
                         <span className="text-sm text-slate-100">Unheated Floor Above Frost Line (or walk-out basement)</span>
                     </label>
                     <label className="flex items-center gap-2">
+                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("heatedFloors")} onChange={e => {
+                            const value = "heatedFloors";
+                            setSelections(prev => ({
+                                ...prev,
+                                floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter(item => item !== value),
+                                hasInFloorHeat: e.target.checked ? "yes" : "no"
+                            }));
+                        }} className="w-4 h-4 text-primary" />
+                        <span className="text-sm text-slate-100">Heated Floors</span>
+                    </label>
+                    <label className="flex items-center gap-2">
                         <input type="checkbox" checked={selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting")} onChange={e => {
                             const value = "slabOnGradeIntegralFooting";
                             setSelections(prev => ({
@@ -242,22 +253,23 @@ export default function Performance9365Section({
                 <Select value={selections.hasInFloorHeat9365} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     hasInFloorHeat9365: value,
-                    // Add to floorsSlabsSelected if yes, remove if no
-                    floorsSlabsSelected: value === 'yes' ? [...prev.floorsSlabsSelected.filter(item => item !== 'heatedFloors'), 'heatedFloors'] : prev.floorsSlabsSelected.filter(item => item !== 'heatedFloors'),
-                    // Clear heated floors RSI if selecting no
+                    // Add to floorsSlabsSelected if 'fully-installed' or 'roughing-in', remove if 'no'
+                    floorsSlabsSelected: (value === 'fully-installed' || value === 'roughing-in') ? [...prev.floorsSlabsSelected.filter(item => item !== 'heatedFloors'), 'heatedFloors'] : prev.floorsSlabsSelected.filter(item => item !== 'heatedFloors'),
+                    // Clear heated floors RSI if selecting 'no'
                     heatedFloorsRSI: value === 'no' ? '' : prev.heatedFloorsRSI
                 }))}>
                     <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
-                        <SelectValue placeholder="Select yes or no" />
+                        <SelectValue placeholder="Select an option" />
                     </SelectTrigger>
                     <SelectContent className="bg-background border shadow-lg z-50">
-                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="fully-installed">Fully Installed</SelectItem>
+                        <SelectItem value="roughing-in">Roughing in</SelectItem>
                         <SelectItem value="no">No</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
 
-            {selections.hasInFloorHeat9365 === "yes" && <WarningButton warningId="inFloorHeating-9365-info" title="ℹ️ In-Floor Heating Requirements">
+            {(selections.hasInFloorHeat9365 === "fully-installed" || selections.hasInFloorHeat9365 === "roughing-in") && <WarningButton warningId="inFloorHeating-9365-info" title="ℹ️ In-Floor Heating Requirements">
                 <p className="text-xs text-white">
                     Since the house has in-floor heating, all floors must be insulated to meet NBC requirements.
                 </p>
@@ -486,7 +498,7 @@ export default function Performance9365Section({
                                         <p>• Use Table 9.36.-A for guarded tests (stricter limits)</p>
                                         <p>• Use Table 9.36.-B for unguarded tests (more lenient for attached buildings)</p>
                                     </div>
-                                    <p className="text-sm text-muted-foreground mt-2">The design air leakage rate, established by the builder and energy modeller, is incorporated into the energy model and later verified through testing at either the mid-construction or final stage. If the measured air changes per hour (ACH, if chosen) exceed the code-specified airtightness level, the building fails; if the measured ACH is lower, it passes.</p>
+                                    <p className="text-sm text-muted-foreground mt-2">The design air leakage rate, established by the builder and energy modeller, is incorporated into the energy model and later verified through testing at either the mid-construction or final stage. If the measured air changes per hour (ACH, if chosen) exceed the code-specified airtightness level, the building fails; if the measured ACH is lower, it passes.</p>                                            
                                     <p className="text-sm text-muted-foreground mt-2">In multi-unit buildings, the worst-performing zone sets the final score.</p>
                                 </div>
 
@@ -535,34 +547,6 @@ export default function Performance9365Section({
                     ...prev,
                     airtightness: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-
-                <WarningButton warningId="airtightness-caution-9365" title="⚠️ Caution: Air-Tightness Targets Without Testing History">
-                    <div className="text-xs text-white space-y-2">
-                        <p>
-                            Choosing an air-tightness target lower than prescribed by NBC2020 without prior test results is risky.
-                        </p>
-                        <p>
-                            We strongly recommend having at least 4–5 blower door tests from similar builds to know what levels you can reliably achieve.
-                        </p>
-                        <p>
-                            If your final blower door test doesn't meet the target you've claimed, you could:
-                        </p>
-                        <ul className="list-disc ml-4 space-y-1">
-                            <li>Miss required performance metrics</li>
-                            <li>Be denied a permit or occupancy</li>
-                            <li>Face expensive late-stage upgrades or rework</li>
-                        </ul>
-                        <p>
-                            <strong>Tip:</strong> Track airtightness results across all projects to set realistic targets, reduce build costs & optimize performance from day one.
-                        </p>
-                        <div className="flex items-center gap-1 text-sm mt-3">
-                            <span>🔗</span>
-                            <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">
-                                More information
-                            </a>
-                        </div>
-                    </div>
-                </WarningButton>
 
                 {(() => {
                     const airtightnessValue = parseFloat(selections.airtightness || "0");
