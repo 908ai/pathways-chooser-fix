@@ -136,10 +136,11 @@ All colors MUST be HSL.
 
 html {
   overflow-y: scroll;
+  font-size: 15px;
 }
 
 html body[data-scroll-locked] {
   margin-right: 0 !important;
   position: initial !important;
   overflow: visible !important;
-} 
+}
