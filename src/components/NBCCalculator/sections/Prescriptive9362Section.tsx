@@ -1135,6 +1135,6 @@ export default function Prescriptive9362Section({
                     </SelectContent>
                 </Select>
             </div>
-        </>
+        </div>
     );
 }
