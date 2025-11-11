@@ -62,7 +62,7 @@ export default function CompliancePathSection({
                                   
                                    <div className="space-y-4">
                                      <div>
-                                        <h5 className="font-medium text-base mb-1">1. Prescriptive Path – NBC 2020 9.36.2 – 9.36.4</h5>
+                                        <h5 className="font-semibold text-lg mb-1">1. Prescriptive Path – NBC 2020 9.36.2 – 9.36.4</h5>
                                         <div className="text-base text-muted-foreground space-y-1">
                                           <p>This is the standard, minimum compliance route.</p>
                                           <p>You meet fixed insulation (RSI) values and HVAC/water heating system requirements — no energy modelling or points system required.</p>
@@ -78,7 +78,7 @@ export default function CompliancePathSection({
                                      </div>
 
                                      <div>
-                                       <h5 className="font-medium text-base mb-1">2. Performance Path – NBC 9.36.5 <i>(Most builders choose this path)</i></h5>
+                                       <h5 className="font-semibold text-lg mb-1">2. Performance Path – NBC 9.36.5 <i>(Most builders choose this path)</i></h5>
                                        <div className="text-base text-muted-foreground space-y-1">
                                          <p>Your design is modelled against a "reference house" which is the exact same house physically that you intend to build, but with all the specifications that meet minimum prescriptive requirements. If your house performs as well or better, it passes.</p>
                                          <p>✅ This path is now the minimum requirement in many jurisdictions for basic code compliance.</p>
@@ -98,7 +98,7 @@ export default function CompliancePathSection({
                                      </div>
 
                                       <div>
-                                        <h5 className="font-medium text-base mb-1">3. Tiered Performance Path – NBC 9.36.7 <span className="inline-block ml-2 px-2 py-1 bg-gradient-to-r from-emerald-500 to-blue-500 text-white text-xs font-bold rounded">(Tier 2-5)</span></h5>
+                                        <h5 className="font-semibold text-lg mb-1">3. Tiered Performance Path – NBC 9.36.7 <span className="inline-block ml-2 px-2 py-1 bg-gradient-to-r from-emerald-500 to-blue-500 text-white text-xs font-bold rounded">(Tier 2-5)</span></h5>
                                         <div className="text-base text-muted-foreground space-y-1">
                                           <p>An extension of the 9.36.5 performance method that targets higher energy performance tiers (Tier 2 and above).</p>
                                           <p>Requires modelling reductions in energy use, heat loss, and peak cooling.</p>
@@ -115,7 +115,7 @@ export default function CompliancePathSection({
                                       </div>
 
                                       <div>
-                                        <h5 className="font-medium text-base mb-1">4. Tiered Prescriptive Path - NBC 9.36.8 <span className="inline-block ml-2 px-2 py-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-bold rounded">(Tier 2-5)</span></h5>
+                                        <h5 className="font-semibold text-lg mb-1">4. Tiered Prescriptive Path - NBC 9.36.8 <span className="inline-block ml-2 px-2 py-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-bold rounded">(Tier 2-5)</span></h5>
                                         <div className="text-base text-muted-foreground space-y-1">
                                           <p>This is a points-based route to meet Tier 2 and above without energy modelling.</p>
                                           <p>Points are earned for upgrades to insulation, windows, airtightness, HVAC, and more.</p>

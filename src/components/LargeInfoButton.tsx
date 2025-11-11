@@ -36,7 +36,7 @@ const LargeInfoButton: React.FC<LargeInfoButtonProps> = ({ title, children, dial
             </Tooltip>
             <DialogContent className={cn("max-w-4xl max-h-[80vh] overflow-y-auto", dialogClassName)}>
                 <DialogHeader>
-                    <DialogTitle>{title}</DialogTitle>
+                    <DialogTitle className="text-xl font-bold leading-none tracking-tight">{title}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                     {children}
