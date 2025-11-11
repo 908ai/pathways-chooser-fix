@@ -67,11 +67,15 @@ export default function CompliancePathSection({
                                           <p>This is the standard, minimum compliance route.</p>
                                           <p>You meet fixed insulation (RSI) values and HVAC/water heating system requirements — no energy modelling or points system required.</p>
                                           <p>An HRV is optional but influences which RSI values you must meet. No HRV means higher RSI requirements for your walls, foundation and attic.</p>
-                                          <p className="bg-muted rounded-md p-3">⚠️ Warning: This path may lead to higher build costs due to limited flexibility. Assemblies must meet strict minimums without trade-offs, which can increase material and labour costs.</p>
+                                          <p className="bg-muted rounded-md p-3">⚠️ Warning: This path may lead to higher build costs due to limited flexibility. Assemblies must meet strict minimums without trade-offs, which can increase material and labour costs. Limited trade-off calculations are allowed only for above-grade assemblies under NBC 9.36.2.11 to balance heat loss between components while maintaining overall compliance.</p>
                                           <p className="mt-2">
-                                            <strong>Trade-off Option (9.36.2.11):</strong> 🔗 <a href="https://www.calgary.ca/content/dam/www/pda/pd/documents/building/green/9.36-trade-off-report.xlsm" download className="text-blue-500 underline hover:text-red-600">
-                                              Download Trade-off Calculator
-                                            </a> - Allows flexibility to balance R-values between building components.
+                                            <strong>Trade-off Option (9.36.2.11):</strong><br />
+                                            🔗 <a href="https://www.calgary.ca/content/dam/www/pda/pd/documents/building/green/9.36-trade-off-report.xlsm" download className="text-blue-500 underline hover:text-red-600">
+                                              Download City of Calgary’s Trade-off Calculator
+                                            </a> - Allows flexibility to balance R-values between building components.<br />
+                                            🔗 <a href=" https://www.edmonton.ca/sites/default/files/public-files/Energy_Efficiency_Tradeoff_Spreadsheet.xlsx" download className="text-blue-500 underline hover:text-red-600">
+                                              Download City of Edmonton Trade-off Calculator
+                                            </a>
                                           </p>
                                         </div>
                                        <div className="w-full h-px bg-muted mt-3" />
@@ -223,7 +227,7 @@ export default function CompliancePathSection({
                                   <SelectItem value="9365" className="border-l-4 border-l-blue-500">
                                     <div className="flex items-center gap-2">
                                       <Zap className="h-4 w-4 text-blue-600" />
-                                      <span>9.36.5 - <strong>Performance</strong> Path</span>
+                                      <span>9.36.5 - <strong>Performance</strong> Path <span className="font-semibold text-green-600">(Recommended)</span></span>
                                     </div>
                                   </SelectItem>
                                   <SelectItem value="9362" className="border-l-4 border-l-orange-500">
