@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Zap } from "lucide-react";
+import { cn } from "@/lib/utils";
 import LargeInfoButton from "@/components/LargeInfoButton";
 import InfoButton from "@/components/InfoButton";
 
@@ -236,16 +237,16 @@ export default function CompliancePathSection({
                                       <span>9.36.2 - 9.36.4 <strong>Prescriptive</strong> Path</span>
                                     </div>
                                   </SelectItem>
-                                  <SelectItem value="9367" className="border-l-4 border-l-blue-500">
+                                  <SelectItem value="9367" className="border-l-4 border-l-blue-500" disabled={selections.province === "alberta"}>
                                     <div className="flex items-center gap-2">
                                       <Zap className="h-4 w-4 text-blue-600" />
-                                      <span>9.36.7 - Tiered <strong>Performance</strong> Path <span className="font-bold text-emerald-600">(Tier 2-5)</span></span>
+                                      <span>9.36.7 - Tiered <strong>Performance</strong> Path <span className="font-bold text-emerald-600">(Tier 2-5)</span>{selections.province === "alberta" && <span className="ml-2 text-xs text-muted-foreground">(Coming Soon)</span>}</span>
                                     </div>
                                   </SelectItem>
-                                  <SelectItem value="9368" className="border-l-4 border-l-orange-500">
+                                  <SelectItem value="9368" className="border-l-4 border-l-orange-500" disabled={selections.province === "alberta"}>
                                     <div className="flex items-center gap-2">
                                       <FileText className="h-4 w-4 text-orange-600" />
-                                      <span>9.36.8 – Tiered <strong>Prescriptive</strong> Path <span className="font-bold text-purple-300">(Tier 2-5)</span></span>
+                                      <span>9.36.8 – Tiered <strong>Prescriptive</strong> Path <span className="font-bold text-purple-300">(Tier 2-5)</span>{selections.province === "alberta" && <span className="ml-2 text-xs text-muted-foreground">(Coming Soon)</span>}</span>
                                     </div>
                                   </SelectItem>
                                  </SelectContent>
