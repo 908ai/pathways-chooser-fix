@@ -905,7 +905,7 @@ const NBCCalculator = ({
                   setSelections={setSelections}
                 />
               )}
-            {selections.compliancePath === "9362" && <Prescriptive9362Section selections={selections} setSelections={setSelections} />}
+            {selections.compliancePath === "9362" && <Prescriptive9362Section selections={selections} setSelections={setSelections} validationErrors={validationErrors} />}
             {selections.compliancePath === "9368" && <Prescriptive9368Section selections={selections} setSelections={setSelections} />}
             {selections.hasHrv === "with_hrv" && selections.compliancePath === "9368" && <Prescriptive9368WithHrvSection selections={selections} setSelections={setSelections} WarningButton={WarningButton} />}
             {selections.compliancePath === "9365" && <Performance9365Section selections={selections} setSelections={setSelections} handleFileUploadRequest={handleFileUploadRequest} uploadedFiles={uploadedFiles} removeFile={removeFile} />}

@@ -5,6 +5,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import InfoButton from "@/components/InfoButton";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, AlertTriangle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 import { validateRSI_9362 } from "../utils/validation";
 import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/EffectiveRSIWarning";
@@ -12,9 +13,11 @@ import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/Effec
 export default function Prescriptive9362Section({
     selections,
     setSelections,
+    validationErrors,
 }: {
     selections: any;
     setSelections: any;
+    validationErrors: Record<string, boolean>;
 }) {
     const WarningButton = ({
         title,
@@ -94,7 +97,7 @@ export default function Prescriptive9362Section({
                     ...prev,
                     hasHrv: value
                 }))}>
-                    <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.hasHrv && "border-red-500 ring-2 ring-red-500")}>
                         <SelectValue placeholder="Select option" />
                     </SelectTrigger>
                     <SelectContent className="bg-background border shadow-lg z-50">
@@ -109,7 +112,7 @@ export default function Prescriptive9362Section({
                 <Input required type="text" placeholder="Input HRV/ERV efficiency (e.g. SRE 65%)" value={selections.hrvEfficiency || ""} onChange={e => setSelections(prev => ({
                     ...prev,
                     hrvEfficiency: e.target.value
-                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.hrvEfficiency && "border-red-500 ring-2 ring-red-500")} />
             </div>}
 
             {/* Secondary Suite HRV - Show for buildings with multiple units */}
@@ -165,7 +168,7 @@ export default function Prescriptive9362Section({
                     <Input required type="text" placeholder="Input secondary HRV/ERV efficiency (e.g. SRE 65%)" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
                         ...prev,
                         secondaryHrvEfficiency: e.target.value
-                    }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                    }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryHrvEfficiency && "border-red-500 ring-2 ring-red-500")} />
                 </div>}
             </div>}
 
@@ -174,7 +177,7 @@ export default function Prescriptive9362Section({
                 <Input required type="text" placeholder={selections.hasHrv === "with_hrv" ? "Min RSI 8.67 w/ HRV" : selections.hasHrv === "without_hrv" ? "Min RSI 10.43 w/o HRV" : "Min RSI 8.67 w/ HRV, 10.43 w/o HRV"} value={selections.ceilingsAtticRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     ceilingsAtticRSI: e.target.value
-                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.ceilingsAtticRSI && "border-red-500 ring-2 ring-red-500")} />
                 {selections.buildingType !== "single-detached-secondary" && (() => {
                     // For 9.36.2: 8.67 RSI with HRV, 10.43 RSI without HRV
                     const minRSI = selections.hasHrv === "with_hrv" ? 8.67 : selections.hasHrv === "without_hrv" ? 10.43 : 8.67;
@@ -192,14 +195,14 @@ export default function Prescriptive9362Section({
             </div>
 
             <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-100">Is there any cathedral ceilings or flat roof? <span className="text-red-400">*</span></label>
+                <label className={cn("text-sm font-medium text-slate-100", validationErrors.hasCathedralOrFlatRoof && "text-red-500")}>Is there any cathedral ceilings or flat roof? <span className="text-red-400">*</span></label>
                 <Select required value={selections.hasCathedralOrFlatRoof} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     hasCathedralOrFlatRoof: value,
                     cathedralFlatRSI: "",
                     cathedralFlatRSIValue: ""
                 }))}>
-                    <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.hasCathedralOrFlatRoof && "border-red-500 ring-2 ring-red-500")}>
                         <SelectValue placeholder="Select option" />
                     </SelectTrigger>
                     <SelectContent className="bg-background border shadow-lg z-50">
@@ -214,7 +217,7 @@ export default function Prescriptive9362Section({
                 <Input required type="text" placeholder="Enter RSI value (min. 5.02)" value={selections.cathedralFlatRSIValue || ""} onChange={e => setSelections(prev => ({
                     ...prev,
                     cathedralFlatRSIValue: e.target.value
-                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.cathedralFlatRSIValue && "border-red-500 ring-2 ring-red-500")} />
                 {(() => {
                     const minRSI = 5.02;
                     const validation = validateRSI_9362(selections.cathedralFlatRSIValue, minRSI, `cathedral/flat roofs`);
@@ -235,7 +238,7 @@ export default function Prescriptive9362Section({
                 <Input required type="text" placeholder={selections.hasHrv === "with_hrv" ? 'Min RSI 2.97 w/ HRV (e.g., R20 Batt/2x6/16"OC)' : selections.hasHrv === "without_hrv" ? 'Min RSI 3.69 w/o HRV (e.g., R20 Batt/2x6/16"OC)' : 'Min RSI 2.97 w/ HRV, 3.69 w/o HRV (e.g., R20 Batt/2x6/16"OC)'} value={selections.wallRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     wallRSI: e.target.value
-                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.wallRSI && "border-red-500 ring-2 ring-red-500")} />
                 {(() => {
                     const minRSI = selections.hasHrv === "with_hrv" ? 2.97 : 3.69;
                     const validation = validateRSI_9362(selections.wallRSI, minRSI, `above grade walls`);
@@ -256,7 +259,7 @@ export default function Prescriptive9362Section({
                 <Input required type="text" placeholder={selections.hasHrv === "with_hrv" ? "Min RSI 2.98 (with HRV, e.g., R12 Batt/2x4/24\"OC)" : selections.hasHrv === "without_hrv" ? "Min RSI 3.46 (without HRV, e.g., R12 Batt/2x4/24\"OC)" : "Select HRV option first"} value={selections.belowGradeRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     belowGradeRSI: e.target.value
-                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.belowGradeRSI && "border-red-500 ring-2 ring-red-500")} />
                 {(() => {
                     const minRSI = selections.hasHrv === "with_hrv" ? 2.98 : 3.46;
                     const validation = validateRSI_9362(selections.belowGradeRSI, minRSI, `below grade walls`);
@@ -273,7 +276,7 @@ export default function Prescriptive9362Section({
             </div>
 
             <div className="space-y-4">
-                <label className="text-sm font-medium text-slate-100">Floors/Slabs (Select all that apply) <span className="text-red-400">*</span></label>
+                <label className={cn("text-sm font-medium text-slate-100", validationErrors.floorsSlabsSelected && "text-red-500")}>Floors/Slabs (Select all that apply) <span className="text-red-400">*</span></label>
                 <div className="space-y-2">
                     <label className="flex items-center gap-2">
                         <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} onChange={e => {
@@ -334,7 +337,7 @@ export default function Prescriptive9362Section({
                 <Input required type="text" placeholder={`Min RSI ${selections.province === "saskatchewan" ? "2.84 (R-16.1)" : "1.34 (R-7.6)"} for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.inFloorHeatRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     inFloorHeatRSI: e.target.value
-                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.inFloorHeatRSI && "border-red-500 ring-2 ring-red-500")} />
                 {(() => {
                     const minRSI = selections.province === "saskatchewan" ? 2.84 : 1.34;
                     const validation = validateRSI_9362(selections.inFloorHeatRSI, minRSI, `heated floors`);
@@ -355,7 +358,7 @@ export default function Prescriptive9362Section({
                 <Input required type="text" placeholder="Min RSI 2.84 or N/A" value={selections.slabOnGradeIntegralFootingRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     slabOnGradeIntegralFootingRSI: e.target.value
-                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.slabOnGradeIntegralFootingRSI && "border-red-500 ring-2 ring-red-500")} />
                 <EffectiveRSIWarning />
 
                 {selections.slabOnGradeIntegralFootingRSI && !isNaN(parseFloat(selections.slabOnGradeIntegralFootingRSI)) && parseFloat(selections.slabOnGradeIntegralFootingRSI) < 2.84 && <WarningButton title="🛑 RSI Value Too Low" variant="destructive" defaultOpen={true}>
@@ -370,7 +373,7 @@ export default function Prescriptive9362Section({
                 <Input required type="text" placeholder="Min RSI 5.02" value={selections.floorsOverUnheatedSpacesRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     floorsOverUnheatedSpacesRSI: e.target.value
-                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.floorsOverUnheatedSpacesRSI && "border-red-500 ring-2 ring-red-500")} />
                 <EffectiveRSIWarning />
             </div>}
 
@@ -379,7 +382,7 @@ export default function Prescriptive9362Section({
                 <Input required type="text" placeholder="Enter RSI value or 'uninsulated'" value={selections.unheatedFloorBelowFrostRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     unheatedFloorBelowFrostRSI: e.target.value
-                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.unheatedFloorBelowFrostRSI && "border-red-500 ring-2 ring-red-500")} />
                 <div className="p-3 bg-muted border border-border rounded-md">
                     <p className="text-sm font-medium">
                         ℹ️ Unheated Floor Below Frost Line
@@ -395,7 +398,7 @@ export default function Prescriptive9362Section({
                 <Input required type="number" step="0.01" min="0" placeholder="Minimum RSI 1.96" value={selections.unheatedFloorAboveFrostRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     unheatedFloorAboveFrostRSI: e.target.value
-                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.unheatedFloorAboveFrostRSI && "border-red-500 ring-2 ring-red-500")} />
                 {selections.unheatedFloorAboveFrostRSI && parseFloat(selections.unheatedFloorAboveFrostRSI) < 1.96 && <WarningButton title="🛑 RSI Value Too Low" variant="destructive" defaultOpen={true}>
                     <p className="text-xs">
                         The RSI value must be increased to at least 1.96 to meet NBC requirements for unheated floor above frost line.
@@ -409,7 +412,7 @@ export default function Prescriptive9362Section({
                 <Input required type="text" placeholder="Input Range of U-values - Max U-Value 1.61 W/(m²·K) or Min Energy Rating ≥ 25" value={selections.windowUValue} onChange={e => setSelections(prev => ({
                     ...prev,
                     windowUValue: e.target.value
-                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.windowUValue && "border-red-500 ring-2 ring-red-500")} />
                 {(() => {
                     // Check if input is a U-value and if it's too high
                     const inputValue = selections.windowUValue;
@@ -433,7 +436,7 @@ export default function Prescriptive9362Section({
             </div>
 
             <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-100">Does the house have skylights? <span className="text-red-400">*</span></label>
+                <label className={cn("text-sm font-medium text-slate-100", validationErrors.hasSkylights && "text-red-500")}>Does the house have skylights? <span className="text-red-400">*</span></label>
                 <div className="flex gap-4">
                     <label className="flex items-center gap-2">
                         <input required type="radio" name="hasSkylights-9362" value="yes" checked={selections.hasSkylights === "yes"} onChange={e => setSelections(prev => ({
@@ -463,7 +466,7 @@ export default function Prescriptive9362Section({
                 <Input required type="number" step="0.01" min="0" placeholder={`Enter U-value (maximum ${selections.province === "alberta" && selections.climateZone === "7B" ? "2.41" : "2.75"} W/(m²·K))`} value={selections.skylightUValue} onChange={e => setSelections(prev => ({
                     ...prev,
                     skylightUValue: e.target.value
-                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.skylightUValue && "border-red-500 ring-2 ring-red-500")} />
                 {(() => {
                     const maxUValue = selections.province === "alberta" && selections.climateZone === "7B" ? 2.41 : 2.75;
                     return selections.skylightUValue && parseFloat(selections.skylightUValue) > maxUValue && <WarningButton title="U-Value Too High" variant="destructive">
@@ -626,7 +629,7 @@ export default function Prescriptive9362Section({
                 <Input required type="text" placeholder={`Min ${selections.province === "saskatchewan" ? "3.2" : "3.0"} ACH50 for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.airtightness} onChange={e => setSelections(prev => ({
                     ...prev,
                     airtightness: e.target.value
-                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.airtightness && "border-red-500 ring-2 ring-red-500")} />
 
                 <WarningButton title="⚠️ Caution: Air-Tightness Targets Without Testing History">
                     <div className="text-xs text-white space-y-2">
@@ -720,7 +723,7 @@ export default function Prescriptive9362Section({
                     ...prev,
                     heatingType: value
                 }))}>
-                    <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.heatingType && "border-red-500 ring-2 ring-red-500")}>
                         <SelectValue placeholder="Select heating type" />
                     </SelectTrigger>
                     <SelectContent className="bg-background border shadow-lg z-50">
@@ -745,7 +748,7 @@ export default function Prescriptive9362Section({
                 <Input required type="text" placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.heatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
                     ...prev,
                     heatingEfficiency: e.target.value
-                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.heatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
                 {selections.heatingEfficiency && selections.heatingType !== 'heat-pump' && (() => {
                     const inputValue = parseFloat(selections.heatingEfficiency);
                     let minValue = 0;
@@ -779,7 +782,7 @@ export default function Prescriptive9362Section({
                         ...prev,
                         indirectTank: value
                     }))}>
-                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                        <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.indirectTank && "border-red-500 ring-2 ring-red-500")}>
                             <SelectValue placeholder="Select if installing indirect tank" />
                         </SelectTrigger>
                         <SelectContent className="bg-background border shadow-lg z-50">
@@ -794,7 +797,7 @@ export default function Prescriptive9362Section({
                     <Input required type="number" placeholder="Enter tank size in gallons" value={selections.indirectTankSize} onChange={e => setSelections(prev => ({
                         ...prev,
                         indirectTankSize: e.target.value
-                    }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                    }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.indirectTankSize && "border-red-500 ring-2 ring-red-500")} />
                 </div>}
             </div>}
 
@@ -804,7 +807,7 @@ export default function Prescriptive9362Section({
                     ...prev,
                     coolingApplicable: value
                 }))}>
-                    <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.coolingApplicable && "border-red-500 ring-2 ring-red-500")}>
                         <SelectValue placeholder="Select if cooling is applicable" />
                     </SelectTrigger>
                     <SelectContent className="bg-background border shadow-lg z-50">
@@ -858,7 +861,7 @@ export default function Prescriptive9362Section({
                             secondaryIndirectTank: "",
                             secondaryIndirectTankSize: ""
                         }))}>
-                            <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                            <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryHeatingType && "border-red-500 ring-2 ring-red-500")}>
                                 <SelectValue placeholder="Select heating type" />
                             </SelectTrigger>
                             <SelectContent className="bg-background border shadow-lg z-50">
@@ -874,7 +877,7 @@ export default function Prescriptive9362Section({
                         <Input required type="text" placeholder={selections.secondaryHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.secondaryHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.secondaryHeatingEfficiency} onChange={e => setSelections(prev => ({
                             ...prev,
                             secondaryHeatingEfficiency: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                        }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryHeatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
                         {selections.secondaryHeatingEfficiency && selections.secondaryHeatingType !== 'heat-pump' && (() => {
                             const inputValue = parseFloat(selections.secondaryHeatingEfficiency);
                             let minValue = 0;
@@ -910,7 +913,7 @@ export default function Prescriptive9362Section({
                                 ...prev,
                                 secondaryIndirectTank: value
                             }))}>
-                                <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                                <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryIndirectTank && "border-red-500 ring-2 ring-red-500")}>
                                     <SelectValue placeholder="Select option" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background border shadow-lg z-50">
@@ -925,7 +928,7 @@ export default function Prescriptive9362Section({
                             <Input required type="text" placeholder="Enter tank size in gallons (e.g., 40, 50, 60, 80)" value={selections.secondaryIndirectTankSize} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 secondaryIndirectTankSize: e.target.value
-                            }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                            }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryIndirectTankSize && "border-red-500 ring-2 ring-red-500")} />
                         </div>}
                     </div>}
                 </>}
@@ -941,7 +944,7 @@ export default function Prescriptive9362Section({
                             waterHeater: "" // Reset efficiency when type changes
                         }));
                     }}>
-                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                        <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.waterHeaterType && "border-red-500 ring-2 ring-red-500")}>
                             <SelectValue placeholder="Select water heater type" />
                         </SelectTrigger>
                         <SelectContent className="bg-background border shadow-lg z-50">
@@ -960,7 +963,7 @@ export default function Prescriptive9362Section({
                     <Input required type="text" placeholder="Please specify the water heater type" value={selections.otherWaterHeaterType || ""} onChange={e => setSelections(prev => ({
                         ...prev,
                         otherWaterHeaterType: e.target.value
-                    }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                    }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.otherWaterHeaterType && "border-red-500 ring-2 ring-red-500")} />
                 </div>}
 
                 {selections.waterHeaterType && <div className="space-y-2">
@@ -985,7 +988,7 @@ export default function Prescriptive9362Section({
                     })()} value={selections.waterHeater} onChange={e => setSelections(prev => ({
                         ...prev,
                         waterHeater: e.target.value
-                    }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                    }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.waterHeater && "border-red-500 ring-2 ring-red-500")} />
                 </div>}
             </>}
 
@@ -1053,7 +1056,7 @@ export default function Prescriptive9362Section({
                                     secondaryWaterHeater: "" // Reset efficiency when type changes
                                 }));
                             }}>
-                                <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                                <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryWaterHeaterType && "border-red-500 ring-2 ring-red-500")}>
                                     <SelectValue placeholder="Select water heater type" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background border shadow-lg z-50">
@@ -1085,7 +1088,7 @@ export default function Prescriptive9362Section({
                             })()} value={selections.secondaryWaterHeater} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 secondaryWaterHeater: e.target.value
-                            }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                            }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryWaterHeater && "border-red-500 ring-2 ring-red-500")} />
                         </div>}
                     </>}
                 </>}
@@ -1127,7 +1130,7 @@ export default function Prescriptive9362Section({
                     ...prev,
                     hasDWHR: value
                 }))}>
-                    <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.hasDWHR && "border-red-500 ring-2 ring-red-500")}>
                         <SelectValue placeholder="Select yes or no" />
                     </SelectTrigger>
                     <SelectContent className="bg-background border shadow-lg z-50">
