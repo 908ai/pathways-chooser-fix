@@ -30,8 +30,14 @@ export default function CompliancePathSection({
   const isSaskatoon = isSaskatchewan && selections.city?.toLowerCase().trim() === "saskatoon";
   const isSaskOther = isSaskatchewan && selections.city && selections.city.toLowerCase().trim() !== "saskatoon";
 
-  const basePathsDisabled = isSaskatchewan; // Both Saskatoon and other Sask cities disable base paths
+  // For Saskatoon, only Tiered paths are available.
+  // For other Sask cities, no paths are available (Tiered are "Coming Soon").
+  const basePathsDisabled = isSaskatchewan; 
+
+  // Tiered paths are disabled for Alberta and non-Saskatoon Sask cities.
   const tieredPathsDisabled = isAlberta || isSaskOther;
+
+  // Show "Coming Soon" for Alberta and non-Saskatoon Sask cities.
   const showTieredComingSoon = isAlberta || isSaskOther;
 
 
@@ -155,7 +161,7 @@ export default function CompliancePathSection({
                           
                           {/* Current pathway display */}
                           {selections.compliancePath && <div className="flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-muted/50 to-muted/30 rounded-lg border-2 border-dashed border-muted-foreground/20 shadow-sm">
-                              {selections.compliancePath === '9362' || selections.compliancePath === '9.36.8' ? <div className="flex items-center gap-3 text-orange-700 dark:text-orange-300">
+                              {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? <div className="flex items-center gap-3 text-orange-700 dark:text-orange-300">
                                   <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-full">
                                     <FileText className="h-5 w-5" />
                                   </div>
@@ -265,7 +271,7 @@ export default function CompliancePathSection({
                         
                          {/* Front Door Orientation for Performance Paths */}
                          {(selections.compliancePath === "9365" ||
-                          selections.compliancePath === "9.36.7") && <div className="space-y-2">
+                          selections.compliancePath === "9367") && <div className="space-y-2">
                              <div className="flex items-center gap-2">
                                <label className="text-sm font-medium text-white">Front Door Orientation</label>
                                   <InfoButton title="Why Orientation Matters in Energy Efficiency">
