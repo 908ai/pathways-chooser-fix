@@ -502,9 +502,11 @@ const NBCCalculator = ({
     }
   };
 
-  const handleSaveDraft = async () => {
+  const handleSaveDraft = async (isIncrementalSave = false) => {
     if (!user) {
-      toast({ title: "Authentication Error", description: "You must be logged in to save a draft.", variant: "destructive" });
+      if (!isIncrementalSave) {
+        toast({ title: "Authentication Error", description: "You must be logged in to save a draft.", variant: "destructive" });
+      }
       return;
     }
 
@@ -551,11 +553,17 @@ const NBCCalculator = ({
 
       if (error) throw error;
 
-      toast({ title: "Draft Saved", description: "Your progress has been saved successfully." });
+      if (isIncrementalSave) {
+        toast({ title: "Progress Saved", description: "Your changes have been saved." });
+      } else {
+        toast({ title: "Draft Saved", description: "Your progress has been saved successfully." });
+      }
 
     } catch (error: any) {
       console.error("Error saving draft:", error);
-      toast({ title: "Save Failed", description: error.message, variant: "destructive" });
+      if (!isIncrementalSave) {
+        toast({ title: "Save Failed", description: error.message, variant: "destructive" });
+      }
     } finally {
       setIsSavingDraft(false);
     }
@@ -732,13 +740,19 @@ const NBCCalculator = ({
     return true;
   };
 
-  const nextStep = () => {
+  const nextStep = async () => {
     if (currentStep === 1 && !validateStep1()) {
       return;
     }
     if (currentStep === 2 && !validateStep2()) {
       return;
     }
+
+    const isEditing = !!searchParams.get('edit');
+    if (isEditing) {
+      await handleSaveDraft(true);
+    }
+
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
       scrollToTop();
@@ -1014,7 +1028,7 @@ const NBCCalculator = ({
           <Button variant="outline" onClick={prevStep}>Back</Button>
         )}
         {showSaveDraftButton && (
-          <Button variant="secondary" onClick={handleSaveDraft} disabled={isSavingDraft}>
+          <Button variant="secondary" onClick={() => handleSaveDraft(false)} disabled={isSavingDraft}>
             {isSavingDraft ? 'Saving...' : 'Save Draft'}
           </Button>
         )}
