@@ -747,46 +747,76 @@ const NBCCalculator = ({
     const { compliancePath } = selections;
 
     if (compliancePath === '9362') {
-      if (!selections.hasHrv) errors.hasHrv = true;
+      const requiredFields: (keyof typeof selections)[] = [
+        'hasHrv', 'ceilingsAtticRSI', 'hasCathedralOrFlatRoof', 'wallRSI',
+        'belowGradeRSI', 'floorsSlabsSelected', 'windowUValue', 'hasSkylights',
+        'airtightness', 'heatingType', 'coolingApplicable', 'waterHeaterType', 'hasDWHR'
+      ];
+
+      requiredFields.forEach(field => {
+        const value = selections[field];
+        if (Array.isArray(value) && value.length === 0) {
+          errors[field] = true;
+        } else if (value === '' || value === null || value === undefined) {
+          errors[field] = true;
+        }
+      });
+      
+      if (selections.midConstructionBlowerDoorPlanned === false) {
+        errors.midConstructionBlowerDoorPlanned = true;
+      }
+
       if (selections.hasHrv === 'with_hrv' && !selections.hrvEfficiency) errors.hrvEfficiency = true;
-      if (!selections.ceilingsAtticRSI) errors.ceilingsAtticRSI = true;
-      if (!selections.hasCathedralOrFlatRoof) errors.hasCathedralOrFlatRoof = true;
       if (selections.hasCathedralOrFlatRoof === 'yes' && !selections.cathedralFlatRSIValue) errors.cathedralFlatRSIValue = true;
-      if (!selections.wallRSI) errors.wallRSI = true;
-      if (!selections.belowGradeRSI) errors.belowGradeRSI = true;
-      if (selections.floorsSlabsSelected.length === 0) errors.floorsSlabsSelected = true;
-      if (!selections.windowUValue) errors.windowUValue = true;
-      if (!selections.hasSkylights) errors.hasSkylights = true;
       if (selections.hasSkylights === 'yes' && !selections.skylightUValue) errors.skylightUValue = true;
-      if (!selections.airtightness) errors.airtightness = true;
-      if (!selections.heatingType) errors.heatingType = true;
       if (selections.heatingType && !selections.heatingEfficiency) errors.heatingEfficiency = true;
-      if (!selections.coolingApplicable) errors.coolingApplicable = true;
-      if (!selections.waterHeaterType) errors.waterHeaterType = true;
       if (selections.waterHeaterType && !selections.waterHeater) errors.waterHeater = true;
-      if (!selections.hasDWHR) errors.hasDWHR = true;
+      
+      if (selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") {
+        if (!selections.hasSecondaryHrv) errors.hasSecondaryHrv = true;
+        if (selections.hasSecondaryHrv === 'yes' && !selections.secondaryHrvEfficiency) errors.secondaryHrvEfficiency = true;
+      }
     }
-    // Add validation for other paths as needed
 
     setValidationErrors(errors);
 
     if (Object.keys(errors).length > 0) {
       toast({ title: "Missing Information", description: "Please fill out all required fields in this step.", variant: "destructive" });
-      return false;
+      return { isValid: false, errors };
     }
 
-    return true;
+    return { isValid: true, errors: {} };
   };
 
   const nextStep = async () => {
-    if (currentStep === 1 && !validateStep1()) {
-      return;
+    let validationResult = { isValid: true, errors: {} as Record<string, boolean> };
+    if (currentStep === 1) {
+      if (!validateStep1()) return;
     }
-    if (currentStep === 2 && !validateStep2()) {
-      return;
+    if (currentStep === 2) {
+      if (!validateStep2()) return;
     }
-    if (currentStep === 3 && !validateStep3()) {
-      return;
+    if (currentStep === 3) {
+      validationResult = validateStep3();
+      if (!validationResult.isValid) {
+        // Scroll to first error
+        const fieldOrder: (keyof typeof selections)[] = [
+          'hasHrv', 'hrvEfficiency', 'hasSecondaryHrv', 'secondaryHrvEfficiency',
+          'ceilingsAtticRSI', 'hasCathedralOrFlatRoof', 'cathedralFlatRSIValue',
+          'wallRSI', 'belowGradeRSI', 'floorsSlabsSelected', 'windowUValue',
+          'hasSkylights', 'skylightUValue', 'airtightness', 'midConstructionBlowerDoorPlanned',
+          'heatingType', 'heatingEfficiency', 'coolingApplicable', 'waterHeaterType',
+          'waterHeater', 'hasDWHR'
+        ];
+        
+        const firstErrorKey = fieldOrder.find(key => validationResult.errors[key]);
+
+        if (firstErrorKey) {
+          const element = document.getElementById(firstErrorKey);
+          element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
     }
 
     const isEditing = !!searchParams.get('edit');
