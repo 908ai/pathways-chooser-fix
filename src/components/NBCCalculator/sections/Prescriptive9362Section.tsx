@@ -90,7 +90,7 @@ export default function Prescriptive9362Section({
                         </div>
                     </InfoButton>
                 </div>
-                <Select value={selections.hasHrv} onValueChange={value => setSelections(prev => ({
+                <Select required value={selections.hasHrv} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     hasHrv: value
                 }))}>
@@ -106,7 +106,7 @@ export default function Prescriptive9362Section({
 
             {selections.hasHrv === "with_hrv" && <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">HRV/ERV Efficiency <span className="text-red-400">*</span></label>
-                <Input type="text" placeholder="Input HRV/ERV efficiency (e.g. SRE 65%)" value={selections.hrvEfficiency || ""} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder="Input HRV/ERV efficiency (e.g. SRE 65%)" value={selections.hrvEfficiency || ""} onChange={e => setSelections(prev => ({
                     ...prev,
                     hrvEfficiency: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -142,7 +142,7 @@ export default function Prescriptive9362Section({
                     </div>
                     <div className="flex gap-4">
                         <label className="flex items-center gap-2">
-                            <input type="radio" name="hasSecondaryHrv" value="yes" checked={selections.hasSecondaryHrv === "yes"} onChange={e => setSelections(prev => ({
+                            <input required type="radio" name="hasSecondaryHrv" value="yes" checked={selections.hasSecondaryHrv === "yes"} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 hasSecondaryHrv: e.target.value,
                                 secondaryHrvEfficiency: "" // Reset when changing
@@ -150,7 +150,7 @@ export default function Prescriptive9362Section({
                             <span className="text-sm text-slate-100">Yes</span>
                         </label>
                         <label className="flex items-center gap-2">
-                            <input type="radio" name="hasSecondaryHrv" value="no" checked={selections.hasSecondaryHrv === "no"} onChange={e => setSelections(prev => ({
+                            <input required type="radio" name="hasSecondaryHrv" value="no" checked={selections.hasSecondaryHrv === "no"} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 hasSecondaryHrv: e.target.value,
                                 secondaryHrvEfficiency: ""
@@ -162,7 +162,7 @@ export default function Prescriptive9362Section({
 
                 {selections.hasSecondaryHrv === "yes" && <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Secondary Suite HRV/ERV Efficiency <span className="text-red-400">*</span></label>
-                    <Input type="text" placeholder="Input secondary HRV/ERV efficiency (e.g. SRE 65%)" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
+                    <Input required type="text" placeholder="Input secondary HRV/ERV efficiency (e.g. SRE 65%)" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
                         ...prev,
                         secondaryHrvEfficiency: e.target.value
                     }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -171,7 +171,7 @@ export default function Prescriptive9362Section({
 
             <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Ceilings below Attics <span className="text-red-400">*</span></label>
-                <Input type="text" placeholder={selections.hasHrv === "with_hrv" ? "Min RSI 8.67 w/ HRV" : selections.hasHrv === "without_hrv" ? "Min RSI 10.43 w/o HRV" : "Min RSI 8.67 w/ HRV, 10.43 w/o HRV"} value={selections.ceilingsAtticRSI} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder={selections.hasHrv === "with_hrv" ? "Min RSI 8.67 w/ HRV" : selections.hasHrv === "without_hrv" ? "Min RSI 10.43 w/o HRV" : "Min RSI 8.67 w/ HRV, 10.43 w/o HRV"} value={selections.ceilingsAtticRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     ceilingsAtticRSI: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -193,7 +193,7 @@ export default function Prescriptive9362Section({
 
             <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Is there any cathedral ceilings or flat roof? <span className="text-red-400">*</span></label>
-                <Select value={selections.hasCathedralOrFlatRoof} onValueChange={value => setSelections(prev => ({
+                <Select required value={selections.hasCathedralOrFlatRoof} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     hasCathedralOrFlatRoof: value,
                     cathedralFlatRSI: "",
@@ -211,7 +211,7 @@ export default function Prescriptive9362Section({
 
             {selections.hasCathedralOrFlatRoof === "yes" && <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Cathedral / Flat Roofs - Min. 5.02 RSI <span className="text-red-400">*</span></label>
-                <Input type="text" placeholder="Enter RSI value (min. 5.02)" value={selections.cathedralFlatRSIValue || ""} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder="Enter RSI value (min. 5.02)" value={selections.cathedralFlatRSIValue || ""} onChange={e => setSelections(prev => ({
                     ...prev,
                     cathedralFlatRSIValue: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -232,7 +232,7 @@ export default function Prescriptive9362Section({
 
             <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Above Grade Walls <span className="text-red-400">*</span></label>
-                <Input type="text" placeholder={selections.hasHrv === "with_hrv" ? 'Min RSI 2.97 w/ HRV (e.g., R20 Batt/2x6/16"OC)' : selections.hasHrv === "without_hrv" ? 'Min RSI 3.69 w/o HRV (e.g., R20 Batt/2x6/16"OC)' : 'Min RSI 2.97 w/ HRV, 3.69 w/o HRV (e.g., R20 Batt/2x6/16"OC)'} value={selections.wallRSI} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder={selections.hasHrv === "with_hrv" ? 'Min RSI 2.97 w/ HRV (e.g., R20 Batt/2x6/16"OC)' : selections.hasHrv === "without_hrv" ? 'Min RSI 3.69 w/o HRV (e.g., R20 Batt/2x6/16"OC)' : 'Min RSI 2.97 w/ HRV, 3.69 w/o HRV (e.g., R20 Batt/2x6/16"OC)'} value={selections.wallRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     wallRSI: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -253,7 +253,7 @@ export default function Prescriptive9362Section({
 
             <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Below Grade Walls (Foundation Walls) <span className="text-red-400">*</span></label>
-                <Input type="text" placeholder={selections.hasHrv === "with_hrv" ? "Min RSI 2.98 (with HRV, e.g., R12 Batt/2x4/24\"OC)" : selections.hasHrv === "without_hrv" ? "Min RSI 3.46 (without HRV, e.g., R12 Batt/2x4/24\"OC)" : "Select HRV option first"} value={selections.belowGradeRSI} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder={selections.hasHrv === "with_hrv" ? "Min RSI 2.98 (with HRV, e.g., R12 Batt/2x4/24\"OC)" : selections.hasHrv === "without_hrv" ? "Min RSI 3.46 (without HRV, e.g., R12 Batt/2x4/24\"OC)" : "Select HRV option first"} value={selections.belowGradeRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     belowGradeRSI: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -331,7 +331,7 @@ export default function Prescriptive9362Section({
 
             {selections.floorsSlabsSelected.includes("heatedFloors") && <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Heated Floors <span className="text-red-400">*</span></label>
-                <Input type="text" placeholder={`Min RSI ${selections.province === "saskatchewan" ? "2.84 (R-16.1)" : "1.34 (R-7.6)"} for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.inFloorHeatRSI} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder={`Min RSI ${selections.province === "saskatchewan" ? "2.84 (R-16.1)" : "1.34 (R-7.6)"} for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.inFloorHeatRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     inFloorHeatRSI: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -352,7 +352,7 @@ export default function Prescriptive9362Section({
 
             {selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting") && <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Slab on grade with integral Footing <span className="text-red-400">*</span></label>
-                <Input type="text" placeholder="Min RSI 2.84 or N/A" value={selections.slabOnGradeIntegralFootingRSI} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder="Min RSI 2.84 or N/A" value={selections.slabOnGradeIntegralFootingRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     slabOnGradeIntegralFootingRSI: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -367,7 +367,7 @@ export default function Prescriptive9362Section({
 
             {selections.floorsSlabsSelected.includes("floorsOverUnheatedSpaces") && <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Floors over Unheated Spaces (Cantilevers or Exposed Floors) <span className="text-red-400">*</span></label>
-                <Input type="text" placeholder="Min RSI 5.02" value={selections.floorsOverUnheatedSpacesRSI} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder="Min RSI 5.02" value={selections.floorsOverUnheatedSpacesRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     floorsOverUnheatedSpacesRSI: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -376,7 +376,7 @@ export default function Prescriptive9362Section({
 
             {selections.floorsSlabsSelected.includes("unheatedBelowFrost") && <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Unheated Floor Below Frost Line <span className="text-red-400">*</span></label>
-                <Input type="text" placeholder="Enter RSI value or 'uninsulated'" value={selections.unheatedFloorBelowFrostRSI} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder="Enter RSI value or 'uninsulated'" value={selections.unheatedFloorBelowFrostRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     unheatedFloorBelowFrostRSI: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -392,7 +392,7 @@ export default function Prescriptive9362Section({
 
             {selections.floorsSlabsSelected.includes("unheatedAboveFrost") && <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Unheated Floor Above Frost Line <span className="text-red-400">*</span></label>
-                <Input type="number" step="0.01" min="0" placeholder="Minimum RSI 1.96" value={selections.unheatedFloorAboveFrostRSI} onChange={e => setSelections(prev => ({
+                <Input required type="number" step="0.01" min="0" placeholder="Minimum RSI 1.96" value={selections.unheatedFloorAboveFrostRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     unheatedFloorAboveFrostRSI: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -406,7 +406,7 @@ export default function Prescriptive9362Section({
 
             <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Window & Door U-Value <span className="text-red-400">*</span></label>
-                <Input type="text" placeholder="Input Range of U-values - Max U-Value 1.61 W/(m²·K) or Min Energy Rating ≥ 25" value={selections.windowUValue} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder="Input Range of U-values - Max U-Value 1.61 W/(m²·K) or Min Energy Rating ≥ 25" value={selections.windowUValue} onChange={e => setSelections(prev => ({
                     ...prev,
                     windowUValue: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -436,14 +436,14 @@ export default function Prescriptive9362Section({
                 <label className="text-sm font-medium text-slate-100">Does the house have skylights? <span className="text-red-400">*</span></label>
                 <div className="flex gap-4">
                     <label className="flex items-center gap-2">
-                        <input type="radio" name="hasSkylights-9362" value="yes" checked={selections.hasSkylights === "yes"} onChange={e => setSelections(prev => ({
+                        <input required type="radio" name="hasSkylights-9362" value="yes" checked={selections.hasSkylights === "yes"} onChange={e => setSelections(prev => ({
                             ...prev,
                             hasSkylights: e.target.value
                         }))} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Yes</span>
                     </label>
                     <label className="flex items-center gap-2">
-                        <input type="radio" name="hasSkylights-9362" value="no" checked={selections.hasSkylights === "no"} onChange={e => setSelections(prev => ({
+                        <input required type="radio" name="hasSkylights-9362" value="no" checked={selections.hasSkylights === "no"} onChange={e => setSelections(prev => ({
                             ...prev,
                             hasSkylights: e.target.value
                         }))} className="w-4 h-4 text-primary" />
@@ -460,7 +460,7 @@ export default function Prescriptive9362Section({
 
             {selections.hasSkylights === "yes" && <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Skylight U-Value <span className="text-red-400">*</span></label>
-                <Input type="number" step="0.01" min="0" placeholder={`Enter U-value (maximum ${selections.province === "alberta" && selections.climateZone === "7B" ? "2.41" : "2.75"} W/(m²·K))`} value={selections.skylightUValue} onChange={e => setSelections(prev => ({
+                <Input required type="number" step="0.01" min="0" placeholder={`Enter U-value (maximum ${selections.province === "alberta" && selections.climateZone === "7B" ? "2.41" : "2.75"} W/(m²·K))`} value={selections.skylightUValue} onChange={e => setSelections(prev => ({
                     ...prev,
                     skylightUValue: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -623,7 +623,7 @@ export default function Prescriptive9362Section({
                         </div>
                     </InfoButton>
                 </div>
-                <Input type="text" placeholder={`Min ${selections.province === "saskatchewan" ? "3.2" : "3.0"} ACH50 for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.airtightness} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder={`Min ${selections.province === "saskatchewan" ? "3.2" : "3.0"} ACH50 for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.airtightness} onChange={e => setSelections(prev => ({
                     ...prev,
                     airtightness: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -681,7 +681,7 @@ export default function Prescriptive9362Section({
                 {/* Mid-Construction Blower Door Test Checkbox */}
                 <div className="space-y-3 pt-4 border-t border-border/20">
                     <div className="flex items-start gap-3">
-                        <input type="checkbox" id="midConstructionBlowerDoor-9362" checked={selections.midConstructionBlowerDoorPlanned} onChange={e => setSelections(prev => ({
+                        <input required type="checkbox" id="midConstructionBlowerDoor-9362" checked={selections.midConstructionBlowerDoorPlanned} onChange={e => setSelections(prev => ({
                             ...prev,
                             midConstructionBlowerDoorPlanned: e.target.checked
                         }))} className="w-4 h-4 text-primary mt-1" />
@@ -716,7 +716,7 @@ export default function Prescriptive9362Section({
 
             <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Heating Type <span className="text-red-400">*</span></label>
-                <Select value={selections.heatingType} onValueChange={value => setSelections(prev => ({
+                <Select required value={selections.heatingType} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     heatingType: value
                 }))}>
@@ -742,7 +742,7 @@ export default function Prescriptive9362Section({
 
             {selections.heatingType && <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Heating Efficiency <span className="text-red-400">*</span></label>
-                <Input type="text" placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.heatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.heatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
                     ...prev,
                     heatingEfficiency: e.target.value
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -775,7 +775,7 @@ export default function Prescriptive9362Section({
             {selections.heatingType === 'boiler' && <div className="space-y-4">
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Are you installing an indirect tank? <span className="text-red-400">*</span></label>
-                    <Select value={selections.indirectTank} onValueChange={value => setSelections(prev => ({
+                    <Select required value={selections.indirectTank} onValueChange={value => setSelections(prev => ({
                         ...prev,
                         indirectTank: value
                     }))}>
@@ -791,7 +791,7 @@ export default function Prescriptive9362Section({
 
                 {selections.indirectTank === 'yes' && <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Indirect tank size (gallons) <span className="text-red-400">*</span></label>
-                    <Input type="number" placeholder="Enter tank size in gallons" value={selections.indirectTankSize} onChange={e => setSelections(prev => ({
+                    <Input required type="number" placeholder="Enter tank size in gallons" value={selections.indirectTankSize} onChange={e => setSelections(prev => ({
                         ...prev,
                         indirectTankSize: e.target.value
                     }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -800,7 +800,7 @@ export default function Prescriptive9362Section({
 
             <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Are you installing cooling/air conditioning? <span className="text-red-400">*</span></label>
-                <Select value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
+                <Select required value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     coolingApplicable: value
                 }))}>
@@ -822,7 +822,7 @@ export default function Prescriptive9362Section({
                     <label className="text-sm font-medium text-slate-100">Will there be a separate heating system for the secondary suite? <span className="text-red-400">*</span></label>
                     <div className="flex gap-4">
                         <label className="flex items-center gap-2">
-                            <input type="radio" name="hasSecondaryHeating" value="yes" checked={selections.hasSecondaryHeating === "yes"} onChange={e => setSelections(prev => ({
+                            <input required type="radio" name="hasSecondaryHeating" value="yes" checked={selections.hasSecondaryHeating === "yes"} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 hasSecondaryHeating: e.target.value,
                                 secondaryHeatingType: "",
@@ -834,7 +834,7 @@ export default function Prescriptive9362Section({
                             <span className="text-sm text-slate-100">Yes</span>
                         </label>
                         <label className="flex items-center gap-2">
-                            <input type="radio" name="hasSecondaryHeating" value="no" checked={selections.hasSecondaryHeating === "no"} onChange={e => setSelections(prev => ({
+                            <input required type="radio" name="hasSecondaryHeating" value="no" checked={selections.hasSecondaryHeating === "no"} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 hasSecondaryHeating: e.target.value,
                                 secondaryHeatingType: "",
@@ -850,7 +850,7 @@ export default function Prescriptive9362Section({
                 {selections.hasSecondaryHeating === "yes" && <>
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Secondary Suite Heating Type <span className="text-red-400">*</span></label>
-                        <Select value={selections.secondaryHeatingType} onValueChange={value => setSelections(prev => ({
+                        <Select required value={selections.secondaryHeatingType} onValueChange={value => setSelections(prev => ({
                             ...prev,
                             secondaryHeatingType: value,
                             secondaryHeatingEfficiency: "",
@@ -871,7 +871,7 @@ export default function Prescriptive9362Section({
 
                     {selections.secondaryHeatingType && <div className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Secondary Suite Heating Efficiency <span className="text-red-400">*</span></label>
-                        <Input type="text" placeholder={selections.secondaryHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.secondaryHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.secondaryHeatingEfficiency} onChange={e => setSelections(prev => ({
+                        <Input required type="text" placeholder={selections.secondaryHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.secondaryHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.secondaryHeatingEfficiency} onChange={e => setSelections(prev => ({
                             ...prev,
                             secondaryHeatingEfficiency: e.target.value
                         }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -906,7 +906,7 @@ export default function Prescriptive9362Section({
                     {selections.secondaryHeatingType === 'boiler' && <div className="space-y-4">
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-100">Are you installing an indirect tank for the secondary suite? <span className="text-red-400">*</span></label>
-                            <Select value={selections.secondaryIndirectTank} onValueChange={value => setSelections(prev => ({
+                            <Select required value={selections.secondaryIndirectTank} onValueChange={value => setSelections(prev => ({
                                 ...prev,
                                 secondaryIndirectTank: value
                             }))}>
@@ -922,7 +922,7 @@ export default function Prescriptive9362Section({
 
                         {selections.secondaryIndirectTank === 'yes' && <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-100">Secondary Suite Indirect Tank Size (Gallons) <span className="text-red-400">*</span></label>
-                            <Input type="text" placeholder="Enter tank size in gallons (e.g., 40, 50, 60, 80)" value={selections.secondaryIndirectTankSize} onChange={e => setSelections(prev => ({
+                            <Input required type="text" placeholder="Enter tank size in gallons (e.g., 40, 50, 60, 80)" value={selections.secondaryIndirectTankSize} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 secondaryIndirectTankSize: e.target.value
                             }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -934,7 +934,7 @@ export default function Prescriptive9362Section({
             {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <>
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Service Water Heater Type <span className="text-red-400">*</span></label>
-                    <Select value={selections.waterHeaterType} onValueChange={value => {
+                    <Select required value={selections.waterHeaterType} onValueChange={value => {
                         setSelections(prev => ({
                             ...prev,
                             waterHeaterType: value,
@@ -957,7 +957,7 @@ export default function Prescriptive9362Section({
 
                 {selections.waterHeaterType === "other" && <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Specify Other Water Heater Type <span className="text-red-400">*</span></label>
-                    <Input type="text" placeholder="Please specify the water heater type" value={selections.otherWaterHeaterType || ""} onChange={e => setSelections(prev => ({
+                    <Input required type="text" placeholder="Please specify the water heater type" value={selections.otherWaterHeaterType || ""} onChange={e => setSelections(prev => ({
                         ...prev,
                         otherWaterHeaterType: e.target.value
                     }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -965,7 +965,7 @@ export default function Prescriptive9362Section({
 
                 {selections.waterHeaterType && <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Service Water Heater Efficiency <span className="text-red-400">*</span></label>
-                    <Input type="text" placeholder={(() => {
+                    <Input required type="text" placeholder={(() => {
                         switch (selections.waterHeaterType) {
                             case "gas-storage":
                                 return "Min UEF 0.60-0.81 for Gas Storage Tank";
@@ -997,7 +997,7 @@ export default function Prescriptive9362Section({
                     <label className="text-sm font-medium text-slate-100">Will there be a second hot water system for the secondary suite? <span className="text-red-400">*</span></label>
                     <div className="flex gap-4">
                         <label className="flex items-center gap-2">
-                            <input type="radio" name="hasSecondaryWaterHeater" value="yes" checked={selections.hasSecondaryWaterHeater === "yes"} onChange={e => setSelections(prev => ({
+                            <input required type="radio" name="hasSecondaryWaterHeater" value="yes" checked={selections.hasSecondaryWaterHeater === "yes"} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 hasSecondaryWaterHeater: e.target.value,
                                 secondaryWaterHeaterSameAsMain: "",
@@ -1008,7 +1008,7 @@ export default function Prescriptive9362Section({
                             <span className="text-sm text-slate-100">Yes</span>
                         </label>
                         <label className="flex items-center gap-2">
-                            <input type="radio" name="hasSecondaryWaterHeater" value="no" checked={selections.hasSecondaryWaterHeater === "no"} onChange={e => setSelections(prev => ({
+                            <input required type="radio" name="hasSecondaryWaterHeater" value="no" checked={selections.hasSecondaryWaterHeater === "no"} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 hasSecondaryWaterHeater: e.target.value,
                                 secondaryWaterHeaterSameAsMain: "",
@@ -1025,7 +1025,7 @@ export default function Prescriptive9362Section({
                         <label className="text-sm font-medium text-slate-100">Will it be the same as the main water heater system? <span className="text-red-400">*</span></label>
                         <div className="flex gap-4">
                             <label className="flex items-center gap-2">
-                                <input type="radio" name="secondaryWaterHeaterSameAsMain" value="yes" checked={selections.secondaryWaterHeaterSameAsMain === "yes"} onChange={e => setSelections(prev => ({
+                                <input required type="radio" name="secondaryWaterHeaterSameAsMain" value="yes" checked={selections.secondaryWaterHeaterSameAsMain === "yes"} onChange={e => setSelections(prev => ({
                                     ...prev,
                                     secondaryWaterHeaterSameAsMain: e.target.value,
                                     secondaryWaterHeater: "",
@@ -1034,7 +1034,7 @@ export default function Prescriptive9362Section({
                                 <span className="text-sm text-slate-100">Yes</span>
                             </label>
                             <label className="flex items-center gap-2">
-                                <input type="radio" name="secondaryWaterHeaterSameAsMain" value="no" checked={selections.secondaryWaterHeaterSameAsMain === "no"} onChange={e => setSelections(prev => ({
+                                <input required type="radio" name="secondaryWaterHeaterSameAsMain" value="no" checked={selections.secondaryWaterHeaterSameAsMain === "no"} onChange={e => setSelections(prev => ({
                                     ...prev,
                                     secondaryWaterHeaterSameAsMain: e.target.value
                                 }))} className="w-4 h-4 text-primary" />
@@ -1046,7 +1046,7 @@ export default function Prescriptive9362Section({
                     {selections.secondaryWaterHeaterSameAsMain === "no" && <>
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-100">Secondary Suite Water Heater Type <span className="text-red-400">*</span></label>
-                            <Select value={selections.secondaryWaterHeaterType} onValueChange={value => {
+                            <Select required value={selections.secondaryWaterHeaterType} onValueChange={value => {
                                 setSelections(prev => ({
                                     ...prev,
                                     secondaryWaterHeaterType: value,
@@ -1067,7 +1067,7 @@ export default function Prescriptive9362Section({
 
                         {selections.secondaryWaterHeaterType && <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-100">Secondary Suite Water Heater Efficiency <span className="text-red-400">*</span></label>
-                            <Input type="text" placeholder={(() => {
+                            <Input required type="text" placeholder={(() => {
                                 switch (selections.secondaryWaterHeaterType) {
                                     case "gas-storage":
                                         return "Enter efficiency for Gas Storage Tank (UEF ≥0.60-0.81)";
@@ -1123,7 +1123,7 @@ export default function Prescriptive9362Section({
                         </div>
                     </InfoButton>
                 </div>
-                <Select value={selections.hasDWHR} onValueChange={value => setSelections(prev => ({
+                <Select required value={selections.hasDWHR} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     hasDWHR: value
                 }))}>
