@@ -97,6 +97,7 @@ export type Database = {
           building_type: string | null
           building_volume: number | null
           city: string | null
+          climate_zone: string | null
           compliance_status: string | null
           cooling_efficiency: number | null
           cooling_points: number | null
@@ -117,6 +118,7 @@ export type Database = {
           hrv_erv_type: string | null
           id: string
           location: string | null
+          occupancy_class: string | null
           performance_compliance_result: string | null
           postal_code: string | null
           project_name: string
@@ -150,6 +152,7 @@ export type Database = {
           building_type?: string | null
           building_volume?: number | null
           city?: string | null
+          climate_zone?: string | null
           compliance_status?: string | null
           cooling_efficiency?: number | null
           cooling_points?: number | null
@@ -170,6 +173,7 @@ export type Database = {
           hrv_erv_type?: string | null
           id?: string
           location?: string | null
+          occupancy_class?: string | null
           performance_compliance_result?: string | null
           postal_code?: string | null
           project_name: string
@@ -203,6 +207,7 @@ export type Database = {
           building_type?: string | null
           building_volume?: number | null
           city?: string | null
+          climate_zone?: string | null
           compliance_status?: string | null
           cooling_efficiency?: number | null
           cooling_points?: number | null
@@ -223,6 +228,7 @@ export type Database = {
           hrv_erv_type?: string | null
           id?: string
           location?: string | null
+          occupancy_class?: string | null
           performance_compliance_result?: string | null
           postal_code?: string | null
           project_name?: string
