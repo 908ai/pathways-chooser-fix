@@ -4,64 +4,62 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Save, FileText, AlertTriangle, Info, Upload, X, Download, File } from 'lucide-react';
+import { Save, FileText, AlertTriangle, Info } from 'lucide-react';
 import FileManager from '@/components/FileManager';
 
 interface ProjectSummaryData {
   projectName: string;
-  buildingType: string;
-  location: string;
-  floorArea: number;
-  selectedPathway: 'prescriptive' | 'performance';
+  buildingType: string | null;
+  location: string | null;
+  floorArea: number | null;
+  selectedPathway: 'prescriptive' | 'performance' | string | null;
   
   // Building Envelope
-  atticRsi: number;
-  atticPoints: number;
-  wallRsi: number;
-  wallPoints: number;
-  belowGradeRsi: number;
-  belowGradePoints: number;
-  floorRsi: number;
-  floorPoints: number;
-  windowUValue: number;
-  windowPoints: number;
+  atticRsi: number | string | null;
+  atticPoints: number | null;
+  wallRsi: number | string | null;
+  wallPoints: number | null;
+  belowGradeRsi: number | string | null;
+  belowGradePoints: number | null;
+  floorRsi: number | string | null;
+  floorPoints: number | null;
+  windowUValue: number | string | null;
+  windowPoints: number | null;
   
   // Mechanical Systems
-  heatingSystemType: string;
-  heatingEfficiency: number;
+  heatingSystemType: string | null;
+  heatingEfficiency: number | string | null;
   heatingMakeModel?: string;
-  heatingPoints: number;
-  coolingSystemType: string;
-  coolingEfficiency: number;
-  coolingPoints: number;
-  waterHeatingType: string;
-  waterHeatingEfficiency: number;
-  waterHeatingPoints: number;
-  hrvErvType: string;
-  hrvErvEfficiency: number;
-  hrvErvPoints: number;
+  heatingPoints: number | null;
+  coolingSystemType: string | null;
+  coolingEfficiency: number | string | null;
+  coolingPoints: number | null;
+  waterHeatingType: string | null;
+  waterHeatingEfficiency: number | string | null;
+  waterHeatingPoints: number | null;
+  hrvErvType: string | null;
+  hrvErvEfficiency: number | string | null;
+  hrvErvPoints: number | null;
   
   // Building Performance
-  airtightnessAl: number;
-  airtightnessPoints: number;
-  buildingVolume: number;
-  volumePoints: number;
+  airtightnessAl: number | string | null;
+  airtightnessPoints: number | null;
+  buildingVolume: number | string | null;
+  volumePoints: number | null;
   
   // Performance Path Specific
-  annualEnergyConsumption?: number;
-  performanceComplianceResult?: string;
+  annualEnergyConsumption?: number | null;
+  performanceComplianceResult?: string | null;
   
   // Compliance Results
-  totalPoints: number;
-  complianceStatus: 'pass' | 'fail' | 'submitted';
-  upgradeCosts: number;
+  totalPoints: number | null;
+  complianceStatus: 'pass' | 'fail' | 'submitted' | string | null;
+  upgradeCosts: number | null;
   
-  // Calculator specific fields
+  // Calculator specific fields from calculatorData that are used in the form
   streetAddress?: string;
   unitNumber?: string;
   city?: string;
@@ -70,6 +68,49 @@ interface ProjectSummaryData {
   occupancyClass?: string;
   climateZone?: string;
   uploadedFiles?: any[];
+  firstName?: string;
+  lastName?: string;
+  company?: string;
+  phoneNumber?: string;
+  email?: string;
+  compliancePath?: string;
+  frontDoorOrientation?: string;
+  energuidePathway?: string;
+  ceilingsAtticRSI?: string;
+  wallRSI?: string;
+  floorsUnheatedRSI?: string;
+  floorsGarageRSI?: string;
+  heatedFloorsRSI?: string;
+  slabOnGradeRSI?: string;
+  slabOnGradeIntegralFootingRSI?: string;
+  floorsOverUnheatedSpacesRSI?: string;
+  belowGradeRSI?: string;
+  skylightUValue?: string;
+  hasCathedralOrFlatRoof?: string;
+  airtightness?: string;
+  midConstructionBlowerDoorPlanned?: boolean;
+  hasHrvErv9365?: string;
+  hrvMakeModel?: string;
+  coolingMakeModel?: string;
+  waterHeatingMakeModel?: string;
+  indirectTank?: string;
+  indirectTankSize?: string;
+  interestedCertifications?: string[];
+  floorsSlabsSelected?: string[];
+  hasInFloorHeat9365?: string;
+  waterHeater?: string;
+  secondaryHeatingType?: string;
+  secondaryHeatingEfficiency?: string;
+  secondaryIndirectTank?: string;
+  secondaryIndirectTankSize?: string;
+  hasSecondaryHeating?: string;
+  hasSecondaryWaterHeater?: string;
+  secondaryWaterHeaterSameAsMain?: string;
+  secondaryWaterHeaterType?: string;
+  secondaryWaterHeater?: string;
+  hrvEfficiency?: string;
+  coolingApplicable?: string;
+  additionalInfo?: string;
 }
 
 interface CalculatorData {
@@ -98,22 +139,6 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   
-  // Function to format location from calculator data
-  const getFormattedLocation = () => {
-    if (calculatorData?.streetAddress) {
-      const addressParts = [
-        calculatorData.streetAddress,
-        calculatorData.unitNumber,
-        calculatorData.city,
-        calculatorData.province,
-        calculatorData.postalCode,
-      ].filter(Boolean);
-      return addressParts.join(', ');
-    }
-    return '';
-  };
-  
-  // Function to auto-generate project name
   const getAutoGeneratedProjectName = () => {
     const address = calculatorData?.streetAddress || calculatorData?.city;
     const company = calculatorData?.company;
@@ -132,7 +157,17 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
     return 'New NBC Project';
   };
   
-  // Function to get pathway display name
+  const [formData, setFormData] = useState<Partial<ProjectSummaryData>>({
+    ...calculatorData,
+    projectName: getAutoGeneratedProjectName(),
+  });
+
+  useEffect(() => {
+    if (autoSave) {
+      handleSave();
+    }
+  }, [autoSave]);
+
   const getPathwayDisplayName = () => {
     const pathwayMap = {
       '9365': 'NBC 9.36.5 Performance Path',
@@ -141,12 +176,11 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
       '9368': 'NBC 9.36.8 Tiered Prescriptive Path'
     };
     
-    const selectedPath = calculatorData?.compliancePath;
+    const selectedPath = formData?.compliancePath;
     if (selectedPath && pathwayMap[selectedPath as keyof typeof pathwayMap]) {
       return `${pathwayMap[selectedPath as keyof typeof pathwayMap]} Summary`;
     }
     
-    // Fallback based on selected pathway if compliance path not available
     if (formData.selectedPathway === 'performance') {
       return 'NBC 9.36 Performance Path Summary';
     } else if (formData.selectedPathway === 'prescriptive') {
@@ -155,18 +189,6 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
     
     return 'NBC 9.36 Pathway Summary';
   };
-  
-  const [formData, setFormData] = useState<Partial<ProjectSummaryData>>({
-    ...calculatorData,
-    projectName: getAutoGeneratedProjectName(),
-    location: getFormattedLocation(),
-  });
-
-  useEffect(() => {
-    if (autoSave) {
-      handleSave();
-    }
-  }, [autoSave]);
 
   const handleInputChange = (field: keyof ProjectSummaryData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -194,7 +216,6 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
     setLoading(true);
     
     try {
-      // First, check if user has company information and if it needs updating
       const { data: existingCompanies, error: companyError } = await supabase
         .from('companies')
         .select('*')
@@ -203,16 +224,16 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
       if (companyError) throw companyError;
       
       const shouldUpdateCompany = existingCompanies.length === 0 || 
-        (calculatorData?.company || calculatorData?.firstName || calculatorData?.lastName || calculatorData?.phoneNumber);
+        (formData?.company || formData?.firstName || formData?.lastName || formData?.phoneNumber);
       
-      if (shouldUpdateCompany && (calculatorData?.company || calculatorData?.firstName || calculatorData?.lastName)) {
-        const companyName = calculatorData?.company || 
-                           (calculatorData?.firstName && calculatorData?.lastName ? 
-                            `${calculatorData.firstName} ${calculatorData.lastName}` : 
+      if (shouldUpdateCompany && (formData?.company || formData?.firstName || formData?.lastName)) {
+        const companyName = formData?.company || 
+                           (formData?.firstName && formData?.lastName ? 
+                            `${formData.firstName} ${formData.lastName}` : 
                             existingCompanies[0]?.company_name || 'My Company');
         
-        const contactEmail = user.email || calculatorData?.email || existingCompanies[0]?.contact_email;
-        const phone = calculatorData?.phoneNumber || existingCompanies[0]?.phone;
+        const contactEmail = user.email || formData?.email || existingCompanies[0]?.contact_email;
+        const phone = formData?.phoneNumber || existingCompanies[0]?.phone;
         const address = [formData.streetAddress, formData.city, formData.province].filter(Boolean).join(', ') || existingCompanies[0]?.address;
 
         if (existingCompanies.length === 0) {
@@ -232,10 +253,10 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
           });
         } else {
           const updateData: any = {};
-          if (calculatorData?.company && calculatorData.company !== existingCompanies[0]?.company_name) {
+          if (formData?.company && formData.company !== existingCompanies[0]?.company_name) {
             updateData.company_name = companyName;
           }
-          if (calculatorData?.phoneNumber && calculatorData.phoneNumber !== existingCompanies[0]?.phone) {
+          if (formData?.phoneNumber && formData.phoneNumber !== existingCompanies[0]?.phone) {
             updateData.phone = phone;
           }
           if (address && address !== existingCompanies[0]?.address) {
@@ -256,8 +277,8 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
       }
 
       let uploadedFileData: any[] = [];
-      if (calculatorData?.uploadedFiles && calculatorData.uploadedFiles.length > 0) {
-        uploadedFileData = calculatorData.uploadedFiles.map(file => ({
+      if (formData?.uploadedFiles && formData.uploadedFiles.length > 0) {
+        uploadedFileData = formData.uploadedFiles.map(file => ({
           name: file.name,
           size: file.size,
           type: file.type,
@@ -401,8 +422,8 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                   <div className="flex justify-between">
                     <span className="text-sm text-muted-foreground">Applicant Name:</span>
                     <span className="font-medium">
-                      {calculatorData?.firstName && calculatorData?.lastName ? 
-                        `${calculatorData.firstName} ${calculatorData.lastName}` : 
+                      {formData?.firstName && formData?.lastName ? 
+                        `${formData.firstName} ${formData.lastName}` : 
                         'Not specified'}
                     </span>
                   </div>
@@ -410,29 +431,29 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                   <div className="flex justify-between">
                     <span className="text-sm text-muted-foreground">Applicant Phone:</span>
                     <span className="font-medium">
-                      {calculatorData?.phoneNumber || 'Not specified'}
+                      {formData?.phoneNumber || 'Not specified'}
                     </span>
                   </div>
                   
                   <div className="flex justify-between">
                     <span className="text-sm text-muted-foreground">Company Name:</span>
                     <span className="font-medium">
-                      {calculatorData?.company || 'Not specified'}
+                      {formData?.company || 'Not specified'}
                     </span>
                   </div>
                   
                   <div className="flex justify-between">
                     <span className="text-sm text-muted-foreground">Building Address:</span>
                     <span className="font-medium">
-                      {[calculatorData?.streetAddress, calculatorData?.unitNumber, calculatorData?.city, calculatorData?.postalCode].filter(Boolean).join(', ') || 'Not specified'}
+                      {[formData?.streetAddress, formData?.unitNumber, formData?.city, formData?.postalCode].filter(Boolean).join(', ') || 'Not specified'}
                     </span>
                   </div>
                   
                   <div className="flex justify-between">
                     <span className="text-sm text-muted-foreground">Province:</span>
                     <span className="font-medium">
-                      {calculatorData?.province ? 
-                        calculatorData.province.charAt(0).toUpperCase() + calculatorData.province.slice(1) : 
+                      {formData?.province ? 
+                        formData.province.charAt(0).toUpperCase() + formData.province.slice(1) : 
                         'Not specified'}
                     </span>
                   </div>
@@ -455,7 +476,7 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                   <div className="flex justify-between">
                     <span className="text-sm text-muted-foreground">Occupancy Class:</span>
                     <span className="font-medium">
-                      {calculatorData?.occupancyClass || 'Not specified'}
+                      {formData?.occupancyClass || 'Not specified'}
                     </span>
                   </div>
                   
@@ -470,7 +491,7 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                     <div className="flex justify-between">
                       <span className="text-sm text-muted-foreground">Front Door Orientation:</span>
                       <span className="font-medium">
-                        {calculatorData?.frontDoorOrientation || 'Not specified'}
+                        {formData?.frontDoorOrientation || 'Not specified'}
                       </span>
                     </div>
                    )}
@@ -480,11 +501,11 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                      <span className="text-sm text-muted-foreground">Building Plans Status:</span>
                      <div className="text-right">
                        <span className="font-medium">
-                         {calculatorData?.uploadedFiles && calculatorData.uploadedFiles.length > 0 ? 
-                           `${calculatorData.uploadedFiles.length} file(s) uploaded` : 
+                         {formData?.uploadedFiles && formData.uploadedFiles.length > 0 ? 
+                           `${formData.uploadedFiles.length} file(s) uploaded` : 
                            'No files uploaded yet'}
                        </span>
-                       {(!calculatorData?.uploadedFiles || calculatorData.uploadedFiles.length === 0) && (
+                       {(!formData?.uploadedFiles || formData.uploadedFiles.length === 0) && (
                          <div className="text-xs text-orange-600 mt-1">
                            Building plans upload pending
                          </div>
@@ -493,13 +514,13 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                    </div>
                    
                    {/* Uploaded Files List */}
-                   {calculatorData?.uploadedFiles && calculatorData.uploadedFiles.length > 0 && (
+                   {formData?.uploadedFiles && formData.uploadedFiles.length > 0 && (
                      <div className="mt-4 space-y-4">
                        {/* Building Plans Section */}
                        <div className="space-y-2">
                          <span className="text-sm font-medium text-muted-foreground">Building Plans:</span>
                          <div className="space-y-2">
-                           {calculatorData.uploadedFiles
+                           {formData.uploadedFiles
                              .filter((file: any) => !file.name?.toLowerCase().includes('window') && !file.name?.toLowerCase().includes('door'))
                              .map((file: any, index: number) => (
                              <div key={`building-${index}`} className="flex items-center gap-2 p-2 bg-muted/30 rounded-md">
@@ -519,13 +540,13 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                        </div>
 
                        {/* Window Package Section */}
-                       {calculatorData.uploadedFiles.some((file: any) => 
+                       {formData.uploadedFiles.some((file: any) => 
                          file.name?.toLowerCase().includes('window') || file.name?.toLowerCase().includes('door')
                        ) && (
                          <div className="space-y-2">
                            <span className="text-sm font-medium text-muted-foreground">Window/Door Packages:</span>
                            <div className="space-y-2">
-                             {calculatorData.uploadedFiles
+                             {formData.uploadedFiles
                                .filter((file: any) => file.name?.toLowerCase().includes('window') || file.name?.toLowerCase().includes('door'))
                                .map((file: any, index: number) => (
                                <div key={`window-${index}`} className="flex items-center gap-2 p-2 bg-blue-50/50 border border-blue-100 rounded-md">
@@ -546,15 +567,15 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                        )}
 
                        {/* All other documents */}
-                       {calculatorData.uploadedFiles.some((file: any) => 
+                       {formData.uploadedFiles.some((file: any) => 
                          !file.name?.toLowerCase().includes('window') && 
                          !file.name?.toLowerCase().includes('door') &&
                          file.name // Only show files that have names and don't fall into other categories
-                       ) === false && calculatorData.uploadedFiles.length > 0 && (
+                       ) === false && formData.uploadedFiles.length > 0 && (
                          <div className="space-y-2">
                            <span className="text-sm font-medium text-muted-foreground">Other Documents:</span>
                            <div className="space-y-2">
-                             {calculatorData.uploadedFiles.map((file: any, index: number) => (
+                             {formData.uploadedFiles.map((file: any, index: number) => (
                                <div key={`other-${index}`} className="flex items-center gap-2 p-2 bg-muted/30 rounded-md">
                                  <FileText className="h-4 w-4 text-muted-foreground" />
                                  <div className="flex-1 min-w-0">
@@ -604,14 +625,9 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                       })()}
                       {(() => {
                         const allFiles = [...(formData.uploadedFiles || []), ...(calculatorData?.uploadedFiles || [])];
-                        console.log('Checking for window/door files in:', allFiles);
-                        console.log('File names:', allFiles.map(f => f.name || 'NO NAME'));
-                        console.log('Calculator uploadedFiles:', calculatorData?.uploadedFiles);
-                        console.log('Form uploadedFiles:', formData.uploadedFiles);
                         
                         const hasWindowDoorSchedule = allFiles.some((file: any) => {
                           if (!file || !file.name) {
-                            console.log('File missing name property:', file);
                             return false;
                           }
                           const fileName = file.name.toLowerCase();
@@ -621,13 +637,9 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                                             fileName.includes('schedule') ||
                                             fileName.includes('supplier') ||
                                             fileName.includes('spec') ||
-                                            // Check for common image/document extensions which might be schedules
                                             (fileName.includes('.pdf') || fileName.includes('.jpg') || fileName.includes('.png') || fileName.includes('.jpeg'));
-                          console.log(`File "${file.name}": hasKeywords=${hasKeywords}`);
                           return hasKeywords;
                         });
-                        
-                        console.log('hasWindowDoorSchedule:', hasWindowDoorSchedule);
                         
                         return !hasWindowDoorSchedule && (
                           <div className="flex items-center gap-2 text-orange-600">
@@ -643,25 +655,25 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                   <div className="space-y-2">
                     <h4 className="font-medium text-orange-800">Technical Specifications</h4>
                     <div className="space-y-1 text-sm">
-                      {(!calculatorData?.heatingMakeModel || calculatorData.heatingMakeModel === '') && (
+                      {(!formData?.heatingMakeModel || formData.heatingMakeModel === '') && (
                         <div className="flex items-center gap-2 text-orange-600">
                           <Info className="h-4 w-4" />
                           Heating system make/model pending
                         </div>
                       )}
-                      {(!calculatorData?.coolingMakeModel || calculatorData.coolingMakeModel === '') && (
+                      {(!formData?.coolingMakeModel || formData.coolingMakeModel === '') && (
                         <div className="flex items-center gap-2 text-orange-600">
                           <Info className="h-4 w-4" />
                           Cooling system make/model pending
                         </div>
                       )}
-                      {(!calculatorData?.waterHeatingMakeModel || calculatorData.waterHeatingMakeModel === '') && (
+                      {(!formData?.waterHeatingMakeModel || formData.waterHeatingMakeModel === '') && (
                         <div className="flex items-center gap-2 text-orange-600">
                           <Info className="h-4 w-4" />
                           Water heater make/model pending
                         </div>
                       )}
-                      {calculatorData?.hasHrvErv9365 === 'yes' && (!calculatorData?.hrvMakeModel || calculatorData.hrvMakeModel === '' || calculatorData.hrvMakeModel === '0') && (
+                      {formData?.hasHrvErv9365 === 'yes' && (!formData?.hrvMakeModel || formData.hrvMakeModel === '' || formData.hrvMakeModel === '0') && (
                         <div className="flex items-center gap-2 text-orange-600">
                           <Info className="h-4 w-4" />
                           HRV/ERV make/model pending
@@ -674,13 +686,13 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                   <div className="space-y-2">
                     <h4 className="font-medium text-orange-800">Missing Information</h4>
                     <div className="space-y-1 text-sm">
-                      {(!calculatorData?.province || calculatorData.province === '') && (
+                      {(!formData?.province || formData.province === '') && (
                         <div className="flex items-center gap-2 text-orange-600">
                           <Info className="h-4 w-4" />
                           Province/location details needed
                         </div>
                       )}
-                      {(!calculatorData?.frontDoorOrientation || calculatorData.frontDoorOrientation === '') && (
+                      {(!formData?.frontDoorOrientation || formData.frontDoorOrientation === '') && (
                         <div className="flex items-center gap-2 text-orange-600">
                           <Info className="h-4 w-4" />
                           Front door orientation needed
@@ -699,13 +711,13 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                   <div className="space-y-2">
                     <h4 className="font-medium text-orange-800">Optional Services</h4>
                     <div className="space-y-1 text-sm">
-                      {(!calculatorData?.interestedCertifications || calculatorData.interestedCertifications.length === 0) && (
+                      {(!formData?.interestedCertifications || formData.interestedCertifications.length === 0) && (
                         <div className="flex items-center gap-2 text-orange-500">
                           <Info className="h-4 w-4" />
                           Certification preferences not specified
                         </div>
                       )}
-                      {!calculatorData?.midConstructionBlowerDoorPlanned && (
+                      {!formData?.midConstructionBlowerDoorPlanned && (
                         <div className="flex items-center gap-2 text-orange-500">
                           <Info className="h-4 w-4" />
                           Mid-construction testing preference not set
@@ -747,7 +759,7 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                     <strong>Review Timeline:</strong> A review will take place within 1-2 days.
                   </p>
                 </div>
-                {calculatorData?.energuidePathway === 'yes' && (
+                {formData?.energuidePathway === 'yes' && (
                   <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-md">
                     <p className="text-sm text-orange-800">
                       <strong>EnerGuide Rating System (ERS) Notice:</strong> Performance modelling would be required for the ERS pathway. Please contact us for more details regarding this additional service.
@@ -765,43 +777,43 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                    <div className="space-y-3">
-                      {(calculatorData?.ceilingsAtticRSI || formData.atticRsi) && (
+                      {(formData?.ceilingsAtticRSI || formData.atticRsi) && (
                          <div className="flex justify-between">
                            <span className="text-sm text-muted-foreground">Attic/Ceiling (RSI):</span>
                           <span className="font-medium">
-                            {calculatorData?.ceilingsAtticRSI || formData.atticRsi}
+                            {formData?.ceilingsAtticRSI || formData.atticRsi}
                           </span>
                         </div>
                      )}
-                     {(calculatorData?.wallRSI || formData.wallRsi) && (
+                     {(formData?.wallRSI || formData.wallRsi) && (
                         <div className="flex justify-between">
                           <span className="text-sm text-muted-foreground">Wall (RSI):</span>
                           <span className="font-medium">
-                            {calculatorData?.wallRSI || formData.wallRsi}
+                            {formData?.wallRSI || formData.wallRsi}
                           </span>
                         </div>
                      )}
-                     {(calculatorData?.belowGradeRSI || formData.belowGradeRsi) && (
+                     {(formData?.belowGradeRSI || formData.belowGradeRsi) && (
                         <div className="flex justify-between">
                           <span className="text-sm text-muted-foreground">Below Grade Walls (RSI):</span>
                           <span className="font-medium">
-                            {calculatorData?.belowGradeRSI || formData.belowGradeRsi}
+                            {formData?.belowGradeRSI || formData.belowGradeRsi}
                           </span>
                         </div>
                      )}
-                       {calculatorData?.floorsSlabsSelected?.includes("slabOnGradeIntegralFooting") && (
+                       {formData?.floorsSlabsSelected?.includes("slabOnGradeIntegralFooting") && (
                          <div className="flex justify-between">
                            <span className="text-sm text-muted-foreground">Slab on Grade Integral Footing (RSI):</span>
                            <span className="font-medium">
-                             {calculatorData?.slabOnGradeIntegralFootingRSI || 'Not specified'}
+                             {formData?.slabOnGradeIntegralFootingRSI || 'Not specified'}
                            </span>
                          </div>
                        )}
-                     {calculatorData?.hasCathedralOrFlatRoof === 'yes' && calculatorData?.cathedralFlatRSI && (
+                     {formData?.hasCathedralOrFlatRoof === 'yes' && formData?.cathedralFlatRSI && (
                        <div className="flex justify-between">
                          <span className="text-sm text-muted-foreground">Cathedral/Flat Roof:</span>
                          <span className="font-medium">
-                           {calculatorData?.cathedralFlatRSI}
+                           {formData?.cathedralFlatRSI}
                          </span>
                        </div>
                      )}
@@ -809,11 +821,11 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                         <div className="flex justify-between">
                           <span className="text-sm text-muted-foreground">Airtightness (ACH50):</span>
                           <span className="font-medium">
-                            {formData.airtightnessAl || calculatorData?.airtightness}
+                            {formData.airtightnessAl || formData?.airtightness}
                           </span>
                         </div>
                      )}
-                     {calculatorData?.midConstructionBlowerDoorPlanned && (
+                     {formData?.midConstructionBlowerDoorPlanned && (
                        <div className="flex justify-between">
                          <span className="text-sm text-muted-foreground">Mid-Construction Test:</span>
                          <span className="font-medium text-green-600">
@@ -825,8 +837,8 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                         <span className="text-sm text-muted-foreground">Blower Door Test Required:</span>
                         <span className="font-medium">
                           {(() => {
-                            const airtightnessValue = parseFloat(formData.airtightnessAl || calculatorData?.airtightness || "0");
-                            const province = calculatorData?.province;
+                            const airtightnessValue = parseFloat(String(formData.airtightnessAl || formData?.airtightness || "0"));
+                            const province = formData?.province;
                             const minimumThreshold = province === "saskatchewan" ? 3.2 : 3.0;
                             
                             return airtightnessValue > 0 && airtightnessValue < minimumThreshold ? "Yes" : "No";
@@ -835,33 +847,33 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                       </div>
                    </div>
                    <div className="space-y-3">
-                      {(calculatorData?.floorsUnheatedRSI || calculatorData?.floorsOverUnheatedSpacesRSI) && (
+                      {(formData?.floorsUnheatedRSI || formData?.floorsOverUnheatedSpacesRSI) && (
                         <div className="flex justify-between">
                           <span className="text-sm text-muted-foreground">Floors Over Unheated Spaces:</span>
                           <span className="font-medium">
-                            {calculatorData?.floorsUnheatedRSI || calculatorData?.floorsOverUnheatedSpacesRSI}
+                            {formData?.floorsUnheatedRSI || formData?.floorsOverUnheatedSpacesRSI}
                           </span>
                         </div>
                       )}
-                      {calculatorData?.floorsGarageRSI && (
+                      {formData?.floorsGarageRSI && (
                         <div className="flex justify-between">
                           <span className="text-sm text-muted-foreground">Garage Floors:</span>
                           <span className="font-medium">
-                            {calculatorData?.floorsGarageRSI}
+                            {formData?.floorsGarageRSI}
                           </span>
                         </div>
                       )}
-                      {(calculatorData?.hasInFloorHeat9365 === 'yes' || calculatorData?.hasInFloorHeat9365 === 'no' || calculatorData?.heatedFloorsRSI) && (
+                      {(formData?.hasInFloorHeat9365 === 'yes' || formData?.hasInFloorHeat9365 === 'no' || formData?.heatedFloorsRSI) && (
                         <div className="flex justify-between">
                           <span className="text-sm text-muted-foreground">Heated Floors:</span>
                           <div className="text-right">
                             <span className="font-medium">
-                              {calculatorData?.hasInFloorHeat9365 === 'yes' ? 
-                                (calculatorData?.heatedFloorsRSI || 'To be specified') : 
-                                calculatorData?.hasInFloorHeat9365 === 'no' ? 'Not installing' : 
-                                calculatorData?.heatedFloorsRSI}
+                              {formData?.hasInFloorHeat9365 === 'yes' ? 
+                                (formData?.heatedFloorsRSI || 'To be specified') : 
+                                formData?.hasInFloorHeat9365 === 'no' ? 'Not installing' : 
+                                formData?.heatedFloorsRSI}
                             </span>
-                            {calculatorData?.hasInFloorHeat9365 === 'yes' && !calculatorData?.heatedFloorsRSI && (
+                            {formData?.hasInFloorHeat9365 === 'yes' && !formData?.heatedFloorsRSI && (
                               <div className="text-xs text-orange-600 mt-1">
                                 Insulation specifications needed
                               </div>
@@ -873,7 +885,7 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                        <span className="text-sm text-muted-foreground">Window U-Value:</span>
                        <div className="text-right">
                          <span className="font-medium">TBD</span>
-                         {(!calculatorData?.windowUValue || calculatorData?.windowUValue === '') && (
+                         {(!formData?.windowUValue || String(formData?.windowUValue) === '') && (
                            <div className="text-xs text-orange-600 mt-1">
                              Waiting for window specifications file upload
                            </div>
@@ -883,11 +895,11 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                          )}
                        </div>
                      </div>
-                      {calculatorData?.skylightUValue && (
+                      {formData?.skylightUValue && (
                         <div className="flex justify-between">
                           <span className="text-sm text-muted-foreground">Skylight U-Value:</span>
                           <span className="font-medium">
-                            {calculatorData?.skylightUValue}
+                            {formData?.skylightUValue}
                           </span>
                         </div>
                       )}
@@ -911,26 +923,26 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                          </span>
                        </div>
                     )}
-                      {calculatorData?.compliancePath === '9367' ? (
-                        (calculatorData?.heatingMakeModel || calculatorData?.heatingEfficiency) && (
+                      {formData?.compliancePath === '9367' ? (
+                        (formData?.heatingMakeModel || formData?.heatingEfficiency) && (
                           <div className="grid grid-cols-2 gap-4">
                             <span className="text-sm text-muted-foreground">Heating System Make/Model:</span>
-                            <span className="font-medium text-right">{calculatorData.heatingMakeModel || calculatorData.heatingEfficiency}</span>
+                            <span className="font-medium text-right">{formData.heatingMakeModel || formData.heatingEfficiency}</span>
                           </div>
                         )
                       ) : (
-                        (calculatorData?.heatingEfficiency || formData.heatingEfficiency) && (
+                        (formData?.heatingEfficiency || formData.heatingEfficiency) && (
                           <div className="grid grid-cols-2 gap-4">
                             <span className="text-sm text-muted-foreground">Heating Efficiency:</span>
-                            <span className="font-medium text-right">{calculatorData?.heatingEfficiency || formData.heatingEfficiency}</span>
+                            <span className="font-medium text-right">{formData?.heatingEfficiency || formData.heatingEfficiency}</span>
                           </div>
                         )
                       )}
-                     {(formData.heatingSystemType === 'Boiler' || formData.heatingSystemType === 'boiler' || calculatorData?.heatingType === 'boiler') && calculatorData?.indirectTank === 'yes' && (
+                     {(formData.heatingSystemType === 'Boiler' || formData.heatingSystemType === 'boiler' || formData?.heatingSystemType === 'boiler') && formData?.indirectTank === 'yes' && (
                        <div className="grid grid-cols-2 gap-4">
                          <span className="text-sm text-muted-foreground">Indirect Tank:</span>
                          <span className="font-medium text-right">
-                           Yes{calculatorData?.indirectTankSize ? ` - ${calculatorData.indirectTankSize} gallons` : ''}
+                           Yes{formData?.indirectTankSize ? ` - ${formData.indirectTankSize} gallons` : ''}
                          </span>
                        </div>
                      )}
@@ -942,10 +954,10 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                           </span>
                         </div>
                      )}
-                     {(calculatorData?.coolingApplicable === 'yes' || calculatorData?.coolingMakeModel) && (
+                     {(formData?.coolingApplicable === 'yes' || formData?.coolingMakeModel) && (
                        <div className="grid grid-cols-2 gap-4">
                          <span className="text-sm text-muted-foreground">Cooling System Make/Model:</span>
-                         <span className="font-medium text-right">{calculatorData?.coolingMakeModel || 'To be specified'}</span>
+                         <span className="font-medium text-right">{formData?.coolingMakeModel || 'To be specified'}</span>
                        </div>
                      )}
                       {formData.waterHeatingType && (
@@ -956,78 +968,78 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                           </span>
                         </div>
                        )}
-                       {calculatorData?.compliancePath === '9367' && (calculatorData?.waterHeatingMakeModel || calculatorData?.waterHeater) && (
+                       {formData?.compliancePath === '9367' && (formData?.waterHeatingMakeModel || formData?.waterHeater) && (
                         <div className="grid grid-cols-2 gap-4">
                           <span className="text-sm text-muted-foreground">Water Heating Make/Model:</span>
                           <span className="font-medium text-right">
-                             {calculatorData.waterHeatingMakeModel || calculatorData.waterHeater}
+                             {formData.waterHeatingMakeModel || formData.waterHeater}
                           </span>
                         </div>
                        )}
-                      {calculatorData?.hasDWHR && (
+                      {formData?.hasDWHR && (
                         <div className="grid grid-cols-2 gap-4">
                           <span className="text-sm text-muted-foreground">Drain Water Heat Recovery:</span>
                           <span className="font-medium text-right">
-                            {calculatorData?.hasDWHR === 'yes' ? 'Yes - DWHR system being installed' : 
-                             calculatorData?.hasDWHR === 'no' ? 'No' : 'Not specified'}
+                            {formData?.hasDWHR === 'yes' ? 'Yes - DWHR system being installed' : 
+                             formData?.hasDWHR === 'no' ? 'No' : 'Not specified'}
                           </span>
                         </div>
                       )}
-                     {(calculatorData?.hasHrvErv9365 === 'yes' || calculatorData?.hasHrvErv9365 === 'no') && (
+                     {(formData?.hasHrvErv9365 === 'yes' || formData?.hasHrvErv9365 === 'no') && (
                        <div className="grid grid-cols-2 gap-4">
                          <span className="text-sm text-muted-foreground">HRV/ERV:</span>
                          <span className="font-medium text-right">
-                           {calculatorData?.hasHrvErv9365 === 'yes' ? 'Yes' : 'No'}
+                           {formData?.hasHrvErv9365 === 'yes' ? 'Yes' : 'No'}
                          </span>
                        </div>
                      )}
-                      {(calculatorData?.hasHrvErv9365 === 'yes' || calculatorData?.hrvMakeModel || calculatorData?.hrvEfficiency) && (
+                      {(formData?.hasHrvErv9365 === 'yes' || formData?.hrvMakeModel || formData?.hrvEfficiency) && (
                         <div className="grid grid-cols-2 gap-4">
                           <span className="text-sm text-muted-foreground">HRV/ERV Make/Model:</span>
-                          <span className="font-medium text-right">{calculatorData?.hrvMakeModel || calculatorData?.hrvEfficiency || 'To be specified'}</span>
+                          <span className="font-medium text-right">{formData?.hrvMakeModel || formData?.hrvEfficiency || 'To be specified'}</span>
                         </div>
                       )}
-                      {formData.hrvErvEfficiency && formData.hrvErvEfficiency > 0 && calculatorData?.compliancePath !== '9367' && (
+                      {formData.hrvErvEfficiency && Number(formData.hrvErvEfficiency) > 0 && formData?.compliancePath !== '9367' && (
                         <div className="grid grid-cols-2 gap-4">
                           <span className="text-sm text-muted-foreground">HRV/ERV Efficiency:</span>
                           <span className="font-medium text-right">{formData.hrvErvEfficiency}%</span>
                         </div>
                       )}
-                     {(calculatorData?.hasSecondaryHrv === 'yes' || calculatorData?.secondaryHrvEfficiency) && (
+                     {(formData?.hasSecondaryHrv === 'yes' || formData?.secondaryHrvEfficiency) && (
                        <div className="grid grid-cols-2 gap-4">
                          <span className="text-sm text-muted-foreground">Secondary Suite HRV/ERV:</span>
                          <span className="font-medium text-right">
-                           {calculatorData?.hasSecondaryHrv === 'yes' ? 
-                             (calculatorData?.secondaryHrvEfficiency ? 
-                               `Yes - ${calculatorData.secondaryHrvEfficiency}% efficiency` : 
+                           {formData?.hasSecondaryHrv === 'yes' ? 
+                             (formData?.secondaryHrvEfficiency ? 
+                               `Yes - ${formData.secondaryHrvEfficiency}% efficiency` : 
                                'Yes - Efficiency TBD') : 
                              'No'}
                          </span>
                        </div>
                      )}
-                     {(calculatorData?.hasSecondaryHeating === 'yes' || calculatorData?.secondaryHeatingType || calculatorData?.secondaryHeatingEfficiency) && (
+                     {(formData?.hasSecondaryHeating === 'yes' || formData?.secondaryHeatingType || formData?.secondaryHeatingEfficiency) && (
                        <div className="grid grid-cols-2 gap-4">
                          <span className="text-sm text-muted-foreground">Secondary Suite Heating:</span>
                          <span className="font-medium text-right">
-                           {calculatorData?.hasSecondaryHeating === 'yes' ? 
-                             (calculatorData?.secondaryHeatingType ? 
-                               `${calculatorData.secondaryHeatingType}${calculatorData?.secondaryHeatingEfficiency ? ` - ${calculatorData.secondaryHeatingEfficiency}% efficiency` : ''}` : 
+                           {formData?.hasSecondaryHeating === 'yes' ? 
+                             (formData?.secondaryHeatingType ? 
+                               `${formData.secondaryHeatingType}${formData?.secondaryHeatingEfficiency ? ` - ${formData.secondaryHeatingEfficiency}% efficiency` : ''}` : 
                                'Yes - Type TBD') : 
-                             calculatorData?.secondaryHeatingType ?
-                               `${calculatorData.secondaryHeatingType}${calculatorData?.secondaryHeatingEfficiency ? ` - ${calculatorData.secondaryHeatingEfficiency}% efficiency` : ''}` :
+                             formData?.secondaryHeatingType ?
+                               `${formData.secondaryHeatingType}${formData?.secondaryHeatingEfficiency ? ` - ${formData.secondaryHeatingEfficiency}% efficiency` : ''}` :
                                'Not specified'}
                          </span>
                        </div>
                      )}
-                     {(calculatorData?.hasSecondaryWaterHeater === 'yes' || calculatorData?.secondaryWaterHeaterType) && (
+                     {(formData?.hasSecondaryWaterHeater === 'yes' || formData?.secondaryWaterHeaterType) && (
                        <div className="grid grid-cols-2 gap-4">
                          <span className="text-sm text-muted-foreground">Secondary Suite Water Heating:</span>
                          <span className="font-medium text-right">
-                           {calculatorData?.hasSecondaryWaterHeater === 'yes' ? 
-                             (calculatorData?.secondaryWaterHeaterSameAsMain === 'yes' ? 
+                           {formData?.hasSecondaryWaterHeater === 'yes' ? 
+                             (formData?.secondaryWaterHeaterSameAsMain === 'yes' ? 
                                'Same as main suite' :
-                               calculatorData?.secondaryWaterHeaterType ? 
-                                 calculatorData.secondaryWaterHeaterType : 
+                               formData?.secondaryWaterHeaterType ? 
+                                 formData.secondaryWaterHeaterType : 
                                  'Yes - Type TBD') : 
                              'No'}
                          </span>
@@ -1075,12 +1087,12 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
             <CardTitle className="text-lg">Additional Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {calculatorData?.additionalInfo && (
+            {formData?.additionalInfo && (
               <div className="space-y-2">
                 <h4 className="font-medium text-sm">Additional Comments:</h4>
                 <div className="p-3 bg-muted border border-border rounded-md">
                   <p className="text-sm text-foreground whitespace-pre-wrap">
-                    {calculatorData.additionalInfo}
+                    {formData.additionalInfo}
                   </p>
                 </div>
               </div>
@@ -1090,17 +1102,17 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">EnerGuide ERS Pathway Considered:</span>
                 <span className="font-medium">
-                  {calculatorData?.energuidePathway === 'yes' ? 'Yes' : 
-                   calculatorData?.energuidePathway === 'no' ? 'No' : 
+                  {formData?.energuidePathway === 'yes' ? 'Yes' : 
+                   formData?.energuidePathway === 'no' ? 'No' : 
                    'Not specified'}
                 </span>
               </div>
               
-              {calculatorData?.interestedCertifications && calculatorData.interestedCertifications.length > 0 && (
+              {formData?.interestedCertifications && formData.interestedCertifications.length > 0 && (
                 <div className="space-y-2">
                    <span className="text-sm text-muted-foreground">Certifications/Programs Considered:</span>
                   <div className="space-y-1">
-                    {calculatorData.interestedCertifications.map((certId: string, index: number) => {
+                    {formData.interestedCertifications.map((certId: string, index: number) => {
                       const certNames: { [key: string]: string } = {
                         'energuide': 'EnerGuide Certification',
                         'energy-star': 'ENERGY STAR Certification',
@@ -1119,7 +1131,7 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                 </div>
               )}
               
-              {(!calculatorData?.interestedCertifications || calculatorData.interestedCertifications.length === 0) && (
+              {(!formData?.interestedCertifications || formData.interestedCertifications.length === 0) && (
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Certifications/Programs Considered:</span>
                   <span className="font-medium">None specified</span>
