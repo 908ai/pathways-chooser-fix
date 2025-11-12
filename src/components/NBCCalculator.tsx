@@ -316,7 +316,7 @@ const NBCCalculator = ({
           frontDoorOrientation: "",
           climateZone: project.climate_zone || "",
           occupancyClass: project.occupancy_class || "",
-          compliancePath: project.selected_pathway === 'performance' ? '9365' : '9362',
+          compliancePath: project.selected_pathway ? (project.selected_pathway === 'performance' ? '9365' : '9362') : "",
           isVolumeOver380: project.building_volume && project.building_volume > 380 ? "yes" : "no",
           buildingVolume: project.building_volume && project.building_volume !== 0 ? project.building_volume.toString() : "",
           ceilingsAtticRSI: project.attic_rsi && project.attic_rsi !== 0 ? project.attic_rsi.toString() : "",
