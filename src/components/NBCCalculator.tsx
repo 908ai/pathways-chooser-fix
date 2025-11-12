@@ -527,6 +527,7 @@ const NBCCalculator = ({
         postal_code: selections.postalCode,
         province: selections.province,
         climate_zone: selections.climateZone,
+        occupancy_class: selections.occupancyClass,
         location: [selections.streetAddress, selections.city, selections.province].filter(Boolean).join(', '),
         selected_pathway: selections.compliancePath.includes('9362') || selections.compliancePath.includes('9368') ? 'prescriptive' : 'performance',
         attic_rsi: parseFloat(selections.ceilingsAtticRSI) || null,
