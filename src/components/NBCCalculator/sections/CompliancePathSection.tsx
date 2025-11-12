@@ -25,6 +25,16 @@ export default function CompliancePathSection({
   onPathwayChange,
 }: Props) {
 
+  const isAlberta = selections.province === "alberta";
+  const isSaskatchewan = selections.province === "saskatchewan";
+  const isSaskatoon = isSaskatchewan && selections.city?.toLowerCase().trim() === "saskatoon";
+  const isSaskOther = isSaskatchewan && selections.city && selections.city.toLowerCase().trim() !== "saskatoon";
+
+  const tieredPathsDisabled = isAlberta || isSaskOther;
+  const basePathsDisabled = isSaskOther;
+  const showTieredComingSoon = isAlberta || isSaskOther;
+
+
   return (
     <>
       {
@@ -225,28 +235,28 @@ export default function CompliancePathSection({
                              <SelectValue placeholder="Select compliance path" />
                            </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="9365" className="border-l-4 border-l-blue-500">
+                                  <SelectItem value="9365" className="border-l-4 border-l-blue-500" disabled={basePathsDisabled}>
                                     <div className="flex items-center gap-2">
                                       <Zap className="h-4 w-4 text-blue-600" />
                                       <span>9.36.5 - <strong>Performance</strong> Path <span className="font-semibold text-green-600">(Recommended)</span></span>
                                     </div>
                                   </SelectItem>
-                                  <SelectItem value="9362" className="border-l-4 border-l-orange-500">
+                                  <SelectItem value="9362" className="border-l-4 border-l-orange-500" disabled={basePathsDisabled}>
                                     <div className="flex items-center gap-2">
                                       <FileText className="h-4 w-4 text-orange-600" />
                                       <span>9.36.2 - 9.36.4 <strong>Prescriptive</strong> Path</span>
                                     </div>
                                   </SelectItem>
-                                  <SelectItem value="9367" className="border-l-4 border-l-blue-500" disabled={selections.province === "alberta"}>
+                                  <SelectItem value="9367" className="border-l-4 border-l-blue-500" disabled={tieredPathsDisabled}>
                                     <div className="flex items-center gap-2">
                                       <Zap className="h-4 w-4 text-blue-600" />
-                                      <span>9.36.7 - Tiered <strong>Performance</strong> Path <span className="font-bold text-emerald-600">(Tier 2-5)</span>{selections.province === "alberta" && <span className="ml-2 text-xs text-muted-foreground">(Coming Soon)</span>}</span>
+                                      <span>9.36.7 - Tiered <strong>Performance</strong> Path <span className="font-bold text-emerald-600">(Tier 2-5)</span>{showTieredComingSoon && <span className="ml-2 text-xs text-muted-foreground">(Coming Soon)</span>}</span>
                                     </div>
                                   </SelectItem>
-                                  <SelectItem value="9368" className="border-l-4 border-l-orange-500" disabled={selections.province === "alberta"}>
+                                  <SelectItem value="9368" className="border-l-4 border-l-orange-500" disabled={tieredPathsDisabled}>
                                     <div className="flex items-center gap-2">
                                       <FileText className="h-4 w-4 text-orange-600" />
-                                      <span>9.36.8 – Tiered <strong>Prescriptive</strong> Path <span className="font-bold text-purple-300">(Tier 2-5)</span>{selections.province === "alberta" && <span className="ml-2 text-xs text-muted-foreground">(Coming Soon)</span>}</span>
+                                      <span>9.36.8 – Tiered <strong>Prescriptive</strong> Path <span className="font-bold text-purple-300">(Tier 2-5)</span>{showTieredComingSoon && <span className="ml-2 text-xs text-muted-foreground">(Coming Soon)</span>}</span>
                                     </div>
                                   </SelectItem>
                                  </SelectContent>
