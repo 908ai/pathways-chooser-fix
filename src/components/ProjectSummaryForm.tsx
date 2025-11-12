@@ -111,6 +111,12 @@ interface ProjectSummaryData {
   hrvEfficiency?: string;
   coolingApplicable?: string;
   additionalInfo?: string;
+
+  // Fields that were causing TS errors
+  cathedralFlatRSI?: string;
+  hasDWHR?: string;
+  hasSecondaryHrv?: string;
+  secondaryHrvEfficiency?: string;
 }
 
 interface CalculatorData {
