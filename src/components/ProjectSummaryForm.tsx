@@ -67,6 +67,8 @@ interface ProjectSummaryData {
   city?: string;
   postalCode?: string;
   province?: string;
+  occupancyClass?: string;
+  climateZone?: string;
   uploadedFiles?: any[];
 }
 
@@ -76,6 +78,8 @@ interface CalculatorData {
   city?: string;
   postalCode?: string;
   province?: string;
+  occupancyClass?: string;
+  climateZone?: string;
   frontDoorOrientation?: string;
   energuidePathway?: string;
   [key: string]: any;
@@ -161,6 +165,8 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
     city: calculatorData?.city || '',
     postalCode: calculatorData?.postalCode || '',
     province: calculatorData?.province || '',
+    occupancyClass: calculatorData?.occupancyClass || '',
+    climateZone: calculatorData?.climateZone || '',
     floorArea: 0,
     selectedPathway: 'prescriptive',
     // Fix #5 & #6: Ensure uploaded files are properly initialized and captured from calculator
@@ -332,6 +338,8 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
         city: formData.city,
         postal_code: formData.postalCode,
         province: formData.province,
+        occupancy_class: formData.occupancyClass,
+        climate_zone: formData.climateZone,
         floor_area: parseFloat(String(formData.floorArea)) || null,
         selected_pathway: formData.selectedPathway,
         

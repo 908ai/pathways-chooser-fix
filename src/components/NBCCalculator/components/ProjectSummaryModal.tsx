@@ -48,6 +48,7 @@ export default function ProjectSummaryModal({
             postalCode: selections.postalCode,
             province: selections.province,
             occupancyClass: selections.occupancyClass,
+            climateZone: selections.climateZone,
             frontDoorOrientation: selections.compliancePath === "9365" || selections.compliancePath === "9367" ? selections.frontDoorOrientation : "",
             energuidePathway: selections.energuidePathway,
             // Original envelope values as strings (not parsed)
