@@ -761,10 +761,6 @@ const NBCCalculator = ({
           errors[field] = true;
         }
       });
-      
-      if (selections.midConstructionBlowerDoorPlanned === false) {
-        errors.midConstructionBlowerDoorPlanned = true;
-      }
 
       if (selections.hasHrv === 'with_hrv' && !selections.hrvEfficiency) errors.hrvEfficiency = true;
       if (selections.hasCathedralOrFlatRoof === 'yes' && !selections.cathedralFlatRSIValue) errors.cathedralFlatRSIValue = true;
@@ -775,6 +771,23 @@ const NBCCalculator = ({
       if (selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") {
         if (!selections.hasSecondaryHrv) errors.hasSecondaryHrv = true;
         if (selections.hasSecondaryHrv === 'yes' && !selections.secondaryHrvEfficiency) errors.secondaryHrvEfficiency = true;
+        if (!selections.hasSecondaryHeating) errors.hasSecondaryHeating = true;
+        if (selections.hasSecondaryHeating === 'yes') {
+            if (!selections.secondaryHeatingType) errors.secondaryHeatingType = true;
+            if (selections.secondaryHeatingType && !selections.secondaryHeatingEfficiency) errors.secondaryHeatingEfficiency = true;
+            if (selections.secondaryHeatingType === 'boiler') {
+                if (!selections.secondaryIndirectTank) errors.secondaryIndirectTank = true;
+                if (selections.secondaryIndirectTank === 'yes' && !selections.secondaryIndirectTankSize) errors.secondaryIndirectTankSize = true;
+            }
+        }
+        if (!selections.hasSecondaryWaterHeater) errors.hasSecondaryWaterHeater = true;
+        if (selections.hasSecondaryWaterHeater === 'yes') {
+            if (!selections.secondaryWaterHeaterSameAsMain) errors.secondaryWaterHeaterSameAsMain = true;
+            if (selections.secondaryWaterHeaterSameAsMain === 'no') {
+                if (!selections.secondaryWaterHeaterType) errors.secondaryWaterHeaterType = true;
+                if (selections.secondaryWaterHeaterType && !selections.secondaryWaterHeater) errors.secondaryWaterHeater = true;
+            }
+        }
       }
     }
 
@@ -806,7 +819,9 @@ const NBCCalculator = ({
           'wallRSI', 'belowGradeRSI', 'floorsSlabsSelected', 'windowUValue',
           'hasSkylights', 'skylightUValue', 'airtightness', 'midConstructionBlowerDoorPlanned',
           'heatingType', 'heatingEfficiency', 'coolingApplicable', 'waterHeaterType',
-          'waterHeater', 'hasDWHR'
+          'waterHeater', 'hasDWHR', 'hasSecondaryHeating', 'secondaryHeatingType', 'secondaryHeatingEfficiency',
+          'secondaryIndirectTank', 'secondaryIndirectTankSize', 'hasSecondaryWaterHeater', 'secondaryWaterHeaterSameAsMain',
+          'secondaryWaterHeaterType', 'secondaryWaterHeater'
         ];
         
         const firstErrorKey = fieldOrder.find(key => validationResult.errors[key]);

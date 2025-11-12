@@ -682,15 +682,15 @@ export default function Prescriptive9362Section({
                 })()}
 
                 {/* Mid-Construction Blower Door Test Checkbox */}
-                <div id="midConstructionBlowerDoorPlanned" className={cn("space-y-3 pt-4 border-t border-border/20", validationErrors.midConstructionBlowerDoorPlanned && "p-2 border-2 border-red-500 rounded-md")}>
+                <div id="midConstructionBlowerDoorPlanned" className="space-y-3 pt-4 border-t border-border/20">
                     <div className="flex items-start gap-3">
-                        <input required type="checkbox" id="midConstructionBlowerDoor-9362" checked={selections.midConstructionBlowerDoorPlanned} onChange={e => setSelections(prev => ({
+                        <input type="checkbox" id="midConstructionBlowerDoor-9362" checked={selections.midConstructionBlowerDoorPlanned} onChange={e => setSelections(prev => ({
                             ...prev,
                             midConstructionBlowerDoorPlanned: e.target.checked
                         }))} className="w-4 h-4 text-primary mt-1" />
                         <div className="flex-1">
                             <label htmlFor="midConstructionBlowerDoor-9362" className="text-sm font-medium cursor-pointer text-slate-100">
-                                Mid-Construction Blower Door Test Planned <span className="text-red-400">*</span>
+                                Mid-Construction Blower Door Test Planned
                             </label>
                         </div>
                     </div>
