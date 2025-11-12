@@ -168,21 +168,7 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
     }
   }, [autoSave]);
 
-  // Debug logging
-  console.log('ProjectSummaryForm calculatorData:', calculatorData);
-  console.log('ProjectSummaryForm envelope values:', {
-    ceilingsAtticRSI: calculatorData?.ceilingsAtticRSI,
-    wallRSI: calculatorData?.wallRSI,
-    floorsUnheatedRSI: calculatorData?.floorsUnheatedRSI,
-    belowGradeRSI: calculatorData?.belowGradeRSI,
-    windowUValue: calculatorData?.windowUValue
-  });
-
   const handleInputChange = (field: keyof ProjectSummaryData, value: any) => {
-    console.log('DEBUG: ProjectSummaryForm - handleInputChange called:', { field, value });
-    if (field === 'uploadedFiles') {
-      console.log('DEBUG: ProjectSummaryForm - Updating uploaded files:', value);
-    }
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -216,7 +202,6 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
 
       if (companyError) throw companyError;
       
-      // Check if we should create or update company info
       const shouldUpdateCompany = existingCompanies.length === 0 || 
         (calculatorData?.company || calculatorData?.firstName || calculatorData?.lastName || calculatorData?.phoneNumber);
       
@@ -231,7 +216,6 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
         const address = [formData.streetAddress, formData.city, formData.province].filter(Boolean).join(', ') || existingCompanies[0]?.address;
 
         if (existingCompanies.length === 0) {
-          // Create new company record
           const { error: insertError } = await supabase
             .from('companies')
             .insert({
@@ -241,16 +225,12 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
               phone: phone,
               address: address
             });
-
           if (insertError) throw insertError;
-
-          console.log('Company information auto-imported from first project');
           toast({
             title: "Account Info Created",
             description: "Your account information has been auto-imported from this project.",
           });
         } else {
-          // Update existing company record with new information
           const updateData: any = {};
           if (calculatorData?.company && calculatorData.company !== existingCompanies[0]?.company_name) {
             updateData.company_name = companyName;
@@ -261,17 +241,12 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
           if (address && address !== existingCompanies[0]?.address) {
             updateData.address = address;
           }
-
-          // Only update if there's new information
           if (Object.keys(updateData).length > 0) {
             const { error: updateError } = await supabase
               .from('companies')
               .update(updateData)
               .eq('user_id', user.id);
-
             if (updateError) throw updateError;
-
-            console.log('Company information updated from project submission');
             toast({
               title: "Account Info Updated",
               description: "Your account information has been updated with details from this project.",
@@ -280,14 +255,8 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
         }
       }
 
-      // Handle file uploads to Supabase Storage and ensure file URLs are captured
-      console.log('Processing uploaded files...', calculatorData?.uploadedFiles);
       let uploadedFileData: any[] = [];
-
       if (calculatorData?.uploadedFiles && calculatorData.uploadedFiles.length > 0) {
-        console.log('Processing files from calculator:', calculatorData.uploadedFiles);
-        
-        // All files from the calculator should already have their path and URL
         uploadedFileData = calculatorData.uploadedFiles.map(file => ({
           name: file.name,
           size: file.size,
@@ -296,71 +265,55 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
           url: file.url,
           uploaded_at: new Date().toISOString()
         }));
-        
-        console.log('All files processed successfully:', uploadedFileData);
-        console.log('uploadedFileData length:', uploadedFileData.length);
-        console.log('uploadedFileData structure:', JSON.stringify(uploadedFileData, null, 2));
       }
 
-      // Now save the project
       const isEditing = !!editingProjectId;
-      const constructedLocation = [calculatorData.streetAddress, calculatorData.city, calculatorData.province].filter(Boolean).join(', ');
+      const constructedLocation = [formData.streetAddress, formData.city, formData.province].filter(Boolean).join(', ');
+      
       const baseProjectData = {
         project_name: formData.projectName,
-        building_type: calculatorData.buildingType,
+        building_type: formData.buildingType,
         location: constructedLocation,
-        street_address: calculatorData.streetAddress,
-        unit_number: calculatorData.unitNumber,
-        city: calculatorData.city,
-        postal_code: calculatorData.postalCode,
-        province: calculatorData.province,
-        occupancy_class: calculatorData.occupancyClass,
-        climate_zone: calculatorData.climateZone,
-        floor_area: parseFloat(String(calculatorData.floorArea)) || null,
-        selected_pathway: calculatorData.selectedPathway,
-        
-        // Building Envelope
-        attic_rsi: parseFloat(String(calculatorData.atticRsi)) || null,
-        attic_points: parseFloat(String(calculatorData.atticPoints)) || null,
-        wall_rsi: parseFloat(String(calculatorData.wallRsi)) || null,
-        wall_points: parseFloat(String(calculatorData.wallPoints)) || null,
-        below_grade_rsi: parseFloat(String(calculatorData.belowGradeRsi)) || null,
-        below_grade_points: parseFloat(String(calculatorData.belowGradePoints)) || null,
-        floor_rsi: parseFloat(String(calculatorData.floorRsi)) || null,
-        floor_points: parseFloat(String(calculatorData.floorPoints)) || null,
-        window_u_value: parseFloat(String(calculatorData.windowUValue)) || null,
-        window_points: parseFloat(String(calculatorData.windowPoints)) || null,
-        
-        // Mechanical Systems
-        heating_system_type: calculatorData.heatingSystemType,
-        heating_efficiency: parseFloat(String(calculatorData.heatingEfficiency)) || null,
-        heating_points: parseFloat(String(calculatorData.heatingPoints)) || null,
-        cooling_system_type: calculatorData.coolingSystemType,
-        cooling_efficiency: parseFloat(String(calculatorData.coolingEfficiency)) || null,
-        cooling_points: parseFloat(String(calculatorData.coolingPoints)) || null,
-        water_heating_type: calculatorData.waterHeatingType,
-        water_heating_efficiency: parseFloat(String(calculatorData.waterHeatingEfficiency)) || null,
-        water_heating_points: parseFloat(String(calculatorData.waterHeatingPoints)) || null,
-        hrv_erv_type: calculatorData.hrvErvType,
-        hrv_erv_efficiency: parseFloat(String(calculatorData.hrvErvEfficiency)) || null,
-        hrv_erv_points: parseFloat(String(calculatorData.hrvErvPoints)) || null,
-        
-        // Building Performance
-        airtightness_al: parseFloat(String(calculatorData.airtightnessAl)) || null,
-        airtightness_points: parseFloat(String(calculatorData.airtightnessPoints)) || null,
-        building_volume: parseFloat(String(calculatorData.buildingVolume)) || null,
-        volume_points: parseFloat(String(calculatorData.volumePoints)) || null,
-        
-        // Performance Path
-        annual_energy_consumption: parseFloat(String(calculatorData.annualEnergyConsumption)) || null,
-        performance_compliance_result: calculatorData.performanceComplianceResult,
-        
-        // Compliance Results
-        total_points: parseFloat(String(calculatorData.totalPoints)) || null,
-        compliance_status: calculatorData.complianceStatus,
-        upgrade_costs: parseFloat(String(calculatorData.upgradeCosts)) || null,
-        
-        // Uploaded files metadata
+        street_address: formData.streetAddress,
+        unit_number: formData.unitNumber,
+        city: formData.city,
+        postal_code: formData.postalCode,
+        province: formData.province,
+        occupancy_class: formData.occupancyClass,
+        climate_zone: formData.climateZone,
+        floor_area: parseFloat(String(formData.floorArea)) || null,
+        selected_pathway: formData.selectedPathway,
+        attic_rsi: parseFloat(String(formData.atticRsi)) || null,
+        attic_points: parseFloat(String(formData.atticPoints)) || null,
+        wall_rsi: parseFloat(String(formData.wallRsi)) || null,
+        wall_points: parseFloat(String(formData.wallPoints)) || null,
+        below_grade_rsi: parseFloat(String(formData.belowGradeRsi)) || null,
+        below_grade_points: parseFloat(String(formData.belowGradePoints)) || null,
+        floor_rsi: parseFloat(String(formData.floorRsi)) || null,
+        floor_points: parseFloat(String(formData.floorPoints)) || null,
+        window_u_value: parseFloat(String(formData.windowUValue)) || null,
+        window_points: parseFloat(String(formData.windowPoints)) || null,
+        heating_system_type: formData.heatingSystemType,
+        heating_efficiency: parseFloat(String(formData.heatingEfficiency)) || null,
+        heating_points: parseFloat(String(formData.heatingPoints)) || null,
+        cooling_system_type: formData.coolingSystemType,
+        cooling_efficiency: parseFloat(String(formData.coolingEfficiency)) || null,
+        cooling_points: parseFloat(String(formData.coolingPoints)) || null,
+        water_heating_type: formData.waterHeatingType,
+        water_heating_efficiency: parseFloat(String(formData.waterHeatingEfficiency)) || null,
+        water_heating_points: parseFloat(String(formData.waterHeatingPoints)) || null,
+        hrv_erv_type: formData.hrvErvType,
+        hrv_erv_efficiency: parseFloat(String(formData.hrvErvEfficiency)) || null,
+        hrv_erv_points: parseFloat(String(formData.hrvErvPoints)) || null,
+        airtightness_al: parseFloat(String(formData.airtightnessAl)) || null,
+        airtightness_points: parseFloat(String(formData.airtightnessPoints)) || null,
+        building_volume: parseFloat(String(formData.buildingVolume)) || null,
+        volume_points: parseFloat(String(formData.volumePoints)) || null,
+        annual_energy_consumption: parseFloat(String(formData.annualEnergyConsumption)) || null,
+        performance_compliance_result: formData.performanceComplianceResult,
+        total_points: parseFloat(String(formData.totalPoints)) || null,
+        compliance_status: formData.complianceStatus,
+        upgrade_costs: parseFloat(String(formData.upgradeCosts)) || null,
         uploaded_files: uploadedFileData
       };
 
@@ -371,7 +324,6 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
           .eq('id', editingProjectId)
           .select();
         if (error) throw error;
-        console.log('Project updated:', data);
       } else {
         const insertData = { ...baseProjectData, user_id: user.id, id: calculatorData?.projectId };
         const { data, error } = await supabase
@@ -379,7 +331,6 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
           .insert(insertData)
           .select();
         if (error) throw error;
-        console.log('Project created:', data);
         if (autoSave) {
           navigate('/dashboard');
         } else if (data && data[0]) {
@@ -389,8 +340,6 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
         }
       }
 
-      console.log('Save successful!');
-      
       if (editingProjectId) {
         toast({
           title: "Project Updated",
@@ -408,13 +357,6 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
 
     } catch (error) {
       console.error('Error saving project summary:', error);
-      console.error('Error details:', {
-        message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined,
-        formData: formData,
-        editingProjectId: editingProjectId,
-        userId: user?.id
-      });
       toast({
         title: "Save Failed",
         description: `There was an error saving your project summary. Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
