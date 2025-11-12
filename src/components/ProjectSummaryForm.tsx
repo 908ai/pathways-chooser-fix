@@ -304,61 +304,61 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
 
       // Now save the project
       const isEditing = !!editingProjectId;
-      const constructedLocation = [formData.streetAddress, formData.city, formData.province].filter(Boolean).join(', ');
+      const constructedLocation = [calculatorData.streetAddress, calculatorData.city, calculatorData.province].filter(Boolean).join(', ');
       const baseProjectData = {
         project_name: formData.projectName,
-        building_type: formData.buildingType,
+        building_type: calculatorData.buildingType,
         location: constructedLocation,
-        street_address: formData.streetAddress,
-        unit_number: formData.unitNumber,
-        city: formData.city,
-        postal_code: formData.postalCode,
-        province: formData.province,
-        occupancy_class: formData.occupancyClass,
-        climate_zone: formData.climateZone,
-        floor_area: parseFloat(String(formData.floorArea)) || null,
-        selected_pathway: formData.selectedPathway,
+        street_address: calculatorData.streetAddress,
+        unit_number: calculatorData.unitNumber,
+        city: calculatorData.city,
+        postal_code: calculatorData.postalCode,
+        province: calculatorData.province,
+        occupancy_class: calculatorData.occupancyClass,
+        climate_zone: calculatorData.climateZone,
+        floor_area: parseFloat(String(calculatorData.floorArea)) || null,
+        selected_pathway: calculatorData.selectedPathway,
         
         // Building Envelope
-        attic_rsi: parseFloat(String(formData.atticRsi)) || null,
-        attic_points: parseFloat(String(formData.atticPoints)) || null,
-        wall_rsi: parseFloat(String(formData.wallRsi)) || null,
-        wall_points: parseFloat(String(formData.wallPoints)) || null,
-        below_grade_rsi: parseFloat(String(formData.belowGradeRsi)) || null,
-        below_grade_points: parseFloat(String(formData.belowGradePoints)) || null,
-        floor_rsi: parseFloat(String(formData.floorRsi)) || null,
-        floor_points: parseFloat(String(formData.floorPoints)) || null,
-        window_u_value: parseFloat(String(formData.windowUValue)) || null,
-        window_points: parseFloat(String(formData.windowPoints)) || null,
+        attic_rsi: parseFloat(String(calculatorData.atticRsi)) || null,
+        attic_points: parseFloat(String(calculatorData.atticPoints)) || null,
+        wall_rsi: parseFloat(String(calculatorData.wallRsi)) || null,
+        wall_points: parseFloat(String(calculatorData.wallPoints)) || null,
+        below_grade_rsi: parseFloat(String(calculatorData.belowGradeRsi)) || null,
+        below_grade_points: parseFloat(String(calculatorData.belowGradePoints)) || null,
+        floor_rsi: parseFloat(String(calculatorData.floorRsi)) || null,
+        floor_points: parseFloat(String(calculatorData.floorPoints)) || null,
+        window_u_value: parseFloat(String(calculatorData.windowUValue)) || null,
+        window_points: parseFloat(String(calculatorData.windowPoints)) || null,
         
         // Mechanical Systems
-        heating_system_type: formData.heatingSystemType,
-        heating_efficiency: parseFloat(String(formData.heatingEfficiency)) || null,
-        heating_points: parseFloat(String(formData.heatingPoints)) || null,
-        cooling_system_type: formData.coolingSystemType,
-        cooling_efficiency: parseFloat(String(formData.coolingEfficiency)) || null,
-        cooling_points: parseFloat(String(formData.coolingPoints)) || null,
-        water_heating_type: formData.waterHeatingType,
-        water_heating_efficiency: parseFloat(String(formData.waterHeatingEfficiency)) || null,
-        water_heating_points: parseFloat(String(formData.waterHeatingPoints)) || null,
-        hrv_erv_type: formData.hrvErvType,
-        hrv_erv_efficiency: parseFloat(String(formData.hrvErvEfficiency)) || null,
-        hrv_erv_points: parseFloat(String(formData.hrvErvPoints)) || null,
+        heating_system_type: calculatorData.heatingSystemType,
+        heating_efficiency: parseFloat(String(calculatorData.heatingEfficiency)) || null,
+        heating_points: parseFloat(String(calculatorData.heatingPoints)) || null,
+        cooling_system_type: calculatorData.coolingSystemType,
+        cooling_efficiency: parseFloat(String(calculatorData.coolingEfficiency)) || null,
+        cooling_points: parseFloat(String(calculatorData.coolingPoints)) || null,
+        water_heating_type: calculatorData.waterHeatingType,
+        water_heating_efficiency: parseFloat(String(calculatorData.waterHeatingEfficiency)) || null,
+        water_heating_points: parseFloat(String(calculatorData.waterHeatingPoints)) || null,
+        hrv_erv_type: calculatorData.hrvErvType,
+        hrv_erv_efficiency: parseFloat(String(calculatorData.hrvErvEfficiency)) || null,
+        hrv_erv_points: parseFloat(String(calculatorData.hrvErvPoints)) || null,
         
         // Building Performance
-        airtightness_al: parseFloat(String(formData.airtightnessAl)) || null,
-        airtightness_points: parseFloat(String(formData.airtightnessPoints)) || null,
-        building_volume: parseFloat(String(formData.buildingVolume)) || null,
-        volume_points: parseFloat(String(formData.volumePoints)) || null,
+        airtightness_al: parseFloat(String(calculatorData.airtightnessAl)) || null,
+        airtightness_points: parseFloat(String(calculatorData.airtightnessPoints)) || null,
+        building_volume: parseFloat(String(calculatorData.buildingVolume)) || null,
+        volume_points: parseFloat(String(calculatorData.volumePoints)) || null,
         
         // Performance Path
-        annual_energy_consumption: parseFloat(String(formData.annualEnergyConsumption)) || null,
-        performance_compliance_result: formData.performanceComplianceResult,
+        annual_energy_consumption: parseFloat(String(calculatorData.annualEnergyConsumption)) || null,
+        performance_compliance_result: calculatorData.performanceComplianceResult,
         
         // Compliance Results
-        total_points: parseFloat(String(formData.totalPoints)) || null,
-        compliance_status: formData.complianceStatus,
-        upgrade_costs: parseFloat(String(formData.upgradeCosts)) || null,
+        total_points: parseFloat(String(calculatorData.totalPoints)) || null,
+        compliance_status: calculatorData.complianceStatus,
+        upgrade_costs: parseFloat(String(calculatorData.upgradeCosts)) || null,
         
         // Uploaded files metadata
         uploaded_files: uploadedFileData
@@ -1093,7 +1093,7 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
                      )}
                  </div>
                </CardContent>
-             </Card>
+            </Card>
 
             {/* Building Performance */}
             <Card>

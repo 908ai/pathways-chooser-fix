@@ -70,6 +70,7 @@ export default function ProjectSummaryModal({
             floorArea: parseFloat(selections.buildingVolume) || 0,
             selectedPathway: selections.compliancePath === '9362' ? 'prescriptive' : selections.compliancePath === '9368' ? 'prescriptive' : 'performance',
             // Building Envelope Data - works for all pathways
+            atticRsi: parseFloat(selections.ceilingsAtticRSI) || 0,
             atticPoints: getPoints("atticRSI", selections.atticRSI || selections.ceilingsAtticRSI),
             wallRsi: parseFloat(selections.wallRSI) || 0,
             wallPoints: getPoints("wallRSI", selections.wallRSI),
