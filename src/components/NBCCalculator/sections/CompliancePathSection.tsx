@@ -192,6 +192,8 @@ export default function CompliancePathSection({
                             ceilingsAtticRSI: "",
                             hasCathedralOrFlatRoof: "",
                             cathedralFlatRSI: "",
+                            cathedralFlatRSIValue: "",
+                            cathedralFlatOtherType: "",
                             wallRSI: "",
                             floorsUnheatedRSI: "",
                             floorsGarageRSI: "",
@@ -200,6 +202,7 @@ export default function CompliancePathSection({
                             hasSlabOnGrade: "",
                             hasInFloorHeat: "",
                             floorsSlabsSelected: [],
+                            inFloorHeatRSI: "",
                             foundationWallsRSI: "",
                             slabOnGradeRSI: "",
                             slabOnGradeIntegralFootingRSI: "",
@@ -253,7 +256,7 @@ export default function CompliancePathSection({
                                       <span>9.36.2 - 9.36.4 <strong>Prescriptive</strong> Path</span>
                                     </div>
                                   </SelectItem>
-                                  <SelectItem value="9367" className="border-l-4 border-l-blue-500" disabled={tieredPathsDisabled}>
+                                  <SelectItem value="9367" className="border-l-4 border-l-blue-500">
                                     <div className="flex items-center gap-2">
                                       <Zap className="h-4 w-4 text-blue-600" />
                                       <span>9.36.7 - Tiered <strong>Performance</strong> Path <span className="font-bold text-emerald-600">(Tier 2-5)</span>{showTieredComingSoon && <span className="ml-2 text-xs font-bold text-red-500">(Coming Soon)</span>}</span>
