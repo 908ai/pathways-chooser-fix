@@ -9,7 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Check, X } from 'lucide-react';
 
 const fetchRequests = async () => {
-  const { data, error } = await supabase.rpc('get_pending_access_requests_with_user_details');
+  const { data, error } = await supabase.rpc('get_access_requests_with_user_details');
 
   if (error) throw new Error(error.message);
   return data;
@@ -77,29 +77,43 @@ const RequestManager = () => {
                 <TableCell>{request.email || 'N/A'}</TableCell>
                 <TableCell>{request.phone || 'N/A'}</TableCell>
                 <TableCell>{new Date(request.requested_at).toLocaleString()}</TableCell>
-                <TableCell><Badge variant="secondary">{request.status}</Badge></TableCell>
+                <TableCell>
+                  <Badge variant={
+                    request.status === 'approved' ? 'default' :
+                    request.status === 'denied' ? 'destructive' :
+                    'secondary'
+                  }>
+                    {request.status}
+                  </Badge>
+                </TableCell>
                 <TableCell className="text-right">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-green-500 hover:text-green-600"
-                    onClick={() => updateRequestMutation.mutate({ requestId: request.id, status: 'approved', userId: request.user_id })}
-                  >
-                    <Check className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-red-500 hover:text-red-600"
-                    onClick={() => updateRequestMutation.mutate({ requestId: request.id, status: 'denied', userId: request.user_id })}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
+                  {request.status === 'pending' ? (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-green-500 hover:text-green-600"
+                        onClick={() => updateRequestMutation.mutate({ requestId: request.id, status: 'approved', userId: request.user_id })}
+                      >
+                        <Check className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-500 hover:text-red-600"
+                        onClick={() => updateRequestMutation.mutate({ requestId: request.id, status: 'denied', userId: request.user_id })}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </>
+                  ) : (
+                    <span>-</span>
+                  )}
                 </TableCell>
               </TableRow>
             )) : (
               <TableRow>
-                <TableCell colSpan={5} className="text-center">No pending requests.</TableCell>
+                <TableCell colSpan={5} className="text-center">No access requests found.</TableCell>
               </TableRow>
             )}
           </TableBody>
