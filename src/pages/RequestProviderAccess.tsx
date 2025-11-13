@@ -8,15 +8,26 @@ import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
-import { CheckCircle, Clock, ShieldCheck } from 'lucide-react';
-import { useState } from 'react';
+import { CheckCircle, Clock, ShieldCheck, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 const RequestProviderAccess = () => {
   const { user, signOut } = useAuth();
-  const { data, refetch } = useProviderAccess();
+  const { data, refetch, isLoading: isAccessLoading } = useProviderAccess();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isRequesting, setIsRequesting] = useState(false);
+
+  useEffect(() => {
+    // If the hook finishes loading and determines the user has access, redirect them.
+    if (!isAccessLoading && data?.hasAccess) {
+      toast({
+        title: 'Access Granted',
+        description: 'Redirecting you to the provider directory.',
+      });
+      navigate('/find-a-provider');
+    }
+  }, [data, isAccessLoading, navigate, toast]);
 
   const handleRequestAccess = async () => {
     if (!user) return;
@@ -45,6 +56,15 @@ const RequestProviderAccess = () => {
   };
 
   const getStatusContent = () => {
+    if (isAccessLoading) {
+      return {
+        icon: <Loader2 className="h-12 w-12 text-slate-400 animate-spin" />,
+        title: 'Checking Access Status...',
+        description: 'Please wait while we verify your access permissions.',
+        button: <Button disabled>Loading...</Button>,
+      };
+    }
+
     if (data?.request?.status === 'pending') {
       return {
         icon: <Clock className="h-12 w-12 text-yellow-400" />,
@@ -54,6 +74,7 @@ const RequestProviderAccess = () => {
       };
     }
 
+    // This case should now be handled by the useEffect redirect, but it's a good fallback.
     if (data?.request?.status === 'approved') {
         return {
             icon: <CheckCircle className="h-12 w-12 text-green-400" />,

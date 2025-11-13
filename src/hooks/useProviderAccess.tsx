@@ -8,6 +8,7 @@ export const useProviderAccess = () => {
   const fetchProviderAccess = async () => {
     if (!user) return { hasAccess: false, request: null };
 
+    // First, check the user's profile directly for the access flag.
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('id, can_access_providers')
@@ -23,20 +24,27 @@ export const useProviderAccess = () => {
       return { hasAccess: true, request: null };
     }
 
-    // If no access, check for a pending or approved request
+    // If profile doesn't grant access, check for the latest access request.
     const { data: request, error: requestError } = await supabase
       .from('provider_access_requests')
       .select('*')
       .eq('user_id', user.id)
-      .in('status', ['pending', 'approved'])
       .order('requested_at', { ascending: false })
       .limit(1)
       .maybeSingle();
 
     if (requestError) {
       console.error('Error fetching access request:', requestError);
+      // Return no access but don't throw, as the user might just not have a request yet.
+      return { hasAccess: false, request: null };
     }
 
+    // If the latest request is approved, they have access. This is the key fix.
+    if (request?.status === 'approved') {
+      return { hasAccess: true, request };
+    }
+
+    // Otherwise, they don't have access. Return the request if it exists (e.g., for 'pending' or 'denied' status).
     return { hasAccess: false, request: request || null };
   };
 
