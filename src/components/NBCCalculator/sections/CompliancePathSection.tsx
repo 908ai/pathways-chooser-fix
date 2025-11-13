@@ -30,12 +30,8 @@ export default function CompliancePathSection({
   const isSaskatoon = isSaskatchewan && selections.city?.toLowerCase().trim() === "saskatoon";
   const isSaskOther = isSaskatchewan && selections.city && selections.city.toLowerCase().trim() !== "saskatoon";
 
-  // For Saskatoon, only Tiered paths are available.
-  // For other Sask cities, no paths are available (Tiered are "Coming Soon").
-  const basePathsDisabled = isSaskatchewan; 
-
-  // Tiered paths are disabled for Alberta and non-Saskatoon Sask cities.
-  const tieredPathsDisabled = isAlberta || isSaskOther;
+  // Disable base paths if in Saskatchewan but not in Saskatoon.
+  const basePathsDisabled = isSaskOther;
 
   // Show "Coming Soon" for Alberta and non-Saskatoon Sask cities.
   const showTieredComingSoon = isAlberta || isSaskOther;
