@@ -5,8 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { PlusCircle, Edit, Trash2 } from 'lucide-react';
-// We will create a form for adding/editing providers in a later step if requested.
+import { PlusCircle, Edit, Trash2, Check, X } from 'lucide-react';
 
 const fetchProviders = async () => {
   const { data, error } = await supabase
@@ -26,8 +25,22 @@ const ProviderManager = () => {
     queryFn: fetchProviders,
   });
 
-  // Note: Add, Edit, and Delete mutations would be implemented here.
-  // For now, we are just displaying the data.
+  const updateProviderStatusMutation = useMutation({
+    mutationFn: async ({ providerId, is_approved }: { providerId: string; is_approved: boolean }) => {
+      const { error } = await supabase
+        .from('service_providers')
+        .update({ is_approved })
+        .eq('id', providerId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['all_service_providers'] });
+      toast({ title: 'Success', description: 'Provider status updated.' });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Error', description: `Failed to update provider: ${error.message}`, variant: 'destructive' });
+    },
+  });
 
   if (isLoading) return <div>Loading providers...</div>;
   if (error) return <div className="text-red-500">Error loading providers: {error.message}</div>;
@@ -40,9 +53,9 @@ const ProviderManager = () => {
             <CardTitle>Service Provider Management</CardTitle>
             <CardDescription>Add, edit, and approve service providers for the directory.</CardDescription>
           </div>
-          <Button>
+          <Button disabled>
             <PlusCircle className="h-4 w-4 mr-2" />
-            Add Provider
+            Add Provider (Coming Soon)
           </Button>
         </div>
       </CardHeader>
@@ -68,11 +81,32 @@ const ProviderManager = () => {
                     {provider.is_approved ? 'Approved' : 'Pending'}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-right">
-                  <Button variant="ghost" size="icon">
+                <TableCell className="text-right space-x-2">
+                  {provider.is_approved ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => updateProviderStatusMutation.mutate({ providerId: provider.id, is_approved: false })}
+                      disabled={updateProviderStatusMutation.isPending}
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      Revoke
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => updateProviderStatusMutation.mutate({ providerId: provider.id, is_approved: true })}
+                      disabled={updateProviderStatusMutation.isPending}
+                    >
+                      <Check className="h-4 w-4 mr-2" />
+                      Approve
+                    </Button>
+                  )}
+                  <Button variant="ghost" size="icon" disabled>
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600">
+                  <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600" disabled>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </TableCell>
