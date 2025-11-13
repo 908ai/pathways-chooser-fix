@@ -73,7 +73,7 @@ export default function Performance9365Section({
         );
     };
 
-    const disableUnheatedFloorOptions = selections.hasInFloorHeat9365 === 'fully-installed' || selections.hasInFloorHeat9365 === 'roughing-in';
+    const disableUnheatedBelowFrost = selections.hasInFloorHeat9365 === 'fully-installed' || selections.hasInFloorHeat9365 === 'roughing-in' || selections.floorsSlabsSelected.includes("heatedFloors");
 
     return (
         <>
@@ -205,8 +205,8 @@ export default function Performance9365Section({
                         }} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Floors above Garages</span>
                     </label>
-                    <label className={`flex items-center gap-2 ${disableUnheatedFloorOptions || selections.floorsSlabsSelected.includes("heatedFloors") ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} disabled={disableUnheatedFloorOptions || selections.floorsSlabsSelected.includes("heatedFloors")} onChange={e => {
+                    <label className={`flex items-center gap-2 ${disableUnheatedBelowFrost ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} disabled={disableUnheatedBelowFrost} onChange={e => {
                             const isChecked = e.target.checked;
                             setSelections(prev => {
                                 let newFloorsSlabsSelected = [...prev.floorsSlabsSelected];
@@ -228,8 +228,8 @@ export default function Performance9365Section({
                         }} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Unheated Floor Below Frostline</span>
                     </label>
-                    <label className={`flex items-center gap-2 ${disableUnheatedFloorOptions ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedAboveFrost")} disabled={disableUnheatedFloorOptions} onChange={e => {
+                    <label className={`flex items-center gap-2`}>
+                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedAboveFrost")} onChange={e => {
                             const value = "unheatedAboveFrost";
                             setSelections(prev => ({
                                 ...prev,
@@ -286,8 +286,8 @@ export default function Performance9365Section({
                             if (!newFloorsSlabsSelected.includes('heatedFloors')) {
                                 newFloorsSlabsSelected.push('heatedFloors');
                             }
-                            // Remove unheated floor options
-                            newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'unheatedBelowFrost' && item !== 'unheatedAboveFrost');
+                            // Remove unheated floor below frostline option
+                            newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'unheatedBelowFrost');
                         } else { // value is 'no'
                             // Remove 'heatedFloors'
                             newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'heatedFloors');
@@ -298,9 +298,8 @@ export default function Performance9365Section({
                             hasInFloorHeat9365: value,
                             floorsSlabsSelected: newFloorsSlabsSelected,
                             heatedFloorsRSI: value === 'no' ? '' : prev.heatedFloorsRSI,
-                            // Also clear the input values for the unheated floors when they are disabled
+                            // Also clear the input value for the unheated floor below frostline when it is disabled
                             unheatedFloorBelowFrostRSI: (value === 'fully-installed' || value === 'roughing-in') ? '' : prev.unheatedFloorBelowFrostRSI,
-                            unheatedFloorAboveFrostRSI: (value === 'fully-installed' || value === 'roughing-in') ? '' : prev.unheatedFloorAboveFrostRSI,
                         };
                     });
                 }}>
