@@ -12,9 +12,9 @@ export const useProviderAccess = () => {
       .from('profiles')
       .select('id, can_access_providers')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
-    if (profileError && profileError.code !== 'PGRST116') {
+    if (profileError) {
       console.error('Error fetching profile for provider access:', profileError);
       return { hasAccess: false, request: null };
     }
