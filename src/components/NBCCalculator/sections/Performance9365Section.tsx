@@ -205,13 +205,26 @@ export default function Performance9365Section({
                         }} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Floors above Garages</span>
                     </label>
-                    <label className={`flex items-center gap-2 ${disableUnheatedFloorOptions ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} disabled={disableUnheatedFloorOptions} onChange={e => {
-                            const value = "unheatedBelowFrost";
-                            setSelections(prev => ({
-                                ...prev,
-                                floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter(item => item !== value)
-                            }));
+                    <label className={`flex items-center gap-2 ${disableUnheatedFloorOptions || selections.floorsSlabsSelected.includes("heatedFloors") ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} disabled={disableUnheatedFloorOptions || selections.floorsSlabsSelected.includes("heatedFloors")} onChange={e => {
+                            const isChecked = e.target.checked;
+                            setSelections(prev => {
+                                let newFloorsSlabsSelected = [...prev.floorsSlabsSelected];
+                                if (isChecked) {
+                                    if (!newFloorsSlabsSelected.includes('unheatedBelowFrost')) {
+                                        newFloorsSlabsSelected.push('unheatedBelowFrost');
+                                    }
+                                    newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'heatedFloors');
+                                } else {
+                                    newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'unheatedBelowFrost');
+                                }
+                                return {
+                                    ...prev,
+                                    floorsSlabsSelected: newFloorsSlabsSelected,
+                                    hasInFloorHeat: 'no',
+                                    hasInFloorHeat9365: 'no'
+                                };
+                            });
                         }} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Unheated Floor Below Frostline</span>
                     </label>
@@ -225,14 +238,26 @@ export default function Performance9365Section({
                         }} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Unheated Floor Above Frost Line (or walk-out basement)</span>
                     </label>
-                    <label className="flex items-center gap-2">
-                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("heatedFloors")} onChange={e => {
-                            const value = "heatedFloors";
-                            setSelections(prev => ({
-                                ...prev,
-                                floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter(item => item !== value),
-                                hasInFloorHeat: e.target.checked ? "yes" : "no"
-                            }));
+                    <label className={`flex items-center gap-2 ${selections.floorsSlabsSelected.includes("unheatedBelowFrost") ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("heatedFloors")} disabled={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} onChange={e => {
+                            const isChecked = e.target.checked;
+                            setSelections(prev => {
+                                let newFloorsSlabsSelected = [...prev.floorsSlabsSelected];
+                                if (isChecked) {
+                                    if (!newFloorsSlabsSelected.includes('heatedFloors')) {
+                                        newFloorsSlabsSelected.push('heatedFloors');
+                                    }
+                                    newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'unheatedBelowFrost');
+                                } else {
+                                    newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'heatedFloors');
+                                }
+                                return {
+                                    ...prev,
+                                    floorsSlabsSelected: newFloorsSlabsSelected,
+                                    hasInFloorHeat: isChecked ? "yes" : "no",
+                                    hasInFloorHeat9365: isChecked ? 'fully-installed' : 'no'
+                                };
+                            });
                         }} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Heated Floors</span>
                     </label>
@@ -672,23 +697,28 @@ export default function Performance9365Section({
                             </div>
 
                             <div className="space-y-3">
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-xs text-muted-foreground">
                                     DWHR systems capture heat from shower drain water and use it to preheat incoming cold water, reducing hot water energy use by 20–40%.
                                 </p>
 
                                 <div className="space-y-2">
-                                    <h5 className="font-medium text-sm">How it works:</h5>
-                                    <p className="text-sm text-muted-foreground">When hot water goes down the drain (like from a shower), the DWHR unit uses a heat exchanger to transfer that thermal energy to the incoming cold water supply before it reaches your water heater.</p>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-green-600 text-xs">✅</span>
+                                        <span className="text-xs">Improves energy efficiency</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-green-600 text-xs">✅</span>
+                                        <span className="text-xs">Helps earn NBC tiered compliance points</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-green-600 text-xs">✅</span>
+                                        <span className="text-xs">Great for homes with frequent showers</span>
+                                    </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <h5 className="font-medium text-sm">Benefits:</h5>
-                                    <div className="text-sm text-muted-foreground space-y-1">
-                                        <p>• Reduces water heating energy consumption</p>
-                                        <p>• Lowers utility bills</p>
-                                        <p>• Contributes to overall building energy efficiency</p>
-                                        <p>• Works continuously with no maintenance required</p>
-                                    </div>
+                                <div className="space-y-1 text-xs text-muted-foreground">
+                                    <p><strong>Estimated cost:</strong> $800–$1,200 installed</p>
+                                    <p><strong>Best fit:</strong> Homes with vertical drain stacks and electric or heat pump water heaters.</p>
                                 </div>
                             </div>
                         </div>
@@ -818,47 +848,46 @@ export default function Performance9365Section({
                         <InfoButton title="Secondary Suite HRV/ERV Information">
                             <div className="space-y-4">
                                 <div>
-                                    <h4 className="font-semibold text-sm mb-2">Independent HRV/ERV for Secondary Suite</h4>
-                                    <p className="text-xs text-muted-foreground">
-                                        A secondary suite may require its own HRV/ERV system to ensure adequate ventilation and maintain indoor air quality independently from the main dwelling unit.
+                                    <h4 className="font-semibold text-base mb-2">Secondary Suite HRV/ERV Options</h4>
+                                    <p className="text-base text-muted-foreground">
+                                        For buildings with secondary suites, you have options for ventilation systems.
                                     </p>
                                 </div>
 
                                 <div>
-                                    <h5 className="font-medium text-sm mb-1">When a second HRV/ERV is needed:</h5>
-                                    <ul className="text-xs text-muted-foreground space-y-1 ml-4 list-disc">
-                                        <li><strong>Separate ventilation zones:</strong> When the secondary suite requires independent air quality control.</li>
-                                        <li><strong>Building code requirements:</strong> Some jurisdictions require separate ventilation systems for secondary suites.</li>
-                                        <li><strong>Different occupancy patterns:</strong> When main and secondary units have different ventilation needs.</li>
-                                        <li><strong>Privacy and control:</strong> Allowing tenants to control their own indoor air quality.</li>
-                                    </ul>
+                                    <h5 className="font-medium text-base mb-1">Option 1: Shared System</h5>
+                                    <p className="text-base text-muted-foreground">
+                                        Use one larger HRV/ERV system to serve both the main dwelling and secondary suite, with proper ducting and controls.
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <h5 className="font-medium text-base mb-1">Option 2: Separate Systems</h5>
+                                    <p className="text-base text-muted-foreground">
+                                        Install separate HRV/ERV systems for each unit to provide independent control and operation.
+                                    </p>
                                 </div>
                             </div>
                         </InfoButton>
                     </div>
-                    <div className="flex gap-4">
-                        <label className="flex items-center gap-2">
-                            <input type="radio" name="hasSecondaryHrv" value="yes" checked={selections.hasSecondaryHrv === "yes"} onChange={e => setSelections(prev => ({
-                                ...prev,
-                                hasSecondaryHrv: e.target.value,
-                                secondaryHrvEfficiency: "" // Reset when changing
-                            }))} className="w-4 h-4 text-emerald-500" />
-                            <span className="text-sm text-slate-100">Yes</span>
-                        </label>
-                        <label className="flex items-center gap-2">
-                            <input type="radio" name="hasSecondaryHrv" value="no" checked={selections.hasSecondaryHrv === "no"} onChange={e => setSelections(prev => ({
-                                ...prev,
-                                hasSecondaryHrv: e.target.value,
-                                secondaryHrvEfficiency: ""
-                            }))} className="w-4 h-4 text-emerald-500" />
-                            <span className="text-sm text-slate-100">No</span>
-                        </label>
-                    </div>
+                    <Select value={selections.hasSecondaryHrv} onValueChange={value => setSelections(prev => ({
+                        ...prev,
+                        hasSecondaryHrv: value
+                    }))}>
+                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                            <SelectValue placeholder="Select option" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background border shadow-lg z-50">
+                            <SelectItem value="shared">Shared system (one HRV/ERV for both units)</SelectItem>
+                            <SelectItem value="separate">Separate HRV/ERV for secondary suite</SelectItem>
+                            <SelectItem value="none">No secondary HRV/ERV</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
 
-                {selections.hasSecondaryHrv === "yes" && <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-100">Secondary Suite HRV/ERV Efficiency</label>
-                    <Input type="text" placeholder="Input HRV/ERV efficiency (e.g. SRE 65%)" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
+                {selections.hasSecondaryHrv === "separate" && <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Secondary Suite HRV/ERV Make/Model</label>
+                    <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
                         ...prev,
                         secondaryHrvEfficiency: e.target.value
                     }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
@@ -866,4 +895,4 @@ export default function Performance9365Section({
             </div>}
         </>
     );
-}
+};
