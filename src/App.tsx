@@ -22,6 +22,7 @@ import ResourcesPage from "./pages/Resources";
 import AccountPage from "./pages/Account";
 import FindAProvider from "./pages/FindAProvider";
 import RequestProviderAccess from "./pages/RequestProviderAccess";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,9 @@ const App = () => (
             {/* Service Provider Routes */}
             <Route path="/find-a-provider" element={<ProviderAccessRoute><FindAProvider /></ProviderAccessRoute>} />
             <Route path="/request-provider-access" element={<ProtectedRoute><RequestProviderAccess /></ProtectedRoute>} />
+
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

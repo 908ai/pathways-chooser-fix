@@ -1,8 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FileText, Zap, LogOut, UserCircle } from 'lucide-react';
+import { FileText, Zap, LogOut, UserCircle, Shield } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserRole } from '@/hooks/useUserRole';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +28,7 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isAdmin } = useUserRole();
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -124,6 +126,14 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
                     FAQ
                   </Button>
                 </Link>
+                {isAdmin && (
+                  <Link to="/admin">
+                    <Button variant="ghost" size="sm" className={cn("text-xs text-yellow-400", isLinkActive('/admin') && "underline")}>
+                      <Shield className="h-3 w-3 mr-1" />
+                      Admin
+                    </Button>
+                  </Link>
+                )}
               </div>
             </nav>
           )}
