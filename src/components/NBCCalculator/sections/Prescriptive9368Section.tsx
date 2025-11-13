@@ -733,7 +733,7 @@ export default function Prescriptive9368Section({
                 <h5 className="font-medium text-green-800">Multi-Unit Building Heating Systems</h5>
 
                 <div id="hasMurbMultipleHeating" className={cn("space-y-2", validationErrors.hasMurbMultipleHeating && "p-2 border-2 border-red-500 rounded-md")}>
-                    <label className="text-sm font-medium text-slate-100">Will there be multiple heating systems in this building? <span className="text-red-400">*</span></label>
+                    <label className="text-sm font-medium text-green-800">Will there be multiple heating systems in this building? <span className="text-red-400">*</span></label>
                     <div className="flex gap-4">
                         <label className="flex items-center gap-2">
                             <input type="radio" name="hasMurbMultipleHeating" value="yes" checked={selections.hasMurbMultipleHeating === "yes"} onChange={e => setSelections(prev => ({
@@ -745,7 +745,7 @@ export default function Prescriptive9368Section({
                                 murbSecondIndirectTank: "",
                                 murbSecondIndirectTankSize: ""
                             }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm text-slate-100">Yes</span>
+                            <span className="text-sm text-green-800">Yes</span>
                         </label>
                         <label className="flex items-center gap-2">
                             <input type="radio" name="hasMurbMultipleHeating" value="no" checked={selections.hasMurbMultipleHeating === "no"} onChange={e => setSelections(prev => ({
@@ -756,14 +756,14 @@ export default function Prescriptive9368Section({
                                 murbSecondIndirectTank: "",
                                 murbSecondIndirectTankSize: ""
                             }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm text-slate-100">No</span>
+                            <span className="text-sm text-green-800">No</span>
                         </label>
                     </div>
                 </div>
 
                 {selections.hasMurbMultipleHeating === "yes" && <div className="space-y-4">
                     <div id="murbSecondHeatingType" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Second Heating System Type <span className="text-red-400">*</span></label>
+                        <label className="text-sm font-medium text-green-800">Second Heating System Type <span className="text-red-400">*</span></label>
                         <Select value={selections.murbSecondHeatingType} onValueChange={value => setSelections(prev => ({
                             ...prev,
                             murbSecondHeatingType: value,
@@ -784,7 +784,7 @@ export default function Prescriptive9368Section({
                     </div>
 
                     {selections.murbSecondHeatingType && <div id="murbSecondHeatingEfficiency" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Second Heating System Efficiency <span className="text-red-400">*</span></label>
+                        <label className="text-sm font-medium text-green-800">Second Heating System Efficiency <span className="text-red-400">*</span></label>
                         <Input type="text" placeholder={selections.murbSecondHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.murbSecondHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.murbSecondHeatingEfficiency} onChange={e => setSelections(prev => ({
                             ...prev,
                             murbSecondHeatingEfficiency: e.target.value
@@ -816,7 +816,7 @@ export default function Prescriptive9368Section({
 
                     {selections.murbSecondHeatingType === 'boiler' && <div className="space-y-4">
                         <div id="murbSecondIndirectTank" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-100">Are you installing an indirect tank for the second heating system? <span className="text-red-400">*</span></label>
+                            <label className="text-sm font-medium text-green-800">Are you installing an indirect tank for the second heating system? <span className="text-red-400">*</span></label>
                             <Select value={selections.murbSecondIndirectTank} onValueChange={value => setSelections(prev => ({
                                 ...prev,
                                 murbSecondIndirectTank: value
@@ -832,7 +832,7 @@ export default function Prescriptive9368Section({
                         </div>
 
                         {selections.murbSecondIndirectTank === 'yes' && <div id="murbSecondIndirectTankSize" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-100">Second System Indirect Tank Size <span className="text-red-400">*</span></label>
+                            <label className="text-sm font-medium text-green-800">Second System Indirect Tank Size <span className="text-red-400">*</span></label>
                             <Select value={selections.murbSecondIndirectTankSize} onValueChange={value => setSelections(prev => ({
                                 ...prev,
                                 murbSecondIndirectTankSize: value
@@ -858,7 +858,7 @@ export default function Prescriptive9368Section({
                 <h5 className="font-medium text-orange-800">Multi-Unit Building Water Heating</h5>
 
                 <div id="hasMurbMultipleWaterHeaters" className={cn("space-y-2", validationErrors.hasMurbMultipleWaterHeaters && "p-2 border-2 border-red-500 rounded-md")}>
-                    <label className="text-sm font-medium text-slate-100">Will there be multiple hot water system types in this building? <span className="text-red-400">*</span></label>
+                    <label className="text-sm font-medium text-orange-800">Will there be multiple hot water system types in this building? <span className="text-red-400">*</span></label>
                     <div className="flex gap-4">
                         <label className="flex items-center gap-2">
                             <input type="radio" name="hasMurbMultipleWaterHeaters" value="yes" checked={selections.hasMurbMultipleWaterHeaters === "yes"} onChange={e => setSelections(prev => ({
@@ -868,7 +868,7 @@ export default function Prescriptive9368Section({
                                 // Reset when changing
                                 murbSecondWaterHeaterType: ""
                             }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm text-slate-100">Yes</span>
+                            <span className="text-sm text-orange-800">Yes</span>
                         </label>
                         <label className="flex items-center gap-2">
                             <input type="radio" name="hasMurbMultipleWaterHeaters" value="no" checked={selections.hasMurbMultipleWaterHeaters === "no"} onChange={e => setSelections(prev => ({
@@ -877,14 +877,14 @@ export default function Prescriptive9368Section({
                                 murbSecondWaterHeater: "",
                                 murbSecondWaterHeaterType: ""
                             }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm text-slate-100">No</span>
+                            <span className="text-sm text-orange-800">No</span>
                         </label>
                     </div>
                 </div>
 
                 {selections.hasMurbMultipleWaterHeaters === "yes" && <div className="space-y-4">
                     <div id="murbSecondWaterHeaterType" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Second Water Heater Type <span className="text-red-400">*</span></label>
+                        <label className="text-sm font-medium text-orange-800">Second Water Heater Type <span className="text-red-400">*</span></label>
                         <Select value={selections.murbSecondWaterHeaterType} onValueChange={value => {
                             setSelections(prev => ({
                                 ...prev,
@@ -905,7 +905,7 @@ export default function Prescriptive9368Section({
                     </div>
 
                     {selections.murbSecondWaterHeaterType && <div id="murbSecondWaterHeater" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Second Water Heater Efficiency <span className="text-red-400">*</span></label>
+                        <label className="text-sm font-medium text-orange-800">Second Water Heater Efficiency <span className="text-red-400">*</span></label>
                         <Input type="text" placeholder={(() => {
                             switch (selections.murbSecondWaterHeaterType) {
                                 case "gas-storage":
