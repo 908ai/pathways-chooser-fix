@@ -817,7 +817,7 @@ export default function Prescriptive9362Section({
             </div>
 
             {/* Secondary Suite Heating - Show for single-detached with secondary suite AND multi-unit buildings for performance path */}
-            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit" && ["9365", "9367"].includes(selections.compliancePath)) && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
+            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit" && ["9362", "9365", "9367"].includes(selections.compliancePath)) && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
                 <h5 className="font-medium text-white">Secondary Suite Heating System</h5>
 
                 <div id="hasSecondaryHeating" className={cn("space-y-2", validationErrors.hasSecondaryHeating && "p-2 border-2 border-red-500 rounded-md")}>
@@ -992,7 +992,7 @@ export default function Prescriptive9362Section({
             </>}
 
             {/* Secondary Suite Water Heater - Show for single-detached with secondary suite AND multi-unit buildings for performance path */}
-            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit" && ["9365", "9367"].includes(selections.compliancePath)) && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
+            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit" && ["9362", "9365", "9367"].includes(selections.compliancePath)) && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
                 <h5 className="font-medium text-white">Secondary Suite Water Heating</h5>
 
                 <div id="hasSecondaryWaterHeater" className={cn("space-y-2", validationErrors.hasSecondaryWaterHeater && "p-2 border-2 border-red-500 rounded-md")}>
