@@ -156,7 +156,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                     </div>}
 
                     {/* Secondary Suite HRV - Show for buildings with multiple units */}
-                    {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
+                    {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv" && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
                         <h5 className="font-medium text-white">Secondary Suite HRV/ERV</h5>
 
                         <div className="space-y-2">
