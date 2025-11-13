@@ -10,6 +10,7 @@ import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 import CreateProjectCard from '@/components/dashboard/CreateProjectCard';
+import FindProviderCard from '@/components/dashboard/FindProviderCard';
 import ProjectList from '@/components/dashboard/ProjectList';
 import BuildingOfficialsTab from '@/components/dashboard/BuildingOfficialsTab';
 import ResourcesTab from '@/components/dashboard/ResourcesTab';
@@ -99,7 +100,10 @@ const Dashboard = () => {
             <TabsTrigger value="faq" className="flex items-center gap-2"><Info className="h-4 w-4" />FAQ</TabsTrigger>
           </TabsList>
           <TabsContent value="projects" className="space-y-6">
-            <CreateProjectCard handleNewProject={handleNewProject} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <CreateProjectCard handleNewProject={handleNewProject} />
+              <FindProviderCard />
+            </div>
             <ProjectList projects={projects} handleViewProject={handleViewProject} handleEditProject={handleEditProject} />
           </TabsContent>
           <TabsContent value="building-officials" className="space-y-6">

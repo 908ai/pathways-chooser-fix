@@ -321,7 +321,7 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
         window_u_value: parseFloat(String(formData.windowUValue)) || null,
         window_points: parseFloat(String(formData.windowPoints)) || null,
         heating_system_type: formData.heatingSystemType,
-        heating_efficiency: parseFloat(String(formData.heatingEfficiency)) || null,
+        heating_efficiency: formData.heatingEfficiency ? String(formData.heatingEfficiency) : null,
         heating_points: parseFloat(String(formData.heatingPoints)) || null,
         cooling_system_type: formData.coolingSystemType,
         cooling_efficiency: parseFloat(String(formData.coolingEfficiency)) || null,

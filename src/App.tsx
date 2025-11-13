@@ -13,11 +13,15 @@ import ProjectDetail from "./pages/ProjectDetail";
 import MockEditor from "./pages/MockEditor";
 import TestUpload from "./pages/TestUpload";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
+import ProviderAccessRoute from "./components/ProviderAccessRoute";
 import NotFound from "./pages/NotFound";
 import FaqPage from "./pages/Faq";
 import BuildingOfficialsPage from "./pages/BuildingOfficials";
 import ResourcesPage from "./pages/Resources";
 import AccountPage from "./pages/Account";
+import FindAProvider from "./pages/FindAProvider";
+import RequestProviderAccess from "./pages/RequestProviderAccess";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +45,11 @@ const App = () => (
             <Route path="/building-officials" element={<ProtectedRoute><BuildingOfficialsPage /></ProtectedRoute>} />
             <Route path="/resources" element={<ProtectedRoute><ResourcesPage /></ProtectedRoute>} />
             <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
+            
+            {/* Service Provider Routes */}
+            <Route path="/find-a-provider" element={<ProviderAccessRoute><FindAProvider /></ProviderAccessRoute>} />
+            <Route path="/request-provider-access" element={<ProtectedRoute><RequestProviderAccess /></ProtectedRoute>} />
+
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
