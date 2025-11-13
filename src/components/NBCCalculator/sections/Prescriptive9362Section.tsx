@@ -6,6 +6,8 @@ import InfoButton from "@/components/InfoButton";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 
 import { validateRSI_9362 } from "../utils/validation";
 import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/EffectiveRSIWarning";
@@ -50,6 +52,8 @@ export default function Prescriptive9362Section({
             </Collapsible>
         );
     };
+    
+    const maxUValue = selections.province === "alberta" && selections.climateZone === "7B" ? 2.41 : 2.75;
 
     return (
         <div className="space-y-4">
@@ -350,7 +354,7 @@ export default function Prescriptive9362Section({
 
             {selections.floorsSlabsSelected.includes("heatedFloors") && <div id="inFloorHeatRSI" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Heated Floors <span className="text-red-400">*</span></label>
-                <Input required type="text" placeholder={`Min RSI ${selections.province === "saskatchewan" ? "2.84 (R-16.1)" : "1.34 (R-7.6)"} for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.inFloorHeatRSI} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder={`Min RSI ${selections.province === "saskatchewan" ? "2.84 (R-16.1)" : "1.34"} for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.inFloorHeatRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     inFloorHeatRSI: e.target.value
                 }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.inFloorHeatRSI && "border-red-500 ring-2 ring-red-500")} />
@@ -390,7 +394,30 @@ export default function Prescriptive9362Section({
                     ...prev,
                     floorsOverUnheatedSpacesRSI: e.target.value
                 }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.floorsOverUnheatedSpacesRSI && "border-red-500 ring-2 ring-red-500")} />
-                <EffectiveRSIWarning />
+                {(() => {
+                    const minRSI = 5.02;
+                    const validation = validateRSI_9362(
+                        selections.floorsOverUnheatedSpacesRSI,
+                        minRSI,
+                        `floors over unheated spaces`
+                    );
+
+                    if (!validation.isValid && validation.warning) {
+                        return (
+                            <WarningButton
+                                title="🛑 RSI Value Too Low"
+                                variant="destructive"
+                                defaultOpen={true}
+                            >
+                                <p className="text-xs text-white">
+                                    The RSI value must be increased to at least 5.02 to meet NBC 9.36.2 requirements for floors over unheated spaces.
+                                </p>
+                            </WarningButton>
+                        );
+                    }
+                    return null;
+                })()}
+                <EffectiveRSIWarning />                
             </div>}
 
             {selections.floorsSlabsSelected.includes("unheatedBelowFrost") && <div id="unheatedFloorBelowFrostRSI" className="space-y-2">
@@ -424,7 +451,57 @@ export default function Prescriptive9362Section({
             </div>}
 
             <div id="windowUValue" className="space-y-2">
-                <label className="text-sm font-medium text-slate-100">Window & Door U-Value <span className="text-red-400">*</span></label>
+                <div className="flex items-center gap-3">
+                    <label className="text-sm font-medium text-slate-100">Window & Door U-Value <span className="text-red-400">*</span></label>
+                    <InfoButton title="Did You Know?">
+                        <div className="space-y-4">
+                            <div>
+                                <p className="text-base text-muted-foreground">
+                                    Part 9.36 of the building code allows limited trade-offs in your above-ground building envelope design so you can keep flexibility while still meeting energy efficiency rules. If you’re a builder or designer trying to tweak R-values without triggering performance modelling, you’ve got three basic options:
+                                </p>
+                            </div>
+
+                            <div>
+                                <h5 className="font-medium text-base mb-1">1. Wall-to-Wall Trade-offs</h5>
+                                <p className="text-base text-muted-foreground">
+                                    Want to use a thinner wall in one spot? You can do that — as long as you boost the insulation elsewhere to balance it out. Total area and thermal performance must stay the same overall, and there are limits on how low you can go.
+                                </p>
+                            </div>
+
+                            <div>
+                                <h5 className="font-medium text-base mb-1">2. Window-to-Window Trade-offs</h5>
+                                <p className="text-base text-muted-foreground">
+                                    Need to use a cheaper window with a higher U-value? No problem — just improve the performance of other windows in the same direction (e.g., all south-facing). Everything needs to net out to the same overall heat loss.
+                                </p>
+                            </div>
+
+                            <div>
+                                <h5 className="font-medium text-base mb-1">3. Window Area for Attic Insulation (Modular Homes Only)</h5>
+                                <p className="text-base text-muted-foreground">
+                                    Factory-built homes with low rooflines (due to transport limits) might not fit the required attic insulation. If your home has fewer windows (less than 15% of the wall area), that reduced heat loss gives you an “energy credit” to offset the missing attic insulation.
+                                </p>
+                            </div>
+
+                            <div>
+                                <p className="text-base text-muted-foreground">
+                                    These are simple, cost-saving tools that let you stay code-compliant without full performance modelling — but they only apply to above-grade assemblies, and you’ll need to follow specific rules for area, orientation, and limits on how much you can trade.
+                                </p>
+                            </div>
+
+                            <div>
+                                <p className="text-base text-muted-foreground">
+                                    <b>Alternatively</b>, performance modelling offers more flexibility, allowing you to mix and match upgrades across the whole building. It often leads to smarter material choices, more design freedom, and cost savings over prescriptive compliance - especially for complex or high-performance homes.
+                                </p>
+                            </div>
+                        </div>
+                        <Button asChild variant="secondary" className="h-6 px-2 text-xs">
+                            <a href="/find-a-provider" target="_blank" rel="noopener noreferrer">
+                                <Search className="h-4 w-4" />
+                                Find a service provider
+                            </a>
+                        </Button>                        
+                    </InfoButton>      
+                </div>       
                 <Input required type="text" placeholder="Input Range of U-values - Max U-Value 1.61 W/(m²·K) or Min Energy Rating ≥ 25" value={selections.windowUValue} onChange={e => setSelections(prev => ({
                     ...prev,
                     windowUValue: e.target.value
@@ -446,8 +523,12 @@ export default function Prescriptive9362Section({
                 })()}
                 <WarningButton title="ℹ️ Window & Door Performance Verification">
                     <p className="text-white">
-                        Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value (ie, highest U-value W/(m²×K).
+                        Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value’s (ie, U-value W/(m²×).
                     </p>
+                    <p className="text-white mt-2">
+                        See below an illustrative example of a window unit showing the performance values that must be recorded in the Window & Door Schedule.                        
+                    </p>
+                    <img src="/assets/img/window-door-uvalue-example.png" alt="Window & Door Performance Example" className="mt-4 rounded-md border mx-auto block" />
                 </WarningButton>
             </div>
 
@@ -471,20 +552,13 @@ export default function Prescriptive9362Section({
                 </div>
             </div>
 
-            <WarningButton title="⚠️ Important: Skylight Shaft Insulation">
-                <p className="text-xs text-white">
-                    Skylight shafts must be insulated. Be prepared to provide further details upon request.
-                </p>
-            </WarningButton>
-
             {selections.hasSkylights === "yes" && <div id="skylightUValue" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Skylight U-Value <span className="text-red-400">*</span></label>
-                <Input required type="number" step="0.01" min="0" placeholder={`Enter U-value (maximum ${selections.province === "alberta" && selections.climateZone === "7B" ? "2.41" : "2.75"} W/(m²·K))`} value={selections.skylightUValue} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder={`Enter U-value (maximum ${selections.province === "alberta" && selections.climateZone === "7B" ? "2.41" : "2.75"} W/(m²·K))`} value={selections.skylightUValue} onChange={e => setSelections(prev => ({
                     ...prev,
                     skylightUValue: e.target.value
                 }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.skylightUValue && "border-red-500 ring-2 ring-red-500")} />
                 {(() => {
-                    const maxUValue = selections.province === "alberta" && selections.climateZone === "7B" ? 2.41 : 2.75;
                     return selections.skylightUValue && parseFloat(selections.skylightUValue) > maxUValue && <WarningButton title="U-Value Too High" variant="destructive">
                         <p className="text-sm text-destructive/80">
                             The U-value must be reduced to {maxUValue} or lower to meet NBC requirements for skylights in your climate zone.
@@ -495,7 +569,7 @@ export default function Prescriptive9362Section({
 
             {selections.hasSkylights === "yes" && <WarningButton title="⚠️ Important: Skylight Shaft Insulation">
                 <p className="text-xs text-white">
-                    Skylight shafts must be insulated. Be prepared to provide further details upon request.
+                    Skylight shafts must be insulated to at least the same RSI value required for above‑grade exterior walls.
                 </p>
             </WarningButton>}
 

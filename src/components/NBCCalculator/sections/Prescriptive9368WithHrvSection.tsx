@@ -484,7 +484,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                         </SelectContent>
                     </Select>
                     {selections.windowUValue && <>
-                        <InfoCollapsible title="ℹ️ Window & Door Performance Verification">
+                        <InfoCollapsible title="ℹ️ ">
                             <p className="text-xs text-white">
                                 Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please only record the lowest performing window and door (U-Value (ie, highest U-value W/(m²×K)).
                             </p>
@@ -563,7 +563,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
 
                 {selections.hasSkylights === "yes" && <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Skylight U-Value</label>
-                    <Input type="number" step="0.01" min="0" placeholder={`Enter U-value (maximum ${selections.province === "alberta" && selections.climateZone === "7B" ? "2.41" : "2.75"} W/(m²·K))`} value={selections.skylightUValue} onChange={e => setSelections(prev => ({
+                    <Input type="text" placeholder={`Enter U-value (maximum ${selections.province === "alberta" && selections.climateZone === "7B" ? "2.41" : "2.75"} W/(m²·K))`} value={selections.skylightUValue} onChange={e => setSelections(prev => ({
                         ...prev,
                         skylightUValue: e.target.value
                     }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />

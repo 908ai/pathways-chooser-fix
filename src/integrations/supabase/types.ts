@@ -139,6 +139,7 @@ export type Database = {
           hrv_erv_type: string | null
           id: string
           location: string | null
+          mid_construction_blower_door_planned: boolean | null
           occupancy_class: string | null
           performance_compliance_result: string | null
           postal_code: string | null
@@ -191,6 +192,7 @@ export type Database = {
           hrv_erv_type?: string | null
           id?: string
           location?: string | null
+          mid_construction_blower_door_planned?: boolean | null
           occupancy_class?: string | null
           performance_compliance_result?: string | null
           postal_code?: string | null
@@ -243,6 +245,7 @@ export type Database = {
           hrv_erv_type?: string | null
           id?: string
           location?: string | null
+          mid_construction_blower_door_planned?: boolean | null
           occupancy_class?: string | null
           performance_compliance_result?: string | null
           postal_code?: string | null

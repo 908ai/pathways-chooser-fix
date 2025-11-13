@@ -389,7 +389,7 @@ const NBCCalculator = ({
           hasF280Calculation: "",
           additionalInfo: "",
           interestedCertifications: [],
-          midConstructionBlowerDoorPlanned: false,
+          midConstructionBlowerDoorPlanned: project.mid_construction_blower_door_planned || false,
           energuidePathway: ""
         };
         setSelections(newSelections);
@@ -545,6 +545,7 @@ const NBCCalculator = ({
         building_volume: parseFloat(selections.buildingVolume) || null,
         compliance_status: 'draft',
         total_points: totalPoints,
+        mid_construction_blower_door_planned: selections.midConstructionBlowerDoorPlanned,
       };
 
       const { error } = await supabase

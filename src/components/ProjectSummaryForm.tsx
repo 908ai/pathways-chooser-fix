@@ -341,7 +341,8 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
         total_points: parseFloat(String(formData.totalPoints)) || null,
         compliance_status: formData.complianceStatus,
         upgrade_costs: parseFloat(String(formData.upgradeCosts)) || null,
-        uploaded_files: uploadedFileData
+        uploaded_files: uploadedFileData,
+        mid_construction_blower_door_planned: formData.midConstructionBlowerDoorPlanned,
       };
 
       if (isEditing) {

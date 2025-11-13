@@ -218,9 +218,13 @@ export default function Prescriptive9368Section({
                 </Select>
 
                 <InfoCollapsible title="ℹ️ Window & Door Performance Verification">
-                    <p className="text-xs text-white">
-                        Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please only record the lowest performing window and door (U-Value (ie, highest U-value W/(m²×K)).
+                    <p className="text-white">
+                        Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value’s (ie, U-value W/(m²×).
                     </p>
+                    <p className="text-white mt-2">
+                        See below an illustrative example of a window unit showing the performance values that must be recorded in the Window & Door Schedule.                        
+                    </p>
+                    <img src="/assets/img/window-door-uvalue-example.png" alt="Window & Door Performance Example" className="mt-4 rounded-md border mx-auto block" />
                 </InfoCollapsible>
                 {selections.windowUValue && <>
 
