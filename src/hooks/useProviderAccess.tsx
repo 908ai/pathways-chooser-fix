@@ -10,7 +10,7 @@ export const useProviderAccess = () => {
 
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('can_access_providers')
+      .select('id, can_access_providers')
       .eq('id', user.id)
       .single();
 
