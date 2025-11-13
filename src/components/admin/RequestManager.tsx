@@ -26,6 +26,7 @@ const RequestManager = () => {
 
   const updateRequestMutation = useMutation({
     mutationFn: async ({ requestId, status, userId }: { requestId: string; status: 'approved' | 'denied'; userId: string }) => {
+      // 1. Update the request status
       const { error: requestError } = await supabase
         .from('provider_access_requests')
         .update({ status, reviewed_by: user?.id, reviewed_at: new Date().toISOString() })
@@ -33,14 +34,13 @@ const RequestManager = () => {
 
       if (requestError) throw requestError;
 
-      if (status === 'approved') {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({ can_access_providers: true })
-          .eq('id', userId);
-        
-        if (profileError) throw profileError;
-      }
+      // 2. Update the user's profile with the access flag using upsert
+      const can_access = status === 'approved';
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({ id: userId, can_access_providers: can_access }, { onConflict: 'id' });
+      
+      if (profileError) throw profileError;
     },
     onSuccess: () => {
       toast({ title: 'Success', description: 'Request updated successfully.' });
