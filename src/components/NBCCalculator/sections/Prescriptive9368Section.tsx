@@ -131,7 +131,7 @@ export default function Prescriptive9368Section({
                     wallRSI: value
                 }))}>
                     <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.wallRSI && "border-red-500 ring-2 ring-red-500")}>
-                        <SelectValue placeholder="Select wall insulation level (e.g., R20 Batt/2x6/16&quot;OC)" />
+                        <SelectValue placeholder="Select wall insulation level" />
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px] overflow-y-auto">
                         {wallRSIOptions.map(option => <SelectItem key={option.value} value={option.value}>
@@ -150,7 +150,7 @@ export default function Prescriptive9368Section({
                     belowGradeRSI: value
                 }))}>
                     <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.belowGradeRSI && "border-red-500 ring-2 ring-red-500")}>
-                        <SelectValue placeholder="Select below grade insulation (e.g., R12 Batt/2x4/24&quot;OC)" />
+                        <SelectValue placeholder="Select below grade insulation" />
                     </SelectTrigger>
                     <SelectContent>
                         {belowGradeRSIOptions.map(option => <SelectItem key={option.value} value={option.value}>

@@ -175,7 +175,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                         wallRSI: value
                     }))}>
                         <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
-                            <SelectValue placeholder="Select wall RSI value (e.g., R20 Batt/2x6/16&quot;OC)" />
+                            <SelectValue placeholder="Select wall RSI value" />
                         </SelectTrigger>
                         <SelectContent className="max-h-[300px] overflow-y-auto">
                             {wallRSIOptions.map(option => <SelectItem key={option.value} value={option.value}>
@@ -198,7 +198,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                         belowGradeRSI: value
                     }))}>
                         <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
-                            <SelectValue placeholder="Select below grade RSI value (e.g., R12 Batt/2x4/24&quot;OC)" />
+                            <SelectValue placeholder="Select below grade RSI value" />
                         </SelectTrigger>
                         <SelectContent>
                             {belowGradeRSIOptions.map(option => <SelectItem key={option.value} value={option.value}>

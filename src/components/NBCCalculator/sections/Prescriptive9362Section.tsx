@@ -234,7 +234,7 @@ export default function Prescriptive9362Section({
 
             <div id="wallRSI" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Above Grade Walls <span className="text-red-400">*</span></label>
-                <Input required type="text" placeholder={selections.hasHrv === "with_hrv" ? 'Min RSI 2.97 w/ HRV (e.g., R20 Batt/2x6/16"OC)' : selections.hasHrv === "without_hrv" ? 'Min RSI 3.69 w/o HRV (e.g., R20 Batt/2x6/16"OC)' : 'Min RSI 2.97 w/ HRV, 3.69 w/o HRV (e.g., R20 Batt/2x6/16"OC)'} value={selections.wallRSI} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder={selections.hasHrv === "with_hrv" ? 'Min RSI 2.97 w/ HRV' : selections.hasHrv === "without_hrv" ? 'Min RSI 3.69 w/o HRV' : 'Min RSI 2.97 w/ HRV, 3.69 w/o HRV'} value={selections.wallRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     wallRSI: e.target.value
                 }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.wallRSI && "border-red-500 ring-2 ring-red-500")} />
@@ -255,7 +255,7 @@ export default function Prescriptive9362Section({
 
             <div id="belowGradeRSI" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Below Grade Walls (Foundation Walls) <span className="text-red-400">*</span></label>
-                <Input required type="text" placeholder={selections.hasHrv === "with_hrv" ? "Min RSI 2.98 (with HRV, e.g., R12 Batt/2x4/24\"OC)" : selections.hasHrv === "without_hrv" ? "Min RSI 3.46 (without HRV, e.g., R12 Batt/2x4/24\"OC)" : "Select HRV option first"} value={selections.belowGradeRSI} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder={selections.hasHrv === "with_hrv" ? "Min RSI 2.98 (with HRV)" : selections.hasHrv === "without_hrv" ? "Min RSI 3.46 (without HRV)" : "Select HRV option first"} value={selections.belowGradeRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     belowGradeRSI: e.target.value
                 }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.belowGradeRSI && "border-red-500 ring-2 ring-red-500")} />
@@ -277,8 +277,8 @@ export default function Prescriptive9362Section({
             <div id="floorsSlabsSelected" className={cn("space-y-4", validationErrors.floorsSlabsSelected && "p-2 border-2 border-red-500 rounded-md")}>
                 <label className="text-sm font-medium text-slate-100">Floors/Slabs (Select all that apply) <span className="text-red-400">*</span></label>
                 <div className="space-y-2">
-                    <label className="flex items-center gap-2">
-                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} onChange={e => {
+                    <label className={cn("flex items-center gap-2", selections.floorsSlabsSelected.includes("heatedFloors") && "opacity-50 cursor-not-allowed")}>
+                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} disabled={selections.floorsSlabsSelected.includes("heatedFloors")} onChange={e => {
                             const value = "unheatedBelowFrost";
                             setSelections(prev => ({
                                 ...prev,
@@ -297,8 +297,8 @@ export default function Prescriptive9362Section({
                         }} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Unheated Floor Above Frost Line (or walk-out basement)</span>
                     </label>
-                    <label className="flex items-center gap-2">
-                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("heatedFloors")} onChange={e => {
+                    <label className={cn("flex items-center gap-2", selections.floorsSlabsSelected.includes("unheatedBelowFrost") && "opacity-50 cursor-not-allowed")}>
+                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("heatedFloors")} disabled={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} onChange={e => {
                             const value = "heatedFloors";
                             setSelections(prev => ({
                                 ...prev,
