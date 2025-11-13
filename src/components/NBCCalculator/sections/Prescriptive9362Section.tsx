@@ -92,10 +92,16 @@ export default function Prescriptive9362Section({
                         </div>
                     </InfoButton>
                 </div>
-                <Select required value={selections.hasHrv} onValueChange={value => setSelections(prev => ({
-                    ...prev,
-                    hasHrv: value
-                }))}>
+                <Select required value={selections.hasHrv} onValueChange={value => {
+                    setSelections((prev: any) => {
+                        const newSelections = { ...prev, hasHrv: value };
+                        if (value === 'without_hrv') {
+                            newSelections.hasSecondaryHrv = "";
+                            newSelections.secondaryHrvEfficiency = "";
+                        }
+                        return newSelections;
+                    });
+                }}>
                     <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.hasHrv && "border-red-500 ring-2 ring-red-500")}>
                         <SelectValue placeholder="Select option" />
                     </SelectTrigger>
@@ -115,7 +121,7 @@ export default function Prescriptive9362Section({
             </div>}
 
             {/* Secondary Suite HRV - Show for buildings with multiple units */}
-            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
+            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv" && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
                 <h5 className="font-medium text-white">Secondary Suite HRV/ERV</h5>
 
                 <div id="hasSecondaryHrv" className={cn("space-y-2", validationErrors.hasSecondaryHrv && "p-2 border-2 border-red-500 rounded-md")}>
@@ -299,12 +305,23 @@ export default function Prescriptive9362Section({
                     </label>
                     <label className={cn("flex items-center gap-2", selections.floorsSlabsSelected.includes("unheatedBelowFrost") && "opacity-50 cursor-not-allowed")}>
                         <input type="checkbox" checked={selections.floorsSlabsSelected.includes("heatedFloors")} disabled={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} onChange={e => {
-                            const value = "heatedFloors";
-                            setSelections(prev => ({
-                                ...prev,
-                                floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter(item => item !== value),
-                                hasInFloorHeat: e.target.checked ? "yes" : "no"
-                            }));
+                            const isChecked = e.target.checked;
+                            setSelections(prev => {
+                                let newFloorsSlabsSelected = [...prev.floorsSlabsSelected];
+                                if (isChecked) {
+                                    if (!newFloorsSlabsSelected.includes('heatedFloors')) {
+                                        newFloorsSlabsSelected.push('heatedFloors');
+                                    }
+                                    newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'unheatedBelowFrost');
+                                } else {
+                                    newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'heatedFloors');
+                                }
+                                return {
+                                    ...prev,
+                                    floorsSlabsSelected: newFloorsSlabsSelected,
+                                    hasInFloorHeat: isChecked ? "yes" : "no"
+                                };
+                            });
                         }} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Heated Floors</span>
                     </label>
@@ -563,7 +580,7 @@ export default function Prescriptive9362Section({
                                         <div>
                                             <p className="font-medium">Guarded Test</p>
                                             <div className="ml-4 space-y-1">
-                                                <p>• All adjacent units are depressurized at the same time.</p>
+                                                <p>• All adjacent units are depressurized (or pressurized) at the same time.</p>
                                                 <p>• Blocks airflow between units, giving a more accurate picture of leakage to the outside.</p>
                                                 <p>• Ideal for multi-unit buildings, but more complex.</p>
                                             </div>
@@ -896,7 +913,7 @@ export default function Prescriptive9362Section({
                                     <AlertTriangle className="h-4 w-4" />
                                     <AlertTitle>Secondary Heating Efficiency Too Low</AlertTitle>
                                     <AlertDescription>
-                                        {systemType} - Your input of {inputValue} is below the minimum requirement.
+                                        {systemType} – Your input of {inputValue} is below the minimum requirement.
                                     </AlertDescription>
                                 </Alert>
                             ) : null;                            
