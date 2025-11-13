@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import InfoButton from "@/components/InfoButton";
-import { Info, ChevronDown } from "lucide-react";
+import { Info, ChevronDown, Search } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
@@ -624,9 +624,15 @@ export default function Prescriptive9368Section({
                         }))} className="w-4 h-4 text-primary mt-1" />
                         <div className="flex-1">
                             <label htmlFor="midConstructionBlowerDoor-9368" className="text-sm font-medium cursor-pointer text-slate-100">
-                                Mid-Construction Blower Door Test Planned
+                                Mid-Construction Blower Door Test Planned (Optional)
                             </label>
                         </div>
+                        <Button asChild variant="secondary" className="h-6 px-2 text-xs">
+                            <a href="/find-a-provider" target="_blank" rel="noopener noreferrer">
+                                <Search className="h-4 w-4" />
+                                Find a service provider
+                            </a>
+                        </Button>                         
                     </div>
 
                     <InfoCollapsible title="ℹ️ Benefits of Mid-Construction Blower Door Testing">
@@ -643,9 +649,15 @@ export default function Prescriptive9368Section({
                             <div className="flex items-center gap-1 text-sm mt-3">
                                 <span>📄</span>
                                 <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-purple-300 hover:text-yellow-300/80">
-                                    🔗 View the Blower Door Checklist
+                                    View the Blower Door Checklist
                                 </a>  
                             </div>
+                            <div className="flex items-center gap-1 text-sm mt-3">
+                                <span>▶️</span>
+                                <a href="https://www.youtube.com/watch?v=4KtCansnpLE" target="_blank" rel="noopener noreferrer" className="text-purple-300 hover:text-yellow-300/80">
+                                    BILD Alberta - Building Airtightness Testing
+                                </a>  
+                            </div>   
                         </div>
                     </InfoCollapsible>
                 </div>

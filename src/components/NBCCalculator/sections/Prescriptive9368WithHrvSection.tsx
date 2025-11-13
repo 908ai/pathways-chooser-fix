@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Info, ChevronDown, AlertTriangle } from "lucide-react";
+import { Info, ChevronDown, AlertTriangle, Search } from "lucide-react";
 import InfoButton from "@/components/InfoButton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -777,9 +777,15 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                             }))} className="w-4 h-4 text-primary mt-1" />
                             <div className="flex-1">
                                 <label htmlFor="midConstructionBlowerDoor-9367" className="text-sm font-medium cursor-pointer text-slate-100">
-                                    Mid-Construction Blower Door Test Planned
+                                    Mid-Construction Blower Door Test Planned (Optional)
                                 </label>
                             </div>
+                            <Button asChild variant="secondary" className="h-6 px-2 text-xs">
+                                <a href="/find-a-provider" target="_blank" rel="noopener noreferrer">
+                                    <Search className="h-4 w-4" />
+                                    Find a service provider
+                                </a>
+                            </Button>                             
                         </div>
 
                         <InfoCollapsible title="ℹ️ Benefits of Mid-Construction Blower Door Testing">
@@ -796,9 +802,15 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                                 <div className="flex items-center gap-1 text-sm mt-3">
                                     <span>📄</span>
                                     <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-purple-300 hover:text-yellow-300/80">
-                                        🔗 View the Blower Door Checklist
+                                        View the Blower Door Checklist
                                     </a>  
                                 </div>
+                                <div className="flex items-center gap-1 text-sm mt-3">
+                                    <span>▶️</span>
+                                    <a href="https://www.youtube.com/watch?v=4KtCansnpLE" target="_blank" rel="noopener noreferrer" className="text-purple-300 hover:text-yellow-300/80">
+                                        BILD Alberta - Building Airtightness Testing
+                                    </a>  
+                                </div>   
                             </div>
                         </InfoCollapsible>
                     </div>
@@ -806,7 +818,34 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
 
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-100">Heating Type</label>
+                    <div className="flex items-center gap-3">
+                        <label className="text-sm font-medium text-slate-100">Heating Type <span className="text-red-400">*</span></label>
+                        <InfoButton title="CAN/CSA F280-12 - Room by Room Heat Loss/Gain Calculation">
+                            <div className="space-y-4">
+                                <div>
+                                    <h5 className="font-medium text-base mb-2">What’s the Benefit of an F280 Calculation?</h5>
+                                    <p className="text-base text-muted-foreground">
+                                        An F280 is a room-by-room heat loss and gain calculation that ensures your heating and cooling
+                                        system is sized exactly right for your home — not based on guesses or whole-house averages.
+                                        It’s especially useful for energy-efficient homes, where oversized systems waste energy, cost more,
+                                        and perform poorly.
+                                    </p>
+                                </div>
+                                <div>
+                                    <h5 className="font-medium text-base mb-2">Key Benefits</h5>
+                                    <ul className="text-base text-muted-foreground ml-4 space-y-1 list-disc">
+                                        <li>Ensures every room stays comfortable</li>
+                                        <li>Allows for smaller, cheaper mechanical systems</li>
+                                        <li>Enables smaller ductwork and easier design</li>
+                                        <li>Boosts efficiency and reduces energy bills</li>
+                                        <li>Prevents issues from oversizing (like poor humidity control)</li>
+                                        <li>Improves system lifespan and indoor air quality</li>
+                                        <li>Reduces need for backup heat in cold weather</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </InfoButton>
+                    </div>  
                     <Select value={selections.heatingType} onValueChange={value => setSelections(prev => ({
                         ...prev,
                         heatingType: value
