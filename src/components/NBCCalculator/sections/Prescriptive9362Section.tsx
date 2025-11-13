@@ -60,7 +60,6 @@ export default function Prescriptive9362Section({
                     <InfoButton title="Should I include an HRV (Heat Recovery Ventilator)?">
                         <div className="space-y-4">
                             <div>
-                                <h4 className="font-semibold text-base mb-2">Should I include an HRV (Heat Recovery Ventilator)?</h4>
                                 <p className="text-base text-muted-foreground">
                                     An HRV is a system that brings in fresh outdoor air while recovering heat from the stale indoor air it exhausts. It improves indoor air quality and energy efficiency — especially in airtight homes.
                                 </p>

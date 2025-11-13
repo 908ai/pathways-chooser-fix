@@ -259,7 +259,7 @@ export default function CompliancePathSection({
                                       <span>9.36.7 - Tiered <strong>Performance</strong> Path <span className="font-bold text-emerald-600">(Tier 2-5)</span>{showTieredComingSoon && <span className="ml-2 text-xs font-bold text-red-500">(Coming Soon)</span>}</span>
                                     </div>
                                   </SelectItem>
-                                  <SelectItem value="9368" className="border-l-4 border-l-orange-500" disabled={tieredPathsDisabled}>
+                                  <SelectItem value="9368" className="border-l-4 border-l-orange-500">
                                     <div className="flex items-center gap-2">
                                       <FileText className="h-4 w-4 text-orange-600" />
                                       <span>9.36.8 – Tiered <strong>Prescriptive</strong> Path <span className="font-bold text-purple-300">(Tier 2-5)</span>{showTieredComingSoon && <span className="ml-2 text-xs font-bold text-red-500">(Coming Soon)</span>}</span>
