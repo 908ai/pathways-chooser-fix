@@ -11,10 +11,7 @@ import { Check, X } from 'lucide-react';
 const fetchRequests = async () => {
   const { data, error } = await supabase
     .from('provider_access_requests')
-    .select(`
-      *,
-      profile:profiles(id, profile_type)
-    `)
+    .select(`*`)
     .eq('status', 'pending')
     .order('requested_at', { ascending: true });
 
