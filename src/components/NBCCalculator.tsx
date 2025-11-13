@@ -725,7 +725,8 @@ const NBCCalculator = ({
     setValidationErrors(errors);
 
     if (Object.keys(errors).length > 0) {
-      toast({ title: "Missing Information", description: "Please fill out all required fields in this step.", variant: "destructive" });
+      console.log('Step 1 Validation Errors:', Object.keys(errors));
+      toast({ title: "Missing Information", description: "Please fill out all required fields. Check the console for details.", variant: "destructive" });
       return false;
     }
 
@@ -735,6 +736,7 @@ const NBCCalculator = ({
   const validateStep2 = () => {
     const { compliancePath } = selections;
     if (!compliancePath) {
+      console.log('Step 2 Validation Error: compliancePath is missing');
       toast({ title: "Missing Information", description: "Please select a compliance path to continue.", variant: "destructive" });
       setValidationErrors({ compliancePath: true });
       return false;
@@ -791,54 +793,11 @@ const NBCCalculator = ({
       }
     }
 
-    if (compliancePath === '9368') {
-      const requiredFields: (keyof typeof selections)[] = [
-        'ceilingsAtticRSI', 'wallRSI', 'belowGradeRSI', 'windowUValue',
-        'airtightness', 'hrvEfficiency'
-      ];
-
-      if (!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes')) {
-        requiredFields.push('waterHeater');
-      }
-
-      if (selections.buildingType === "multi-unit") {
-        requiredFields.push('hasMurbMultipleHeating');
-        if (selections.hasMurbMultipleHeating === 'yes') {
-          requiredFields.push('murbSecondHeatingType');
-          if (selections.murbSecondHeatingType) {
-            requiredFields.push('murbSecondHeatingEfficiency');
-            if (selections.murbSecondHeatingType === 'boiler') {
-              requiredFields.push('murbSecondIndirectTank');
-              if (selections.murbSecondIndirectTank === 'yes') {
-                requiredFields.push('murbSecondIndirectTankSize');
-              }
-            }
-          }
-        }
-
-        if (!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes')) {
-            requiredFields.push('hasMurbMultipleWaterHeaters');
-            if (selections.hasMurbMultipleWaterHeaters === 'yes') {
-                requiredFields.push('murbSecondWaterHeaterType');
-                if (selections.murbSecondWaterHeaterType) {
-                    requiredFields.push('murbSecondWaterHeater');
-                }
-            }
-        }
-      }
-
-      requiredFields.forEach(field => {
-        const value = selections[field];
-        if (value === '' || value === null || value === undefined) {
-          errors[field] = true;
-        }
-      });
-    }
-
     setValidationErrors(errors);
 
     if (Object.keys(errors).length > 0) {
-      toast({ title: "Missing Information", description: "Please fill out all required fields in this step.", variant: "destructive" });
+      console.log('Step 3 Validation Errors:', Object.keys(errors));
+      toast({ title: "Missing Information", description: "Please fill out all required fields. Check the console for details.", variant: "destructive" });
       return { isValid: false, errors };
     }
 
@@ -996,6 +955,7 @@ const NBCCalculator = ({
               )}
             {selections.compliancePath === "9362" && <Prescriptive9362Section selections={selections} setSelections={setSelections} validationErrors={validationErrors} />}
             {selections.compliancePath === "9368" && <Prescriptive9368Section selections={selections} setSelections={setSelections} validationErrors={validationErrors} />}
+            {selections.hasHrv === "with_hrv" && selections.compliancePath === "9368" && <Prescriptive9368WithHrvSection selections={selections} setSelections={setSelections} WarningButton={WarningButton} />}
             {selections.compliancePath === "9365" && <Performance9365Section selections={selections} setSelections={setSelections} handleFileUploadRequest={handleFileUploadRequest} uploadedFiles={uploadedFiles} removeFile={removeFile} />}
             {selections.compliancePath === "9367" && <Performance9367Section selections={selections} setSelections={setSelections} handleFileUploadRequest={handleFileUploadRequest} uploadedFiles={uploadedFiles} removeFile={removeFile} />}
             {selections.compliancePath && (
