@@ -150,7 +150,12 @@ export default function ProjectInformationSection({
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-100">Occupancy Class</label>
+                    <div className="flex items-center gap-2">
+                      <label className="text-sm font-medium text-slate-100">Occupancy Class</label>
+                      <InfoButton title="Understanding Occupancy Class">
+                        <p>Homebuilders need to understand building occupancy classifications because it determines whether a project falls under Part 9 of the National Building Code (NBC), which governs small buildings like houses, row homes, small apartments, and similar low-rise structures. These rules apply only to certain building types, mainly residential (Group C) or home-type care (Group B, Division 4) with fewer than 10 residents. If your building includes commercial uses (like a shop, office, or workshop), it might still fall under Part 9, but if you combine unrelated uses (like residential and a school or restaurant), or if it’s an assembly space (Group A), detention/care facility (Group B), or high-hazard industrial (Group F, Div. 1), then you’re out of scope and must follow the much more complex Part 3. Understanding this early avoids costly missteps in design, fire safety, and permit approval. For most new homes, the occupancy is Group C, unless there’s a unique mixed-use or care component.</p>
+                      </InfoButton>
+                    </div>
                     <Input type="text" placeholder="C" value={selections.occupancyClass} onChange={e => setSelections(prev => ({ ...prev, occupancyClass: e.target.value }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                   </div>
                   {selections.province === "alberta" && (
