@@ -30,8 +30,8 @@ export default function CompliancePathSection({
   const isSaskatoon = isSaskatchewan && selections.city?.toLowerCase().trim() === "saskatoon";
   const isSaskOther = isSaskatchewan && selections.city && selections.city.toLowerCase().trim() !== "saskatoon";
 
-  // Disable base paths if in Saskatchewan but not in Saskatoon.
-  const basePathsDisabled = isSaskOther;
+  // If Saskatoon, disable the base paths (9365, 9362).
+  const basePathsDisabled = isSaskatoon;
 
   // Show "Coming Soon" for Alberta and non-Saskatoon Sask cities.
   const showTieredComingSoon = isAlberta || isSaskOther;
