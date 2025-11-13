@@ -390,6 +390,17 @@ export type Database = {
         }
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      get_pending_access_requests_with_user_details: {
+        Args: Record<string, never>
+        Returns: {
+          id: string
+          user_id: string
+          requested_at: string
+          status: string
+          email: string | null
+          phone: string | null
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "account_manager" | "user"

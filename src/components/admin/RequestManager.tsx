@@ -9,11 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Check, X } from 'lucide-react';
 
 const fetchRequests = async () => {
-  const { data, error } = await supabase
-    .from('provider_access_requests')
-    .select(`*`)
-    .eq('status', 'pending')
-    .order('requested_at', { ascending: true });
+  const { data, error } = await supabase.rpc('get_pending_access_requests_with_user_details');
 
   if (error) throw new Error(error.message);
   return data;
@@ -68,7 +64,8 @@ const RequestManager = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>User ID</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Phone</TableHead>
               <TableHead>Requested At</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -77,7 +74,8 @@ const RequestManager = () => {
           <TableBody>
             {requests && requests.length > 0 ? requests.map((request: any) => (
               <TableRow key={request.id}>
-                <TableCell>{request.user_id}</TableCell>
+                <TableCell>{request.email || 'N/A'}</TableCell>
+                <TableCell>{request.phone || 'N/A'}</TableCell>
                 <TableCell>{new Date(request.requested_at).toLocaleString()}</TableCell>
                 <TableCell><Badge variant="secondary">{request.status}</Badge></TableCell>
                 <TableCell className="text-right">
@@ -101,7 +99,7 @@ const RequestManager = () => {
               </TableRow>
             )) : (
               <TableRow>
-                <TableCell colSpan={4} className="text-center">No pending requests.</TableCell>
+                <TableCell colSpan={5} className="text-center">No pending requests.</TableCell>
               </TableRow>
             )}
           </TableBody>
