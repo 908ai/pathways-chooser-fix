@@ -853,7 +853,10 @@ export default function Prescriptive9362Section({
                 </div>
                 <Select required value={selections.heatingType} onValueChange={value => setSelections(prev => ({
                     ...prev,
-                    heatingType: value
+                    heatingType: value,
+                    // When heating type changes, reset boiler-specific fields if it's not a boiler
+                    indirectTank: value !== 'boiler' ? '' : prev.indirectTank,
+                    indirectTankSize: value !== 'boiler' ? '' : prev.indirectTankSize,
                 }))}>
                     <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.heatingType && "border-red-500 ring-2 ring-red-500")}>
                         <SelectValue placeholder="Select heating type" />
@@ -932,22 +935,6 @@ export default function Prescriptive9362Section({
                     }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.indirectTankSize && "border-red-500 ring-2 ring-red-500")} />
                 </div>}
             </div>}
-
-            <div id="coolingApplicable" className="space-y-2">
-                <label className="text-sm font-medium text-slate-100">Are you installing cooling/air conditioning? <span className="text-red-400">*</span></label>
-                <Select required value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
-                    ...prev,
-                    coolingApplicable: value
-                }))}>
-                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.coolingApplicable && "border-red-500 ring-2 ring-red-500")}>
-                        <SelectValue placeholder="Select if cooling is applicable" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background border shadow-lg z-50">
-                        <SelectItem value="yes">Yes</SelectItem>
-                        <SelectItem value="no">No</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
 
             {/* Secondary Suite Heating - Show for single-detached with secondary suite AND multi-unit buildings for performance path */}
             {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit" && ["9362", "9365", "9367"].includes(selections.compliancePath)) && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
@@ -1065,6 +1052,22 @@ export default function Prescriptive9362Section({
                     </div>}
                 </>}
             </div>}
+
+            <div id="coolingApplicable" className="space-y-2">
+                <label className="text-sm font-medium text-slate-100">Are you installing cooling/air conditioning? <span className="text-red-400">*</span></label>
+                <Select required value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
+                    ...prev,
+                    coolingApplicable: value
+                }))}>
+                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.coolingApplicable && "border-red-500 ring-2 ring-red-500")}>
+                        <SelectValue placeholder="Select if cooling is applicable" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
 
             {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <>
                 <div id="waterHeaterType" className="space-y-2">
