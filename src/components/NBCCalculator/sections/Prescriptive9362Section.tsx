@@ -41,6 +41,25 @@ export default function Prescriptive9362Section({
         }
     }, [selections.province, selections.buildingType, selections.airtightness, setSelections]);
 
+    useEffect(() => {
+        if (selections.heatingType === 'boiler' && selections.indirectTank === 'yes') {
+            if (selections.waterHeaterType !== 'boiler') {
+                setSelections((prev: any) => ({ ...prev, waterHeaterType: 'boiler' }));
+            }
+        }
+    }, [selections.heatingType, selections.indirectTank, selections.waterHeaterType, setSelections]);
+
+    useEffect(() => {
+        if (selections.secondaryHeatingType === 'boiler' && selections.secondaryIndirectTank === 'yes') {
+            if (selections.secondaryWaterHeaterType !== 'boiler') {
+                setSelections((prev: any) => ({ ...prev, secondaryWaterHeaterType: 'boiler' }));
+            }
+        }
+    }, [selections.secondaryHeatingType, selections.secondaryIndirectTank, selections.secondaryWaterHeaterType, setSelections]);
+
+    const isWaterHeaterBoiler = selections.heatingType === 'boiler' && selections.indirectTank === 'yes';
+    const isSecondaryWaterHeaterBoiler = selections.secondaryHeatingType === 'boiler' && selections.secondaryIndirectTank === 'yes';
+
     const WarningButton = ({
         title,
         children,
@@ -1069,63 +1088,62 @@ export default function Prescriptive9362Section({
                 </Select>
             </div>
 
-            {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <>
-                <div id="waterHeaterType" className="space-y-2">
-                    <label className="text-sm font-medium text-slate-100">Service Water Heater Type <span className="text-red-400">*</span></label>
-                    <Select required value={selections.waterHeaterType} onValueChange={value => {
-                        setSelections(prev => ({
-                            ...prev,
-                            waterHeaterType: value,
-                            waterHeater: "" // Reset efficiency when type changes
-                        }));
-                    }}>
-                        <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.waterHeaterType && "border-red-500 ring-2 ring-red-500")}>
-                            <SelectValue placeholder="Select water heater type" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-background border shadow-lg z-50">
-                            <SelectItem value="gas-storage">Gas Storage Tank</SelectItem>
-                            <SelectItem value="gas-tankless">Gas Tankless</SelectItem>
-                            <SelectItem value="electric-storage">Electric Storage Tank</SelectItem>
-                            <SelectItem value="electric-tankless">Electric Tankless</SelectItem>
-                            <SelectItem value="electric-heat-pump">Electric Heat Pump</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                {selections.waterHeaterType === "other" && <div id="otherWaterHeaterType" className="space-y-2">
-                    <label className="text-sm font-medium text-slate-100">Specify Other Water Heater Type <span className="text-red-400">*</span></label>
-                    <Input required type="text" placeholder="Please specify the water heater type" value={selections.otherWaterHeaterType || ""} onChange={e => setSelections(prev => ({
+            <div id="waterHeaterType" className="space-y-2">
+                <label className="text-sm font-medium text-slate-100">Service Water Heater Type <span className="text-red-400">*</span></label>
+                <Select required value={selections.waterHeaterType} onValueChange={value => {
+                    setSelections((prev: any) => ({
                         ...prev,
-                        otherWaterHeaterType: e.target.value
-                    }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.otherWaterHeaterType && "border-red-500 ring-2 ring-red-500")} />
-                </div>}
+                        waterHeaterType: value,
+                        waterHeater: "" // Reset efficiency when type changes
+                    }));
+                }} disabled={isWaterHeaterBoiler}>
+                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.waterHeaterType && "border-red-500 ring-2 ring-red-500")}>
+                        <SelectValue placeholder="Select water heater type" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="boiler">Boiler</SelectItem>
+                        <SelectItem value="gas-storage">Gas Storage Tank</SelectItem>
+                        <SelectItem value="gas-tankless">Gas Tankless</SelectItem>
+                        <SelectItem value="electric-storage">Electric Storage Tank</SelectItem>
+                        <SelectItem value="electric-tankless">Electric Tankless</SelectItem>
+                        <SelectItem value="electric-heat-pump">Electric Heat Pump</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
 
-                {selections.waterHeaterType && <div id="waterHeater" className="space-y-2">
-                    <label className="text-sm font-medium text-slate-100">Service Water Heater Efficiency <span className="text-red-400">*</span></label>
-                    <Input required type="text" placeholder={(() => {
-                        switch (selections.waterHeaterType) {
-                            case "gas-storage":
-                                return "Min UEF 0.60-0.81 for Gas Storage Tank";
-                            case "gas-tankless":
-                                return "Min UEF 0.86 for Gas Tankless";
-                            case "electric-storage":
-                                return "Min UEF 0.35-0.69 for Electric Storage Tank";
-                            case "electric-tankless":
-                                return "Min UEF 0.86 for Electric Tankless";
-                            case "electric-heat-pump":
-                                return "Min UEF 2.1 for Electric Heat Pump";
-                            case "other":
-                                return "Enter efficiency value";
-                            default:
-                                return "Enter water heater efficiency";
-                        }
-                    })()} value={selections.waterHeater} onChange={e => setSelections(prev => ({
-                        ...prev,
-                        waterHeater: e.target.value
-                    }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.waterHeater && "border-red-500 ring-2 ring-red-500")} />
-                </div>}
-            </>}
+            {selections.waterHeaterType === "other" && <div id="otherWaterHeaterType" className="space-y-2">
+                <label className="text-sm font-medium text-slate-100">Specify Other Water Heater Type <span className="text-red-400">*</span></label>
+                <Input required type="text" placeholder="Please specify the water heater type" value={selections.otherWaterHeaterType || ""} onChange={e => setSelections(prev => ({
+                    ...prev,
+                    otherWaterHeaterType: e.target.value
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.otherWaterHeaterType && "border-red-500 ring-2 ring-red-500")} />
+            </div>}
+
+            {selections.waterHeaterType && selections.waterHeaterType !== 'boiler' && <div id="waterHeater" className="space-y-2">
+                <label className="text-sm font-medium text-slate-100">Service Water Heater Efficiency <span className="text-red-400">*</span></label>
+                <Input required type="text" placeholder={(() => {
+                    switch (selections.waterHeaterType) {
+                        case "gas-storage":
+                            return "Min UEF 0.60-0.81 for Gas Storage Tank";
+                        case "gas-tankless":
+                            return "Min UEF 0.86 for Gas Tankless";
+                        case "electric-storage":
+                            return "Min UEF 0.35-0.69 for Electric Storage Tank";
+                        case "electric-tankless":
+                            return "Min UEF 0.86 for Electric Tankless";
+                        case "electric-heat-pump":
+                            return "Min UEF 2.1 for Electric Heat Pump";
+                        case "other":
+                            return "Enter efficiency value";
+                        default:
+                            return "Enter water heater efficiency";
+                    }
+                })()} value={selections.waterHeater} onChange={e => setSelections(prev => ({
+                    ...prev,
+                    waterHeater: e.target.value
+                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.waterHeater && "border-red-500 ring-2 ring-red-500")} />
+            </div>}
 
             {/* Secondary Suite Water Heater - Show for single-detached with secondary suite AND multi-unit buildings for performance path */}
             {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit" && ["9362", "9365", "9367"].includes(selections.compliancePath)) && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
@@ -1190,11 +1208,12 @@ export default function Prescriptive9362Section({
                                     secondaryWaterHeaterType: value,
                                     secondaryWaterHeater: "" // Reset efficiency when type changes
                                 }));
-                            }}>
+                            }} disabled={isSecondaryWaterHeaterBoiler}>
                                 <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryWaterHeaterType && "border-red-500 ring-2 ring-red-500")}>
                                     <SelectValue placeholder="Select water heater type" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background border shadow-lg z-50">
+                                    <SelectItem value="boiler">Boiler</SelectItem>
                                     <SelectItem value="gas-storage">Gas Storage Tank</SelectItem>
                                     <SelectItem value="gas-tankless">Gas Tankless</SelectItem>
                                     <SelectItem value="electric-storage">Electric Storage Tank</SelectItem>
@@ -1203,7 +1222,7 @@ export default function Prescriptive9362Section({
                             </Select>
                         </div>
 
-                        {selections.secondaryWaterHeaterType && <div id="secondaryWaterHeater" className="space-y-2">
+                        {selections.secondaryWaterHeaterType && selections.secondaryWaterHeaterType !== 'boiler' && <div id="secondaryWaterHeater" className="space-y-2">
                             <label className="text-sm font-medium text-slate-100">Secondary Suite Water Heater Efficiency <span className="text-red-400">*</span></label>
                             <Input required type="text" placeholder={(() => {
                                 switch (selections.secondaryWaterHeaterType) {
