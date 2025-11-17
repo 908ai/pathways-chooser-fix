@@ -1212,6 +1212,23 @@ export default function Prescriptive9362Section({
                 </Select>
             </div>
 
+            {selections.coolingApplicable === "yes" && (
+                <div id="coolingEfficiency" className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Cooling System Efficiency <span className="text-red-400">*</span></label>
+                    <Input
+                        required
+                        type="text"
+                        placeholder="Enter SEER (min 14.5) or SEER2 (min 14.3) value"
+                        value={selections.coolingEfficiency}
+                        onChange={e => setSelections(prev => ({
+                            ...prev,
+                            coolingEfficiency: e.target.value
+                        }))}
+                        className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.coolingEfficiency && "border-red-500 ring-2 ring-red-500")}
+                    />
+                </div>
+            )}
+
             <div id="waterHeaterType" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Service Water Heater Type <span className="text-red-400">*</span></label>
                 <Select required value={selections.waterHeaterType} onValueChange={value => {
