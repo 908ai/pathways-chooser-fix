@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -21,6 +21,26 @@ export default function Prescriptive9362Section({
     setSelections: any;
     validationErrors: Record<string, boolean>;
 }) {
+    useEffect(() => {
+        let targetAirtightness = '';
+        if (selections.province === 'saskatchewan') {
+            targetAirtightness = '3.2';
+        } else if (selections.province === 'alberta') {
+            if (selections.buildingType === 'multi-unit') {
+                targetAirtightness = '3.0';
+            } else if (selections.buildingType) { // single-detached or single-detached-secondary
+                targetAirtightness = '2.5';
+            }
+        }
+        
+        if (targetAirtightness && selections.airtightness !== targetAirtightness) {
+            setSelections((prev: any) => ({
+                ...prev,
+                airtightness: targetAirtightness
+            }));
+        }
+    }, [selections.province, selections.buildingType, selections.airtightness, setSelections]);
+
     const WarningButton = ({
         title,
         children,
@@ -38,7 +58,9 @@ export default function Prescriptive9362Section({
                 ? "bg-gradient-to-r from-slate-800/60 to-teal-800/60"
                 : "bg-gradient-to-r from-slate-800/60 to-red-800/60";
         const borderColor =
-            variant === "warning" ? "border border-orange-400" : "border-2 border-red-400";
+            variant === "warning"
+                ? "border border-orange-400"
+                : "border-2 border-red-400";
 
         return (
             <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
@@ -716,10 +738,10 @@ export default function Prescriptive9362Section({
                         </div>
                     </InfoButton>
                 </div>
-                <Input required type="text" placeholder={`Min ${selections.province === "saskatchewan" ? "3.2" : "3.0"} ACH50 for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.airtightness} onChange={e => setSelections(prev => ({
-                    ...prev,
-                    airtightness: e.target.value
-                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.airtightness && "border-red-500 ring-2 ring-red-500")} />
+                <div className="p-3 bg-slate-900/50 border border-slate-600 rounded-md">
+                    <p className="text-white font-medium">{selections.airtightness ? `${selections.airtightness} ACH50` : 'Select province and building type'}</p>
+                    <p className="text-xs text-slate-400">Target air-leakage rate is automatically assigned based on location.</p>
+                </div>
 
                 <WarningButton title="⚠️ Caution: Air-Tightness Targets Without Testing History">
                     <div className="text-xs text-white space-y-2">
@@ -748,28 +770,6 @@ export default function Prescriptive9362Section({
                         </div>
                     </div>
                 </WarningButton>
-
-                {(() => {
-                    const airtightnessValue = parseFloat(selections.airtightness || "0");
-
-                    // Determine minimum threshold based on province
-                    let minimumThreshold = 3.0; // Default for Alberta
-                    let thresholdText = "3.0";
-                    if (selections.province === "saskatchewan") {
-                        minimumThreshold = 3.2;
-                        thresholdText = "3.2";
-                    }
-                    const showWarning = airtightnessValue > 0 && airtightnessValue < minimumThreshold;
-                    return showWarning ? (
-                        <Alert variant="destructive" style={{ backgroundColor: 'beige' }}>
-                            <AlertTriangle className="h-4 w-4" />
-                            <AlertTitle>Airtightness Value Too Low</AlertTitle>
-                            <AlertDescription>
-                                The airtightness value must be at least {thresholdText} ACH50 for prescriptive unguarded testing in {selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}. Please increase your target value.
-                            </AlertDescription>
-                        </Alert>
-                    ) : null;                    
-                })()}
 
                 {/* Mid-Construction Blower Door Test Checkbox */}
                 <div id="midConstructionBlowerDoorPlanned" className="space-y-3 pt-4 border-t border-border/20">
