@@ -404,6 +404,10 @@ export type Database = {
           phone: string | null
         }[]
       }
+      user_can_access_providers: {
+        Args: Record<string, never>
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "account_manager" | "user"

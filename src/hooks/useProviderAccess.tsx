@@ -8,23 +8,15 @@ export const useProviderAccess = () => {
   const fetchProviderAccess = async () => {
     if (!user) return { hasAccess: false, request: null };
 
-    // First, check the user's profile directly for the access flag.
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('id, can_access_providers')
-      .eq('id', user.id)
-      .maybeSingle();
+    // Use the single source of truth RPC function for the access check
+    const { data: hasAccess, error: rpcError } = await supabase.rpc('user_can_access_providers');
 
-    if (profileError) {
-      console.error('Error fetching profile for provider access:', profileError);
+    if (rpcError) {
+      console.error('Error checking provider access:', rpcError);
       return { hasAccess: false, request: null };
     }
 
-    if (profile?.can_access_providers) {
-      return { hasAccess: true, request: null };
-    }
-
-    // If profile doesn't grant access, check for the latest access request.
+    // We still need to fetch the latest request object to show its status on the request page
     const { data: request, error: requestError } = await supabase
       .from('provider_access_requests')
       .select('*')
@@ -32,20 +24,12 @@ export const useProviderAccess = () => {
       .order('requested_at', { ascending: false })
       .limit(1)
       .maybeSingle();
-
+    
     if (requestError) {
       console.error('Error fetching access request:', requestError);
-      // Return no access but don't throw, as the user might just not have a request yet.
-      return { hasAccess: false, request: null };
     }
 
-    // If the latest request is approved, they have access. This is the key fix.
-    if (request?.status === 'approved') {
-      return { hasAccess: true, request };
-    }
-
-    // Otherwise, they don't have access. Return the request if it exists (e.g., for 'pending' or 'denied' status).
-    return { hasAccess: false, request: request || null };
+    return { hasAccess: hasAccess || false, request: request || null };
   };
 
   return useQuery({
