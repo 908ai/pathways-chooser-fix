@@ -795,6 +795,19 @@ export default function Performance9367Section({
                                 coolingMakeModel: e.target.value
                             }))} placeholder="Enter cooling system make and model" className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                         </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-slate-100">Cooling System Efficiency</label>
+                            <Input
+                                type="text"
+                                placeholder="Enter SEER (min 14.5) or SEER2 (min 14.3) value"
+                                value={selections.coolingEfficiency}
+                                onChange={e => setSelections(prev => ({
+                                    ...prev,
+                                    coolingEfficiency: e.target.value
+                                }))}
+                                className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400"
+                            />
+                        </div>
                     </div>}
 
                     {/* Secondary Suite HRV - Show for buildings with multiple units */}
