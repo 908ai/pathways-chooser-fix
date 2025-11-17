@@ -949,8 +949,8 @@ export default function Prescriptive9362Section({
                                     />
                                     <Dialog>
                                         <DialogTrigger asChild>
-                                            <Button variant="outline" size="sm">
-                                                View Performance Requirements
+                                            <Button variant="secondary" className="h-6 px-2 text-xs">
+                                                View HVAC Equipment Performance Requirements
                                             </Button>
                                         </DialogTrigger>
                                         <DialogContent className="max-w-4xl">
@@ -967,7 +967,7 @@ export default function Prescriptive9362Section({
                             )}
                         </>
                     ) : (
-                        <Input required type="text" placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
+                        <Input required type="text" placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90% AFUE)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
                             ...prev,
                             heatingEfficiency: e.target.value
                         }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.heatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
@@ -1117,8 +1117,8 @@ export default function Prescriptive9362Section({
                                         />
                                         <Dialog>
                                             <DialogTrigger asChild>
-                                                <Button variant="outline" size="sm">
-                                                    View Performance Requirements
+                                                <Button variant="secondary" className="h-6 px-2 text-xs">
+                                                    View HVAC Equipment Performance Requirements
                                                 </Button>
                                             </DialogTrigger>
                                             <DialogContent className="max-w-4xl">
@@ -1135,7 +1135,7 @@ export default function Prescriptive9362Section({
                                 )}
                             </>
                         ) : (
-                            <Input required type="text" placeholder={selections.secondaryHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.secondaryHeatingEfficiency} onChange={e => setSelections(prev => ({
+                            <Input required type="text" placeholder={selections.secondaryHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90% AFUE)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.secondaryHeatingEfficiency} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 secondaryHeatingEfficiency: e.target.value
                             }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryHeatingEfficiency && "border-red-500 ring-2 ring-red-500")} />

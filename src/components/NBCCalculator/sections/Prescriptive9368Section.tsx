@@ -17,9 +17,10 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import InfoButton from "@/components/InfoButton";
-import { Info, ChevronDown, Search } from "lucide-react";
+import { Info, ChevronDown, Search, AlertTriangle } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import { validateRSI } from "../utils/validation";
 import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/EffectiveRSIWarning";
@@ -33,6 +34,14 @@ import {
     waterHeaterOptions,
     airtightnessOptions_7B
 } from "../../NBCCalculator/constants/options";
+
+const heatPumpOptions = [
+    { value: "Air-Source Heat Pump – Split (SEER 14.5, EER 11.5, HSPF 7.1)", label: "Air-Source Heat Pump – Split (SEER 14.5, EER 11.5, HSPF 7.1)" },
+    { value: "Air-Source Heat Pump – Single Package (SEER 14.0, EER 11.0, HSPF 7.0)", label: "Air-Source Heat Pump – Single Package (SEER 14.0, EER 11.0, HSPF 7.0)" },
+    { value: "Ground-Source Heat Pump – Closed Loop (COPc ≥ 3.6, COPh ≥ 3.1)", label: "Ground-Source Heat Pump – Closed Loop (COPc ≥ 3.6, COPh ≥ 3.1)" },
+    { value: "Ground-Source Heat Pump – Open Loop (COPc ≥ 4.75, COPh ≥ 3.6)", label: "Ground-Source Heat Pump – Open Loop (COPc ≥ 4.75, COPh ≥ 3.6)" },
+    { value: "Other", label: "Other (Manual Entry Required)" }
+];
 
 export default function Prescriptive9368Section({
     selections,
@@ -88,6 +97,9 @@ export default function Prescriptive9368Section({
         }
         return baseOptions;
     };
+
+    const isWaterHeaterBoiler = selections.heatingType === 'boiler' && selections.indirectTank === 'yes';
+    const isSecondaryWaterHeaterBoiler = selections.secondaryHeatingType === 'boiler' && selections.secondaryIndirectTank === 'yes';
 
     return (
         <div className="space-y-6">
@@ -418,17 +430,31 @@ export default function Prescriptive9368Section({
                     ...prev,
                     airtightness: value
                 }))}>
-                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.airtightness && "border-red-500 ring-2 ring-red-500")}>
-                        <SelectValue placeholder="Select airtightness level" />
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select air-tightness level" />
                     </SelectTrigger>
                     <SelectContent>
-                        {getFilteredAirtightnessOptions().map(option => <SelectItem key={option.value} value={option.value}>
-                            {option.label} ({option.points} points)
+                        {airtightnessOptions.map(option => <SelectItem key={option.value} value={option.value}>
+                            <div className="flex justify-between items-center w-full">
+                                <span>
+                                    {option.label.includes('ACH₅₀:') ? <>
+                                        {option.label.split('ACH₅₀:')[0]}
+                                        <strong>ACH₅₀: </strong>
+                                        <strong className="text-primary">
+                                            {option.label.split('ACH₅₀:')[1].split(',')[0]}
+                                        </strong>
+                                        {option.label.split('ACH₅₀:')[1].substring(option.label.split('ACH₅₀:')[1].split(',')[0].length)}
+                                    </> : option.label}
+                                </span>
+                                <Badge variant={option.points > 0 ? "default" : "secondary"}>
+                                    {option.points} pts
+                                </Badge>
+                            </div>
                         </SelectItem>)}
                     </SelectContent>
                 </Select>
 
-                <InfoCollapsible title="⚠️ Caution: Air-Tightness Targets Without Testing History">
+                <InfoCollapsible title="⚠️ Caution: Choosing Airtightness Points Without Experience">
                     <div className="text-xs text-white space-y-2">
                         <p>
                             Choosing an air-tightness target lower than prescribed by NBC2020 without prior test results is risky.
@@ -445,185 +471,26 @@ export default function Prescriptive9368Section({
                             <li>Face expensive late-stage upgrades or rework</li>
                         </ul>
                         <p>
-                            <strong>Tip:</strong> Track airtightness results across all projects to set realistic targets, reduce build costs & optimize performance from day one.
+                            If you're unsure of your airtightness performance, consider using performance modelling instead — it offers more flexibility and reduces the risk of non-compliance.
                         </p>
                         <div className="flex items-center gap-1 text-sm mt-3">
                             <span>🔗</span>
-                            <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">
+                            <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300">
                                 More information
                             </a>
                         </div>
                     </div>
                 </InfoCollapsible>
 
-                {/* Multi-Unit Exercise */}
-                <div className="space-y-3 pt-4 border-t border-border/20">
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium bg-emerald-50/80 border-emerald-300/50 hover:bg-emerald-100/80 hover:border-emerald-400/60 backdrop-blur-sm">
-                                Learn more about points allocation for air-townhouse for MURB/Row/Town-homes
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="w-[700px] max-h-[80vh] overflow-y-auto p-4" >
-                            <DialogHeader>
-                                <DialogTitle>Understanding Airtightness Levels & Points: 4-Unit Row House Scenario</DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-4">
-                                <div>
-                                    <p className="text-sm text-muted-foreground">We're showing how a builder can earn energy efficiency points by improving airtightness—that is, how well a building keeps outside air from leaking in (or inside air from leaking out).</p>
-                                    <p className="text-sm text-muted-foreground mt-2">Even though we're mainly focusing on single detached homes today, we're using a 4-unit row house in this example to show how things can get a bit more complex in real-world multi-unit builds.</p>
-                                </div>
-
-                                {/* Diagram */}
-                                <div className="bg-muted/30 p-3 rounded-md">
-                                    <img src="/lovable-uploads/9fef7011-6de1-412c-9331-2c6f86f64d18.png" alt="Figure 9.36.-18: Example of attached zones" className="w-full max-w-md mx-auto" />
-                                    <p className="text-xs text-muted-foreground text-center mt-2">Figure 9.36.-18: Example of attached zones</p>
-                                    <p className="text-xs text-muted-foreground text-center mt-1 italic">Source: Housing and Small Buildings Illustrated User's Guide - National Building Code of Canada 2020 Part 9 of Division B</p>
-                                </div>
-
-
-                                {/* Test Results Table */}
-                                <div>
-                                    <h5 className="font-medium text-sm mb-3">Test Results for an Example 4 Unit Row House in Climate Zone 7A (Unguarded)</h5>
-                                    <div className="overflow-x-auto">
-                                        <table className="w-full border-collapse border border-border text-sm">
-                                            <thead>
-                                                <tr className="bg-muted/50">
-                                                    <th className="border border-border p-2 text-left font-medium">Metric</th>
-                                                    <th className="border border-border p-2 text-center font-medium">Left End House</th>
-                                                    <th className="border border-border p-2 text-center font-medium">Left Middle House</th>
-                                                    <th className="border border-border p-2 text-center font-medium">Right Middle House</th>
-                                                    <th className="border border-border p-2 text-center font-medium">Right End House</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td className="border border-border p-2 font-medium bg-muted/30">ACH</td>
-                                                    <td className="border border-border p-2 text-center">1.49</td>
-                                                    <td className="border border-border p-2 text-center">2.01</td>
-                                                    <td className="border border-border p-2 text-center">1.95</td>
-                                                    <td className="border border-border p-2 text-center">1.51</td>
-                                                </tr>
-                                                <tr className="bg-muted/20">
-                                                    <td className="border border-border p-2 font-medium bg-muted/30">NLA</td>
-                                                    <td className="border border-border p-2 text-center">0.97</td>
-                                                    <td className="border border-border p-2 text-center">1.29</td>
-                                                    <td className="border border-border p-2 text-center">1.24</td>
-                                                    <td className="border border-border p-2 text-center">0.95</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="border border-border p-2 font-medium bg-muted/30">NRL</td>
-                                                    <td className="border border-border p-2 text-center">0.57</td>
-                                                    <td className="border border-border p-2 text-center">0.75</td>
-                                                    <td className="border border-border p-2 text-center">0.79</td>
-                                                    <td className="border border-border p-2 text-center">0.6</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                <div className="w-full h-px bg-muted"></div>
-
-                                <div>
-                                    <h5 className="font-medium text-sm mb-2">Key Rules to Know:</h5>
-                                    <div className="text-sm text-muted-foreground ml-4 space-y-1">
-                                        <p>• Builders can skip the prescriptive air barrier checklist (NBC 9.36.2.10) if they do a blower door test and meet certain airtightness levels.</p>
-                                        <p>• In multi-unit buildings, each unit is tested individually, but the worst score of all the units is what counts for code and points.</p>
-                                        <p>• To earn points, the results must at least meet AL-1B (if unguarded testing is used).</p>
-                                    </div>
-                                </div>
-
-                                <div className="w-full h-px bg-muted"></div>
-
-                                <div>
-                                    <h5 className="font-medium text-sm mb-2">This Example:</h5>
-                                    <div className="text-sm text-muted-foreground ml-4 space-y-1">
-                                        <p>• <strong>Project:</strong> 4-unit row house in Prince Albert (Zone 7A)</p>
-                                        <p>• <strong>Goal:</strong> Reach Tier 2 compliance, which needs 10 total points</p>
-                                        <p>• <strong>Already earned:</strong> 6.7 points from well-insulated above-grade walls</p>
-                                        <p>• <strong>Need:</strong> 3.3 more points — aiming to get them from airtightness</p>
-                                        <p>• <strong>Test type used:</strong> Unguarded, because units will be occupied at different times</p>
-                                    </div>
-                                </div>
-
-                                <div className="w-full h-px bg-muted"></div>
-
-                                <div>
-                                    <h5 className="font-medium text-sm mb-2">Test Results (Worst Values):</h5>
-                                    <div className="overflow-x-auto">
-                                        <table className="w-full text-xs border-collapse border border-border">
-                                            <thead>
-                                                <tr className="bg-muted/50">
-                                                    <th className="border border-border p-2 text-left font-medium">Metric</th>
-                                                    <th className="border border-border p-2 text-left font-medium">Worst Unit Result</th>
-                                                    <th className="border border-border p-2 text-left font-medium">AL- Target (From NBC Table 9.36.-B)</th>
-                                                    <th className="border border-border p-2 text-left font-medium">Airtightness Level Met</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td className="border border-border p-2 font-medium">ACH</td>
-                                                    <td className="border border-border p-2">2.01 (Left Middle)</td>
-                                                    <td className="border border-border p-2">AL-3B = 2.0 max</td>
-                                                    <td className="border border-border p-2 text-destructive font-medium">Fails AL-3B → drops to AL-2B</td>
-                                                </tr>
-                                                <tr className="bg-muted/20">
-                                                    <td className="border border-border p-2 font-medium">NLA</td>
-                                                    <td className="border border-border p-2">1.29 (Left Middle)</td>
-                                                    <td className="border border-border p-2">AL-3B = 1.28 max</td>
-                                                    <td className="border border-border p-2 text-destructive font-medium">Fails AL-3B → drops to AL-2B</td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="border border-border p-2 font-medium">NRL</td>
-                                                    <td className="border border-border p-2">0.79 (Right Middle)</td>
-                                                    <td className="border border-border p-2">AL-3B = 0.78 max</td>
-                                                    <td className="border border-border p-2 text-destructive font-medium">Fails AL-3B → drops to AL-2B</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <p className="text-xs text-muted-foreground mt-2 italic">Even though the differences are tiny, the worst score in each category is just above the AL-3B thresholds, so the builder can only claim AL-2B.</p>
-                                </div>
-
-                                <div className="w-full h-px bg-muted"></div>
-
-                                <div>
-                                    <h5 className="font-medium text-sm mb-2">Outcome:</h5>
-                                    <div className="text-sm text-muted-foreground ml-4 space-y-2">
-                                        <p>• Builder cannot claim points for AL-3B or higher.</p>
-                                        <p>• Based on AL-2B, they'd earn fewer points (you'd refer to your compliance table for exact value, but likely not enough to hit 10 points total).</p>
-                                        <p>• So if the builder wants to stay on track for Tier 2, they need to:</p>
-                                        <div className="ml-4 space-y-1">
-                                            <p>• Tighten up the leakiest unit(s) (especially Left Middle and Right Middle)</p>
-                                            <p>• To stay on track for Tier 2, they could invest in Aerobarrier (air-sealing system) as well</p>
-                                            <p>• Or look for other upgrades (e.g. better windows, mechanical systems) to make up the missing points</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
-                                    <p className="text-xs font-medium text-blue-800">💡 Key Takeaways:</p>
-                                    <div className="text-xs text-blue-700 space-y-1">
-                                        <p>• In multi-unit buildings, one poorly-performing unit can impact the entire project's compliance. This is why consistent construction quality and testing across all units is critical for achieving energy efficiency targets.</p>
-                                        <p>• Having some air-tightness results from previous projects to apply and guide decision-making for this particular project would reduce risk and ensure that costly changes don't have to happen if the air-leakage targets aren't met.</p>
-                                        <p>• Alternatively, performance energy modelling would have likely also met the performance requirements with a lower overall build cost and less risk if they had started down that path to begin with.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
-                </div>
-
                 {/* Mid-Construction Blower Door Test Checkbox */}
                 <div className="space-y-3 pt-4 border-t border-border/20">
                     <div className="flex items-start gap-3">
-                        <input type="checkbox" id="midConstructionBlowerDoor-9368" checked={selections.midConstructionBlowerDoorPlanned} onChange={e => setSelections(prev => ({
+                        <input type="checkbox" id="midConstructionBlowerDoor-9367" checked={selections.midConstructionBlowerDoorPlanned} onChange={e => setSelections(prev => ({
                             ...prev,
                             midConstructionBlowerDoorPlanned: e.target.checked
                         }))} className="w-4 h-4 text-primary mt-1" />
                         <div className="flex-1">
-                            <label htmlFor="midConstructionBlowerDoor-9368" className="text-sm font-medium cursor-pointer text-slate-100">
+                            <label htmlFor="midConstructionBlowerDoor-9367" className="text-sm font-medium cursor-pointer text-slate-100">
                                 Mid-Construction Blower Door Test Planned (Optional)
                             </label>
                         </div>
@@ -632,7 +499,7 @@ export default function Prescriptive9368Section({
                                 <Search className="h-4 w-4" />
                                 Find a service provider
                             </a>
-                        </Button>                         
+                        </Button>                             
                     </div>
 
                     <InfoCollapsible title="ℹ️ Benefits of Mid-Construction Blower Door Testing">
@@ -663,287 +530,248 @@ export default function Prescriptive9368Section({
                 </div>
             </div>
 
-            {/* HRV/ERV Section for 9368 - Mandatory */}
-            <div className="space-y-3">
+
+            <div className="space-y-2">
                 <div className="flex items-center gap-3">
-                    <label className="text-sm font-medium text-slate-100">HRV/ERV System (Required for 9.36.8)</label>
-                    <InfoButton title="HRV/ERV Required for 9.36.8 Path">
+                    <label className="text-sm font-medium text-slate-100">Heating Type <span className="text-red-400">*</span></label>
+                    <InfoButton title="CAN/CSA F280-12 - Room by Room Heat Loss/Gain Calculation">
                         <div className="space-y-4">
                             <div>
-                                <p className="text-xs text-muted-foreground">
-                                    An HRV or ERV is mandatory for the 9.36.8 Tiered Prescriptive Path. This system brings in fresh outdoor air while recovering heat from the stale indoor air it exhausts.
+                                <h5 className="font-medium text-base mb-2">What’s the Benefit of an F280 Calculation?</h5>
+                                <p className="text-base text-muted-foreground">
+                                    An F280 is a room-by-room heat loss and gain calculation that ensures your heating and cooling
+                                    system is sized exactly right for your home — not based on guesses or whole-house averages.
+                                    It’s especially useful for energy-efficient homes, where oversized systems waste energy, cost more,
+                                    and perform poorly.
                                 </p>
                             </div>
-
                             <div>
-                                <h5 className="font-medium text-sm mb-1">Benefits of HRV/ERV systems:</h5>
-                                <ul className="text-xs text-muted-foreground space-y-1 ml-4 list-disc">
-                                    <li><strong>Better indoor air quality:</strong> Removes stale air, moisture, odors, and pollutants while bringing in fresh air.</li>
-                                    <li><strong>Energy savings:</strong> Recovery up to 80-90% of the heat from outgoing air, reducing heating costs.</li>
-                                    <li><strong>Comfort:</strong> Maintains consistent temperatures and humidity levels throughout your home.</li>
-                                    <li><strong>Code compliance:</strong> Required for this pathway and enables more flexible building envelope options.</li>
+                                <h5 className="font-medium text-base mb-2">Key Benefits</h5>
+                                <ul className="text-base text-muted-foreground ml-4 space-y-1 list-disc">
+                                    <li>Ensures every room stays comfortable</li>
+                                    <li>Allows for smaller, cheaper mechanical systems</li>
+                                    <li>Enables smaller ductwork and easier design</li>
+                                    <li>Boosts efficiency and reduces energy bills</li>
+                                    <li>Prevents issues from oversizing (like poor humidity control)</li>
+                                    <li>Improves system lifespan and indoor air quality</li>
+                                    <li>Reduces need for backup heat in cold weather</li>
                                 </ul>
                             </div>
+                        </div>
+                    </InfoButton>
+                </div>  
+                <Select value={selections.heatingType} onValueChange={value => setSelections(prev => ({
+                    ...prev,
+                    heatingType: value
+                }))}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select heating type" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="furnace">Furnace</SelectItem>
+                        <SelectItem value="boiler">Boiler</SelectItem>
+                        <SelectItem value="heat-pump">Heat Pump</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
 
-                            <div>
-                                <h5 className="font-medium text-sm mb-1">HRV vs. ERV:</h5>
-                                <div className="text-xs text-muted-foreground space-y-1">
-                                    <p><strong>HRV (Heat Recovery Ventilator):</strong> Recovers heat only. Best for cold, dry climates like most of Canada.</p>
-                                    <p><strong>ERV (Energy Recovery Ventilator):</strong> Recovers both heat and moisture. Better for humid climates or homes with high humidity issues.</p>
+            <InfoCollapsible title="⚠️ Mechanical Equipment Documentation">
+                <div className="text-xs text-white space-y-2">
+                    <p>
+                        The Authority Having Jurisdiction (AHJ) may verify specific makes/models of the mechanical equipment being proposed for heating, cooling, domestic hot water and HRV systems. The AHJ may also request CSA F-280 heat loss & gain calculations.
+                    </p>
+                    <p>
+                        <strong>F280 calculations:</strong> A heating and cooling load calculation based on CSA Standard F280-12 (or updated versions), which is the Canadian standard for determining how much heating or cooling a home needs. It accounts for factors like insulation levels, windows, air leakage, and local climate.
+                    </p>
+                    <p>
+                        <strong>Benefits:</strong> Ensures HVAC systems are properly sized, improves comfort and efficiency, reduces energy costs, and is often required for building permits.
+                    </p>
+                    <div className="flex items-center gap-1 text-sm mt-3">
+                        <span>🔗</span>
+                        <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">
+                            More information
+                        </a>
+                    </div>
+                </div>
+            </InfoCollapsible>
+
+            {selections.heatingType && selections.compliancePath as string === '9367' && <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-100">Heating System Make/Model</label>
+                <Input type="text" placeholder="Input heating system make/model (e.g. Carrier 59TP6)" value={selections.heatingMakeModel || ""} onChange={e => setSelections(prev => ({
+                    ...prev,
+                    heatingMakeModel: e.target.value
+                }))} />
+            </div>}
+
+            {selections.heatingType && selections.compliancePath as string !== '9367' && <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-100">Heating Efficiency</label>
+                <Input type="text" placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.heatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
+                    ...prev,
+                    heatingEfficiency: e.target.value
+                }))} />
+                {selections.heatingEfficiency && selections.heatingType !== 'heat-pump' && (() => {
+                    console.log('Heating efficiency validation - type:', selections.heatingType, 'efficiency:', selections.heatingEfficiency);
+                    const inputValue = parseFloat(selections.heatingEfficiency);
+                    let minValue = 0;
+                    let systemType = "";
+                    if (selections.heatingType === 'boiler') {
+                        minValue = 90;
+                        systemType = "Boiler (90 AFUE minimum)";
+                    } else {
+                        minValue = 95; // Furnace
+                        systemType = "Furnace (95% AFUE minimum)";
+                    }
+                    const showWarning = !isNaN(inputValue) && inputValue < minValue;
+
+                    return showWarning ? (
+                        <Alert variant="destructive" style={{ backgroundColor: 'beige' }}>
+                            <AlertTriangle className="h-4 w-4" />
+                            <AlertTitle>Heating Efficiency Too Low</AlertTitle>
+                            <AlertDescription>
+                                {systemType} – Your input of {inputValue} is below the minimum requirement.
+                            </AlertDescription>
+                        </Alert>
+                    ) : null;
+                })()}
+            </div>}
+
+            {selections.heatingType === 'boiler' && <div className="space-y-4">
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Are you installing an indirect tank?</label>
+                    <Select value={selections.indirectTank} onValueChange={value => setSelections(prev => ({
+                        ...prev,
+                        indirectTank: value
+                    }))}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select if installing indirect tank" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background border shadow-lg z-50">
+                            <SelectItem value="yes">Yes</SelectItem>
+                            <SelectItem value="no">No</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {selections.indirectTank === 'yes' && <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Indirect tank size (gallons)</label>
+                    <Input type="number" placeholder="Enter tank size in gallons" value={selections.indirectTankSize} onChange={e => setSelections(prev => ({
+                        ...prev,
+                        indirectTankSize: e.target.value
+                    }))} />
+                </div>}
+            </div>}
+
+            <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-100">Are you installing cooling/air conditioning?</label>
+                <Select value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
+                    ...prev,
+                    coolingApplicable: value
+                }))}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select if cooling is applicable" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
+
+            {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <>
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Service Water Heater Type</label>
+                    <Select value={selections.waterHeater} onValueChange={value => setSelections(prev => ({
+                        ...prev,
+                        waterHeater: value
+                    }))}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select service water heater type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {waterHeaterOptions.map(option => <SelectItem key={option.value} value={option.value}>
+                                <div className="flex justify-between items-center w-full">
+                                    <span>{option.label}</span>
+                                    <Badge variant={option.points > 0 ? "default" : "secondary"}>
+                                        {option.points} pts
+                                    </Badge>
+                                </div>
+                            </SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {selections.waterHeater && selections.compliancePath as string === '9367' && <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Water Heating Make/Model</label>
+                    <Input type="text" placeholder="Input water heating make/model (e.g. Rheem Pro Prestige)" value={selections.waterHeaterMakeModel || ""} onChange={e => setSelections(prev => ({
+                        ...prev,
+                        waterHeaterMakeModel: e.target.value
+                    }))} />
+                </div>}
+
+                {selections.waterHeater && selections.compliancePath as string !== '9367' && <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Service Water Heater</label>
+                    <Input type="text" placeholder="Enter water heater efficiency, (e.g. .69 UEF)" value={selections.waterHeaterType} onChange={e => {
+                        console.log('Water heater efficiency updated:', e.target.value);
+                        setSelections(prev => ({
+                            ...prev,
+                            waterHeaterType: e.target.value
+                        }));
+                    }} />
+                </div>}
+            </>}
+
+            <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                    <label className="text-sm font-medium text-slate-100">Is a drain water heat recovery system being installed?</label>
+                    <InfoButton title="Drain Water Heat Recovery System Information">
+                        <div className="space-y-4">
+                            <div className="border-b pb-2">
+                                <h4 className="font-medium text-sm">ℹ️ Drain Water Heat Recovery (DWHR)</h4>
+                            </div>
+
+                            <div className="space-y-3">
+                                <p className="text-xs text-muted-foreground">
+                                    DWHR systems capture heat from shower drain water and use it to preheat incoming cold water, reducing hot water energy use by 20–40%.
+                                </p>
+
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-green-600 text-xs">✅</span>
+                                        <span className="text-xs">Improves energy efficiency</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-green-600 text-xs">✅</span>
+                                        <span className="text-xs">Helps earn NBC tiered compliance points</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-green-600 text-xs">✅</span>
+                                        <span className="text-xs">Great for homes with frequent showers</span>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1 text-xs text-muted-foreground">
+                                    <p><strong>Estimated cost:</strong> $800–$1,200 installed</p>
+                                    <p><strong>Best fit:</strong> Homes with vertical drain stacks and electric or heat pump water heaters.</p>
                                 </div>
                             </div>
                         </div>
                     </InfoButton>
                 </div>
-
-                {/* Auto-set HRV to required for 9368 and show notification */}
-                <div className="p-3 bg-emerald-50/80 border border-emerald-300/50 rounded-md backdrop-blur-sm">
-                    <p className="text-sm text-emerald-900">
-                        ✓ HRV/ERV system is required and automatically included for the 9.36.8 Tiered Prescriptive Path.
-                    </p>
-                </div>
-
-                <div id="hrvEfficiency" className="space-y-2">
-                    <label className="text-sm font-medium text-slate-100">HRV/ERV Efficiency <span className="text-red-400">*</span></label>
-                    <Select value={selections.hrvEfficiency || ""} onValueChange={value => {
-                        setSelections(prev => ({
-                            ...prev,
-                            hasHrv: "with_hrv", // Auto-set to with_hrv for 9368
-                            hrvEfficiency: value
-                        }));
-                    }}>
-                        <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.hrvEfficiency && "border-red-500 ring-2 ring-red-500")}>
-                            <SelectValue placeholder="Select HRV/ERV efficiency range" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-background border shadow-lg z-50">
-                            {hrvOptions.slice(1).map(option => (
-                                <SelectItem key={option.value} value={option.value}>
-                                    {option.label} ({option.points} points)
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-            </div>
-
-            {/* Service Water Heater */}
-            {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <div id="waterHeater" className="space-y-2">
-                <label className="text-sm font-medium text-slate-100">Service Water Heater <span className="text-red-400">*</span></label>
-                <Select value={selections.waterHeater} onValueChange={value => setSelections(prev => ({
+                <Select value={selections.hasDWHR} onValueChange={value => setSelections(prev => ({
                     ...prev,
-                    waterHeater: value
+                    hasDWHR: value
                 }))}>
-                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.waterHeater && "border-red-500 ring-2 ring-red-500")}>
-                        <SelectValue placeholder="Select water heater type" />
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select yes or no" />
                     </SelectTrigger>
-                    <SelectContent>
-                        {waterHeaterOptions.map(option => <SelectItem key={option.value} value={option.value}>
-                            {option.label} ({option.points} points)
-                        </SelectItem>)}
+                    <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
                     </SelectContent>
                 </Select>
-            </div>}
-
-            {/* MURB Multiple Heating Systems - Only show for Multi-Unit buildings */}
-            {selections.buildingType === "multi-unit" && <div className="space-y-4 p-4 bg-green-50 border border-green-200 rounded-md">
-                <h5 className="font-medium text-green-800">Multi-Unit Building Heating Systems</h5>
-
-                <div id="hasMurbMultipleHeating" className={cn("space-y-2", validationErrors.hasMurbMultipleHeating && "p-2 border-2 border-red-500 rounded-md")}>
-                    <label className="text-sm font-medium text-green-800">Will there be multiple heating systems in this building? <span className="text-red-400">*</span></label>
-                    <div className="flex gap-4">
-                        <label className="flex items-center gap-2">
-                            <input type="radio" name="hasMurbMultipleHeating" value="yes" checked={selections.hasMurbMultipleHeating === "yes"} onChange={e => setSelections(prev => ({
-                                ...prev,
-                                hasMurbMultipleHeating: e.target.value,
-                                murbSecondHeatingType: "",
-                                // Reset when changing
-                                murbSecondHeatingEfficiency: "",
-                                murbSecondIndirectTank: "",
-                                murbSecondIndirectTankSize: ""
-                            }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm text-green-800">Yes</span>
-                        </label>
-                        <label className="flex items-center gap-2">
-                            <input type="radio" name="hasMurbMultipleHeating" value="no" checked={selections.hasMurbMultipleHeating === "no"} onChange={e => setSelections(prev => ({
-                                ...prev,
-                                hasMurbMultipleHeating: e.target.value,
-                                murbSecondHeatingType: "",
-                                murbSecondHeatingEfficiency: "",
-                                murbSecondIndirectTank: "",
-                                murbSecondIndirectTankSize: ""
-                            }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm text-green-800">No</span>
-                        </label>
-                    </div>
-                </div>
-
-                {selections.hasMurbMultipleHeating === "yes" && <div className="space-y-4">
-                    <div id="murbSecondHeatingType" className="space-y-2">
-                        <label className="text-sm font-medium text-green-800">Second Heating System Type <span className="text-red-400">*</span></label>
-                        <Select value={selections.murbSecondHeatingType} onValueChange={value => setSelections(prev => ({
-                            ...prev,
-                            murbSecondHeatingType: value,
-                            murbSecondHeatingEfficiency: "",
-                            // Reset efficiency when type changes
-                            murbSecondIndirectTank: "",
-                            murbSecondIndirectTankSize: ""
-                        }))}>
-                            <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.murbSecondHeatingType && "border-red-500 ring-2 ring-red-500")}>
-                                <SelectValue placeholder="Select heating type" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-background border shadow-lg z-50">
-                                <SelectItem value="furnace">Furnace</SelectItem>
-                                <SelectItem value="boiler">Boiler</SelectItem>
-                                <SelectItem value="heat-pump">Heat Pump</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    {selections.murbSecondHeatingType && <div id="murbSecondHeatingEfficiency" className="space-y-2">
-                        <label className="text-sm font-medium text-green-800">Second Heating System Efficiency <span className="text-red-400">*</span></label>
-                        <Input type="text" placeholder={selections.murbSecondHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.murbSecondHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.murbSecondHeatingEfficiency} onChange={e => setSelections(prev => ({
-                            ...prev,
-                            murbSecondHeatingEfficiency: e.target.value
-                        }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.murbSecondHeatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
-                        {selections.murbSecondHeatingEfficiency && selections.murbSecondHeatingType !== 'heat-pump' && (() => {
-                            const inputValue = parseFloat(selections.murbSecondHeatingEfficiency);
-                            let minValue = 0;
-                            let systemType = "";
-                            if (selections.murbSecondHeatingType === 'boiler') {
-                                minValue = 90;
-                                systemType = "Boiler (90 AFUE minimum)";
-                            } else {
-                                minValue = 95; // Furnace
-                                systemType = "Furnace (95% AFUE minimum)";
-                            }
-                            if (!isNaN(inputValue) && inputValue < minValue) {
-                                return <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-                                    <p className="text-sm text-destructive font-medium">
-                                        ⚠️ Second Heating System Efficiency Too Low
-                                    </p>
-                                    <p className="text-sm text-destructive/80 mt-1">
-                                        {systemType} - Your input of {inputValue} is below the minimum requirement.
-                                    </p>
-                                </div>;
-                            }
-                            return null;
-                        })()}
-                    </div>}
-
-                    {selections.murbSecondHeatingType === 'boiler' && <div className="space-y-4">
-                        <div id="murbSecondIndirectTank" className="space-y-2">
-                            <label className="text-sm font-medium text-green-800">Are you installing an indirect tank for the second heating system? <span className="text-red-400">*</span></label>
-                            <Select value={selections.murbSecondIndirectTank} onValueChange={value => setSelections(prev => ({
-                                ...prev,
-                                murbSecondIndirectTank: value
-                            }))}>
-                                <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.murbSecondIndirectTank && "border-red-500 ring-2 ring-red-500")}>
-                                    <SelectValue placeholder="Select option" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-background border shadow-lg z-50">
-                                    <SelectItem value="yes">Yes</SelectItem>
-                                    <SelectItem value="no">No</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {selections.murbSecondIndirectTank === 'yes' && <div id="murbSecondIndirectTankSize" className="space-y-2">
-                            <label className="text-sm font-medium text-green-800">Second System Indirect Tank Size <span className="text-red-400">*</span></label>
-                            <Select value={selections.murbSecondIndirectTankSize} onValueChange={value => setSelections(prev => ({
-                                ...prev,
-                                murbSecondIndirectTankSize: value
-                            }))}>
-                                <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.murbSecondIndirectTankSize && "border-red-500 ring-2 ring-red-500")}>
-                                    <SelectValue placeholder="Select tank size" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-background border shadow-lg z-50">
-                                    <SelectItem value="40-gal">40 Gallon</SelectItem>
-                                    <SelectItem value="50-gal">50 Gallon</SelectItem>
-                                    <SelectItem value="60-gal">60 Gallon</SelectItem>
-                                    <SelectItem value="80-gal">80 Gallon</SelectItem>
-                                    <SelectItem value="other">Other</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>}
-                    </div>}
-                </div>}
-            </div>}
-
-            {/* MURB Multiple Water Heaters - Only show for Multi-Unit buildings */}
-            {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && selections.buildingType === "multi-unit" && <div className="space-y-4 p-4 bg-orange-50 border border-orange-200 rounded-md">
-                <h5 className="font-medium text-orange-800">Multi-Unit Building Water Heating</h5>
-
-                <div id="hasMurbMultipleWaterHeaters" className={cn("space-y-2", validationErrors.hasMurbMultipleWaterHeaters && "p-2 border-2 border-red-500 rounded-md")}>
-                    <label className="text-sm font-medium text-orange-800">Will there be multiple hot water system types in this building? <span className="text-red-400">*</span></label>
-                    <div className="flex gap-4">
-                        <label className="flex items-center gap-2">
-                            <input type="radio" name="hasMurbMultipleWaterHeaters" value="yes" checked={selections.hasMurbMultipleWaterHeaters === "yes"} onChange={e => setSelections(prev => ({
-                                ...prev,
-                                hasMurbMultipleWaterHeaters: e.target.value,
-                                murbSecondWaterHeater: "",
-                                // Reset when changing
-                                murbSecondWaterHeaterType: ""
-                            }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm text-orange-800">Yes</span>
-                        </label>
-                        <label className="flex items-center gap-2">
-                            <input type="radio" name="hasMurbMultipleWaterHeaters" value="no" checked={selections.hasMurbMultipleWaterHeaters === "no"} onChange={e => setSelections(prev => ({
-                                ...prev,
-                                hasMurbMultipleWaterHeaters: e.target.value,
-                                murbSecondWaterHeater: "",
-                                murbSecondWaterHeaterType: ""
-                            }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm text-orange-800">No</span>
-                        </label>
-                    </div>
-                </div>
-
-                {selections.hasMurbMultipleWaterHeaters === "yes" && <div className="space-y-4">
-                    <div id="murbSecondWaterHeaterType" className="space-y-2">
-                        <label className="text-sm font-medium text-orange-800">Second Water Heater Type <span className="text-red-400">*</span></label>
-                        <Select value={selections.murbSecondWaterHeaterType} onValueChange={value => {
-                            setSelections(prev => ({
-                                ...prev,
-                                murbSecondWaterHeaterType: value,
-                                murbSecondWaterHeater: "" // Reset efficiency when type changes
-                            }));
-                        }}>
-                            <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.murbSecondWaterHeaterType && "border-red-500 ring-2 ring-red-500")}>
-                                <SelectValue placeholder="Select water heater type" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-background border shadow-lg z-50">
-                                <SelectItem value="gas-storage">Gas Storage Tank</SelectItem>
-                                <SelectItem value="gas-tankless">Gas Tankless</SelectItem>
-                                <SelectItem value="electric-storage">Electric Storage Tank</SelectItem>
-                                <SelectItem value="other">Other</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    {selections.murbSecondWaterHeaterType && <div id="murbSecondWaterHeater" className="space-y-2">
-                        <label className="text-sm font-medium text-orange-800">Second Water Heater Efficiency <span className="text-red-400">*</span></label>
-                        <Input type="text" placeholder={(() => {
-                            switch (selections.murbSecondWaterHeaterType) {
-                                case "gas-storage":
-                                    return "Enter efficiency for Gas Storage Tank (UEF ≥0.60-0.81)";
-                                case "gas-tankless":
-                                    return "Enter efficiency for Gas Tankless (UEF ≥0.86)";
-                                case "electric-storage":
-                                    return "Enter efficiency for Electric Storage Tank (UEF ≥0.35-0.69)";
-                                case "heat-pump":
-                                    return "Enter efficiency for Heat Pump Water Heater (EF ≥2.1)";
-                                case "other":
-                                    return "Enter efficiency for water heater";
-                                default:
-                                    return "Enter water heater efficiency";
-                            }
-                        })()} value={selections.murbSecondWaterHeater} onChange={e => setSelections(prev => ({
-                            ...prev,
-                            murbSecondWaterHeater: e.target.value
-                        }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.murbSecondWaterHeater && "border-red-500 ring-2 ring-red-500")} />
-                    </div>}
-                </div>}
-            </div>}
+            </div>
         </div>
     );
 }
