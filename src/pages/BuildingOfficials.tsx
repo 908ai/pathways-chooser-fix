@@ -77,7 +77,11 @@ const BuildingOfficialsPage = () => {
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="h-1.5 w-1.5 bg-orange-400 rounded-full mt-2 flex-shrink-0"></div>
-                    <p className="text-sm text-slate-300">A Reference House is generated based on NBC2020's minimum requirements.</p>
+                    <p className="text-sm text-slate-300">A Proposed House is created using your building plans, envelope specifications and mechanical systems.</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="h-1.5 w-1.5 bg-orange-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-sm text-slate-300">A Reference House is generated based on the Proposed House and NBC2020's minimum requirements.</p>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="h-1.5 w-1.5 bg-orange-400 rounded-full mt-2 flex-shrink-0"></div>
