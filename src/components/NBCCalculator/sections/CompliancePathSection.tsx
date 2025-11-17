@@ -216,6 +216,7 @@ export default function CompliancePathSection({
                             hasSecondaryHeating: "",
                             secondaryHeatingType: "",
                             secondaryHeatingEfficiency: "",
+                            otherSecondaryHeatingEfficiency: "",
                             secondaryIndirectTank: "",
                             secondaryIndirectTankSize: "",
                             hasMurbMultipleHeating: "",
@@ -223,16 +224,21 @@ export default function CompliancePathSection({
                             murbSecondHeatingEfficiency: "",
                             murbSecondIndirectTank: "",
                             murbSecondIndirectTankSize: "",
+                            hasMurbMultipleWaterHeaters: "",
+                            murbSecondWaterHeaterType: "",
+                            murbSecondWaterHeater: "",
                             waterHeater: "",
                             waterHeaterType: "",
                             hasSecondaryWaterHeater: "",
                             secondaryWaterHeaterSameAsMain: "",
                             secondaryWaterHeater: "",
                             secondaryWaterHeaterType: "",
-                            hasMurbMultipleWaterHeaters: "",
-                            murbSecondWaterHeater: "",
-                            murbSecondWaterHeaterType: "",
-                            hasDWHR: ""
+                            hasDWHR: "",
+                            heatingType: "",
+                            heatingEfficiency: "",
+                            otherHeatingEfficiency: "",
+                            heatingMakeModel: "",
+                            otherHeatingMakeModel: "",
                           }));
                           onPathwayChange?.(getPathwayDisplayName(value));
                         }}>

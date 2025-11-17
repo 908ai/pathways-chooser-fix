@@ -899,7 +899,7 @@ export default function Prescriptive9362Section({
 
             {selections.heatingType && <div id="heatingEfficiency" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Heating Efficiency <span className="text-red-400">*</span></label>
-                <Input required type="text" placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.heatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
+                <Input required type="text" placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 % AFUE)" : selections.heatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
                     ...prev,
                     heatingEfficiency: e.target.value
                 }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.heatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
@@ -909,7 +909,7 @@ export default function Prescriptive9362Section({
                     let systemType = "";
                     if (selections.heatingType === 'boiler') {
                         minValue = 90;
-                        systemType = "Boiler (90 AFUE minimum)";
+                        systemType = "Boiler (90% AFUE minimum)";
                     } else {
                         minValue = 95; // Furnace
                         systemType = "Furnace (95% AFUE minimum)";
@@ -1012,7 +1012,7 @@ export default function Prescriptive9362Section({
 
                     {selections.secondaryHeatingType && <div id="secondaryHeatingEfficiency" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Secondary Suite Heating Efficiency <span className="text-red-400">*</span></label>
-                        <Input required type="text" placeholder={selections.secondaryHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.secondaryHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.secondaryHeatingEfficiency} onChange={e => setSelections(prev => ({
+                        <Input required type="text" placeholder={selections.secondaryHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90% AFUE)" : selections.secondaryHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.secondaryHeatingEfficiency} onChange={e => setSelections(prev => ({
                             ...prev,
                             secondaryHeatingEfficiency: e.target.value
                         }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryHeatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
@@ -1022,7 +1022,7 @@ export default function Prescriptive9362Section({
                             let systemType = "";
                             if (selections.secondaryHeatingType === 'boiler') {
                                 minValue = 90;
-                                systemType = "Boiler (90 AFUE minimum)";
+                                systemType = "Boiler (90% AFUE minimum)";
                             } else {
                                 minValue = 95; // Furnace
                                 systemType = "Furnace (95% AFUE minimum)";
@@ -1072,22 +1072,6 @@ export default function Prescriptive9362Section({
                 </>}
             </div>}
 
-            <div id="coolingApplicable" className="space-y-2">
-                <label className="text-sm font-medium text-slate-100">Are you installing cooling/air conditioning? <span className="text-red-400">*</span></label>
-                <Select required value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
-                    ...prev,
-                    coolingApplicable: value
-                }))}>
-                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.coolingApplicable && "border-red-500 ring-2 ring-red-500")}>
-                        <SelectValue placeholder="Select if cooling is applicable" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background border shadow-lg z-50">
-                        <SelectItem value="yes">Yes</SelectItem>
-                        <SelectItem value="no">No</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-
             <div id="waterHeaterType" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Service Water Heater Type <span className="text-red-400">*</span></label>
                 <Select required value={selections.waterHeaterType} onValueChange={value => {
@@ -1108,6 +1092,22 @@ export default function Prescriptive9362Section({
                         <SelectItem value="electric-tankless">Electric Tankless</SelectItem>
                         <SelectItem value="electric-heat-pump">Electric Heat Pump</SelectItem>
                         <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>            
+
+            <div id="coolingApplicable" className="space-y-2">
+                <label className="text-sm font-medium text-slate-100">Are you installing cooling/air conditioning? <span className="text-red-400">*</span></label>
+                <Select required value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
+                    ...prev,
+                    coolingApplicable: value
+                }))}>
+                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.coolingApplicable && "border-red-500 ring-2 ring-red-500")}>
+                        <SelectValue placeholder="Select if cooling is applicable" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
