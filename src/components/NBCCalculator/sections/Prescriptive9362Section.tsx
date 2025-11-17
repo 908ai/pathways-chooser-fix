@@ -738,10 +738,13 @@ export default function Prescriptive9362Section({
                         </div>
                     </InfoButton>
                 </div>
-                <div className="p-3 bg-slate-900/50 border border-slate-600 rounded-md">
-                    <p className="text-white font-medium">{selections.airtightness ? `${selections.airtightness} ACH50` : 'Select province and building type'}</p>
-                    <p className="text-xs text-slate-400">Target air-leakage rate is automatically assigned based on location.</p>
-                </div>
+                <Input
+                    type="text"
+                    value={selections.airtightness ? `${selections.airtightness} ACH50` : 'Select province and building type'}
+                    disabled
+                    className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400 disabled:opacity-75 disabled:cursor-not-allowed"
+                />
+                <p className="text-xs text-slate-400">Target air-leakage rate is automatically assigned based on location.</p>
 
                 <WarningButton title="⚠️ Caution: Air-Tightness Targets Without Testing History">
                     <div className="text-xs text-white space-y-2">
