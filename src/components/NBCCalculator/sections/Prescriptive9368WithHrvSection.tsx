@@ -694,6 +694,19 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                                             <p>• Combining zones? You must test each one. Use the lowest Airtightness Level for scoring if they're different. Reference the Illustrated Guide for the image above.</p>
                                         </div>
                                     </div>
+
+                                    <div className="w-full h-px bg-muted"></div>
+
+                                    <div>
+                                        <h5 className="font-medium text-sm mb-2">Potential Air Leakage Locations</h5>
+                                        <p className="text-sm text-muted-foreground mb-3">Common areas where air leakage occurs in buildings:</p>
+                                        <div className="mb-3">
+                                            <img src="/lovable-uploads/9d231144-3c4e-430b-9f8c-914698eae23e.png" alt="Figure 9.25-9 Potential air leakage locations in a house showing various points where air can escape including joints at attic hatches, ceiling light fixtures, windows, electrical outlets, around posts and columns, chimney leaks, plumbing stack penetrations, and more" className="w-full h-auto border border-border rounded" onLoad={() => console.log('Air leakage diagram loaded successfully')} onError={e => console.log('Failed to load air leakage diagram:', e)} />
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">
+                                            Figure 9.25-9 from Housing and Small Buildings - Illustrated User's Guide, National Building Code of Canada 2020, Part 9 of Division B
+                                        </p>
+                                    </div>
                                 </div>
 
                                 <div className="space-y-2">
@@ -953,6 +966,21 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                     </Select>
                 </div>
 
+                {selections.coolingApplicable === "yes" && (
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-100">Cooling System Efficiency</label>
+                        <Input
+                            type="text"
+                            placeholder="Enter SEER (min 14.5) or SEER2 (min 14.3) value"
+                            value={selections.coolingEfficiency}
+                            onChange={e => setSelections(prev => ({
+                                ...prev,
+                                coolingEfficiency: e.target.value
+                            }))}
+                            className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400"
+                        />
+                    </div>
+                )}
 
                 {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <>
                     <div className="space-y-2">
@@ -1047,7 +1075,8 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                         </SelectContent>
                     </Select>
                 </div>
-            </>}
+            </>
+            }
         </>
     );
-};
+}
