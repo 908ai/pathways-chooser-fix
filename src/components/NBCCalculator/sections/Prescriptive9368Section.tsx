@@ -1,23 +1,11 @@
 import { useState } from "react";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import InfoButton from "@/components/InfoButton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Info, ChevronDown, Search } from "lucide-react";
+import InfoButton from "@/components/InfoButton";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
@@ -33,16 +21,25 @@ import {
     waterHeaterOptions,
     airtightnessOptions_7B
 } from "../../NBCCalculator/constants/options";
+import { Prescriptive9368WithHrvSection } from "./Prescriptive9368WithHrvSection";
+
+interface Props {
+    selections: any;
+    setSelections: React.Dispatch<React.SetStateAction<any>>;
+    validationErrors: Record<string, boolean>;
+    handleFileUploadRequest: (file: File) => Promise<void>;
+    uploadedFiles: File[];
+    removeFile: (file: File) => void;
+}
 
 export default function Prescriptive9368Section({
     selections,
     setSelections,
     validationErrors,
-}: {
-    selections: any;
-    setSelections: any;
-    validationErrors: Record<string, boolean>;
-}) {
+    handleFileUploadRequest,
+    uploadedFiles,
+    removeFile,
+}: Props) {
     const InfoCollapsible = ({
         title,
         children,
@@ -743,6 +740,12 @@ export default function Prescriptive9368Section({
                     </SelectContent>
                 </Select>
             </div>}
+
+            <Prescriptive9368WithHrvSection
+                selections={selections}
+                setSelections={setSelections}
+                WarningButton={InfoCollapsible}
+            />
 
             {/* MURB Multiple Heating Systems - Only show for Multi-Unit buildings */}
             {selections.buildingType === "multi-unit" && <div className="space-y-4 p-4 bg-green-50 border border-green-200 rounded-md">

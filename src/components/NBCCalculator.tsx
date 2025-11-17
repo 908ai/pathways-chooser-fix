@@ -1007,7 +1007,14 @@ const NBCCalculator = ({
                 />
               )}
             {selections.compliancePath === "9362" && <Prescriptive9362Section selections={selections} setSelections={setSelections} validationErrors={validationErrors} />}
-            {selections.compliancePath === "9368" && <Prescriptive9368Section selections={selections} setSelections={setSelections} validationErrors={validationErrors} />}
+            {selections.compliancePath === "9368" && <Prescriptive9368Section 
+              selections={selections} 
+              setSelections={setSelections} 
+              validationErrors={validationErrors}
+              handleFileUploadRequest={handleFileUploadRequest}
+              uploadedFiles={uploadedFiles}
+              removeFile={removeFile}
+            />}
             {selections.compliancePath === "9365" && <Performance9365Section selections={selections} setSelections={setSelections} handleFileUploadRequest={handleFileUploadRequest} uploadedFiles={uploadedFiles} removeFile={removeFile} />}
             {selections.compliancePath === "9367" && <Performance9367Section selections={selections} setSelections={setSelections} handleFileUploadRequest={handleFileUploadRequest} uploadedFiles={uploadedFiles} removeFile={removeFile} />}
             {selections.compliancePath && (
