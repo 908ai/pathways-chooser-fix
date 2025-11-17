@@ -1014,6 +1014,7 @@ export default function Prescriptive9362Section({
                                 secondaryHeatingType: "",
                                 // Reset when changing
                                 secondaryHeatingEfficiency: "",
+                                otherSecondaryHeatingEfficiency: "",
                                 secondaryIndirectTank: "",
                                 secondaryIndirectTankSize: ""
                             }))} className="w-4 h-4 text-primary" />
@@ -1025,6 +1026,7 @@ export default function Prescriptive9362Section({
                                 hasSecondaryHeating: e.target.value,
                                 secondaryHeatingType: "",
                                 secondaryHeatingEfficiency: "",
+                                otherSecondaryHeatingEfficiency: "",
                                 secondaryIndirectTank: "",
                                 secondaryIndirectTankSize: ""
                             }))} className="w-4 h-4 text-primary" />
@@ -1040,7 +1042,7 @@ export default function Prescriptive9362Section({
                             ...prev,
                             secondaryHeatingType: value,
                             secondaryHeatingEfficiency: "",
-                            // Reset efficiency when type changes
+                            otherSecondaryHeatingEfficiency: "",
                             secondaryIndirectTank: "",
                             secondaryIndirectTankSize: ""
                         }))}>
@@ -1056,11 +1058,45 @@ export default function Prescriptive9362Section({
                     </div>
 
                     {selections.secondaryHeatingType && <div id="secondaryHeatingEfficiency" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Secondary Suite Heating Efficiency <span className="text-red-400">*</span></label>
-                        <Input required type="text" placeholder={selections.secondaryHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.secondaryHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.secondaryHeatingEfficiency} onChange={e => setSelections(prev => ({
-                            ...prev,
-                            secondaryHeatingEfficiency: e.target.value
-                        }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryHeatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
+                        <div className="flex items-center gap-3">
+                            <label className="text-sm font-medium text-slate-100">
+                                {selections.secondaryHeatingType === 'heat-pump' ? 'Secondary Heat Pump Type and Efficiency' : 'Secondary Suite Heating Efficiency'} <span className="text-red-400">*</span>
+                            </label>
+                            {selections.secondaryHeatingType === 'heat-pump' && (
+                                <InfoButton title="Heat Pump Efficiency">
+                                    Select the applicable heat pump type to automatically apply the minimum efficiency requirement based on NBC Table 9.36.3.10. If your system type or performance rating is not listed, choose Other and enter specifications manually.
+                                </InfoButton>
+                            )}
+                        </div>
+                        {selections.secondaryHeatingType === 'heat-pump' ? (
+                            <>
+                                <Select required value={selections.secondaryHeatingEfficiency} onValueChange={value => setSelections(prev => ({ ...prev, secondaryHeatingEfficiency: value, otherSecondaryHeatingEfficiency: "" }))}>
+                                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryHeatingEfficiency && "border-red-500 ring-2 ring-red-500")}>
+                                        <SelectValue placeholder="Select heat pump type and efficiency" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {heatPumpOptions.map(option => (
+                                            <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {selections.secondaryHeatingEfficiency === 'Other' && (
+                                    <Input
+                                        required
+                                        type="text"
+                                        placeholder="Enter specifications manually"
+                                        value={selections.otherSecondaryHeatingEfficiency || ''}
+                                        onChange={e => setSelections(prev => ({ ...prev, otherSecondaryHeatingEfficiency: e.target.value }))}
+                                        className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400 mt-2"
+                                    />
+                                )}
+                            </>
+                        ) : (
+                            <Input required type="text" placeholder={selections.secondaryHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.secondaryHeatingEfficiency} onChange={e => setSelections(prev => ({
+                                ...prev,
+                                secondaryHeatingEfficiency: e.target.value
+                            }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryHeatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
+                        )}
                         {selections.secondaryHeatingEfficiency && selections.secondaryHeatingType !== 'heat-pump' && (() => {
                             const inputValue = parseFloat(selections.secondaryHeatingEfficiency);
                             let minValue = 0;
