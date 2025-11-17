@@ -15,6 +15,9 @@ import ProjectList from '@/components/dashboard/ProjectList';
 import BuildingOfficialsTab from '@/components/dashboard/BuildingOfficialsTab';
 import ResourcesTab from '@/components/dashboard/ResourcesTab';
 import FaqTab from '@/components/dashboard/FaqTab';
+import { useProviderAccess } from '@/hooks/useProviderAccess';
+import RequestProviderAccessCard from '@/components/dashboard/RequestProviderAccessCard';
+import { Card } from '@/components/ui/card';
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
@@ -22,6 +25,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { data: providerAccessData, isLoading: isAccessLoading } = useProviderAccess();
   const [projects, setProjects] = useState<{
     inProgress: any[];
     complete: any[];
@@ -102,7 +106,15 @@ const Dashboard = () => {
           <TabsContent value="projects" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <CreateProjectCard handleNewProject={handleNewProject} />
-              <FindProviderCard />
+              {isAccessLoading ? (
+                <Card className="bg-slate-800/60 border-slate-400/30 backdrop-blur-md flex items-center justify-center min-h-[200px]">
+                  <p className="text-white">Loading...</p>
+                </Card>
+              ) : providerAccessData?.hasAccess ? (
+                <FindProviderCard />
+              ) : (
+                <RequestProviderAccessCard />
+              )}
             </div>
             <ProjectList projects={projects} handleViewProject={handleViewProject} handleEditProject={handleEditProject} />
           </TabsContent>
