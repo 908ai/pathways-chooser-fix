@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Calculator, AlertTriangle, Edit, Save } from "lucide-react";
+import { Calculator, AlertTriangle, Edit, Save, FileText, Zap } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -42,6 +42,7 @@ import HrvAdditionalInfoSection from "./NBCCalculator/sections/HrvAdditionalInfo
 import EnerGuidePathwaySection from "./NBCCalculator/sections/EnerGuidePathwaySection";
 import HelpDrawer from "@/components/HelpDrawer";
 import { cn } from "@/lib/utils";
+import { getPathwayDisplayName } from "./NBCCalculator/utils/helpers";
 
 interface NBCCalculatorProps {
   onPathwayChange?: (pathwayInfo: string) => void;
@@ -985,10 +986,15 @@ const NBCCalculator = ({
       {currentStep === 3 && (
         <Card className="bg-slate-700/40">
           <CardHeader>
-            <CardTitle className="text-white text-center">
-              {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? 'Prescriptive Building Requirements' : 'Performance Building Specifications'}
+            <CardTitle className="text-white text-center flex items-center justify-center gap-2">
+              {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? (
+                <FileText className="h-6 w-6 text-orange-400" />
+              ) : (
+                <Zap className="h-6 w-6 text-blue-400" />
+              )}
+              {getPathwayDisplayName(selections.compliancePath)}
             </CardTitle>
-            <CardDescription className="text-slate-200">
+            <CardDescription className="text-slate-200 text-center">
               {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? 'Specify minimum required values for prescriptive compliance' : 'Enter proposed building specifications for energy modeling'}
             </CardDescription>
           </CardHeader>
