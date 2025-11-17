@@ -12,6 +12,14 @@ import { Search } from "lucide-react";
 import { validateRSI_9362 } from "../utils/validation";
 import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/EffectiveRSIWarning";
 
+const heatPumpOptions = [
+    { value: "Air-Source Heat Pump – Split (SEER 14.5, EER 11.5, HSPF 7.1)", label: "Air-Source Heat Pump – Split (SEER 14.5, EER 11.5, HSPF 7.1)" },
+    { value: "Air-Source Heat Pump – Single Package (SEER 14.0, EER 11.0, HSPF 7.0)", label: "Air-Source Heat Pump – Single Package (SEER 14.0, EER 11.0, HSPF 7.0)" },
+    { value: "Ground-Source Heat Pump – Closed Loop (COPc ≥ 3.6, COPh ≥ 3.1)", label: "Ground-Source Heat Pump – Closed Loop (COPc ≥ 3.6, COPh ≥ 3.1)" },
+    { value: "Ground-Source Heat Pump – Open Loop (COPc ≥ 4.75, COPh ≥ 3.6)", label: "Ground-Source Heat Pump – Open Loop (COPc ≥ 4.75, COPh ≥ 3.6)" },
+    { value: "Other", label: "Other (Manual Entry Required)" }
+];
+
 export default function Prescriptive9362Section({
     selections,
     setSelections,
@@ -873,7 +881,8 @@ export default function Prescriptive9362Section({
                 <Select required value={selections.heatingType} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     heatingType: value,
-                    // When heating type changes, reset boiler-specific fields if it's not a boiler
+                    heatingEfficiency: "",
+                    otherHeatingEfficiency: "",
                     indirectTank: value !== 'boiler' ? '' : prev.indirectTank,
                     indirectTankSize: value !== 'boiler' ? '' : prev.indirectTankSize,
                 }))}>
@@ -897,37 +906,73 @@ export default function Prescriptive9362Section({
                 </p>
             </div>
 
-            {selections.heatingType && <div id="heatingEfficiency" className="space-y-2">
-                <label className="text-sm font-medium text-slate-100">Heating Efficiency <span className="text-red-400">*</span></label>
-                <Input required type="text" placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 % AFUE)" : selections.heatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
-                    ...prev,
-                    heatingEfficiency: e.target.value
-                }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.heatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
-                {selections.heatingEfficiency && selections.heatingType !== 'heat-pump' && (() => {
-                    const inputValue = parseFloat(selections.heatingEfficiency);
-                    let minValue = 0;
-                    let systemType = "";
-                    if (selections.heatingType === 'boiler') {
-                        minValue = 90;
-                        systemType = "Boiler (90% AFUE minimum)";
-                    } else {
-                        minValue = 95; // Furnace
-                        systemType = "Furnace (95% AFUE minimum)";
-                    }
-                    
-                    const showWarning = !isNaN(inputValue) && inputValue < minValue;
+            {selections.heatingType && (
+                <div id="heatingEfficiency" className="space-y-2">
+                    <div className="flex items-center gap-3">
+                        <label className="text-sm font-medium text-slate-100">
+                            {selections.heatingType === 'heat-pump' ? 'Heat Pump Type and Efficiency' : 'Heating Efficiency'} <span className="text-red-400">*</span>
+                        </label>
+                        {selections.heatingType === 'heat-pump' && (
+                            <InfoButton title="Heat Pump Efficiency">
+                                Select the applicable heat pump type to automatically apply the minimum efficiency requirement based on NBC Table 9.36.3.10. If your system type or performance rating is not listed, choose Other and enter specifications manually.
+                            </InfoButton>
+                        )}
+                    </div>
+                    {selections.heatingType === 'heat-pump' ? (
+                        <>
+                            <Select required value={selections.heatingEfficiency} onValueChange={value => setSelections(prev => ({ ...prev, heatingEfficiency: value, otherHeatingEfficiency: "" }))}>
+                                <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.heatingEfficiency && "border-red-500 ring-2 ring-red-500")}>
+                                    <SelectValue placeholder="Select heat pump type and efficiency" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {heatPumpOptions.map(option => (
+                                        <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {selections.heatingEfficiency === 'Other' && (
+                                <Input
+                                    required
+                                    type="text"
+                                    placeholder="Enter specifications manually"
+                                    value={selections.otherHeatingEfficiency || ''}
+                                    onChange={e => setSelections(prev => ({ ...prev, otherHeatingEfficiency: e.target.value }))}
+                                    className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400 mt-2"
+                                />
+                            )}
+                        </>
+                    ) : (
+                        <Input required type="text" placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
+                            ...prev,
+                            heatingEfficiency: e.target.value
+                        }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.heatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
+                    )}
+                    {selections.heatingEfficiency && selections.heatingType !== 'heat-pump' && (() => {
+                        const inputValue = parseFloat(selections.heatingEfficiency);
+                        let minValue = 0;
+                        let systemType = "";
+                        if (selections.heatingType === 'boiler') {
+                            minValue = 90;
+                            systemType = "Boiler (90% AFUE minimum)";
+                        } else {
+                            minValue = 95; // Furnace
+                            systemType = "Furnace (95% AFUE minimum)";
+                        }
+                        
+                        const showWarning = !isNaN(inputValue) && inputValue < minValue;
 
-                    return showWarning ? (
-                        <Alert variant="destructive" style={{ backgroundColor: 'beige' }}>
-                            <AlertTriangle className="h-4 w-4" />
-                            <AlertTitle>Heating Efficiency Too Low</AlertTitle>
-                            <AlertDescription>
-                                {systemType} – Your input of {inputValue} is below the minimum requirement.
-                            </AlertDescription>
-                        </Alert>
-                    ) : null;
-                })()}
-            </div>}
+                        return showWarning ? (
+                            <Alert variant="destructive" style={{ backgroundColor: 'beige' }}>
+                                <AlertTriangle className="h-4 w-4" />
+                                <AlertTitle>Heating Efficiency Too Low</AlertTitle>
+                                <AlertDescription>
+                                    {systemType} – Your input of {inputValue} is below the minimum requirement.
+                                </AlertDescription>
+                            </Alert>
+                        ) : null;
+                    })()}
+                </div>
+            )}
 
             {selections.heatingType === 'boiler' && <div className="space-y-4">
                 <div id="indirectTank" className="space-y-2">
@@ -1012,7 +1057,7 @@ export default function Prescriptive9362Section({
 
                     {selections.secondaryHeatingType && <div id="secondaryHeatingEfficiency" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Secondary Suite Heating Efficiency <span className="text-red-400">*</span></label>
-                        <Input required type="text" placeholder={selections.secondaryHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90% AFUE)" : selections.secondaryHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.secondaryHeatingEfficiency} onChange={e => setSelections(prev => ({
+                        <Input required type="text" placeholder={selections.secondaryHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.secondaryHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.secondaryHeatingEfficiency} onChange={e => setSelections(prev => ({
                             ...prev,
                             secondaryHeatingEfficiency: e.target.value
                         }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryHeatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
@@ -1072,6 +1117,22 @@ export default function Prescriptive9362Section({
                 </>}
             </div>}
 
+            <div id="coolingApplicable" className="space-y-2">
+                <label className="text-sm font-medium text-slate-100">Are you installing cooling/air conditioning? <span className="text-red-400">*</span></label>
+                <Select required value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
+                    ...prev,
+                    coolingApplicable: value
+                }))}>
+                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.coolingApplicable && "border-red-500 ring-2 ring-red-500")}>
+                        <SelectValue placeholder="Select if cooling is applicable" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border shadow-lg z-50">
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
             <div id="waterHeaterType" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Service Water Heater Type <span className="text-red-400">*</span></label>
                 <Select required value={selections.waterHeaterType} onValueChange={value => {
@@ -1095,22 +1156,6 @@ export default function Prescriptive9362Section({
                     </SelectContent>
                 </Select>
             </div>            
-
-            <div id="coolingApplicable" className="space-y-2">
-                <label className="text-sm font-medium text-slate-100">Are you installing cooling/air conditioning? <span className="text-red-400">*</span></label>
-                <Select required value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
-                    ...prev,
-                    coolingApplicable: value
-                }))}>
-                    <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.coolingApplicable && "border-red-500 ring-2 ring-red-500")}>
-                        <SelectValue placeholder="Select if cooling is applicable" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background border shadow-lg z-50">
-                        <SelectItem value="yes">Yes</SelectItem>
-                        <SelectItem value="no">No</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
 
             {selections.waterHeaterType === "other" && <div id="otherWaterHeaterType" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Specify Other Water Heater Type <span className="text-red-400">*</span></label>
