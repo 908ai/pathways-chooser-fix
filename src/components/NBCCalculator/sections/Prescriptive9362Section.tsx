@@ -8,6 +8,13 @@ import { ChevronDown, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 import { validateRSI_9362 } from "../utils/validation";
 import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/EffectiveRSIWarning";
@@ -931,14 +938,32 @@ export default function Prescriptive9362Section({
                                 </SelectContent>
                             </Select>
                             {selections.heatingEfficiency === 'Other' && (
-                                <Input
-                                    required
-                                    type="text"
-                                    placeholder="Enter specifications manually"
-                                    value={selections.otherHeatingEfficiency || ''}
-                                    onChange={e => setSelections(prev => ({ ...prev, otherHeatingEfficiency: e.target.value }))}
-                                    className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400 mt-2"
-                                />
+                                <div className="mt-2 space-y-2">
+                                    <Input
+                                        required
+                                        type="text"
+                                        placeholder="Enter specifications manually"
+                                        value={selections.otherHeatingEfficiency || ''}
+                                        onChange={e => setSelections(prev => ({ ...prev, otherHeatingEfficiency: e.target.value }))}
+                                        className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400"
+                                    />
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                            <Button variant="outline" size="sm">
+                                                View Performance Requirements
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="max-w-4xl">
+                                            <DialogHeader>
+                                                <DialogTitle>Table 9.36.3.10 - HVAC Equipment Performance Requirements</DialogTitle>
+                                            </DialogHeader>
+                                            <div className="space-y-4 max-h-[70vh] overflow-y-auto">
+                                                <img src="/assets/img/table-9.36.3.10-a.png" alt="HVAC Performance Requirements Table Part 1" />
+                                                <img src="/assets/img/table-9.36.3.10-b.png" alt="HVAC Performance Requirements Table Part 2" />
+                                            </div>
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
                             )}
                         </>
                     ) : (
@@ -1081,14 +1106,32 @@ export default function Prescriptive9362Section({
                                     </SelectContent>
                                 </Select>
                                 {selections.secondaryHeatingEfficiency === 'Other' && (
-                                    <Input
-                                        required
-                                        type="text"
-                                        placeholder="Enter specifications manually"
-                                        value={selections.otherSecondaryHeatingEfficiency || ''}
-                                        onChange={e => setSelections(prev => ({ ...prev, otherSecondaryHeatingEfficiency: e.target.value }))}
-                                        className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400 mt-2"
-                                    />
+                                    <div className="mt-2 space-y-2">
+                                        <Input
+                                            required
+                                            type="text"
+                                            placeholder="Enter specifications manually"
+                                            value={selections.otherSecondaryHeatingEfficiency || ''}
+                                            onChange={e => setSelections(prev => ({ ...prev, otherSecondaryHeatingEfficiency: e.target.value }))}
+                                            className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400"
+                                        />
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <Button variant="outline" size="sm">
+                                                    View Performance Requirements
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="max-w-4xl">
+                                                <DialogHeader>
+                                                    <DialogTitle>Table 9.36.3.10 - HVAC Equipment Performance Requirements</DialogTitle>
+                                                </DialogHeader>
+                                                <div className="space-y-4 max-h-[70vh] overflow-y-auto">
+                                                    <img src="/assets/img/table-9.36.3.10-a.png" alt="HVAC Performance Requirements Table Part 1" />
+                                                    <img src="/assets/img/table-9.36.3.10-b.png" alt="HVAC Performance Requirements Table Part 2" />
+                                                </div>
+                                            </DialogContent>
+                                        </Dialog>
+                                    </div>
                                 )}
                             </>
                         ) : (
