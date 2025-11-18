@@ -15,21 +15,22 @@ import { wallRSIOptions, belowGradeRSIOptions, windowUValueOptions, waterHeaterO
 import { validateRSI } from "../utils/validation";
 import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/EffectiveRSIWarning";
 
-const heatPumpOptions = [
-    { value: "Air-Source Heat Pump – Split (SEER 14.5, EER 11.5, HSPF 7.1)", label: "Air-Source Heat Pump – Split (SEER 14.5, EER 11.5, HSPF 7.1)" },
-    { value: "Air-Source Heat Pump – Single Package (SEER 14.0, EER 11.0, HSPF 7.0)", label: "Air-Source Heat Pump – Single Package (SEER 14.0, EER 11.0, HSPF 7.0)" },
-    { value: "Ground-Source Heat Pump – Closed Loop (COPc ≥ 3.6, COPh ≥ 3.1)", label: "Ground-Source Heat Pump – Closed Loop (COPc ≥ 3.6, COPh ≥ 3.1)" },
-    { value: "Ground-Source Heat Pump – Open Loop (COPc ≥ 4.75, COPh ≥ 3.6)", label: "Ground-Source Heat Pump – Open Loop (COPc ≥ 4.75, COPh ≥ 3.6)" },
-    { value: "Other", label: "Other (Manual Entry Required)" }
-];
-
 interface Props {
     selections: any;
     setSelections: React.Dispatch<React.SetStateAction<any>>;
     WarningButton: React.FC<any>;
+    validationErrors: Record<string, boolean>;
 }
 
-export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, setSelections, WarningButton }) => {
+export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, setSelections, WarningButton, validationErrors }) => {
+
+    const heatPumpOptions = [
+        { value: "Air-Source Heat Pump – Split (SEER 14.5, EER 11.5, HSPF 7.1)", label: "Air-Source Heat Pump – Split (SEER 14.5, EER 11.5, HSPF 7.1)" },
+        { value: "Air-Source Heat Pump – Single Package (SEER 14.0, EER 11.0, HSPF 7.0)", label: "Air-Source Heat Pump – Single Package (SEER 14.0, EER 11.0, HSPF 7.0)" },
+        { value: "Ground-Source Heat Pump – Closed Loop (COPc ≥ 3.6, COPh ≥ 3.1)", label: "Ground-Source Heat Pump – Closed Loop (COPc ≥ 3.6, COPh ≥ 3.1)" },
+        { value: "Ground-Source Heat Pump – Open Loop (COPc ≥ 4.75, COPh ≥ 3.6)", label: "Ground-Source Heat Pump – Open Loop (COPc ≥ 4.75, COPh ≥ 3.6)" },
+        { value: "Other", label: "Other (Manual Entry Required)" }
+    ];
 
     // Collapsible component for warnings/info
     const InfoCollapsible = ({
@@ -125,138 +126,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                     </Select>
                 </div>
 
-                <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                        <label className="text-sm font-medium text-slate-100">Heating Type <span className="text-red-400">*</span></label>
-                        <InfoButton title="CAN/CSA F280-12 - Room by Room Heat Loss/Gain Calculation">
-                            <div className="space-y-4">
-                                <div>
-                                    <h5 className="font-medium text-base mb-2">What’s the Benefit of an F280 Calculation?</h5>
-                                    <p className="text-base text-muted-foreground">
-                                        An F280 is a room-by-room heat loss and gain calculation that ensures your heating and cooling
-                                        system is sized exactly right for your home — not based on guesses or whole-house averages.
-                                        It’s especially useful for energy-efficient homes, where oversized systems waste energy, cost more,
-                                        and perform poorly.
-                                    </p>
-                                </div>
-                                <div>
-                                    <h5 className="font-medium text-base mb-2">Key Benefits</h5>
-                                    <ul className="text-base text-muted-foreground ml-4 space-y-1 list-disc">
-                                        <li>Ensures every room stays comfortable</li>
-                                        <li>Allows for smaller, cheaper mechanical systems</li>
-                                        <li>Enables smaller ductwork and easier design</li>
-                                        <li>Boosts efficiency and reduces energy bills</li>
-                                        <li>Prevents issues from oversizing (like poor humidity control)</li>
-                                        <li>Improves system lifespan and indoor air quality</li>
-                                        <li>Reduces need for backup heat in cold weather</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </InfoButton>
-                    </div>
-                    <Select value={selections.heatingType} onValueChange={value => setSelections(prev => ({
-                        ...prev,
-                        heatingType: value,
-                        heatingEfficiency: "",
-                        otherHeatingEfficiency: "",
-                        indirectTank: value !== 'boiler' ? '' : prev.indirectTank,
-                        indirectTankSize: value !== 'boiler' ? '' : prev.indirectTankSize,
-                    }))}>
-                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
-                            <SelectValue placeholder="Select heating type" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-background border shadow-lg z-50">
-                            <SelectItem value="furnace">Furnace</SelectItem>
-                            <SelectItem value="boiler">Boiler</SelectItem>
-                            <SelectItem value="heat-pump">Heat Pump</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
 
-                {selections.heatingType && (
-                    <div className="space-y-2">
-                        <div className="flex items-center gap-3">
-                            <label className="text-sm font-medium text-slate-100">
-                                {selections.heatingType === 'heat-pump' ? 'Heat Pump Type and Efficiency' : 'Heating Efficiency'} <span className="text-red-400">*</span>
-                            </label>
-                            {selections.heatingType === 'heat-pump' && (
-                                <InfoButton title="Heat Pump Efficiency">
-                                    Select the applicable heat pump type to automatically apply the minimum efficiency requirement based on NBC Table 9.36.3.10. If your system type or performance rating is not listed, choose Other and enter specifications manually.
-                                </InfoButton>
-                            )}
-                        </div>
-                        {selections.heatingType === 'heat-pump' ? (
-                            <>
-                                <Select value={selections.heatingEfficiency} onValueChange={value => setSelections(prev => ({ ...prev, heatingEfficiency: value, otherHeatingEfficiency: "" }))}>
-                                    <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
-                                        <SelectValue placeholder="Select heat pump type and efficiency" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {heatPumpOptions.map(option => (
-                                            <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                {selections.heatingEfficiency === 'Other' && (
-                                    <div className="mt-2 space-y-2">
-                                        <Input
-                                            type="text"
-                                            placeholder="Enter specifications manually"
-                                            value={selections.otherHeatingEfficiency || ''}
-                                            onChange={e => setSelections(prev => ({ ...prev, otherHeatingEfficiency: e.target.value }))}
-                                            className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400"
-                                        />
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button variant="secondary" className="h-6 px-2 text-xs">
-                                                    View HVAC Equipment Performance Requirements
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent className="max-w-4xl">
-                                                <DialogHeader>
-                                                    <DialogTitle>Table 9.36.3.10 - HVAC Equipment Performance Requirements</DialogTitle>
-                                                </DialogHeader>
-                                                <div className="space-y-4 max-h-[70vh] overflow-y-auto">
-                                                    <img src="/assets/img/table-9.36.3.10-a.png" alt="HVAC Performance Requirements Table Part 1" />
-                                                    <img src="/assets/img/table-9.36.3.10-b.png" alt="HVAC Performance Requirements Table Part 2" />
-                                                </div>
-                                            </DialogContent>
-                                        </Dialog>
-                                    </div>
-                                )}
-                            </>
-                        ) : (
-                            <Input type="text" placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90% AFUE)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
-                                ...prev,
-                                heatingEfficiency: e.target.value
-                            }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                        )}
-                        {selections.heatingEfficiency && selections.heatingType !== 'heat-pump' && (() => {
-                            const inputValue = parseFloat(selections.heatingEfficiency);
-                            let minValue = 0;
-                            let systemType = "";
-                            if (selections.heatingType === 'boiler') {
-                                minValue = 90;
-                                systemType = "Boiler (90% AFUE minimum)";
-                            } else {
-                                minValue = 95; // Furnace
-                                systemType = "Furnace (95% AFUE minimum)";
-                            }
-                            
-                            const showWarning = !isNaN(inputValue) && inputValue < minValue;
-
-                            return showWarning ? (
-                                <Alert variant="destructive" style={{ backgroundColor: 'beige' }}>
-                                    <AlertTriangle className="h-4 w-4" />
-                                    <AlertTitle>Heating Efficiency Too Low</AlertTitle>
-                                    <AlertDescription>
-                                        {systemType} – Your input of {inputValue} is below the minimum requirement.
-                                    </AlertDescription>
-                                </Alert>
-                            ) : null;
-                        })()}
-                    </div>
-                )}
 
                 <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Is there any cathedral ceilings or flat roof?</label>
@@ -602,7 +472,297 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                 )}
 
                 <EffectiveRSIWarning />
+
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Window & Door U-Value (W/(m²·K))</label>
+                    <Select value={selections.windowUValue} onValueChange={value => setSelections(prev => ({
+                        ...prev,
+                        windowUValue: value
+                    }))}>
+                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                            <SelectValue placeholder="Select window U-value" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {windowUValueOptions.map(option => <SelectItem key={option.value} value={option.value}>
+                                <div className="flex justify-between items-center w-full">
+                                    <span>{option.label}</span>
+                                    <Badge variant={option.points > 0 ? "default" : "secondary"}>
+                                        {option.points} pts
+                                    </Badge>
+                                </div>
+                            </SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                    {selections.windowUValue && <>
+                        <InfoCollapsible title="ℹ️ ">
+                            <p className="text-xs text-white">
+                                Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please only record the lowest performing window and door (U-Value (ie, highest U-value W/(m²×K)).
+                            </p>
+                        </InfoCollapsible>
+
+                        <div className="flex items-center gap-2">
+                            <label className="text-sm font-medium text-slate-100">Energy Efficiency Points for Windows & Doors</label>
+                            <InfoButton title="Energy Efficiency Points for Windows & Doors">
+                                <div className="space-y-4">
+                                    <p className="text-sm text-foreground/80">
+                                        You can get extra energy efficiency points in the code if your windows and doors perform better than the minimum required by the building code (NBC 9.36). This means they either keep heat in better (low U-value) or let in helpful sunlight to reduce heating needs (high Energy Rating or ER).
+                                    </p>
+
+                                    <p className="text-sm text-foreground/80">
+                                        But to use the Energy Rating (ER) method for windows or doors, the total glass/opening area on that wall must be less than 17% of the wall's area. The example in the image shows how to calculate that percentage:
+                                    </p>
+
+                                    <ul className="list-disc ml-5 space-y-1 text-sm text-foreground/80">
+                                        <li>The wall is 48 m²</li>
+                                        <li>The total area of the windows and doors is 7.75 m²</li>
+                                        <li>7.75 ÷ 48 × 100 = 16%, so this wall qualifies for ER-based compliance.</li>
+                                    </ul>
+
+                                    <p className="text-sm text-foreground/80">
+                                        If the openings are over 17%, you usually have to use U-values instead and follow a trade-off approach.
+                                    </p>
+
+                                    <div className="border-t pt-4">
+                                        <h5 className="font-medium mb-2">Why this matters:</h5>
+                                        <ul className="list-disc ml-5 space-y-1 text-sm text-foreground/80">
+                                            <li>ER is good for cold climates – it considers how much sun a window lets in to help heat the home, along with how well it insulates and how airtight it is.</li>
+                                            <li>U-value only looks at insulation, not sun or air leaks.</li>
+                                            <li>Using ER lets you use things like patio doors or south-facing windows that bring in sun, even if their U-value isn't great—as long as they don't make up too much of the wall.</li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="border-t pt-4">
+                                        <img src="/lovable-uploads/7665f3ac-355b-4715-9121-ae5d822bc1f0.png" alt="Figure 9.36-20: Example of how to calculate the percent fenestration area" className="w-full h-auto border rounded" />
+                                        <p className="text-xs text-muted-foreground mt-2 italic">
+                                            Source: Housing and Small Buildings Illustrated User's Guide National Building Code of Canada 2020
+                                        </p>
+                                    </div>
+                                </div>
+                            </InfoButton>
+                        </div>
+                    </>}
+
+                    <div className="p-3 bg-muted border border-border rounded-md">
+                        <p className="text-sm text-foreground font-medium">
+                            ℹ️ One Door Exception
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            Note: There is a "One door exception" that may apply to your project. Please consult the NBC requirements for specific details on this exception.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Does the house have skylights?</label>
+                    <Select value={selections.hasSkylights} onValueChange={value => {
+                        setSelections(prev => ({
+                            ...prev,
+                            hasSkylights: value,
+                            skylightUValue: ""
+                        }));
+                    }}>
+                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                            <SelectValue placeholder="Select if house has skylights" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="yes">Yes</SelectItem>
+                            <SelectItem value="no">No</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {selections.hasSkylights === "yes" && <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-100">Skylight U-Value</label>
+                    <Input type="text" placeholder={`Enter U-value (maximum ${selections.province === "alberta" && selections.climateZone === "7B" ? "2.41" : "2.75"} W/(m²·K))`} value={selections.skylightUValue} onChange={e => setSelections(prev => ({
+                        ...prev,
+                        skylightUValue: e.target.value
+                    }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                    {(() => {
+                        const maxUValue = selections.province === "alberta" && selections.climateZone === "7B" ? 2.41 : 2.75;
+                        return selections.skylightUValue && parseFloat(selections.skylightUValue) > maxUValue && <WarningButton warningId="skylightUValue-high" title="U-Value Too High" variant="destructive">
+                            <p className="text-xs text-destructive/80">
+                                The U-value must be reduced to {maxUValue} or lower to meet NBC requirements for skylights in your climate zone.
+                            </p>
+                        </WarningButton>;
+                    })()}
+                </div>}
+
+                {selections.hasSkylights === "yes" && <InfoCollapsible title="ℹ️ Important: Skylight Shaft Insulation">
+                    <p className="text-xs white">
+                        Skylight shafts must be insulated. Be prepared to provide further details upon request.
+                    </p>
+                </InfoCollapsible>}
+
+                <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                        <label className="text-sm font-medium text-slate-100">Heating Type <span className="text-red-400">*</span></label>
+                        <InfoButton title="CAN/CSA F280-12 - Room by Room Heat Loss/Gain Calculation">
+                            <div className="space-y-4">
+                                <div>
+                                    <h5 className="font-medium text-base mb-2">What’s the Benefit of an F280 Calculation?</h5>
+                                    <p className="text-base text-muted-foreground">
+                                        An F280 is a room-by-room heat loss and gain calculation that ensures your heating and cooling
+                                        system is sized exactly right for your home — not based on guesses or whole-house averages.
+                                        It’s especially useful for energy-efficient homes, where oversized systems waste energy, cost more,
+                                        and perform poorly.
+                                    </p>
+                                </div>
+                                <div>
+                                    <h5 className="font-medium text-base mb-2">Key Benefits</h5>
+                                    <ul className="text-base text-muted-foreground ml-4 space-y-1 list-disc">
+                                        <li>Ensures every room stays comfortable</li>
+                                        <li>Allows for smaller, cheaper mechanical systems</li>
+                                        <li>Enables smaller ductwork and easier design</li>
+                                        <li>Boosts efficiency and reduces energy bills</li>
+                                        <li>Prevents issues from oversizing (like poor humidity control)</li>
+                                        <li>Improves system lifespan and indoor air quality</li>
+                                        <li>Reduces need for backup heat in cold weather</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </InfoButton>
+                    </div>
+                    <Select value={selections.heatingType} onValueChange={value => setSelections(prev => ({
+                        ...prev,
+                        heatingType: value,
+                        heatingEfficiency: "",
+                        otherHeatingEfficiency: "",
+                        indirectTank: value !== 'boiler' ? '' : prev.indirectTank,
+                        indirectTankSize: value !== 'boiler' ? '' : prev.indirectTankSize,
+                    }))}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select heating type" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background border shadow-lg z-50">
+                            <SelectItem value="furnace">Furnace</SelectItem>
+                            <SelectItem value="boiler">Boiler</SelectItem>
+                            <SelectItem value="heat-pump">Heat Pump</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className="p-4 bg-muted border border-border rounded-md">
+                    <p className="text-sm font-medium text-slate-950">
+                        ⚠️ Mechanical Equipment Documentation
+                    </p>
+                    <p className="text-xs mt-1 text-slate-950">
+                        The Authority Having Jurisdiction (AHJ) may verify specific makes/models of the mechanical equipment being proposed for heating, cooling, domestic hot water and HRV systems. The AHJ may also request CSA F-280 heat loss & gain calculations. More info at: 🔗 <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">https://solinvictusenergyservices.com/cancsa-f28012</a>
+                    </p>
+                </div>
+
+                {selections.heatingType && (
+                <div id="heatingEfficiency" className="space-y-2">
+                    <div className="flex items-center gap-3">
+                        <label className="text-sm font-medium text-slate-100">
+                            {selections.heatingType === 'heat-pump' ? 'Heat Pump Type and Efficiency' : 'Heating Efficiency'} <span className="text-red-400">*</span>
+                        </label>
+                        {selections.heatingType === 'heat-pump' && (
+                            <InfoButton title="Heat Pump Efficiency">
+                                Select the applicable heat pump type to automatically apply the minimum efficiency requirement based on NBC Table 9.36.3.10. If your system type or performance rating is not listed, choose Other and enter specifications manually.
+                            </InfoButton>
+                        )}
+                    </div>
+                    {selections.heatingType === 'heat-pump' ? (
+                        <>
+                            <Select required value={selections.heatingEfficiency} onValueChange={value => setSelections(prev => ({ ...prev, heatingEfficiency: value, otherHeatingEfficiency: "" }))}>
+                                <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.heatingEfficiency && "border-red-500 ring-2 ring-red-500")}>
+                                    <SelectValue placeholder="Select heat pump type and efficiency" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {heatPumpOptions.map(option => (
+                                        <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {selections.heatingEfficiency === 'Other' && (
+                                <div className="mt-2 space-y-2">
+                                    <Input
+                                        required
+                                        type="text"
+                                        placeholder="Enter specifications manually"
+                                        value={selections.otherHeatingEfficiency || ''}
+                                        onChange={e => setSelections(prev => ({ ...prev, otherHeatingEfficiency: e.target.value }))}
+                                        className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400"
+                                    />
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                            <Button variant="secondary" className="h-6 px-2 text-xs">
+                                                View HVAC Equipment Performance Requirements
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="max-w-4xl">
+                                            <DialogHeader>
+                                                <DialogTitle>Table 9.36.3.10 - HVAC Equipment Performance Requirements</DialogTitle>
+                                            </DialogHeader>
+                                            <div className="space-y-4 max-h-[70vh] overflow-y-auto">
+                                                <img src="/assets/img/table-9.36.3.10-a.png" alt="HVAC Performance Requirements Table Part 1" />
+                                                <img src="/assets/img/table-9.36.3.10-b.png" alt="HVAC Performance Requirements Table Part 2" />
+                                            </div>
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <Input required type="text" placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90% AFUE)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
+                            ...prev,
+                            heatingEfficiency: e.target.value
+                        }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.heatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
+                    )}
+                    {selections.heatingEfficiency && selections.heatingType !== 'heat-pump' && (() => {
+                        const inputValue = parseFloat(selections.heatingEfficiency);
+                        let minValue = 0;
+                        let systemType = "";
+                        if (selections.heatingType === 'boiler') {
+                            minValue = 90;
+                            systemType = "Boiler (90% AFUE minimum)";
+                        } else {
+                            minValue = 95; // Furnace
+                            systemType = "Furnace (95% AFUE minimum)";
+                        }
+                        
+                        const showWarning = !isNaN(inputValue) && inputValue < minValue;
+
+                        return showWarning ? (
+                            <Alert variant="destructive" style={{ backgroundColor: 'beige' }}>
+                                <AlertTriangle className="h-4 w-4" />
+                                <AlertTitle>Heating Efficiency Too Low</AlertTitle>
+                                <AlertDescription>
+                                    {systemType} – Your input of {inputValue} is below the minimum requirement.
+                                </AlertDescription>
+                            </Alert>
+                        ) : null;
+                    })()}
+                </div>
+            )}
+
+                {selections.heatingType === 'boiler' && <div className="space-y-4">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-100">Are you installing an indirect tank?</label>
+                        <Select value={selections.indirectTank} onValueChange={value => setSelections(prev => ({
+                            ...prev,
+                            indirectTank: value
+                        }))}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select if installing indirect tank" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-background border shadow-lg z-50">
+                                <SelectItem value="yes">Yes</SelectItem>
+                                <SelectItem value="no">No</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {selections.indirectTank === 'yes' && <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-100">Indirect tank size (gallons)</label>
+                        <Input type="number" placeholder="Enter tank size in gallons" value={selections.indirectTankSize} onChange={e => setSelections(prev => ({
+                            ...prev,
+                            indirectTankSize: e.target.value
+                        }))} />
+                    </div>}
+                </div>}
             </>}
         </>
     );
-};
+}
