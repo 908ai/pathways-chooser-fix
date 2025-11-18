@@ -93,7 +93,7 @@ const BuildingOfficialsPage = () => {
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="h-1.5 w-1.5 bg-orange-400 rounded-full mt-2 flex-shrink-0"></div>
-                    <p className="text-sm text-slate-300">Ongoing support for revisions or re-submissions as needed (billable)</p>
+                    <p className="text-sm text-slate-300">Ongoing support for revisions or re-submissions as needed (billable).</p>
                   </div>
                 </div>
               </div>
@@ -119,7 +119,7 @@ const BuildingOfficialsPage = () => {
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="h-1.5 w-1.5 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
-                    <p className="text-sm text-slate-300">Ongoing support for revisions or re-submissions as needed (billable)</p>
+                    <p className="text-sm text-slate-300">Ongoing support for revisions or re-submissions as needed (billable).</p>
                   </div>
                 </div>
               </div>
