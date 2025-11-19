@@ -72,6 +72,9 @@ export default function Prescriptive9362Section({
         }
     }, [selections.secondaryHeatingType, selections.secondaryIndirectTank, selections.secondaryWaterHeaterType, setSelections]);
 
+    const isHeatedFloorsChecked = selections.floorsSlabsSelected.includes("heatedFloors");
+    const isUnheatedFloorChecked = selections.floorsSlabsSelected.includes("unheatedBelowFrost") || selections.floorsSlabsSelected.includes("unheatedAboveFrost");
+
     const isWaterHeaterBoiler = selections.heatingType === 'boiler' && selections.indirectTank === 'yes';
     const isSecondaryWaterHeaterBoiler = selections.secondaryHeatingType === 'boiler' && selections.secondaryIndirectTank === 'yes';
 
@@ -343,36 +346,64 @@ export default function Prescriptive9362Section({
             <div id="floorsSlabsSelected" className={cn("space-y-4", validationErrors.floorsSlabsSelected && "p-2 border-2 border-red-500 rounded-md")}>
                 <label className="text-sm font-medium text-slate-100">Floors/Slabs (Select all that apply) <span className="text-red-400">*</span></label>
                 <div className="space-y-2">
-                    <label className={cn("flex items-center gap-2", selections.floorsSlabsSelected.includes("heatedFloors") && "opacity-50 cursor-not-allowed")}>
-                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} disabled={selections.floorsSlabsSelected.includes("heatedFloors")} onChange={e => {
-                            const value = "unheatedBelowFrost";
-                            setSelections(prev => ({
-                                ...prev,
-                                floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter(item => item !== value)
-                            }));
+                    <label className={cn("flex items-center gap-2", isHeatedFloorsChecked && "opacity-50 cursor-not-allowed")}>
+                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} disabled={isHeatedFloorsChecked} onChange={e => {
+                            const isChecked = e.target.checked;
+                            setSelections((prev: any) => {
+                                let newFloorsSlabsSelected = [...prev.floorsSlabsSelected];
+                                if (isChecked) {
+                                    if (!newFloorsSlabsSelected.includes('unheatedBelowFrost')) {
+                                        newFloorsSlabsSelected.push('unheatedBelowFrost');
+                                    }
+                                    newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'heatedFloors');
+                                } else {
+                                    newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'unheatedBelowFrost');
+                                }
+                                return {
+                                    ...prev,
+                                    floorsSlabsSelected: newFloorsSlabsSelected,
+                                    hasInFloorHeat: newFloorsSlabsSelected.includes('heatedFloors') ? "yes" : "no"
+                                };
+                            });
                         }} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Unheated Floor Below Frostline</span>
                     </label>
-                    <label className="flex items-center gap-2">
-                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedAboveFrost")} onChange={e => {
-                            const value = "unheatedAboveFrost";
-                            setSelections(prev => ({
-                                ...prev,
-                                floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter(item => item !== value)
-                            }));
+                    <label className={cn("flex items-center gap-2", isHeatedFloorsChecked && "opacity-50 cursor-not-allowed")}>
+                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedAboveFrost")} disabled={isHeatedFloorsChecked} onChange={e => {
+                            const isChecked = e.target.checked;
+                            setSelections((prev: any) => {
+                                let newFloorsSlabsSelected = [...prev.floorsSlabsSelected];
+                                if (isChecked) {
+                                    if (!newFloorsSlabsSelected.includes('unheatedAboveFrost')) {
+                                        newFloorsSlabsSelected.push('unheatedAboveFrost');
+                                    }
+                                    newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'heatedFloors');
+                                } else {
+                                    newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'unheatedAboveFrost');
+                                }
+                                return {
+                                    ...prev,
+                                    floorsSlabsSelected: newFloorsSlabsSelected,
+                                    hasInFloorHeat: newFloorsSlabsSelected.includes('heatedFloors') ? "yes" : "no"
+                                };
+                            });
                         }} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Unheated Floor Above Frost Line (or walk-out basement)</span>
                     </label>
-                    <label className={cn("flex items-center gap-2", selections.floorsSlabsSelected.includes("unheatedBelowFrost") && "opacity-50 cursor-not-allowed")}>
-                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("heatedFloors")} disabled={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} onChange={e => {
+                    <label className={cn("flex items-center gap-2", isUnheatedFloorChecked && "opacity-50 cursor-not-allowed")}>
+                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("heatedFloors")} disabled={isUnheatedFloorChecked} onChange={e => {
                             const isChecked = e.target.checked;
-                            setSelections(prev => {
+                            setSelections((prev: any) => {
                                 let newFloorsSlabsSelected = [...prev.floorsSlabsSelected];
                                 if (isChecked) {
                                     if (!newFloorsSlabsSelected.includes('heatedFloors')) {
                                         newFloorsSlabsSelected.push('heatedFloors');
                                     }
-                                    newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'unheatedBelowFrost');
+                                    newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => 
+                                        item !== 'unheatedBelowFrost' && 
+                                        item !== 'unheatedAboveFrost' &&
+                                        item !== 'slabOnGradeIntegralFooting'
+                                    );
                                 } else {
                                     newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'heatedFloors');
                                 }
@@ -385,12 +416,12 @@ export default function Prescriptive9362Section({
                         }} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Heated Floors</span>
                     </label>
-                    <label className="flex items-center gap-2">
-                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting")} onChange={e => {
+                    <label className={cn("flex items-center gap-2", isHeatedFloorsChecked && "opacity-50 cursor-not-allowed")}>
+                        <input type="checkbox" checked={selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting")} disabled={isHeatedFloorsChecked} onChange={e => {
                             const value = "slabOnGradeIntegralFooting";
-                            setSelections(prev => ({
+                            setSelections((prev: any) => ({
                                 ...prev,
-                                floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter(item => item !== value)
+                                floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter((item: string) => item !== value)
                             }));
                         }} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Slab on grade with integral Footing</span>
@@ -398,9 +429,9 @@ export default function Prescriptive9362Section({
                     <label className="flex items-center gap-2">
                         <input type="checkbox" checked={selections.floorsSlabsSelected.includes("floorsOverUnheatedSpaces")} onChange={e => {
                             const value = "floorsOverUnheatedSpaces";
-                            setSelections(prev => ({
+                            setSelections((prev: any) => ({
                                 ...prev,
-                                floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter(item => item !== value)
+                                floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter((item: string) => item !== value)
                             }));
                         }} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</span>
