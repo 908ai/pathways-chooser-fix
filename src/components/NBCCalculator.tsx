@@ -313,9 +313,9 @@ const NBCCalculator = ({
           unitNumber: project.unit_number || "",
           city: project.city || "",
           postalCode: project.postal_code || "",
-          province: project.province || "",
           buildingType: project.building_type || "",
           phoneNumber: companyData?.phone || "",
+          province: project.province || "",
           frontDoorOrientation: "",
           climateZone: project.climate_zone || "",
           occupancyClass: project.occupancy_class || "",
@@ -757,7 +757,7 @@ const NBCCalculator = ({
       const requiredFields: (keyof typeof selections)[] = [
         'hasHrv', 'ceilingsAtticRSI', 'hasCathedralOrFlatRoof', 'wallRSI',
         'belowGradeRSI', 'floorsSlabsSelected', 'windowUValue', 'hasSkylights',
-        'airtightness', 'heatingType', 'coolingApplicable', 'waterHeaterType', 'hasDWHR'
+        'airtightness', 'heatingType', 'coolingApplicable', 'hasDWHR'
       ];
 
       requiredFields.forEach(field => {
@@ -773,11 +773,25 @@ const NBCCalculator = ({
       if (selections.hasCathedralOrFlatRoof === 'yes' && !selections.cathedralFlatRSIValue) errors.cathedralFlatRSIValue = true;
       if (selections.hasSkylights === 'yes' && !selections.skylightUValue) errors.skylightUValue = true;
       if (selections.heatingType && !selections.heatingEfficiency) errors.heatingEfficiency = true;
-      if (selections.waterHeaterType && !selections.waterHeater) errors.waterHeater = true;
       
+      if (!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes')) {
+        if (!selections.waterHeaterType) errors.waterHeaterType = true;
+        if (selections.waterHeaterType && !selections.waterHeater) errors.waterHeater = true;
+        if (selections.waterHeaterType === 'other' && !selections.otherWaterHeaterType) errors.otherWaterHeaterType = true;
+      }
+      
+      if (selections.floorsSlabsSelected.includes("heatedFloors") && !selections.inFloorHeatRSI) errors.inFloorHeatRSI = true;
+      if (selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting") && !selections.slabOnGradeIntegralFootingRSI) errors.slabOnGradeIntegralFootingRSI = true;
+      if (selections.floorsSlabsSelected.includes("floorsOverUnheatedSpaces") && !selections.floorsOverUnheatedSpacesRSI) errors.floorsOverUnheatedSpacesRSI = true;
+      if (selections.floorsSlabsSelected.includes("unheatedBelowFrost") && !selections.unheatedFloorBelowFrostRSI) errors.unheatedFloorBelowFrostRSI = true;
+      if (selections.floorsSlabsSelected.includes("unheatedAboveFrost") && !selections.unheatedFloorAboveFrostRSI) errors.unheatedFloorAboveFrostRSI = true;
+      if (selections.heatingType === 'boiler' && !selections.indirectTank) errors.indirectTank = true;
+      if (selections.heatingType === 'boiler' && selections.indirectTank === 'yes' && !selections.indirectTankSize) errors.indirectTankSize = true;
+      if (selections.coolingApplicable === 'yes' && !selections.coolingEfficiency) errors.coolingEfficiency = true;
+
       if (selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") {
-        if (!selections.hasSecondaryHrv) errors.hasSecondaryHrv = true;
-        if (selections.hasSecondaryHrv === 'yes' && !selections.secondaryHrvEfficiency) errors.secondaryHrvEfficiency = true;
+        if (selections.hasHrv === 'with_hrv' && !selections.hasSecondaryHrv) errors.hasSecondaryHrv = true;
+        if (selections.hasHrv === 'with_hrv' && selections.hasSecondaryHrv === 'yes' && !selections.secondaryHrvEfficiency) errors.secondaryHrvEfficiency = true;
         if (!selections.hasSecondaryHeating) errors.hasSecondaryHeating = true;
         if (selections.hasSecondaryHeating === 'yes') {
             if (!selections.secondaryHeatingType) errors.secondaryHeatingType = true;
@@ -845,6 +859,7 @@ const NBCCalculator = ({
     setValidationErrors(errors);
 
     if (Object.keys(errors).length > 0) {
+      console.log("Validation failed. Missing fields:", Object.keys(errors));
       toast({ title: "Missing Information", description: "Please fill out all required fields in this step.", variant: "destructive" });
       return { isValid: false, errors };
     }
