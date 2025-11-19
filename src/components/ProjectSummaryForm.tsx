@@ -1,172 +1,44 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Save, FileText, AlertTriangle, Info } from 'lucide-react';
+import { Save, FileText, AlertTriangle, Info, Building, Thermometer, Zap, Droplets, Wind, FolderOpen } from 'lucide-react';
 import FileManager from '@/components/FileManager';
-
-interface ProjectSummaryData {
-  projectName: string;
-  buildingType: string | null;
-  location: string | null;
-  floorArea: number | null;
-  selectedPathway: 'prescriptive' | 'performance' | string | null;
-  
-  // Building Envelope
-  atticRsi: number | string | null;
-  atticPoints: number | null;
-  wallRsi: number | string | null;
-  wallPoints: number | null;
-  belowGradeRsi: number | string | null;
-  belowGradePoints: number | null;
-  floorRsi: number | string | null;
-  floorPoints: number | null;
-  windowUValue: number | string | null;
-  windowPoints: number | null;
-  
-  // Mechanical Systems
-  heatingSystemType: string | null;
-  heatingEfficiency: number | string | null;
-  heatingMakeModel?: string;
-  heatingPoints: number | null;
-  coolingSystemType: string | null;
-  coolingEfficiency: number | string | null;
-  coolingPoints: number | null;
-  waterHeatingType: string | null;
-  waterHeatingEfficiency: number | string | null;
-  waterHeatingPoints: number | null;
-  hrvErvType: string | null;
-  hrvErvEfficiency: number | string | null;
-  hrvErvPoints: number | null;
-  
-  // Building Performance
-  airtightnessAl: number | string | null;
-  airtightnessPoints: number | null;
-  buildingVolume: number | string | null;
-  volumePoints: number | null;
-  
-  // Performance Path Specific
-  annualEnergyConsumption?: number | null;
-  performanceComplianceResult?: string | null;
-  
-  // Compliance Results
-  totalPoints: number | null;
-  complianceStatus: 'pass' | 'fail' | 'submitted' | string | null;
-  upgradeCosts: number | null;
-  
-  // Calculator specific fields from calculatorData that are used in the form
-  streetAddress?: string;
-  unitNumber?: string;
-  city?: string;
-  postalCode?: string;
-  province?: string;
-  occupancyClass?: string;
-  climateZone?: string;
-  uploadedFiles?: any[];
-  firstName?: string;
-  lastName?: string;
-  company?: string;
-  phoneNumber?: string;
-  email?: string;
-  compliancePath?: string;
-  frontDoorOrientation?: string;
-  energuidePathway?: string;
-  ceilingsAtticRSI?: string;
-  wallRSI?: string;
-  floorsUnheatedRSI?: string;
-  floorsGarageRSI?: string;
-  heatedFloorsRSI?: string;
-  slabOnGradeRSI?: string;
-  slabOnGradeIntegralFootingRSI?: string;
-  floorsOverUnheatedSpacesRSI?: string;
-  belowGradeRSI?: string;
-  skylightUValue?: string;
-  hasCathedralOrFlatRoof?: string;
-  airtightness?: string;
-  midConstructionBlowerDoorPlanned?: boolean;
-  hasHrvErv9365?: string;
-  hrvMakeModel?: string;
-  coolingMakeModel?: string;
-  waterHeatingMakeModel?: string;
-  indirectTank?: string;
-  indirectTankSize?: string;
-  interestedCertifications?: string[];
-  floorsSlabsSelected?: string[];
-  hasInFloorHeat9365?: string;
-  waterHeater?: string;
-  secondaryHeatingType?: string;
-  secondaryHeatingEfficiency?: string;
-  secondaryIndirectTank?: string;
-  secondaryIndirectTankSize?: string;
-  hasSecondaryHeating?: string;
-  hasSecondaryWaterHeater?: string;
-  secondaryWaterHeaterSameAsMain?: string;
-  secondaryWaterHeaterType?: string;
-  secondaryWaterHeater?: string;
-  hrvEfficiency?: string;
-  coolingApplicable?: string;
-  additionalInfo?: string;
-
-  // Fields that were causing TS errors
-  cathedralFlatRSI?: string;
-  hasDWHR?: string;
-  hasSecondaryHrv?: string;
-  secondaryHrvEfficiency?: string;
-}
-
-interface CalculatorData {
-  streetAddress?: string;
-  unitNumber?: string;
-  city?: string;
-  postalCode?: string;
-  province?: string;
-  occupancyClass?: string;
-  climateZone?: string;
-  frontDoorOrientation?: string;
-  energuidePathway?: string;
-  [key: string]: any;
-}
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface ProjectSummaryFormProps {
-  calculatorData?: CalculatorData;
+  selections: any;
+  uploadedFiles: any[];
   onSave?: () => void;
   editingProjectId?: string;
   autoSave?: boolean;
 }
 
-const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave = false }: ProjectSummaryFormProps) => {
+const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectId, autoSave = false }: ProjectSummaryFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   
   const getAutoGeneratedProjectName = () => {
-    const address = calculatorData?.streetAddress || calculatorData?.city;
-    const company = calculatorData?.company;
-    const lastName = calculatorData?.lastName;
+    const address = selections?.streetAddress || selections?.city;
+    const company = selections?.company;
+    const lastName = selections?.lastName;
     
-    if (address && company) {
-      return `${address} - ${company}`;
-    } else if (address && lastName) {
-      return `${address} - ${lastName}`;
-    } else if (company) {
-      return `Project - ${company}`;
-    } else if (lastName) {
-      return `Project - ${lastName}`;
-    }
+    if (address && company) return `${address} - ${company}`;
+    if (address && lastName) return `${address} - ${lastName}`;
+    if (company) return `Project - ${company}`;
+    if (lastName) return `Project - ${lastName}`;
     
     return 'New NBC Project';
   };
   
-  const [formData, setFormData] = useState<Partial<ProjectSummaryData>>({
-    ...calculatorData,
-    projectName: getAutoGeneratedProjectName(),
-  });
+  const [projectName, setProjectName] = useState(getAutoGeneratedProjectName());
 
   useEffect(() => {
     if (autoSave) {
@@ -175,1005 +47,212 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
   }, [autoSave]);
 
   const getPathwayDisplayName = () => {
-    const pathwayMap = {
+    const pathwayMap: { [key: string]: string } = {
       '9365': 'NBC 9.36.5 Performance Path',
       '9362': 'NBC 9.36.2 Prescriptive Path', 
       '9367': 'NBC 9.36.7 Tiered Performance Path',
       '9368': 'NBC 9.36.8 Tiered Prescriptive Path'
     };
-    
-    const selectedPath = formData?.compliancePath;
-    if (selectedPath && pathwayMap[selectedPath as keyof typeof pathwayMap]) {
-      return `${pathwayMap[selectedPath as keyof typeof pathwayMap]} Summary`;
-    }
-    
-    if (formData.selectedPathway === 'performance') {
-      return 'NBC 9.36 Performance Path Summary';
-    } else if (formData.selectedPathway === 'prescriptive') {
-      return 'NBC 9.36 Prescriptive Path Summary';
-    }
-    
-    return 'NBC 9.36 Pathway Summary';
-  };
-
-  const handleInputChange = (field: keyof ProjectSummaryData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    return pathwayMap[selections.compliancePath] || 'NBC 9.36 Pathway';
   };
 
   const handleSave = async () => {
     if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to save project summaries.",
-        variant: "destructive"
-      });
+      toast({ title: "Authentication Required", description: "Please sign in to save.", variant: "destructive" });
       return;
     }
-
-    if (!formData.projectName) {
-      toast({
-        title: "Project Name Required",
-        description: "Please enter a project name before saving.",
-        variant: "destructive"
-      });
+    if (!projectName) {
+      toast({ title: "Project Name Required", description: "Please enter a project name.", variant: "destructive" });
       return;
     }
 
     setLoading(true);
     
     try {
-      const { data: existingCompanies, error: companyError } = await supabase
-        .from('companies')
-        .select('*')
-        .eq('user_id', user.id);
+      // Update company info if provided
+      if (selections.company || selections.phoneNumber) {
+        const { data: company, error: fetchError } = await supabase.from('companies').select('id').eq('user_id', user.id).single();
+        if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
 
-      if (companyError) throw companyError;
-      
-      const shouldUpdateCompany = existingCompanies.length === 0 || 
-        (formData?.company || formData?.firstName || formData?.lastName || formData?.phoneNumber);
-      
-      if (shouldUpdateCompany && (formData?.company || formData?.firstName || formData?.lastName)) {
-        const companyName = formData?.company || 
-                           (formData?.firstName && formData?.lastName ? 
-                            `${formData.firstName} ${formData.lastName}` : 
-                            existingCompanies[0]?.company_name || 'My Company');
-        
-        const contactEmail = user.email || formData?.email || existingCompanies[0]?.contact_email;
-        const phone = formData?.phoneNumber || existingCompanies[0]?.phone;
-        const address = [formData.streetAddress, formData.city, formData.province].filter(Boolean).join(', ') || existingCompanies[0]?.address;
+        const companyData = {
+          user_id: user.id,
+          company_name: selections.company,
+          contact_email: user.email,
+          phone: selections.phoneNumber,
+          address: selections.companyAddress,
+        };
 
-        if (existingCompanies.length === 0) {
-          const { error: insertError } = await supabase
-            .from('companies')
-            .insert({
-              user_id: user.id,
-              company_name: companyName,
-              contact_email: contactEmail,
-              phone: phone,
-              address: address
-            });
-          if (insertError) throw insertError;
-          toast({
-            title: "Account Info Created",
-            description: "Your account information has been auto-imported from this project.",
-          });
+        if (company) {
+          const { error: updateError } = await supabase.from('companies').update(companyData).eq('id', company.id);
+          if (updateError) throw updateError;
         } else {
-          const updateData: any = {};
-          if (formData?.company && formData.company !== existingCompanies[0]?.company_name) {
-            updateData.company_name = companyName;
-          }
-          if (formData?.phoneNumber && formData.phoneNumber !== existingCompanies[0]?.phone) {
-            updateData.phone = phone;
-          }
-          if (address && address !== existingCompanies[0]?.address) {
-            updateData.address = address;
-          }
-          if (Object.keys(updateData).length > 0) {
-            const { error: updateError } = await supabase
-              .from('companies')
-              .update(updateData)
-              .eq('user_id', user.id);
-            if (updateError) throw updateError;
-            toast({
-              title: "Account Info Updated",
-              description: "Your account information has been updated with details from this project.",
-            });
-          }
+          const { error: insertError } = await supabase.from('companies').insert(companyData);
+          if (insertError) throw insertError;
         }
       }
 
-      let uploadedFileData: any[] = [];
-      if (formData?.uploadedFiles && formData.uploadedFiles.length > 0) {
-        uploadedFileData = formData.uploadedFiles.map(file => ({
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          path: file.path,
-          url: file.url,
-          uploaded_at: new Date().toISOString()
-        }));
-      }
-
-      const isEditing = !!editingProjectId;
-      const constructedLocation = [formData.streetAddress, formData.city, formData.province].filter(Boolean).join(', ');
-      
-      const baseProjectData = {
-        project_name: formData.projectName,
-        building_type: formData.buildingType,
-        location: constructedLocation,
-        street_address: formData.streetAddress,
-        unit_number: formData.unitNumber,
-        city: formData.city,
-        postal_code: formData.postalCode,
-        province: formData.province,
-        occupancy_class: formData.occupancyClass,
-        climate_zone: formData.climateZone,
-        floor_area: parseFloat(String(formData.floorArea)) || null,
-        selected_pathway: formData.selectedPathway,
-        attic_rsi: parseFloat(String(formData.atticRsi)) || null,
-        attic_points: parseFloat(String(formData.atticPoints)) || null,
-        wall_rsi: parseFloat(String(formData.wallRsi)) || null,
-        wall_points: parseFloat(String(formData.wallPoints)) || null,
-        below_grade_rsi: parseFloat(String(formData.belowGradeRsi)) || null,
-        below_grade_points: parseFloat(String(formData.belowGradePoints)) || null,
-        floor_rsi: parseFloat(String(formData.floorRsi)) || null,
-        floor_points: parseFloat(String(formData.floorPoints)) || null,
-        window_u_value: parseFloat(String(formData.windowUValue)) || null,
-        window_points: parseFloat(String(formData.windowPoints)) || null,
-        heating_system_type: formData.heatingSystemType,
-        heating_efficiency: formData.heatingEfficiency ? String(formData.heatingEfficiency) : null,
-        heating_points: parseFloat(String(formData.heatingPoints)) || null,
-        cooling_system_type: formData.coolingSystemType,
-        cooling_efficiency: parseFloat(String(formData.coolingEfficiency)) || null,
-        cooling_points: parseFloat(String(formData.coolingPoints)) || null,
-        water_heating_type: formData.waterHeatingType,
-        water_heating_efficiency: parseFloat(String(formData.waterHeatingEfficiency)) || null,
-        water_heating_points: parseFloat(String(formData.waterHeatingPoints)) || null,
-        hrv_erv_type: formData.hrvErvType,
-        hrv_erv_efficiency: parseFloat(String(formData.hrvErvEfficiency)) || null,
-        hrv_erv_points: parseFloat(String(formData.hrvErvPoints)) || null,
-        airtightness_al: parseFloat(String(formData.airtightnessAl)) || null,
-        airtightness_points: parseFloat(String(formData.airtightnessPoints)) || null,
-        building_volume: parseFloat(String(formData.buildingVolume)) || null,
-        volume_points: parseFloat(String(formData.volumePoints)) || null,
-        annual_energy_consumption: parseFloat(String(formData.annualEnergyConsumption)) || null,
-        performance_compliance_result: formData.performanceComplianceResult,
-        total_points: parseFloat(String(formData.totalPoints)) || null,
-        compliance_status: formData.complianceStatus,
-        upgrade_costs: parseFloat(String(formData.upgradeCosts)) || null,
-        uploaded_files: uploadedFileData,
-        mid_construction_blower_door_planned: formData.midConstructionBlowerDoorPlanned,
-        secondary_heating_system_type: formData.secondaryHeatingType,
-        secondary_heating_efficiency: formData.secondaryHeatingEfficiency ? String(formData.secondaryHeatingEfficiency) : null,
+      const projectData = {
+        project_name: projectName,
+        building_type: selections.buildingType,
+        location: [selections.streetAddress, selections.city, selections.province].filter(Boolean).join(', '),
+        street_address: selections.streetAddress,
+        unit_number: selections.unitNumber,
+        city: selections.city,
+        postal_code: selections.postalCode,
+        province: selections.province,
+        occupancy_class: selections.occupancyClass,
+        climate_zone: selections.climateZone,
+        selected_pathway: selections.compliancePath,
+        
+        // Envelope
+        attic_rsi: parseFloat(selections.ceilingsAtticRSI) || null,
+        wall_rsi: parseFloat(selections.wallRSI) || null,
+        below_grade_rsi: parseFloat(selections.belowGradeRSI || selections.foundationWallsRSI) || null,
+        floor_rsi: parseFloat(selections.floorsUnheatedRSI || selections.floorsOverUnheatedSpacesRSI) || null,
+        window_u_value: parseFloat(selections.windowUValue) || null,
+        
+        // Mechanical
+        heating_system_type: selections.heatingType,
+        heating_efficiency: selections.heatingEfficiency,
+        secondary_heating_system_type: selections.secondaryHeatingType,
+        secondary_heating_efficiency: selections.secondaryHeatingEfficiency,
+        cooling_system_type: selections.coolingApplicable === 'yes' ? 'Central AC' : 'None',
+        cooling_efficiency: parseFloat(selections.coolingEfficiency) || null,
+        water_heating_type: selections.waterHeaterType || selections.waterHeater,
+        hrv_erv_type: selections.hasHrv === 'with_hrv' ? 'HRV/ERV' : 'None',
+        hrv_erv_efficiency: parseFloat(selections.hrvEfficiency) || null,
+        
+        // Performance
+        airtightness_al: parseFloat(selections.airtightness || selections.customAirtightness) || null,
+        building_volume: parseFloat(selections.buildingVolume) || null,
+        
+        // Status & Files
+        compliance_status: 'submitted',
+        uploaded_files: uploadedFiles.map(f => ({ name: f.name, size: f.size, type: f.type, path: f.path, url: f.url })),
+        mid_construction_blower_door_planned: selections.midConstructionBlowerDoorPlanned,
       };
 
-      if (isEditing) {
-        const { data, error } = await supabase
-          .from('project_summaries')
-          .update(baseProjectData)
-          .eq('id', editingProjectId)
-          .select();
-        if (error) throw error;
-      } else {
-        const insertData = { ...baseProjectData, user_id: user.id, id: calculatorData?.projectId };
-        const { data, error } = await supabase
-          .from('project_summaries')
-          .insert(insertData)
-          .select();
-        if (error) throw error;
-        if (autoSave) {
-          navigate('/dashboard');
-        } else if (data && data[0]) {
-          navigate(`/project/${data[0].id}`);
-        } else {
-          navigate('/dashboard');
-        }
-      }
-
+      let savedProject;
       if (editingProjectId) {
-        toast({
-          title: "Project Updated",
-          description: "Your project has been updated successfully.",
-        });
-        navigate('/dashboard');
-      } else if (!autoSave) {
-        toast({
-          title: "Project Saved",
-          description: "Your project summary has been saved successfully.",
-        });
+        const { data, error } = await supabase.from('project_summaries').update(projectData).eq('id', editingProjectId).select().single();
+        if (error) throw error;
+        savedProject = data;
+      } else {
+        const { data, error } = await supabase.from('project_summaries').insert({ ...projectData, user_id: user.id }).select().single();
+        if (error) throw error;
+        savedProject = data;
       }
 
+      toast({ title: "Project Submitted", description: "Your project has been successfully submitted for review." });
       onSave?.();
+      navigate(`/project/${savedProject.id}`);
 
-    } catch (error) {
-      console.error('Error saving project summary:', error);
-      toast({
-        title: "Save Failed",
-        description: `There was an error saving your project summary. Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        variant: "destructive"
-      });
+    } catch (error: any) {
+      console.error('Error saving project:', error);
+      toast({ title: "Save Failed", description: error.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
-  const isPerformancePath = formData.selectedPathway === 'performance';
+  const renderField = (label: string, value: any, unit = '') => {
+    if (value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0)) {
+      return null;
+    }
+    return (
+      <div className="flex justify-between items-center text-sm py-2 border-b border-slate-700">
+        <span className="text-slate-300">{label}:</span>
+        <span className="font-medium text-white">{value} {unit}</span>
+      </div>
+    );
+  };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card className="w-full max-w-4xl mx-auto bg-slate-800/50 border-slate-700 text-white">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-xl">
           <FileText className="h-5 w-5" />
           {getPathwayDisplayName()}
         </CardTitle>
+        <CardDescription className="text-slate-300">Please review all information before submitting.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Core Project Information */}
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="projectName">Project Name *</Label>
-            <Input
-              id="projectName"
-              value={formData.projectName || ''}
-              onChange={(e) => handleInputChange('projectName', e.target.value)}
-              placeholder="Enter project name"
-            />
-          </div>
-          
-          {/* Project Information Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Project Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Applicant Name:</span>
-                    <span className="font-medium">
-                      {formData?.firstName && formData?.lastName ? 
-                        `${formData.firstName} ${formData.lastName}` : 
-                        'Not specified'}
-                    </span>
-                  </div>
-                  
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Applicant Phone:</span>
-                    <span className="font-medium">
-                      {formData?.phoneNumber || 'Not specified'}
-                    </span>
-                  </div>
-                  
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Company Name:</span>
-                    <span className="font-medium">
-                      {formData?.company || 'Not specified'}
-                    </span>
-                  </div>
-                  
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Building Address:</span>
-                    <span className="font-medium">
-                      {[formData?.streetAddress, formData?.unitNumber, formData?.city, formData?.postalCode].filter(Boolean).join(', ') || 'Not specified'}
-                    </span>
-                  </div>
-                  
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Province:</span>
-                    <span className="font-medium">
-                      {formData?.province ? 
-                        formData.province.charAt(0).toUpperCase() + formData.province.slice(1) : 
-                        'Not specified'}
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Building Type:</span>
-                    <span className="font-medium">
-                      {formData.buildingType === 'single-detached' ? 'Single Detached' :
-                       formData.buildingType === 'single-family' ? 'Single Family Home' :
-                       formData.buildingType === 'duplex' ? 'Duplex' :
-                       formData.buildingType === 'row-house' ? 'Row House' :
-                       formData.buildingType === 'apartment' ? 'Apartment Building' :
-                       formData.buildingType === 'other' ? 'Other' :
-                       formData.buildingType || 'Not specified'}
-                    </span>
-                  </div>
-                  
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Occupancy Class:</span>
-                    <span className="font-medium">
-                      {formData?.occupancyClass || 'Not specified'}
-                    </span>
-                  </div>
-                  
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Selected Pathway:</span>
-                    <span className="font-medium">
-                      {formData.selectedPathway === 'performance' ? 'Performance Path' : 'Prescriptive Path'}
-                    </span>
-                  </div>
-                   
-                   {formData.selectedPathway === 'performance' && (
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Front Door Orientation:</span>
-                      <span className="font-medium">
-                        {formData?.frontDoorOrientation || 'Not specified'}
-                      </span>
-                    </div>
-                   )}
-                  
-                   
-                   <div className="flex justify-between">
-                     <span className="text-sm text-muted-foreground">Building Plans Status:</span>
-                     <div className="text-right">
-                       <span className="font-medium">
-                         {formData?.uploadedFiles && formData.uploadedFiles.length > 0 ? 
-                           `${formData.uploadedFiles.length} file(s) uploaded` : 
-                           'No files uploaded yet'}
-                       </span>
-                       {(!formData?.uploadedFiles || formData.uploadedFiles.length === 0) && (
-                         <div className="text-xs text-orange-600 mt-1">
-                           Building plans upload pending
-                         </div>
-                       )}
-                     </div>
-                   </div>
-                   
-                   {/* Uploaded Files List */}
-                   {formData?.uploadedFiles && formData.uploadedFiles.length > 0 && (
-                     <div className="mt-4 space-y-4">
-                       {/* Building Plans Section */}
-                       <div className="space-y-2">
-                         <span className="text-sm font-medium text-muted-foreground">Building Plans:</span>
-                         <div className="space-y-2">
-                           {formData.uploadedFiles
-                             .filter((file: any) => !file.name?.toLowerCase().includes('window') && !file.name?.toLowerCase().includes('door'))
-                             .map((file: any, index: number) => (
-                             <div key={`building-${index}`} className="flex items-center gap-2 p-2 bg-muted/30 rounded-md">
-                               <FileText className="h-4 w-4 text-muted-foreground" />
-                               <div className="flex-1 min-w-0">
-                                 <div className="text-sm font-medium truncate">
-                                   {file.name || `Building Plan ${index + 1}`}
-                                 </div>
-                                 <div className="text-xs text-muted-foreground">
-                                   {file.size ? `${(file.size / 1024 / 1024).toFixed(2)} MB` : 'Size unknown'} • 
-                                   {file.type || 'Unknown type'}
-                                 </div>
-                               </div>
-                             </div>
-                           ))}
-                         </div>
-                       </div>
-
-                       {/* Window Package Section */}
-                       {formData.uploadedFiles.some((file: any) => 
-                         file.name?.toLowerCase().includes('window') || file.name?.toLowerCase().includes('door')
-                       ) && (
-                         <div className="space-y-2">
-                           <span className="text-sm font-medium text-muted-foreground">Window/Door Packages:</span>
-                           <div className="space-y-2">
-                             {formData.uploadedFiles
-                               .filter((file: any) => file.name?.toLowerCase().includes('window') || file.name?.toLowerCase().includes('door'))
-                               .map((file: any, index: number) => (
-                               <div key={`window-${index}`} className="flex items-center gap-2 p-2 bg-blue-50/50 border border-blue-100 rounded-md">
-                                 <FileText className="h-4 w-4 text-blue-600" />
-                                 <div className="flex-1 min-w-0">
-                                   <div className="text-sm font-medium truncate text-blue-900">
-                                     {file.name || `Window Package ${index + 1}`}
-                                   </div>
-                                   <div className="text-xs text-blue-600">
-                                     {file.size ? `${(file.size / 1024 / 1024).toFixed(2)} MB` : 'Size unknown'} • 
-                                     {file.type || 'Unknown type'}
-                                   </div>
-                                 </div>
-                               </div>
-                             ))}
-                           </div>
-                         </div>
-                       )}
-
-                       {/* All other documents */}
-                       {formData.uploadedFiles.some((file: any) => 
-                         !file.name?.toLowerCase().includes('window') && 
-                         !file.name?.toLowerCase().includes('door') &&
-                         file.name // Only show files that have names and don't fall into other categories
-                       ) === false && formData.uploadedFiles.length > 0 && (
-                         <div className="space-y-2">
-                           <span className="text-sm font-medium text-muted-foreground">Other Documents:</span>
-                           <div className="space-y-2">
-                             {formData.uploadedFiles.map((file: any, index: number) => (
-                               <div key={`other-${index}`} className="flex items-center gap-2 p-2 bg-muted/30 rounded-md">
-                                 <FileText className="h-4 w-4 text-muted-foreground" />
-                                 <div className="flex-1 min-w-0">
-                                   <div className="text-sm font-medium truncate">
-                                     {file.name || `Document ${index + 1}`}
-                                   </div>
-                                   <div className="text-xs text-muted-foreground">
-                                     {file.size ? `${(file.size / 1024 / 1024).toFixed(2)} MB` : 'Size unknown'} • 
-                                     {file.type || 'Unknown type'}
-                                   </div>
-                                 </div>
-                               </div>
-                             ))}
-                           </div>
-                         </div>
-                       )}
-                     </div>
-                   )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* In-Progress Items Summary */}
-          {formData.complianceStatus === 'submitted' && (
-            <Card className="border-orange-200 bg-orange-50/50">
-              <CardHeader>
-                <CardTitle className="text-orange-800 flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5" />
-                  Project Status - Items Pending
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Documentation Status */}
-                  <div className="space-y-2">
-                    <h4 className="font-medium text-orange-800">Documentation</h4>
-                    <div className="space-y-1 text-sm">
-                      {(() => {
-                        const allFiles = [...(formData.uploadedFiles || []), ...(calculatorData?.uploadedFiles || [])];
-                        return allFiles.length === 0 && (
-                          <div className="flex items-center gap-2 text-orange-600">
-                            <FileText className="h-4 w-4" />
-                            Building plans upload pending
-                          </div>
-                        );
-                      })()}
-                      {(() => {
-                        const allFiles = [...(formData.uploadedFiles || []), ...(calculatorData?.uploadedFiles || [])];
-                        
-                        const hasWindowDoorSchedule = allFiles.some((file: any) => {
-                          if (!file || !file.name) {
-                            return false;
-                          }
-                          const fileName = file.name.toLowerCase();
-                          const hasKeywords = fileName.includes('window') || 
-                                            fileName.includes('door') ||
-                                            fileName.includes('stc') ||
-                                            fileName.includes('schedule') ||
-                                            fileName.includes('supplier') ||
-                                            fileName.includes('spec') ||
-                                            (fileName.includes('.pdf') || fileName.includes('.jpg') || fileName.includes('.png') || fileName.includes('.jpeg'));
-                          return hasKeywords;
-                        });
-                        
-                        return !hasWindowDoorSchedule && (
-                          <div className="flex items-center gap-2 text-orange-600">
-                            <FileText className="h-4 w-4" />
-                            Window/door schedule upload pending
-                          </div>
-                        );
-                      })()}
-                    </div>
-                  </div>
-
-                  {/* Technical Specifications */}
-                  <div className="space-y-2">
-                    <h4 className="font-medium text-orange-800">Technical Specifications</h4>
-                    <div className="space-y-1 text-sm">
-                      {(!formData?.heatingMakeModel || formData.heatingMakeModel === '') && (
-                        <div className="flex items-center gap-2 text-orange-600">
-                          <Info className="h-4 w-4" />
-                          Heating system make/model pending
-                        </div>
-                      )}
-                      {(!formData?.coolingMakeModel || formData.coolingMakeModel === '') && (
-                        <div className="flex items-center gap-2 text-orange-600">
-                          <Info className="h-4 w-4" />
-                          Cooling system make/model pending
-                        </div>
-                      )}
-                      {(!formData?.waterHeatingMakeModel || formData.waterHeatingMakeModel === '') && (
-                        <div className="flex items-center gap-2 text-orange-600">
-                          <Info className="h-4 w-4" />
-                          Water heater make/model pending
-                        </div>
-                      )}
-                      {formData?.hasHrvErv9365 === 'yes' && (!formData?.hrvMakeModel || formData.hrvMakeModel === '' || formData.hrvMakeModel === '0') && (
-                        <div className="flex items-center gap-2 text-orange-600">
-                          <Info className="h-4 w-4" />
-                          HRV/ERV make/model pending
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Missing Information */}
-                  <div className="space-y-2">
-                    <h4 className="font-medium text-orange-800">Missing Information</h4>
-                    <div className="space-y-1 text-sm">
-                      {(!formData?.province || formData.province === '') && (
-                        <div className="flex items-center gap-2 text-orange-600">
-                          <Info className="h-4 w-4" />
-                          Province/location details needed
-                        </div>
-                      )}
-                      {(!formData?.frontDoorOrientation || formData.frontDoorOrientation === '') && (
-                        <div className="flex items-center gap-2 text-orange-600">
-                          <Info className="h-4 w-4" />
-                          Front door orientation needed
-                        </div>
-                      )}
-                      {formData.floorArea === 0 && (
-                        <div className="flex items-center gap-2 text-orange-600">
-                          <Info className="h-4 w-4" />
-                          Floor area calculation needed
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Certifications & Services */}
-                  <div className="space-y-2">
-                    <h4 className="font-medium text-orange-800">Optional Services</h4>
-                    <div className="space-y-1 text-sm">
-                      {(!formData?.interestedCertifications || formData.interestedCertifications.length === 0) && (
-                        <div className="flex items-center gap-2 text-orange-500">
-                          <Info className="h-4 w-4" />
-                          Certification preferences not specified
-                        </div>
-                      )}
-                      {!formData?.midConstructionBlowerDoorPlanned && (
-                        <div className="flex items-center gap-2 text-orange-500">
-                          <Info className="h-4 w-4" />
-                          Mid-construction testing preference not set
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-4 p-3 bg-orange-100 rounded-md">
-                  <p className="text-sm text-orange-800">
-                    <strong>Next Steps:</strong> Complete the missing items above to move your project forward. 
-                    Upload required documents and provide technical specifications to finalize your submission.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+        <div className="space-y-2">
+          <Label htmlFor="projectName" className="text-slate-200">Project Name *</Label>
+          <Input id="projectName" value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="Enter project name" className="bg-slate-900/50 border-slate-600" />
         </div>
 
-        {/* Detailed Building Specifications */}
-        {formData.totalPoints !== undefined && (
-          <div className="space-y-6">
-            {/* Compliance Summary */}
-            <Card className="bg-muted/50">
-              <CardContent className="pt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
-                  <div>
-                    <div className="text-2xl font-bold text-orange-600">TBD</div>
-                    <div className="text-sm text-muted-foreground">Compliance Status</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-primary">${formData.upgradeCosts?.toLocaleString() || 0}</div>
-                    <div className="text-sm text-muted-foreground">Upgrade Costs</div>
-                  </div>
-                </div>
-                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                  <p className="text-sm text-blue-800">
-                    <strong>Review Timeline:</strong> A review will take place within 1-2 days.
-                  </p>
-                </div>
-                {formData?.energuidePathway === 'yes' && (
-                  <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-md">
-                    <p className="text-sm text-orange-800">
-                      <strong>EnerGuide Rating System (ERS) Notice:</strong> Performance modelling would be required for the ERS pathway. Please contact us for more details regarding this additional service.
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+        <Accordion type="multiple" defaultValue={['item-1', 'item-2', 'item-3', 'item-4']} className="w-full">
+          <AccordionItem value="item-1">
+            <AccordionTrigger className="text-lg font-semibold"><Building className="h-5 w-5 mr-2" />Project & Contact Information</AccordionTrigger>
+            <AccordionContent className="space-y-2 pt-4">
+              {renderField('First Name', selections.firstName)}
+              {renderField('Last Name', selections.lastName)}
+              {renderField('Company', selections.company)}
+              {renderField('Phone Number', selections.phoneNumber)}
+              {renderField('Company Address', selections.companyAddress)}
+              {renderField('Street Address', selections.streetAddress)}
+              {renderField('Unit Number', selections.unitNumber)}
+              {renderField('City', selections.city)}
+              {renderField('Province', selections.province)}
+              {renderField('Postal Code', selections.postalCode)}
+              {renderField('Building Type', selections.buildingType)}
+              {renderField('Occupancy Class', selections.occupancyClass)}
+              {renderField('Climate Zone', selections.climateZone)}
+            </AccordionContent>
+          </AccordionItem>
 
-            {/* Building Envelope Specifications */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Building Envelope Specifications</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   <div className="space-y-3">
-                      {(formData?.ceilingsAtticRSI || formData.atticRsi) && (
-                         <div className="flex justify-between">
-                           <span className="text-sm text-muted-foreground">Attic/Ceiling (RSI):</span>
-                          <span className="font-medium">
-                            {formData?.ceilingsAtticRSI || formData.atticRsi}
-                          </span>
-                        </div>
-                     )}
-                     {(formData?.wallRSI || formData.wallRsi) && (
-                        <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground">Wall (RSI):</span>
-                          <span className="font-medium">
-                            {formData?.wallRSI || formData.wallRsi}
-                          </span>
-                        </div>
-                     )}
-                     {(formData?.belowGradeRSI || formData.belowGradeRsi) && (
-                        <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground">Below Grade Walls (RSI):</span>
-                          <span className="font-medium">
-                            {formData?.belowGradeRSI || formData.belowGradeRsi}
-                          </span>
-                        </div>
-                     )}
-                       {formData?.floorsSlabsSelected?.includes("slabOnGradeIntegralFooting") && (
-                         <div className="flex justify-between">
-                           <span className="text-sm text-muted-foreground">Slab on Grade Integral Footing (RSI):</span>
-                           <span className="font-medium">
-                             {formData?.slabOnGradeIntegralFootingRSI || 'Not specified'}
-                           </span>
-                         </div>
-                       )}
-                     {formData?.hasCathedralOrFlatRoof === 'yes' && formData?.cathedralFlatRSI && (
-                       <div className="flex justify-between">
-                         <span className="text-sm text-muted-foreground">Cathedral/Flat Roof:</span>
-                         <span className="font-medium">
-                           {formData?.cathedralFlatRSI}
-                         </span>
-                       </div>
-                     )}
-                     {formData.airtightnessAl && (
-                        <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground">Airtightness (ACH50):</span>
-                          <span className="font-medium">
-                            {formData.airtightnessAl || formData?.airtightness}
-                          </span>
-                        </div>
-                     )}
-                     {formData?.midConstructionBlowerDoorPlanned && (
-                       <div className="flex justify-between">
-                         <span className="text-sm text-muted-foreground">Mid-Construction Test:</span>
-                         <span className="font-medium text-green-600">
-                           Planned - Early testing for quality assurance
-                         </span>
-                       </div>
-                     )}
-                      <div className="flex justify-between">
-                        <span className="text-sm text-muted-foreground">Blower Door Test Required:</span>
-                        <span className="font-medium">
-                          {(() => {
-                            const airtightnessValue = parseFloat(String(formData.airtightnessAl || formData?.airtightness || "0"));
-                            const province = formData?.province;
-                            const minimumThreshold = province === "saskatchewan" ? 3.2 : 3.0;
-                            
-                            return airtightnessValue > 0 && airtightnessValue < minimumThreshold ? "Yes" : "No";
-                          })()}
-                        </span>
-                      </div>
-                   </div>
-                   <div className="space-y-3">
-                      {(formData?.floorsUnheatedRSI || formData?.floorsOverUnheatedSpacesRSI) && (
-                        <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground">Floors Over Unheated Spaces:</span>
-                          <span className="font-medium">
-                            {formData?.floorsUnheatedRSI || formData?.floorsOverUnheatedSpacesRSI}
-                          </span>
-                        </div>
-                      )}
-                      {formData?.floorsGarageRSI && (
-                        <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground">Garage Floors:</span>
-                          <span className="font-medium">
-                            {formData?.floorsGarageRSI}
-                          </span>
-                        </div>
-                      )}
-                      {(formData?.hasInFloorHeat9365 === 'yes' || formData?.hasInFloorHeat9365 === 'no' || formData?.heatedFloorsRSI) && (
-                        <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground">Heated Floors:</span>
-                          <div className="text-right">
-                            <span className="font-medium">
-                              {formData?.hasInFloorHeat9365 === 'yes' ? 
-                                (formData?.heatedFloorsRSI || 'To be specified') : 
-                                formData?.hasInFloorHeat9365 === 'no' ? 'Not installing' : 
-                                formData?.heatedFloorsRSI}
-                            </span>
-                            {formData?.hasInFloorHeat9365 === 'yes' && !formData?.heatedFloorsRSI && (
-                              <div className="text-xs text-orange-600 mt-1">
-                                Insulation specifications needed
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                       )}
-                     <div className="flex justify-between">
-                       <span className="text-sm text-muted-foreground">Window U-Value:</span>
-                       <div className="text-right">
-                         <span className="font-medium">TBD</span>
-                         {(!formData?.windowUValue || String(formData?.windowUValue) === '') && (
-                           <div className="text-xs text-orange-600 mt-1">
-                             Waiting for window specifications file upload
-                           </div>
-                         )}
-                         {!isPerformancePath && formData.windowPoints && (
-                           <div className="text-xs text-muted-foreground">({formData.windowPoints} pts)</div>
-                         )}
-                       </div>
-                     </div>
-                      {formData?.skylightUValue && (
-                        <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground">Skylight U-Value:</span>
-                          <span className="font-medium">
-                            {formData?.skylightUValue}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                 </div>
-              </CardContent>
-            </Card>
+          <AccordionItem value="item-2">
+            <AccordionTrigger className="text-lg font-semibold"><Thermometer className="h-5 w-5 mr-2" />Building Envelope</AccordionTrigger>
+            <AccordionContent className="space-y-2 pt-4">
+              {renderField('Ceilings/Attic', selections.ceilingsAtticRSI, 'RSI')}
+              {renderField('Cathedral/Flat Roof', selections.cathedralFlatRSIValue || selections.cathedralFlatRSI, 'RSI')}
+              {renderField('Above Grade Walls', selections.wallRSI, 'RSI')}
+              {renderField('Below Grade Walls', selections.belowGradeRSI || selections.foundationWallsRSI, 'RSI')}
+              {renderField('Floors over Unheated Spaces', selections.floorsUnheatedRSI || selections.floorsOverUnheatedSpacesRSI, 'RSI')}
+              {renderField('Floors over Garages', selections.floorsGarageRSI, 'RSI')}
+              {renderField('Heated Floors', selections.heatedFloorsRSI || selections.inFloorHeatRSI, 'RSI')}
+              {renderField('Slab on Grade', selections.slabOnGradeRSI || selections.slabOnGradeIntegralFootingRSI, 'RSI')}
+              {renderField('Window U-Value', selections.windowUValue, 'W/(m²·K)')}
+              {renderField('Skylight U-Value', selections.skylightUValue, 'W/(m²·K)')}
+              {renderField('Airtightness', selections.airtightness || selections.customAirtightness, 'ACH50')}
+            </AccordionContent>
+          </AccordionItem>
 
-            {/* Mechanical Systems */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Mechanical Systems</CardTitle>
-              </CardHeader>
-              <CardContent>
-                 <div className="space-y-3">
-                    {formData.heatingSystemType && (
-                       <div className="grid grid-cols-2 gap-4">
-                         <span className="text-sm text-muted-foreground">Heating System:</span>
-                         <span className="font-medium text-right">
-                            {formData.heatingSystemType}
-                         </span>
-                       </div>
-                    )}
-                      {formData?.compliancePath === '9367' ? (
-                        (formData?.heatingMakeModel || formData?.heatingEfficiency) && (
-                          <div className="grid grid-cols-2 gap-4">
-                            <span className="text-sm text-muted-foreground">Heating System Make/Model:</span>
-                            <span className="font-medium text-right">{formData.heatingMakeModel || formData.heatingEfficiency}</span>
-                          </div>
-                        )
-                      ) : (
-                        (formData?.heatingEfficiency || formData.heatingEfficiency) && (
-                          <div className="grid grid-cols-2 gap-4">
-                            <span className="text-sm text-muted-foreground">Heating Efficiency:</span>
-                            <span className="font-medium text-right">{formData?.heatingEfficiency || formData.heatingEfficiency}</span>
-                          </div>
-                        )
-                      )}
-                     {(formData.heatingSystemType === 'Boiler' || formData.heatingSystemType === 'boiler' || formData?.heatingSystemType === 'boiler') && formData?.indirectTank === 'yes' && (
-                       <div className="grid grid-cols-2 gap-4">
-                         <span className="text-sm text-muted-foreground">Indirect Tank:</span>
-                         <span className="font-medium text-right">
-                           Yes{formData?.indirectTankSize ? ` - ${formData.indirectTankSize} gallons` : ''}
-                         </span>
-                       </div>
-                     )}
-                     {formData.coolingSystemType && formData.coolingSystemType !== 'None' && (
-                        <div className="grid grid-cols-2 gap-4">
-                          <span className="text-sm text-muted-foreground">Cooling System:</span>
-                          <span className="font-medium text-right">
-                            {formData.coolingSystemType}
-                          </span>
-                        </div>
-                     )}
-                     {(formData?.coolingApplicable === 'yes' || formData?.coolingMakeModel) && (
-                       <div className="grid grid-cols-2 gap-4">
-                         <span className="text-sm text-muted-foreground">Cooling System Make/Model:</span>
-                         <span className="font-medium text-right">{formData?.coolingMakeModel || 'To be specified'}</span>
-                       </div>
-                     )}
-                      {formData.waterHeatingType && (
-                        <div className="grid grid-cols-2 gap-4">
-                          <span className="text-sm text-muted-foreground">Water Heating:</span>
-                          <span className="font-medium text-right">
-                             {formData.waterHeatingType}
-                          </span>
-                        </div>
-                       )}
-                       {formData?.compliancePath === '9367' && (formData?.waterHeatingMakeModel || formData?.waterHeater) && (
-                        <div className="grid grid-cols-2 gap-4">
-                          <span className="text-sm text-muted-foreground">Water Heating Make/Model:</span>
-                          <span className="font-medium text-right">
-                             {formData.waterHeatingMakeModel || formData.waterHeater}
-                          </span>
-                        </div>
-                       )}
-                      {formData?.hasDWHR && (
-                        <div className="grid grid-cols-2 gap-4">
-                          <span className="text-sm text-muted-foreground">Drain Water Heat Recovery:</span>
-                          <span className="font-medium text-right">
-                            {formData?.hasDWHR === 'yes' ? 'Yes - DWHR system being installed' : 
-                             formData?.hasDWHR === 'no' ? 'No' : 'Not specified'}
-                          </span>
-                        </div>
-                      )}
-                     {(formData?.hasHrvErv9365 === 'yes' || formData?.hasHrvErv9365 === 'no') && (
-                       <div className="grid grid-cols-2 gap-4">
-                         <span className="text-sm text-muted-foreground">HRV/ERV:</span>
-                         <span className="font-medium text-right">
-                           {formData?.hasHrvErv9365 === 'yes' ? 'Yes' : 'No'}
-                         </span>
-                       </div>
-                     )}
-                      {(formData?.hasHrvErv9365 === 'yes' || formData?.hrvMakeModel || formData?.hrvEfficiency) && (
-                        <div className="grid grid-cols-2 gap-4">
-                          <span className="text-sm text-muted-foreground">HRV/ERV Make/Model:</span>
-                          <span className="font-medium text-right">{formData?.hrvMakeModel || formData?.hrvEfficiency || 'To be specified'}</span>
-                        </div>
-                      )}
-                      {formData.hrvErvEfficiency && Number(formData.hrvErvEfficiency) > 0 && formData?.compliancePath !== '9367' && (
-                        <div className="grid grid-cols-2 gap-4">
-                          <span className="text-sm text-muted-foreground">HRV/ERV Efficiency:</span>
-                          <span className="font-medium text-right">{formData.hrvErvEfficiency}%</span>
-                        </div>
-                      )}
-                     {(formData?.hasSecondaryHrv === 'yes' || formData?.secondaryHrvEfficiency) && (
-                       <div className="grid grid-cols-2 gap-4">
-                         <span className="text-sm text-muted-foreground">Secondary Suite HRV/ERV:</span>
-                         <span className="font-medium text-right">
-                           {formData?.hasSecondaryHrv === 'yes' ? 
-                             (formData?.secondaryHrvEfficiency ? 
-                               `Yes - ${formData.secondaryHrvEfficiency}% efficiency` : 
-                               'Yes - Efficiency TBD') : 
-                             'No'}
-                         </span>
-                       </div>
-                     )}
-                     {(formData?.hasSecondaryHeating === 'yes' || formData?.secondaryHeatingType || formData?.secondaryHeatingEfficiency) && (
-                       <div className="grid grid-cols-2 gap-4">
-                         <span className="text-sm text-muted-foreground">Secondary Suite Heating:</span>
-                         <span className="font-medium text-right">
-                           {formData?.hasSecondaryHeating === 'yes' ? 
-                             (formData?.secondaryHeatingType ? 
-                               `${formData.secondaryHeatingType}${formData?.secondaryHeatingEfficiency ? ` - ${formData.secondaryHeatingEfficiency}% efficiency` : ''}` : 
-                               'Yes - Type TBD') : 
-                             formData?.secondaryHeatingType ?
-                               `${formData.secondaryHeatingType}${formData?.secondaryHeatingEfficiency ? ` - ${formData.secondaryHeatingEfficiency}% efficiency` : ''}` :
-                               'Not specified'}
-                         </span>
-                       </div>
-                     )}
-                     {(formData?.hasSecondaryWaterHeater === 'yes' || formData?.secondaryWaterHeaterType) && (
-                       <div className="grid grid-cols-2 gap-4">
-                         <span className="text-sm text-muted-foreground">Secondary Suite Water Heating:</span>
-                         <span className="font-medium text-right">
-                           {formData?.hasSecondaryWaterHeater === 'yes' ? 
-                             (formData?.secondaryWaterHeaterSameAsMain === 'yes' ? 
-                               'Same as main suite' :
-                               formData?.secondaryWaterHeaterType ? 
-                                 formData.secondaryWaterHeaterType : 
-                                 'Yes - Type TBD') : 
-                             'No'}
-                         </span>
-                       </div>
-                     )}
-                 </div>
-               </CardContent>
-            </Card>
+          <AccordionItem value="item-3">
+            <AccordionTrigger className="text-lg font-semibold"><Zap className="h-5 w-5 mr-2" />Mechanical Systems</AccordionTrigger>
+            <AccordionContent className="space-y-2 pt-4">
+              {renderField('Heating Type', selections.heatingType)}
+              {renderField('Heating Efficiency/Model', selections.heatingEfficiency || selections.heatingMakeModel)}
+              {renderField('Cooling', selections.coolingApplicable)}
+              {renderField('Cooling Efficiency/Model', selections.coolingEfficiency || selections.coolingMakeModel)}
+              {renderField('Water Heater Type', selections.waterHeaterType || selections.waterHeater)}
+              {renderField('Water Heater Model', selections.waterHeaterMakeModel)}
+              {renderField('HRV/ERV', selections.hasHrv || selections.hasHrvErv9365)}
+              {renderField('HRV/ERV Efficiency/Model', selections.hrvEfficiency || selections.hrvMakeModel)}
+              {renderField('Drain Water Heat Recovery', selections.hasDWHR)}
+              {renderField('Secondary Heating', selections.secondaryHeatingType)}
+              {renderField('Secondary Heating Efficiency', selections.secondaryHeatingEfficiency)}
+            </AccordionContent>
+          </AccordionItem>
+          
+          <AccordionItem value="item-4">
+            <AccordionTrigger className="text-lg font-semibold"><FolderOpen className="h-5 w-5 mr-2" />Documents</AccordionTrigger>
+            <AccordionContent className="pt-4">
+              <FileManager
+                files={uploadedFiles}
+                onFilesChange={() => {}}
+                projectId={editingProjectId || null}
+                readOnly={true}
+                showUpload={false}
+              />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
 
-            {/* Building Performance */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Building Performance</CardTitle>
-              </CardHeader>
-               <CardContent>
-                 {formData.selectedPathway === 'performance' && (
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                     <div className="space-y-3">
-                       <div className="flex justify-between">
-                         <span className="text-sm text-muted-foreground">Performance Result:</span>
-                         <span className="font-medium">{formData.performanceComplianceResult || 'TBD'}</span>
-                       </div>
-                       {formData.annualEnergyConsumption && (
-                         <div className="flex justify-between">
-                           <span className="text-sm text-muted-foreground">Annual Energy:</span>
-                           <span className="font-medium">{formData.annualEnergyConsumption} kWh</span>
-                         </div>
-                       )}
-                     </div>
-                   </div>
-                 )}
-                 {formData.selectedPathway !== 'performance' && (
-                   <div className="text-center text-muted-foreground py-4">
-                     Additional building performance metrics can be calculated during energy modeling if the performance path is chosen.
-                   </div>
-                 )}
-               </CardContent>
-            </Card>
-          </div>
-         )}
-
-        {/* Additional Information Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Additional Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {formData?.additionalInfo && (
-              <div className="space-y-2">
-                <h4 className="font-medium text-sm">Additional Comments:</h4>
-                <div className="p-3 bg-muted border border-border rounded-md">
-                  <p className="text-sm text-foreground whitespace-pre-wrap">
-                    {formData.additionalInfo}
-                  </p>
-                </div>
-              </div>
-            )}
-            
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">EnerGuide ERS Pathway Considered:</span>
-                <span className="font-medium">
-                  {formData?.energuidePathway === 'yes' ? 'Yes' : 
-                   formData?.energuidePathway === 'no' ? 'No' : 
-                   'Not specified'}
-                </span>
-              </div>
-              
-              {formData?.interestedCertifications && formData.interestedCertifications.length > 0 && (
-                <div className="space-y-2">
-                   <span className="text-sm text-muted-foreground">Certifications/Programs Considered:</span>
-                  <div className="space-y-1">
-                    {formData.interestedCertifications.map((certId: string, index: number) => {
-                      const certNames: { [key: string]: string } = {
-                        'energuide': 'EnerGuide Certification',
-                        'energy-star': 'ENERGY STAR Certification',
-                        'built-green': 'Built Green Certification',
-                        'net-zero': 'Net Zero Home Certification',
-                        'leed': 'LEED Certification',
-                        'passive-house': 'Passive House Certification'
-                      };
-                      return (
-                        <div key={index} className="text-sm font-medium ml-4">
-                          • {certNames[certId] || certId}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-              
-              {(!formData?.interestedCertifications || formData.interestedCertifications.length === 0) && (
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Certifications/Programs Considered:</span>
-                  <span className="font-medium">None specified</span>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* File Upload Section */}
-        <FileManager
-          files={formData.uploadedFiles || []}
-          onFilesChange={(files) => handleInputChange('uploadedFiles', files)}
-          projectId={editingProjectId || null}
-          readOnly={false}
-          showUpload={true}
-        />
-
-        {/* Action Buttons */}
-        <div className="flex justify-start gap-3">
-          <Button
-            onClick={handleSave}
-            disabled={loading || !formData.projectName}
-            className="min-w-[120px]"
-          >
-            {loading ? (
-              <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
-            ) : (
-              <>
-                <Save className="h-4 w-4 mr-2" />
-                Save Project
-              </>
-            )}
+        <div className="flex justify-start gap-3 pt-6 border-t border-slate-700">
+          <Button onClick={handleSave} disabled={loading || !projectName} className="min-w-[120px]">
+            {loading ? <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" /> : <><Save className="h-4 w-4 mr-2" />Submit Project</>}
           </Button>
         </div>
       </CardContent>

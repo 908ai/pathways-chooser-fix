@@ -3,11 +3,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Calculator, AlertTriangle, Edit, Save, FileText, Zap } from "lucide-react";
+import { Calculator, AlertTriangle, Edit, Save, FileText, Zap, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import ProjectSummaryModal from "./NBCCalculator/components/ProjectSummaryModal";
+import ProjectSummaryForm from "@/components/ProjectSummaryForm";
 import FloatingPointsSummary from "./NBCCalculator/components/FloatingPointsSummary";
 import Stepper from "./NBCCalculator/components/Stepper";
 import FileUploadSection from "./NBCCalculator/sections/FileUploadSection";
@@ -1210,16 +1210,27 @@ const NBCCalculator = ({
       </div>
 
       {showProjectSummary && (
-        <ProjectSummaryModal
-          setShowProjectSummary={setShowProjectSummary}
-          selections={selections}
-          totalPoints={totalPoints}
-          searchParams={searchParams}
-          getPoints={getPoints}
-          uploadedFiles={uploadedFiles}
-          autoSave={autoSaveTrigger}
-          projectId={projectId}
-        />
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-background rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-background border-b p-4 flex justify-between items-center">
+              <h2 className="text-lg font-semibold">
+                Project Summary & Submission
+              </h2>
+              <Button variant="ghost" size="sm" onClick={() => setShowProjectSummary(false)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="p-4">
+              <ProjectSummaryForm
+                selections={selections}
+                uploadedFiles={uploadedFiles}
+                autoSave={autoSaveTrigger}
+                editingProjectId={projectId || undefined}
+                onSave={() => setShowProjectSummary(false)}
+              />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
