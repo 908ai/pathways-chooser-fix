@@ -928,276 +928,283 @@ const NBCCalculator = ({
     </div>;
   }
 
-  return <div className="min-h-screen p-4 relative">
-    <div ref={sentinelRef} className="absolute top-0 h-px" />
-    <HelpDrawer open={isHelpDrawerOpen} onOpenChange={setIsHelpDrawerOpen} />
+  return (
+    <div className="min-h-screen p-4 relative">
+      <div ref={sentinelRef} className="absolute top-0 h-px" />
+      <HelpDrawer open={isHelpDrawerOpen} onOpenChange={setIsHelpDrawerOpen} />
 
-    <Stepper steps={steps} currentStep={currentStep} onStepClick={handleStepClick} isSticky={isSticky} />
+      <Stepper steps={steps} currentStep={currentStep} onStepClick={handleStepClick} isSticky={isSticky} />
 
-    {selections.compliancePath === "9368" && <div className="hidden lg:block fixed top-20 right-4 z-50 w-72">
-      <FloatingPointsSummary
-        selections={selections}
-        totalPoints={totalPoints}
-        compliance={compliance}
-        getPoints={getPoints}
-        calculatePrescriptiveCost={calculatePrescriptiveCost}
-        calculatePerformanceCost={calculatePerformanceCost}
-        calculateCostSavings={calculateCostSavings}
-      />
-    </div>}
+      {searchParams.get('edit') && <EditModeIndicator projectName={editingProjectName} />}
 
-    {searchParams.get('edit') && <EditModeIndicator projectName={editingProjectName} />}
+      <div className="relative flex justify-center">
+        <div className={cn(
+          "relative transition-all duration-300 w-full",
+          selections.compliancePath === "9368" ? "lg:max-w-3xl" : "max-w-4xl"
+        )}>
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <Calculator className="h-8 w-8 text-teal-300" />
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-200 via-blue-200 to-teal-200 bg-clip-text text-transparent drop-shadow-lg">NBC 9.36 Energy Code Pathways Selector</h1>
+            </div>
+            <p className="text-xl bg-gradient-to-r from-slate-300 to-teal-300 bg-clip-text text-transparent font-medium mb-4 drop-shadow-md">(Alberta & Saskatchewan)</p>
+            <p className="text-gray-200 text-lg drop-shadow-md">
+              National Building Code of Canada - Energy Performance Compliance Tool
+            </p>
+          </div>
 
-    <div className={`mx-auto space-y-6 relative z-10 transition-all duration-300 ${selections.compliancePath === "9368" ? "max-w-3xl mr-80" : "max-w-4xl"}`}>
-      <div className="text-center mb-8">
-        <div className="flex items-center justify-center gap-3 mb-2">
-          <Calculator className="h-8 w-8 text-teal-300" />
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-200 via-blue-200 to-teal-200 bg-clip-text text-transparent drop-shadow-lg">NBC 9.36 Energy Code Pathways Selector</h1>
-        </div>
-        <p className="text-xl bg-gradient-to-r from-slate-300 to-teal-300 bg-clip-text text-transparent font-medium mb-4 drop-shadow-md">(Alberta & Saskatchewan)</p>
-        <p className="text-gray-200 text-lg drop-shadow-md">
-          National Building Code of Canada - Energy Performance Compliance Tool
-        </p>
-      </div>
-    </div>
+          <div ref={formContainerRef} className={cn(
+            "space-y-6 relative z-10 transition-all duration-300 p-5 backdrop-blur-[100px] border-slate-400/50 rounded-lg border shadow-lg"
+          )}>
 
-    <div ref={formContainerRef} className={cn(
-      "mx-auto space-y-6 relative z-10 transition-all duration-300 p-5 backdrop-blur-[100px] border-slate-400/50 rounded-lg border shadow-lg",
-      selections.compliancePath === "9368" ? "lg:max-w-3xl lg:mr-80" : "max-w-4xl"
-    )}>
-
-      <ContactBanner />
-      {currentStep === 1 && (
-        <ProjectInformationSection
-          selections={selections}
-          setSelections={setSelections}
-          validationErrors={validationErrors}
-        />
-      )}
-
-      {currentStep === 2 && (
-        <CompliancePathSection
-          selections={selections}
-          setSelections={setSelections}
-          onPathwayChange={onPathwayChange}
-        />
-      )}
-
-      {currentStep === 3 && (
-        <Card className="bg-slate-700/40">
-          <CardHeader>
-            <CardTitle className="text-white text-center flex items-center justify-center gap-2">
-              {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? (
-                <FileText className="h-6 w-6 text-orange-400" />
-              ) : (
-                <Zap className="h-6 w-6 text-blue-400" />
-              )}
-              {getPathwayDisplayName(selections.compliancePath)}
-            </CardTitle>
-            <CardDescription className="text-slate-200 text-center">
-              {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? 'Specify minimum required values for prescriptive compliance' : 'Enter proposed building specifications for energy modeling'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-8">
-            {(selections.compliancePath === "9365" ||
-              selections.compliancePath === "9367") && (
-                <EnerGuidePathwaySection
-                  selections={selections}
-                  setSelections={setSelections}
-                />
-              )}
-            {selections.compliancePath === "9362" && <Prescriptive9362Section selections={selections} setSelections={setSelections} validationErrors={validationErrors} />}
-            {selections.compliancePath === "9368" && <Prescriptive9368Section 
-              selections={selections} 
-              setSelections={setSelections} 
-              validationErrors={validationErrors}
-              handleFileUploadRequest={handleFileUploadRequest}
-              uploadedFiles={uploadedFiles}
-              removeFile={removeFile}
-            />}
-            {selections.compliancePath === "9365" && <Performance9365Section selections={selections} setSelections={setSelections} handleFileUploadRequest={handleFileUploadRequest} uploadedFiles={uploadedFiles} removeFile={removeFile} />}
-            {selections.compliancePath === "9367" && <Performance9367Section selections={selections} setSelections={setSelections} handleFileUploadRequest={handleFileUploadRequest} uploadedFiles={uploadedFiles} removeFile={removeFile} />}
-            {selections.compliancePath && (
-              <HrvAdditionalInfoSection
+            <ContactBanner />
+            {currentStep === 1 && (
+              <ProjectInformationSection
                 selections={selections}
                 setSelections={setSelections}
+                validationErrors={validationErrors}
               />
             )}
-          </CardContent>
-        </Card>
-      )}
 
-      {currentStep === 4 && (
-        <Card className="bg-slate-700/40">
-          <CardHeader>
-            <CardTitle className="text-white text-center">
-              Documents & Submission
-            </CardTitle>
-            <CardDescription className="text-slate-200">
-              Upload supporting documents and submit your application.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-8">
-            <FileUploadSection
-              uploadedFiles={uploadedFiles}
-              onFileUploadRequest={handleFileUploadRequest}
-              isUploading={isUploading}
-              removeFile={removeFile}
-            />
+            {currentStep === 2 && (
+              <CompliancePathSection
+                selections={selections}
+                setSelections={setSelections}
+                onPathwayChange={onPathwayChange}
+              />
+            )}
 
-            {/* Results */}
-            {selections.compliancePath === "9368" && (
-              <Card className="bg-slate-900/50 border-slate-600">
+            {currentStep === 3 && (
+              <Card className="bg-slate-700/40">
                 <CardHeader>
-                  <CardTitle className="text-white">Compliance Results</CardTitle>
+                  <CardTitle className="text-white text-center flex items-center justify-center gap-2">
+                    {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? (
+                      <FileText className="h-6 w-6 text-orange-400" />
+                    ) : (
+                      <Zap className="h-6 w-6 text-blue-400" />
+                    )}
+                    {getPathwayDisplayName(selections.compliancePath)}
+                  </CardTitle>
+                  <CardDescription className="text-slate-200 text-center">
+                    {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? 'Specify minimum required values for prescriptive compliance' : 'Enter proposed building specifications for energy modeling'}
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="text-center py-8">
-                  <div className="space-y-6">
-                    <div>
-                      <p className="text-sm text-slate-300 uppercase tracking-wider">Total Points</p>
-                      <p className="text-7xl font-bold text-purple-400">{totalPoints.toFixed(1)}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-slate-300 uppercase tracking-wider">Compliance Tier</p>
-                      <p className={`text-5xl font-bold ${compliance.status === "success" ? "text-green-400" : compliance.status === "warning" ? "text-yellow-400" : "text-red-400"}`}>{compliance.tier}</p>
-                      <p className="text-sm text-slate-400 mt-1">{compliance.description}</p>
-                    </div>
+                <CardContent className="space-y-8">
+                  {(selections.compliancePath === "9365" ||
+                    selections.compliancePath === "9367") && (
+                      <EnerGuidePathwaySection
+                        selections={selections}
+                        setSelections={setSelections}
+                      />
+                    )}
+                  {selections.compliancePath === "9362" && <Prescriptive9362Section selections={selections} setSelections={setSelections} validationErrors={validationErrors} />}
+                  {selections.compliancePath === "9368" && <Prescriptive9368Section 
+                    selections={selections} 
+                    setSelections={setSelections} 
+                    validationErrors={validationErrors}
+                    handleFileUploadRequest={handleFileUploadRequest}
+                    uploadedFiles={uploadedFiles}
+                    removeFile={removeFile}
+                  />}
+                  {selections.compliancePath === "9365" && <Performance9365Section selections={selections} setSelections={setSelections} handleFileUploadRequest={handleFileUploadRequest} uploadedFiles={uploadedFiles} removeFile={removeFile} />}
+                  {selections.compliancePath === "9367" && <Performance9367Section selections={selections} setSelections={setSelections} handleFileUploadRequest={handleFileUploadRequest} uploadedFiles={uploadedFiles} removeFile={removeFile} />}
+                  {selections.compliancePath && (
+                    <HrvAdditionalInfoSection
+                      selections={selections}
+                      setSelections={setSelections}
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {currentStep === 4 && (
+              <Card className="bg-slate-700/40">
+                <CardHeader>
+                  <CardTitle className="text-white text-center">
+                    Documents & Submission
+                  </CardTitle>
+                  <CardDescription className="text-slate-200">
+                    Upload supporting documents and submit your application.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-8">
+                  <FileUploadSection
+                    uploadedFiles={uploadedFiles}
+                    onFileUploadRequest={handleFileUploadRequest}
+                    isUploading={isUploading}
+                    removeFile={removeFile}
+                  />
+
+                  {/* Results */}
+                  {selections.compliancePath === "9368" && (
+                    <Card className="bg-slate-900/50 border-slate-600">
+                      <CardHeader>
+                        <CardTitle className="text-white">Compliance Results</CardTitle>
+                      </CardHeader>
+                      <CardContent className="text-center py-8">
+                        <div className="space-y-6">
+                          <div>
+                            <p className="text-sm text-slate-300 uppercase tracking-wider">Total Points</p>
+                            <p className="text-7xl font-bold text-purple-400">{totalPoints.toFixed(1)}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-slate-300 uppercase tracking-wider">Compliance Tier</p>
+                            <p className={`text-5xl font-bold ${compliance.status === "success" ? "text-green-400" : compliance.status === "warning" ? "text-yellow-400" : "text-red-400"}`}>{compliance.tier}</p>
+                            <p className="text-sm text-slate-400 mt-1">{compliance.description}</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Submit section — conditional on path */}
+                  <div className="pt-6 border-t border-slate-600 space-y-4">
+                    {selections.compliancePath === "9365" ||
+                      selections.compliancePath === "9367" ? (
+                      <>
+                        {/* Performance Path */}
+                        <div className="flex items-start space-x-3 p-4 bg-slate-900/50 border border-slate-600 rounded-lg">
+                          <Checkbox
+                            id="agreement-performance"
+                            checked={agreementChecked}
+                            onCheckedChange={(checked) =>
+                              setAgreementChecked(checked as boolean)
+                            }
+                          />
+                          <label
+                            htmlFor="agreement-performance"
+                            className="text-sm text-slate-300 leading-relaxed cursor-pointer"
+                          >
+                            I agree to notify my energy advisor before making any changes to
+                            the design, including envelope components, windows, or
+                            mechanical systems, to ensure the energy model remains accurate
+                            and the project stays compliant during construction. Failure to
+                            communicate design changes may result in non-compliance, which
+                            could put the project at risk of not meeting energy code
+                            requirements or delaying occupancy approval. Design changes may
+                            also result in additional charges. I commit to ensuring that the
+                            final building plans align with both the energy model and the
+                            as-constructed building.
+                          </label>
+                        </div>
+
+                        <div className="flex justify-center">
+                          <Button
+                            size="lg"
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3"
+                            onClick={() => handleSubmitApplication("performance")}
+                            disabled={isSubmitting || !agreementChecked}
+                          >
+                            {isSubmitting
+                              ? "Submitting..."
+                              : searchParams.get("edit")
+                                ? "Update Performance Path Application"
+                                : "Submit Performance Path Application"}
+                          </Button>
+                        </div>
+
+                        <p className="text-sm text-slate-400 text-center mt-3">
+                          Your application will be reviewed and energy modeling will begin
+                          within 1-2 business days.
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        {/* Prescriptive Path */}
+                        <div className="flex items-start space-x-3 p-4 bg-slate-900/50 border border-slate-600 rounded-lg">
+                          <Checkbox
+                            id="agreement-prescriptive"
+                            checked={agreementChecked}
+                            onCheckedChange={(checked) =>
+                              setAgreementChecked(checked as boolean)
+                            }
+                          />
+                          <label
+                            htmlFor="agreement-prescriptive"
+                            className="text-sm text-slate-300 leading-relaxed cursor-pointer"
+                          >
+                            I agree to notify the Authority Having Jurisdiction if any
+                            changes to the design occur, including envelope components,
+                            windows, or mechanical systems, to ensure the energy plan
+                            remains accurate and the project stays compliant during
+                            construction. Failure to communicate design changes may result
+                            in non-compliance, which could put the project at risk of not
+                            meeting energy code requirements or delaying occupancy approval.
+                            I commit to ensuring that the final building plans align with
+                            both the energy building permit application and the
+                            as-constructed building.
+                          </label>
+                        </div>
+
+                        <div className="flex justify-center">
+                          <Button
+                            size="lg"
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3"
+                            onClick={() => handleSubmitApplication("prescriptive")}
+                            disabled={isSubmitting || !agreementChecked}
+                          >
+                            {isSubmitting
+                              ? "Submitting..."
+                              : searchParams.get("edit")
+                                ? "Update Prescriptive Path Application"
+                                : "Submit Prescriptive Path Application"}
+                          </Button>
+                        </div>
+
+                        <p className="text-sm text-slate-400 text-center mt-3">
+                          Your application will be reviewed within 1-2 business days.
+                        </p>
+                      </>
+                    )}
                   </div>
                 </CardContent>
               </Card>
             )}
 
-            {/* Submit section — conditional on path */}
-            <div className="pt-6 border-t border-slate-600 space-y-4">
-              {selections.compliancePath === "9365" ||
-                selections.compliancePath === "9367" ? (
-                <>
-                  {/* Performance Path */}
-                  <div className="flex items-start space-x-3 p-4 bg-slate-900/50 border border-slate-600 rounded-lg">
-                    <Checkbox
-                      id="agreement-performance"
-                      checked={agreementChecked}
-                      onCheckedChange={(checked) =>
-                        setAgreementChecked(checked as boolean)
-                      }
-                    />
-                    <label
-                      htmlFor="agreement-performance"
-                      className="text-sm text-slate-300 leading-relaxed cursor-pointer"
-                    >
-                      I agree to notify my energy advisor before making any changes to
-                      the design, including envelope components, windows, or
-                      mechanical systems, to ensure the energy model remains accurate
-                      and the project stays compliant during construction. Failure to
-                      communicate design changes may result in non-compliance, which
-                      could put the project at risk of not meeting energy code
-                      requirements or delaying occupancy approval. Design changes may
-                      also result in additional charges. I commit to ensuring that the
-                      final building plans align with both the energy model and the
-                      as-constructed building.
-                    </label>
-                  </div>
-
-                  <div className="flex justify-center">
-                    <Button
-                      size="lg"
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3"
-                      onClick={() => handleSubmitApplication("performance")}
-                      disabled={isSubmitting || !agreementChecked}
-                    >
-                      {isSubmitting
-                        ? "Submitting..."
-                        : searchParams.get("edit")
-                          ? "Update Performance Path Application"
-                          : "Submit Performance Path Application"}
-                    </Button>
-                  </div>
-
-                  <p className="text-sm text-slate-400 text-center mt-3">
-                    Your application will be reviewed and energy modeling will begin
-                    within 1-2 business days.
-                  </p>
-                </>
-              ) : (
-                <>
-                  {/* Prescriptive Path */}
-                  <div className="flex items-start space-x-3 p-4 bg-slate-900/50 border border-slate-600 rounded-lg">
-                    <Checkbox
-                      id="agreement-prescriptive"
-                      checked={agreementChecked}
-                      onCheckedChange={(checked) =>
-                        setAgreementChecked(checked as boolean)
-                      }
-                    />
-                    <label
-                      htmlFor="agreement-prescriptive"
-                      className="text-sm text-slate-300 leading-relaxed cursor-pointer"
-                    >
-                      I agree to notify the Authority Having Jurisdiction if any
-                      changes to the design occur, including envelope components,
-                      windows, or mechanical systems, to ensure the energy plan
-                      remains accurate and the project stays compliant during
-                      construction. Failure to communicate design changes may result
-                      in non-compliance, which could put the project at risk of not
-                      meeting energy code requirements or delaying occupancy approval.
-                      I commit to ensuring that the final building plans align with
-                      both the energy building permit application and the
-                      as-constructed building.
-                    </label>
-                  </div>
-
-                  <div className="flex justify-center">
-                    <Button
-                      size="lg"
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3"
-                      onClick={() => handleSubmitApplication("prescriptive")}
-                      disabled={isSubmitting || !agreementChecked}
-                    >
-                      {isSubmitting
-                        ? "Submitting..."
-                        : searchParams.get("edit")
-                          ? "Update Prescriptive Path Application"
-                          : "Submit Prescriptive Path Application"}
-                    </Button>
-                  </div>
-
-                  <p className="text-sm text-slate-400 text-center mt-3">
-                    Your application will be reviewed within 1-2 business days.
-                  </p>
-                </>
+            <div className="flex justify-center gap-4 mt-8">
+              {currentStep > 1 && (
+                <Button variant="outline" onClick={prevStep}>Back</Button>
+              )}
+              {showSaveDraftButton && (
+                <Button variant="secondary" onClick={() => handleSaveDraft(false)} disabled={isSavingDraft}>
+                  {isSavingDraft ? 'Saving...' : 'Save Draft'}
+                </Button>
+              )}
+              {currentStep < steps.length && (
+                <Button onClick={nextStep}>Next</Button>
               )}
             </div>
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="flex justify-center gap-4 mt-8">
-        {currentStep > 1 && (
-          <Button variant="outline" onClick={prevStep}>Back</Button>
-        )}
-        {showSaveDraftButton && (
-          <Button variant="secondary" onClick={() => handleSaveDraft(false)} disabled={isSavingDraft}>
-            {isSavingDraft ? 'Saving...' : 'Save Draft'}
-          </Button>
-        )}
-        {currentStep < steps.length && (
-          <Button onClick={nextStep}>Next</Button>
+          </div>
+        </div>
+        {selections.compliancePath === "9368" && (
+          <div className="hidden lg:block fixed top-24 right-4 w-80">
+            <FloatingPointsSummary
+              selections={selections}
+              totalPoints={totalPoints}
+              compliance={compliance}
+              getPoints={getPoints}
+              calculatePrescriptiveCost={calculatePrescriptiveCost}
+              calculatePerformanceCost={calculatePerformanceCost}
+              calculateCostSavings={calculateCostSavings}
+            />
+          </div>
         )}
       </div>
-    </div>
 
-    {showProjectSummary && (
-      <ProjectSummaryModal
-        setShowProjectSummary={setShowProjectSummary}
-        selections={selections}
-        totalPoints={totalPoints}
-        searchParams={searchParams}
-        getPoints={getPoints}
-        uploadedFiles={uploadedFiles}
-        autoSave={autoSaveTrigger}
-        projectId={projectId}
-      />
-    )}
-  </div>;
+      {showProjectSummary && (
+        <ProjectSummaryModal
+          setShowProjectSummary={setShowProjectSummary}
+          selections={selections}
+          totalPoints={totalPoints}
+          searchParams={searchParams}
+          getPoints={getPoints}
+          uploadedFiles={uploadedFiles}
+          autoSave={autoSaveTrigger}
+          projectId={projectId}
+        />
+      )}
+    </div>
+  );
 };
 export default NBCCalculator;
