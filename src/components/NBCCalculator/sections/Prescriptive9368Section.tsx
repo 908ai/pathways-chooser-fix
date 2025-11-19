@@ -9,7 +9,7 @@ import InfoButton from "@/components/InfoButton";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
-import { validateRSI } from "../utils/validation";
+import { validateRSI, validateRSI_9362 } from "../utils/validation";
 import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/EffectiveRSIWarning";
 
 import {
@@ -44,12 +44,14 @@ export default function Prescriptive9368Section({
         title,
         children,
         variant = "warning",
+        defaultOpen = false,
     }: {
         title: string;
         children: React.ReactNode;
         variant?: "warning" | "destructive";
+        defaultOpen?: boolean;
     }) => {
-        const [isOpen, setIsOpen] = useState(false);
+        const [isOpen, setIsOpen] = useState(defaultOpen);
         const bgColor =
             variant === "warning"
                 ? "bg-gradient-to-r from-slate-800/60 to-teal-800/60"
@@ -91,15 +93,25 @@ export default function Prescriptive9368Section({
             {/* Ceiling/Attic Insulation */}
             <div id="ceilingsAtticRSI" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Effective RSI - Ceilings below Attics <span className="text-red-400">*</span></label>
-                <Input type="number" step="0.01" min="0" placeholder={selections.compliancePath === "9368" ? "Min RSI 8.67 (R-49.2) with HRV" : selections.hasHrv === "with_hrv" ? "Min RSI 8.67 (R-49.2) with HRV" : selections.hasHrv === "without_hrv" ? "Min RSI 10.43 (R-59.2) without HRV" : "Min RSI 8.67 (R-49.2) with HRV, 10.43 (R-59.2) without HRV"} value={selections.ceilingsAtticRSI} onChange={e => setSelections(prev => ({
+                <Input type="text" placeholder={selections.compliancePath === "9368" ? "Min RSI 8.67 (R-49.2) with HRV" : selections.hasHrv === "with_hrv" ? "Min RSI 8.67 (R-49.2) with HRV" : selections.hasHrv === "without_hrv" ? "Min RSI 10.43 (R-59.2) without HRV" : "Min RSI 8.67 (R-49.2) with HRV, 10.43 (R-59.2) without HRV"} value={selections.ceilingsAtticRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     ceilingsAtticRSI: e.target.value
                 }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.ceilingsAtticRSI && "border-red-500 ring-2 ring-red-500")} />
                 {(() => {
-                    // Skip R-value validation for 9368 path - allow any input
                     if (selections.compliancePath === "9368") {
+                        const minRSI = 8.67; // For 9368, HRV is mandatory
+                        const validation = validateRSI_9362(selections.ceilingsAtticRSI, minRSI, `ceilings below attics`);
+                        if (!validation.isValid && validation.warning) {
+                            return <InfoCollapsible title="🛑 RSI Value Too Low" variant="destructive" defaultOpen={true}>
+                                <p className="text-xs text-white">
+                                    {`The RSI value must be increased to at least ${minRSI} to meet NBC 9.36.8 requirements.`}
+                                </p>
+                            </InfoCollapsible>;
+                        }
                         return null;
                     }
+
+                    // Existing validation for other paths
                     console.log("Ceilings validation debug:", {
                         ceilingsAtticRSI: selections.ceilingsAtticRSI,
                         hasHrv: selections.hasHrv,
@@ -350,7 +362,7 @@ export default function Prescriptive9368Section({
                                         <div>
                                             <p className="font-medium">Guarded Test</p>
                                             <div className="ml-4 space-y-1">
-                                                <p>• All adjacent units are depressurized at the same time.</p>
+                                                <p>• All adjacent units are depressurized (or pressurized) at the same time.</p>
                                                 <p>• Blocks airflow between units, giving a more accurate picture of leakage to the outside.</p>
                                                 <p>• Ideal for multi-unit buildings, but more complex.</p>
                                             </div>
