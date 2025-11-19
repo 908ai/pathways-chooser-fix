@@ -65,7 +65,7 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
       }
     };
 
-    // Project & Contact Info
+    // Step 1
     addIfMissing('firstName', 'First Name');
     addIfMissing('lastName', 'Last Name');
     addIfMissing('company', 'Company Name');
@@ -77,10 +77,10 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
     addIfMissing('buildingType', 'Building Type');
     if (selections.province === 'alberta') addIfMissing('climateZone', 'Climate Zone');
 
-    // Compliance Path
+    // Step 2
     addIfMissing('compliancePath', 'Compliance Path');
 
-    // Technical Specs (simplified check)
+    // Step 3 (Technical)
     if (selections.compliancePath) {
       if (selections.compliancePath.includes('9365') || selections.compliancePath.includes('9367')) {
         addIfMissing('frontDoorOrientation', 'Front Door Orientation');
@@ -95,6 +95,7 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
       addIfMissing('waterHeaterType', 'Water Heater Type');
     }
     
+    // Step 4 (Documents)
     if (uploadedFiles.length === 0) {
       pending.push('At least one project document (e.g., building plans)');
     }
@@ -207,10 +208,11 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
     if (value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0)) {
       return null;
     }
+    const displayValue = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value;
     return (
       <div className="flex justify-between items-center text-sm py-2 border-b border-slate-700">
         <span className="text-slate-300">{label}:</span>
-        <span className="font-medium text-white">{value} {unit}</span>
+        <span className="font-medium text-white">{displayValue} {unit}</span>
       </div>
     );
   };
@@ -266,6 +268,8 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
               {renderField('Building Type', selections.buildingType)}
               {renderField('Occupancy Class', selections.occupancyClass)}
               {renderField('Climate Zone', selections.climateZone)}
+              {renderField('Front Door Orientation', selections.frontDoorOrientation)}
+              {renderField('EnerGuide Pathway', selections.energuidePathway)}
             </AccordionContent>
           </AccordionItem>
 
@@ -280,17 +284,24 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
               {renderField('Floors over Garages', selections.floorsGarageRSI, 'RSI')}
               {renderField('Heated Floors', selections.heatedFloorsRSI || selections.inFloorHeatRSI, 'RSI')}
               {renderField('Slab on Grade', selections.slabOnGradeRSI || selections.slabOnGradeIntegralFootingRSI, 'RSI')}
+              {renderField('Unheated Floor Below Frostline', selections.unheatedFloorBelowFrostRSI)}
+              {renderField('Unheated Floor Above Frostline', selections.unheatedFloorAboveFrostRSI, 'RSI')}
               {renderField('Window U-Value', selections.windowUValue, 'W/(m²·K)')}
               {renderField('Skylight U-Value', selections.skylightUValue, 'W/(m²·K)')}
               {renderField('Airtightness', selections.airtightness || selections.customAirtightness, 'ACH50')}
+              {renderField('Building Volume', selections.buildingVolume, 'm³')}
+              {renderField('Mid-Construction Blower Door Test', selections.midConstructionBlowerDoorPlanned)}
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="item-3">
             <AccordionTrigger className="text-lg font-semibold"><Zap className="h-5 w-5 mr-2" />Mechanical Systems</AccordionTrigger>
             <AccordionContent className="space-y-2 pt-4">
+              {renderField('F280 Calculation Completed', selections.hasF280Calculation)}
               {renderField('Heating Type', selections.heatingType)}
               {renderField('Heating Efficiency/Model', selections.heatingEfficiency || selections.heatingMakeModel)}
+              {renderField('Indirect Tank (Main)', selections.indirectTank)}
+              {renderField('Indirect Tank Size (Main)', selections.indirectTankSize, 'gal')}
               {renderField('Cooling', selections.coolingApplicable)}
               {renderField('Cooling Efficiency/Model', selections.coolingEfficiency || selections.coolingMakeModel)}
               {renderField('Water Heater Type', selections.waterHeaterType || selections.waterHeater)}
@@ -298,8 +309,19 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
               {renderField('HRV/ERV', selections.hasHrv || selections.hasHrvErv9365)}
               {renderField('HRV/ERV Efficiency/Model', selections.hrvEfficiency || selections.hrvMakeModel)}
               {renderField('Drain Water Heat Recovery', selections.hasDWHR)}
-              {renderField('Secondary Heating', selections.secondaryHeatingType)}
+              {renderField('Separate Secondary Heating', selections.hasSecondaryHeating)}
+              {renderField('Secondary Heating Type', selections.secondaryHeatingType)}
               {renderField('Secondary Heating Efficiency', selections.secondaryHeatingEfficiency)}
+              {renderField('Indirect Tank (Secondary)', selections.secondaryIndirectTank)}
+              {renderField('Indirect Tank Size (Secondary)', selections.secondaryIndirectTankSize, 'gal')}
+              {renderField('Multiple MURB Heating Systems', selections.hasMurbMultipleHeating)}
+              {renderField('MURB Second Heating Type', selections.murbSecondHeatingType)}
+              {renderField('MURB Second Heating Efficiency', selections.murbSecondHeatingEfficiency)}
+              {renderField('MURB Second Indirect Tank', selections.murbSecondIndirectTank)}
+              {renderField('MURB Second Indirect Tank Size', selections.murbSecondIndirectTankSize, 'gal')}
+              {renderField('Multiple MURB Water Heaters', selections.hasMurbMultipleWaterHeaters)}
+              {renderField('MURB Second Water Heater Type', selections.murbSecondWaterHeaterType)}
+              {renderField('MURB Second Water Heater Efficiency', selections.murbSecondWaterHeater)}
             </AccordionContent>
           </AccordionItem>
           
