@@ -776,7 +776,9 @@ const NBCCalculator = ({
       
       if (!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes')) {
         if (!selections.waterHeaterType) errors.waterHeaterType = true;
-        if (selections.waterHeaterType && !selections.waterHeater) errors.waterHeater = true;
+        if (selections.waterHeaterType && selections.waterHeaterType !== 'boiler' && !selections.waterHeater) {
+          errors.waterHeater = true;
+        }
         if (selections.waterHeaterType === 'other' && !selections.otherWaterHeaterType) errors.otherWaterHeaterType = true;
       }
       
