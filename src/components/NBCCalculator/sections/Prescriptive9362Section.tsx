@@ -243,7 +243,7 @@ export default function Prescriptive9362Section({
                     ...prev,
                     ceilingsAtticRSI: e.target.value
                 }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.ceilingsAtticRSI && "border-red-500 ring-2 ring-red-500")} />
-                {selections.buildingType !== "single-detached-secondary" && (() => {
+                {(() => {
                     // For 9.36.2: 8.67 RSI with HRV, 10.43 RSI without HRV
                     const minRSI = selections.hasHrv === "with_hrv" ? 8.67 : selections.hasHrv === "without_hrv" ? 10.43 : 8.67;
                     const validation = validateRSI_9362(selections.ceilingsAtticRSI, minRSI, `ceilings below attics`);
@@ -256,7 +256,7 @@ export default function Prescriptive9362Section({
                     }
                     return null;
                 })()}
-                {selections.buildingType !== "single-detached-secondary" && <EffectiveRSIWarning />}
+                <EffectiveRSIWarning />
             </div>
 
             <div id="hasCathedralOrFlatRoof" className="space-y-2">
