@@ -56,6 +56,54 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
     return pathwayMap[selections.compliancePath] || 'NBC 9.36 Pathway';
   };
 
+  const getPendingItems = (selections: any) => {
+    const pending: string[] = [];
+    const addIfMissing = (field: keyof typeof selections, label: string) => {
+      const value = selections[field];
+      if (value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0)) {
+        pending.push(label);
+      }
+    };
+
+    // Project & Contact Info
+    addIfMissing('firstName', 'First Name');
+    addIfMissing('lastName', 'Last Name');
+    addIfMissing('company', 'Company Name');
+    addIfMissing('phoneNumber', 'Phone Number');
+    addIfMissing('streetAddress', 'Project Street Address');
+    addIfMissing('city', 'Project City');
+    addIfMissing('province', 'Project Province');
+    addIfMissing('postalCode', 'Project Postal Code');
+    addIfMissing('buildingType', 'Building Type');
+    if (selections.province === 'alberta') addIfMissing('climateZone', 'Climate Zone');
+
+    // Compliance Path
+    addIfMissing('compliancePath', 'Compliance Path');
+
+    // Technical Specs (simplified check)
+    if (selections.compliancePath) {
+      if (selections.compliancePath.includes('9365') || selections.compliancePath.includes('9367')) {
+        addIfMissing('frontDoorOrientation', 'Front Door Orientation');
+        addIfMissing('energuidePathway', 'EnerGuide Pathway Selection');
+      }
+      addIfMissing('ceilingsAtticRSI', 'Ceilings/Attic Insulation');
+      addIfMissing('wallRSI', 'Above Grade Wall Insulation');
+      addIfMissing('belowGradeRSI', 'Below Grade Wall Insulation');
+      addIfMissing('windowUValue', 'Window U-Value');
+      addIfMissing('airtightness', 'Airtightness Level');
+      addIfMissing('heatingType', 'Heating Type');
+      addIfMissing('waterHeaterType', 'Water Heater Type');
+    }
+    
+    if (uploadedFiles.length === 0) {
+      pending.push('At least one project document (e.g., building plans)');
+    }
+
+    return pending;
+  };
+
+  const pendingItems = getPendingItems(selections);
+
   const handleSave = async () => {
     if (!user) {
       toast({ title: "Authentication Required", description: "Please sign in to save.", variant: "destructive" });
@@ -182,7 +230,26 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
           <Input id="projectName" value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="Enter project name" className="bg-slate-900/50 border-slate-600" />
         </div>
 
-        <Accordion type="multiple" defaultValue={['item-1', 'item-2', 'item-3', 'item-4']} className="w-full">
+        <Accordion type="multiple" defaultValue={['item-pending', 'item-1', 'item-2', 'item-3', 'item-4']} className="w-full">
+          {pendingItems.length > 0 && (
+            <AccordionItem value="item-pending">
+              <AccordionTrigger className="text-lg font-semibold text-yellow-400 hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5" />
+                  Items Pending ({pendingItems.length})
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="space-y-2 pt-4">
+                <p className="text-sm text-slate-300 mb-2">The following required items are missing:</p>
+                <ul className="list-disc list-inside space-y-1 text-yellow-300">
+                  {pendingItems.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          )}
+
           <AccordionItem value="item-1">
             <AccordionTrigger className="text-lg font-semibold"><Building className="h-5 w-5 mr-2" />Project & Contact Information</AccordionTrigger>
             <AccordionContent className="space-y-2 pt-4">
@@ -236,6 +303,15 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
             </AccordionContent>
           </AccordionItem>
           
+          {selections.interestedCertifications && selections.interestedCertifications.length > 0 && (
+            <AccordionItem value="item-optional">
+              <AccordionTrigger className="text-lg font-semibold"><Info className="h-5 w-5 mr-2" />Optional Services</AccordionTrigger>
+              <AccordionContent className="space-y-2 pt-4">
+                {renderField('Interested Certifications', selections.interestedCertifications.join(', '))}
+              </AccordionContent>
+            </AccordionItem>
+          )}
+
           <AccordionItem value="item-4">
             <AccordionTrigger className="text-lg font-semibold"><FolderOpen className="h-5 w-5 mr-2" />Documents</AccordionTrigger>
             <AccordionContent className="pt-4">
