@@ -162,6 +162,8 @@ export type Database = {
           water_heating_type: string | null
           window_points: number | null
           window_u_value: number | null
+          secondary_heating_system_type: string | null
+          secondary_heating_efficiency: string | null
         }
         Insert: {
           airtightness_al?: number | null
@@ -215,6 +217,8 @@ export type Database = {
           water_heating_type?: string | null
           window_points?: number | null
           window_u_value?: number | null
+          secondary_heating_system_type?: string | null
+          secondary_heating_efficiency?: string | null
         }
         Update: {
           airtightness_al?: number | null
@@ -268,6 +272,8 @@ export type Database = {
           water_heating_type?: string | null
           window_points?: number | null
           window_u_value?: number | null
+          secondary_heating_system_type?: string | null
+          secondary_heating_efficiency?: string | null
         }
         Relationships: []
       }

@@ -343,6 +343,8 @@ const ProjectSummaryForm = ({ calculatorData, onSave, editingProjectId, autoSave
         upgrade_costs: parseFloat(String(formData.upgradeCosts)) || null,
         uploaded_files: uploadedFileData,
         mid_construction_blower_door_planned: formData.midConstructionBlowerDoorPlanned,
+        secondary_heating_system_type: formData.secondaryHeatingType,
+        secondary_heating_efficiency: formData.secondaryHeatingEfficiency ? String(formData.secondaryHeatingEfficiency) : null,
       };
 
       if (isEditing) {

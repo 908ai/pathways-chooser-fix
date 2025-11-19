@@ -880,6 +880,18 @@ const ProjectDetail = () => {
                       <span className="text-gray-200 drop-shadow-sm">Heating Efficiency:</span>
                       <span className="font-medium text-white">{project.heating_efficiency || 'N/A'}</span>
                     </div>
+                    {project.secondary_heating_system_type && (
+                      <>
+                        <div className="flex justify-between">
+                          <span className="text-gray-200 drop-shadow-sm">Secondary Heating System:</span>
+                          <span className="font-medium text-white">{project.secondary_heating_system_type}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-200 drop-shadow-sm">Secondary Heating Efficiency:</span>
+                          <span className="font-medium text-white">{project.secondary_heating_efficiency || 'N/A'}</span>
+                        </div>
+                      </>
+                    )}
                     <div className="flex justify-between">
                       <span className="text-gray-200 drop-shadow-sm">Cooling System:</span>
                       <span className="font-medium text-white">{project.cooling_system_type || 'N/A'}</span>
