@@ -1053,7 +1053,33 @@ const NBCCalculator = ({
                     removeFile={removeFile}
                   />
 
-                  {/* Results */}
+                  {/* Results for Performance & Prescriptive Paths */}
+                  {(selections.compliancePath === "9362" || selections.compliancePath === "9365" || selections.compliancePath === "9367") && (
+                    <Card className="bg-slate-900/50 border-slate-600">
+                      <CardHeader>
+                        <CardTitle className="text-white">Compliance Summary</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4 text-center">
+                          <div>
+                            <p className="text-sm text-slate-300 uppercase tracking-wider">Compliance Status</p>
+                            <p className="text-2xl font-bold text-orange-400">TBD</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-slate-300 uppercase tracking-wider">Upgrade Costs</p>
+                            <p className="text-2xl font-bold text-purple-400">$0</p>
+                          </div>
+                        </div>
+                        <div className="p-3 bg-blue-900/30 border border-blue-500/30 rounded-md">
+                          <p className="text-sm text-blue-300">
+                            <span className="font-bold">Review Timeline:</span> A review will take place within 1-2 days.
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Results for 9368 */}
                   {selections.compliancePath === "9368" && (
                     <Card className="bg-slate-900/50 border-slate-600">
                       <CardHeader>
