@@ -47,6 +47,20 @@ import { getPathwayDisplayName } from "./NBCCalculator/utils/helpers";
 interface NBCCalculatorProps {
   onPathwayChange?: (pathwayInfo: string) => void;
 }
+
+const getStepForField = (fieldId: string) => {
+  const step1Fields = ['firstName', 'lastName', 'company', 'phoneNumber', 'companyAddress', 'streetAddress', 'unitNumber', 'city', 'postalCode', 'buildingType', 'province', 'climateZone', 'occupancyClass'];
+  const step2Fields = ['compliancePath', 'frontDoorOrientation', 'energuidePathway'];
+  const step4Fields = ['fileUploadSection'];
+
+  if (step1Fields.includes(fieldId)) return 1;
+  if (step2Fields.includes(fieldId)) return 2;
+  if (step4Fields.includes(fieldId)) return 4;
+  
+  // Everything else is on step 3
+  return 3;
+};
+
 const NBCCalculator = ({
   onPathwayChange
 }: NBCCalculatorProps = {}) => {
@@ -174,8 +188,11 @@ const NBCCalculator = ({
   const [agreementChecked, setAgreementChecked] = useState(false);
 
   const handleFixItem = (fieldId: string) => {
+    const step = getStepForField(fieldId);
+    setCurrentStep(step);
     setShowProjectSummary(false);
-    // Use a timeout to ensure the modal is closed before scrolling
+    
+    // Use a timeout to allow React to re-render the correct step's components
     setTimeout(() => {
       const element = document.getElementById(fieldId);
       if (element) {
@@ -186,9 +203,9 @@ const NBCCalculator = ({
           element.classList.remove('ring-2', 'ring-offset-2', 'ring-yellow-400', 'rounded-md');
         }, 2500);
       } else {
-        console.warn(`Element with id "${fieldId}" not found.`);
+        console.warn(`Element with id "${fieldId}" not found on step ${step}.`);
       }
-    }, 100); // 100ms delay for modal to close
+    }, 150); // Increased timeout slightly to be safer
   };
 
   useEffect(() => {
