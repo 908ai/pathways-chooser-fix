@@ -59,7 +59,7 @@ export default function CompliancePathSection({
                            </div>}
                          
                          {selections.buildingType && (selections.province !== "alberta" || selections.climateZone) && <>
-                         <div className="space-y-2">
+                         <div id="compliancePath" className="space-y-2">
                           <div className="flex items-center gap-3">
                             <label className="text-sm font-medium text-white">Which compliance path are you using?</label>
                             <LargeInfoButton
@@ -276,7 +276,7 @@ export default function CompliancePathSection({
                         
                          {/* Front Door Orientation for Performance Paths */}
                          {(selections.compliancePath === "9365" ||
-                          selections.compliancePath === "9367") && <div className="space-y-2">
+                          selections.compliancePath === "9367") && <div id="frontDoorOrientation" className="space-y-2">
                              <div className="flex items-center gap-2">
                                <label className="text-sm font-medium text-white">Front Door Orientation</label>
                                   <InfoButton title="Why Orientation Matters in Energy Efficiency">

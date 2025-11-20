@@ -16,7 +16,7 @@ const FileUploadSection = ({
   removeFile,
 }: Props) => {
   return (
-    <div className="space-y-2">
+    <div id="fileUploadSection" className="space-y-2">
       <label className="text-sm font-medium text-slate-100">Building Plans, Full Window Schedule from Your Supplier & Other Documents.</label>
       <div className="space-y-2">
         <FileUpload

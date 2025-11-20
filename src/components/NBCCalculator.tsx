@@ -173,6 +173,24 @@ const NBCCalculator = ({
 
   const [agreementChecked, setAgreementChecked] = useState(false);
 
+  const handleFixItem = (fieldId: string) => {
+    setShowProjectSummary(false);
+    // Use a timeout to ensure the modal is closed before scrolling
+    setTimeout(() => {
+      const element = document.getElementById(fieldId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Add a temporary highlight effect for better UX
+        element.classList.add('ring-2', 'ring-offset-2', 'ring-yellow-400', 'transition-all', 'duration-300', 'rounded-md');
+        setTimeout(() => {
+          element.classList.remove('ring-2', 'ring-offset-2', 'ring-yellow-400', 'rounded-md');
+        }, 2500);
+      } else {
+        console.warn(`Element with id "${fieldId}" not found.`);
+      }
+    }, 100); // 100ms delay for modal to close
+  };
+
   useEffect(() => {
     const showHelp = searchParams.get('showHelp');
     const editProjectId = searchParams.get('edit');
@@ -1046,12 +1064,14 @@ const NBCCalculator = ({
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-8">
-                  <FileUploadSection
-                    uploadedFiles={uploadedFiles}
-                    onFileUploadRequest={handleFileUploadRequest}
-                    isUploading={isUploading}
-                    removeFile={removeFile}
-                  />
+                  <div id="fileUploadSection">
+                    <FileUploadSection
+                      uploadedFiles={uploadedFiles}
+                      onFileUploadRequest={handleFileUploadRequest}
+                      isUploading={isUploading}
+                      removeFile={removeFile}
+                    />
+                  </div>
 
                   {/* Results for Performance & Prescriptive Paths */}
                   {(selections.compliancePath === "9362" || selections.compliancePath === "9365" || selections.compliancePath === "9367") && (
@@ -1253,6 +1273,7 @@ const NBCCalculator = ({
                 autoSave={autoSaveTrigger}
                 editingProjectId={projectId || undefined}
                 onSave={() => setShowProjectSummary(false)}
+                onFixItem={handleFixItem}
               />
             </div>
           </div>
