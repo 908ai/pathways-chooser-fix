@@ -47,7 +47,7 @@ export default function ProjectInformationSection({
                <h4 className="text-md font-medium text-white border-b border-slate-500 pb-2 tracking-wide">Personal & Contact Information <span className="text-red-400 font-semibold">(Required)</span></h4>
                
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div className="space-y-2">
+                 <div id="firstName" className="space-y-2">
                    <label className="text-sm font-medium text-slate-100">First Name</label>
                    <Input type="text" placeholder="Enter first name" value={selections.firstName} onChange={e => setSelections(prev => ({
                   ...prev,
@@ -55,7 +55,7 @@ export default function ProjectInformationSection({
                 }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.firstName && "border-red-500 ring-2 ring-red-500")} />
                  </div>
                  
-                 <div className="space-y-2">
+                 <div id="lastName" className="space-y-2">
                    <label className="text-sm font-medium text-slate-100">Last Name</label>
                    <Input type="text" placeholder="Enter last name" value={selections.lastName} onChange={e => setSelections(prev => ({
                   ...prev,
@@ -65,7 +65,7 @@ export default function ProjectInformationSection({
                </div>
 
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div className="space-y-2">
+                 <div id="company" className="space-y-2">
                    <label className="text-sm font-medium text-slate-100">Company</label>
                    <Input type="text" placeholder="Enter company name" value={selections.company} onChange={e => setSelections(prev => ({
                   ...prev,
@@ -73,7 +73,7 @@ export default function ProjectInformationSection({
                 }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.company && "border-red-500 ring-2 ring-red-500")} />
                  </div>
 
-                 <div className="space-y-2">
+                 <div id="phoneNumber" className="space-y-2">
                    <label className="text-sm font-medium text-slate-100">Phone Number</label>
                    <Input type="tel" placeholder="Enter phone number" value={selections.phoneNumber} onChange={e => setSelections(prev => ({
                   ...prev,
@@ -82,7 +82,7 @@ export default function ProjectInformationSection({
                  </div>
                </div>
 
-               <div className="space-y-2">
+               <div id="companyAddress" className="space-y-2">
                  <label className="text-sm font-medium text-slate-100">Company Address</label>
                  <Input type="text" placeholder="Enter company address" value={selections.companyAddress} onChange={e => setSelections(prev => ({
                 ...prev,
@@ -96,22 +96,22 @@ export default function ProjectInformationSection({
                 <h4 className="text-md font-medium text-white border-b border-slate-500 pb-2 tracking-wide">Building & Location Details <span className="text-red-400 font-semibold">(Required)</span></h4>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
+                  <div id="streetAddress" className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Street Address</label>
                     <Input type="text" placeholder="e.g., 123 Main St" value={selections.streetAddress} onChange={e => setSelections(prev => ({ ...prev, streetAddress: e.target.value }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.streetAddress && "border-red-500 ring-2 ring-red-500")} />
                   </div>
-                  <div className="space-y-2">
+                  <div id="unitNumber" className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Unit Number <span className="text-slate-400 font-normal">(Optional)</span></label>
                     <Input type="text" placeholder="e.g., Apt, Unit, Suite" value={selections.unitNumber} onChange={e => setSelections(prev => ({ ...prev, unitNumber: e.target.value }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.unitNumber && "border-red-500 ring-2 ring-red-500")} />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
+                  <div id="city" className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">City</label>
                     <Input type="text" placeholder="Enter city" value={selections.city} onChange={e => setSelections(prev => ({ ...prev, city: e.target.value }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.city && "border-red-500 ring-2 ring-red-500")} />
                   </div>
-                  <div className="space-y-2">
+                  <div id="province" className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Province</label>
                     <Select value={selections.province} onValueChange={value => {
                       setSelections(prev => ({
@@ -129,14 +129,14 @@ export default function ProjectInformationSection({
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
+                  <div id="postalCode" className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Postal Code</label>
                     <Input type="text" placeholder="Enter postal code" value={selections.postalCode} onChange={e => setSelections(prev => ({ ...prev, postalCode: e.target.value }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.postalCode && "border-red-500 ring-2 ring-red-500")} />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
+                  <div id="buildingType" className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Building Type</label>
                     <Select value={selections.buildingType} onValueChange={value => setSelections(prev => ({ ...prev, buildingType: value }))}>
                       <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.buildingType && "border-red-500 ring-2 ring-red-500")}>
@@ -149,7 +149,7 @@ export default function ProjectInformationSection({
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
+                  <div id="occupancyClass" className="space-y-2">
                     <div className="flex items-center gap-2">
                       <label className="text-sm font-medium text-slate-100">Occupancy Class</label>
                       <InfoButton title="Understanding Occupancy Class">
@@ -161,7 +161,7 @@ export default function ProjectInformationSection({
                     <Input type="text" placeholder="C" value={selections.occupancyClass} onChange={e => setSelections(prev => ({ ...prev, occupancyClass: e.target.value }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                   </div>
                   {selections.province === "alberta" && (
-                    <div className="space-y-2">
+                    <div id="climateZone" className="space-y-2">
                       <div className="flex items-center gap-2">
                         <label className="text-sm font-medium text-slate-100">Climate Zone</label>
                         <InfoButton title="Climate Zone Information">

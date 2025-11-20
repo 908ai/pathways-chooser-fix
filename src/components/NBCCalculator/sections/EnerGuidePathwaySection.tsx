@@ -19,7 +19,7 @@ const EnerGuidePathwaySection: React.FC<Props> = ({ selections, setSelections })
         <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px] shadow-lg">
             <CardContent className="pt-6">
                 <div className="space-y-4">
-                    <div className="space-y-2">
+                    <div id="energuidePathway" className="space-y-2">
                         <div className="flex items-center gap-2">
                             <label className="text-sm font-medium text-slate-100">Would you like to pursue the EnerGuide Rating System (ERS) pathway in conjunction with the Performance Path?</label>
                             <InfoButton title="What is the EnerGuide Pathway?">

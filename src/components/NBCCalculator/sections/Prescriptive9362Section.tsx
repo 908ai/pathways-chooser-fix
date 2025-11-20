@@ -248,13 +248,32 @@ export default function Prescriptive9362Section({
                     ceilingsAtticRSI: e.target.value
                 }))} className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.ceilingsAtticRSI && "border-red-500 ring-2 ring-red-500")} />
                 {(() => {
-                    // For 9.36.2: 8.67 RSI with HRV, 10.43 RSI without HRV
+                    if (selections.compliancePath === "9368") {
+                        const minRSI = 8.67; // For 9368, HRV is mandatory
+                        const validation = validateRSI_9362(selections.ceilingsAtticRSI, minRSI, `ceilings below attics`);
+                        if (!validation.isValid && validation.warning) {
+                            return <WarningButton title="🛑 RSI Value Too Low" variant="destructive" defaultOpen={true}>
+                                <p className="text-xs text-white">
+                                    {`The RSI value must be increased to at least ${minRSI} to meet NBC 9.36.8 requirements.`}
+                                </p>
+                            </WarningButton>;
+                        }
+                        return null;
+                    }
+
+                    // Existing validation for other paths
+                    console.log("Ceilings validation debug:", {
+                        ceilingsAtticRSI: selections.ceilingsAtticRSI,
+                        hasHrv: selections.hasHrv,
+                        parsedValue: parseFloat(selections.ceilingsAtticRSI || "0"),
+                        minRSI: selections.hasHrv === "with_hrv" ? 8.67 : 10.43
+                    });
                     const minRSI = selections.hasHrv === "with_hrv" ? 8.67 : selections.hasHrv === "without_hrv" ? 10.43 : 8.67;
-                    const validation = validateRSI_9362(selections.ceilingsAtticRSI, minRSI, `ceilings below attics`);
+                    const validation = validateRSI_9362(selections.ceilingsAtticRSI, minRSI, `ceilings below attics ${selections.hasHrv === "with_hrv" ? "with HRV" : "without HRV"}`);
                     if (!validation.isValid && validation.warning) {
-                        return <WarningButton title="🛑 RSI Value Too Low" variant="destructive" defaultOpen={true}>
-                            <p className="text-xs text-white">
-                                {`The RSI value must be increased to at least ${selections.hasHrv === "with_hrv" ? "8.67 with HRV" : selections.hasHrv === "without_hrv" ? "10.43 without HRV" : "8.67 with HRV or 10.43 without HRV"} to meet NBC 9.36.2 requirements.`}
+                        return <WarningButton title={validation.warning.type === "rvalue-suspected" ? "R-Value Detected" : "RSI Value Too Low"} variant={validation.warning.type === "rvalue-suspected" ? "warning" : "destructive"}>
+                            <p className="text-sm text-white">
+                                {validation.warning.message}
                             </p>
                         </WarningButton>;
                     }
