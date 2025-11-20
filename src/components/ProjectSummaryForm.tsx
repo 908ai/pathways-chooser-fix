@@ -65,7 +65,7 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
       }
     };
 
-    // Step 1
+    // Project & Contact Info
     addIfMissing('firstName', 'First Name');
     addIfMissing('lastName', 'Last Name');
     addIfMissing('company', 'Company Name');
@@ -77,10 +77,10 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
     addIfMissing('buildingType', 'Building Type');
     if (selections.province === 'alberta') addIfMissing('climateZone', 'Climate Zone');
 
-    // Step 2
+    // Compliance Path
     addIfMissing('compliancePath', 'Compliance Path');
 
-    // Step 3 (Technical)
+    // Technical Specs (simplified check)
     if (selections.compliancePath) {
       if (selections.compliancePath.includes('9365') || selections.compliancePath.includes('9367')) {
         addIfMissing('frontDoorOrientation', 'Front Door Orientation');
@@ -95,7 +95,6 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
       addIfMissing('waterHeaterType', 'Water Heater Type');
     }
     
-    // Step 4 (Documents)
     if (uploadedFiles.length === 0) {
       pending.push('At least one project document (e.g., building plans)');
     }
@@ -104,6 +103,7 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
   };
 
   const pendingItems = getPendingItems(selections);
+  const isUploadPending = uploadedFiles.length === 0;
 
   const handleSave = async () => {
     if (!user) {
@@ -241,13 +241,22 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
                   Items Pending ({pendingItems.length})
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="space-y-2 pt-4">
+              <AccordionContent className="space-y-4 pt-4">
                 <p className="text-sm text-slate-300 mb-2">The following required items are missing:</p>
                 <ul className="list-disc list-inside space-y-1 text-yellow-300">
                   {pendingItems.map((item, index) => (
                     <li key={index}>{item}</li>
                   ))}
                 </ul>
+                <div className="mt-4 p-3 bg-orange-900/30 border border-orange-500/30 rounded-md">
+                  <p className="text-sm text-orange-300">
+                    <span className="font-bold">Next Steps:</span> Complete the missing items above to move your project forward.
+                    {isUploadPending 
+                      ? " Upload required documents and provide technical specifications to finalize your submission."
+                      : " Provide technical specifications to finalize your submission."
+                    }
+                  </p>
+                </div>
               </AccordionContent>
             </AccordionItem>
           )}
