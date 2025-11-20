@@ -7,12 +7,12 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import InfoButton from "@/components/InfoButton";
 import { Button } from "@/components/ui/button";
-import { Info, Search } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Info, ChevronDown, AlertTriangle, Search } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import InfoButton from "@/components/InfoButton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ChevronDown, AlertTriangle } from "lucide-react";
 
 export default function Performance9367Section({
     selections,
@@ -83,7 +83,7 @@ export default function Performance9367Section({
                 <>
                     {/* Building volume section removed for 9.36.7 */}
 
-                    <div className="space-y-2">
+                    <div id="ceilingsAtticRSI" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Ceilings below Attics</label>
                         <Input type="text" placeholder='Enter assembly info (e.g., R50 Loose-fill/2x10/16"OC)' value={selections.ceilingsAtticRSI} onChange={e => setSelections(prev => ({
                             ...prev,
@@ -91,7 +91,7 @@ export default function Performance9367Section({
                         }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                     </div>
 
-                    <div className="space-y-2">
+                    <div id="hasCathedralOrFlatRoof" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Is there any cathedral ceilings or flat roof?</label>
                         <Select value={selections.hasCathedralOrFlatRoof} onValueChange={value => setSelections(prev => ({
                             ...prev,
@@ -108,7 +108,7 @@ export default function Performance9367Section({
                         </Select>
                     </div>
 
-                    {selections.hasCathedralOrFlatRoof === "yes" && <div className="space-y-2">
+                    {selections.hasCathedralOrFlatRoof === "yes" && <div id="cathedralFlatRSI" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Cathedral / Flat Roofs</label>
                         <Input type="text" placeholder="Enter insulation type &/or R-value (e.g, R50 Loose-fill)., N/A" value={selections.cathedralFlatRSI} onChange={e => setSelections(prev => ({
                             ...prev,
@@ -116,7 +116,7 @@ export default function Performance9367Section({
                         }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                     </div>}
 
-                    <div className="space-y-2">
+                    <div id="wallRSI" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Above Grade Walls</label>
                         <Input type="text" placeholder='Enter assembly info (e.g., R20 Batt/2x6/16"OC)' value={selections.wallRSI} onChange={e => setSelections(prev => ({
                             ...prev,
@@ -124,7 +124,7 @@ export default function Performance9367Section({
                         }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                     </div>
 
-                    <div className="space-y-2">
+                    <div id="belowGradeRSI" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Below Grade Walls (Foundation Walls)</label>
                         <Input type="text" placeholder='Enter assembly info (e.g., R12 Batt/2x4/24"OC)' value={selections.belowGradeRSI} onChange={e => setSelections(prev => ({
                             ...prev,
@@ -132,7 +132,7 @@ export default function Performance9367Section({
                         }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                     </div>
 
-                    <div className="space-y-4">
+                    <div id="floorsSlabsSelected" className="space-y-4">
                         <label className="text-sm font-medium text-slate-100">Floors/Slabs (Select all that apply)</label>
                         <div className="space-y-2">
                             <label className="flex items-center gap-2">
@@ -215,21 +215,23 @@ export default function Performance9367Section({
                             </label>
                             <label className={`flex items-center gap-2 ${isHeatedFloorsChecked ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                 <input type="checkbox" checked={selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting")} disabled={isHeatedFloorsChecked} onChange={e => {
+                                    const value = "slabOnGradeIntegralFooting";
                                     const isChecked = e.target.checked;
                                     setSelections(prev => {
                                         let newFloorsSlabsSelected = [...prev.floorsSlabsSelected];
                                         if (isChecked) {
-                                            if (!newFloorsSlabsSelected.includes('slabOnGradeIntegralFooting')) {
-                                                newFloorsSlabsSelected.push('slabOnGradeIntegralFooting');
+                                            if (!newFloorsSlabsSelected.includes(value)) {
+                                                newFloorsSlabsSelected.push(value);
                                             }
+                                            // Uncheck heated floors
                                             newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'heatedFloors');
                                         } else {
-                                            newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== 'slabOnGradeIntegralFooting');
+                                            newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => item !== value);
                                         }
                                         return {
                                             ...prev,
                                             floorsSlabsSelected: newFloorsSlabsSelected,
-                                            hasInFloorHeat: 'no'
+                                            hasInFloorHeat: newFloorsSlabsSelected.includes('heatedFloors') ? "yes" : "no"
                                         };
                                     });
                                 }} className="w-4 h-4 text-primary" />
@@ -238,7 +240,7 @@ export default function Performance9367Section({
                         </div>
                     </div>
 
-                    {selections.floorsSlabsSelected.includes("floorsUnheated") && <div className="space-y-2">
+                    {selections.floorsSlabsSelected.includes("floorsUnheated") && <div id="floorsUnheatedRSI" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</label>
                         <Input type="text" placeholder="Enter insulation type &/or RSI/R-value, or N/A" value={selections.floorsUnheatedRSI} onChange={e => setSelections(prev => ({
                             ...prev,
@@ -246,7 +248,7 @@ export default function Performance9367Section({
                         }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                     </div>}
 
-                    {selections.floorsSlabsSelected.includes("floorsGarage") && <div className="space-y-2">
+                    {selections.floorsSlabsSelected.includes("floorsGarage") && <div id="floorsGarageRSI" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Floors above Garages</label>
                         <Input type="text" placeholder="Enter insulation type &/or RSI/R-value, or N/A" value={selections.floorsGarageRSI} onChange={e => setSelections(prev => ({
                             ...prev,
@@ -254,7 +256,7 @@ export default function Performance9367Section({
                         }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                     </div>}
 
-                    {selections.floorsSlabsSelected.includes("unheatedBelowFrost") && <div className="space-y-2">
+                    {selections.floorsSlabsSelected.includes("unheatedBelowFrost") && <div id="unheatedFloorBelowFrostRSI" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Unheated Floor Below Frost Line</label>
                         <Input type="text" placeholder="Enter RSI value or 'uninsulated'" value={selections.unheatedFloorBelowFrostRSI} onChange={e => setSelections(prev => ({
                             ...prev,
@@ -262,7 +264,7 @@ export default function Performance9367Section({
                         }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                     </div>}
 
-                    {selections.floorsSlabsSelected.includes("unheatedAboveFrost") && <div className="space-y-2">
+                    {selections.floorsSlabsSelected.includes("unheatedAboveFrost") && <div id="unheatedFloorAboveFrostRSI" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Unheated Floor Above Frost Line</label>
                         <Input type="text" placeholder='Enter insulation type & R-value (e.g., 2" XPS or R10 Rigid), or N/A' value={selections.unheatedFloorAboveFrostRSI} onChange={e => setSelections(prev => ({
                             ...prev,
@@ -270,7 +272,7 @@ export default function Performance9367Section({
                         }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                     </div>}
 
-                    {selections.floorsSlabsSelected.includes("heatedFloors") && <div className="space-y-2">
+                    {selections.floorsSlabsSelected.includes("heatedFloors") && <div id="heatedFloorsRSI" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Heated Floors</label>
                         <Input type="text" placeholder='Enter insulation type & R-value (e.g., 2" XPS or R10 Rigid)' value={selections.heatedFloorsRSI} onChange={e => setSelections(prev => ({
                             ...prev,
@@ -283,7 +285,7 @@ export default function Performance9367Section({
                         </WarningButton>
                     </div>}
 
-                    {selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting") && <div className="space-y-2">
+                    {selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting") && <div id="slabOnGradeIntegralFootingRSI" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Slab on grade with integral Footing</label>
                         <Input type="text" placeholder="Enter insulation type &/or R-value, or N/A" value={selections.slabOnGradeIntegralFootingRSI} onChange={e => setSelections(prev => ({
                             ...prev,
@@ -336,7 +338,7 @@ export default function Performance9367Section({
                         </div>}
                     </div>
 
-                    <div className="space-y-2">
+                    <div id="windowUValue" className="space-y-2">
                         <WarningButton warningId="windowUValue-9367" title="ℹ️ Window Schedule Required">
                             <p className="text-xs text-white">
                                 Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value (ie, highest U-value W/(m²×K)).
@@ -344,7 +346,7 @@ export default function Performance9367Section({
                         </WarningButton>
                     </div>
 
-                    <div className="space-y-2">
+                    <div id="hasSkylights" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Do you have skylights?</label>
                         <Select value={selections.hasSkylights} onValueChange={value => setSelections(prev => ({
                             ...prev,
@@ -359,7 +361,7 @@ export default function Performance9367Section({
                             </SelectContent>
                         </Select>
 
-                        {selections.hasSkylights === "yes" && <div className="space-y-2">
+                        {selections.hasSkylights === "yes" && <div id="skylightUValue" className="space-y-2">
                             <label className="text-sm font-medium text-slate-100">Skylight U-Value</label>
                             <Input type="text" placeholder="Enter U-Value (W/(m²·K))" value={selections.skylightUValue || ""} onChange={e => setSelections(prev => ({
                                 ...prev,
@@ -374,7 +376,7 @@ export default function Performance9367Section({
                         </p>
                     </WarningButton>}
 
-                    <div className="space-y-2">
+                    <div id="airtightness" className="space-y-2">
                         <div className="flex items-center gap-3">
                             <label className="text-sm font-medium text-slate-100">Airtightness Level</label>
                             <InfoButton title="What's a Blower Door Test?">
@@ -573,26 +575,31 @@ export default function Performance9367Section({
                         </WarningButton>
 
                         {/* Mid-Construction Blower Door Test Checkbox */}
-                        <div className="space-y-3 pt-4 border-t border-border/20">
-                            <div className="flex items-start gap-3">
-                                <input type="checkbox" id="midConstructionBlowerDoor-9368" checked={selections.midConstructionBlowerDoorPlanned} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    midConstructionBlowerDoorPlanned: e.target.checked
-                                }))} className="w-4 h-4 text-primary mt-1" />
-                                <div className="flex-1">
-                                    <label htmlFor="midConstructionBlowerDoor-9368" className="text-sm font-medium cursor-pointer text-slate-100">
-                                        Mid-Construction Blower Door Test Planned (Optional)
-                                    </label>
-                                </div>
-                                <Button asChild variant="secondary" className="h-6 px-2 text-xs">
-                                    <a href="/find-a-provider" target="_blank" rel="noopener noreferrer">
-                                        <Search className="h-4 w-4" />
-                                        Find a service provider
-                                    </a>
-                                </Button>                                
-                            </div>
-
-                            <WarningButton warningId="mid-construction-blower-door-info-9368" title="ℹ️ Benefits of Mid-Construction Blower Door Testing">
+                        <div id="midConstructionBlowerDoorPlanned" className="space-y-3 pt-4 border-t border-border/20">
+                            <Checkbox
+                                id="midConstructionBlowerDoor-9367-3"
+                                checked={selections.midConstructionBlowerDoorPlanned}
+                                onCheckedChange={(checked) => {
+                                    setSelections((prev) => ({
+                                        ...prev,
+                                        midConstructionBlowerDoorPlanned: checked === true, // `checked` pode ser true | false | "indeterminate"
+                                    }));
+                                }}
+                                className="h-4 w-4 text-primary"
+                            />
+                            <label
+                                htmlFor="midConstructionBlowerDoor-9367-3"
+                                className="ml-2 text-sm font-medium cursor-pointer text-slate-100"
+                            >
+                                Mid-Construction Blower Door Test Planned (Optional)
+                            </label>
+                            <Button asChild variant="secondary" className="h-6 px-2 text-xs ml-2">
+                                <a href="/find-a-provider" target="_blank" rel="noopener noreferrer">
+                                    <Search className="h-4 w-4" />
+                                    Find a service provider
+                                </a>
+                            </Button> 
+                            <WarningButton warningId="mid-construction-blower-door-info-9367-3" title="ℹ️ Benefits of Mid-Construction Blower Door Testing">
                                 <div className="text-xs text-white space-y-2">
                                     <p className="font-medium">Benefits of a mid-construction (misconstruction) blower door test:</p>
                                     <ul className="list-disc ml-4 space-y-1">
@@ -620,31 +627,33 @@ export default function Performance9367Section({
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Water Heater Type</label>
-                        <Select value={selections.waterHeaterType} onValueChange={value => setSelections(prev => ({
-                            ...prev,
-                            waterHeaterType: value
-                        }))}>
-                            <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
-                                <SelectValue placeholder="Select water heater type" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-background border shadow-lg z-50">
-                                <SelectItem value="gas">Gas</SelectItem>
-                                <SelectItem value="electric">Electric</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
+                    {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <>
+                        <div id="waterHeaterType" className="space-y-2">
+                            <label className="text-sm font-medium text-slate-100">Water Heater Type</label>
+                            <Select value={selections.waterHeaterType} onValueChange={value => setSelections(prev => ({
+                                ...prev,
+                                waterHeaterType: value
+                            }))}>
+                                <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                                    <SelectValue placeholder="Select water heater type" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-background border shadow-lg z-50">
+                                    <SelectItem value="gas">Gas</SelectItem>
+                                    <SelectItem value="electric">Electric</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Water Heater</label>
-                        <Input type="text" placeholder="Enter Water Heater Make/Model" value={selections.waterHeater} onChange={e => setSelections(prev => ({
-                            ...prev,
-                            waterHeater: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
-                    </div>
+                        <div id="waterHeater" className="space-y-2">
+                            <label className="text-sm font-medium text-slate-100">Water Heater</label>
+                            <Input type="text" placeholder="Enter Water Heater Make/Model" value={selections.waterHeater} onChange={e => setSelections(prev => ({
+                                ...prev,
+                                waterHeater: e.target.value
+                            }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                        </div>
+                    </>}
 
-                    <div className="space-y-2">
+                    <div id="hasDWHR" className="space-y-2">
                         <div className="flex items-center gap-3">
                             <label className="text-sm font-medium text-slate-100">Is a drain water heat recovery system being installed?</label>
                             <InfoButton title="Drain Water Heat Recovery System Information">
@@ -690,7 +699,7 @@ export default function Performance9367Section({
                         </Select>
                     </div>
 
-                    <div className="space-y-2">
+                    <div id="heatingType" className="space-y-2">
                         <div className="flex items-center gap-3">
                             <label className="text-sm font-medium text-slate-100">Heating Type <span className="text-red-400">*</span></label>
                             <InfoButton title="CAN/CSA F280-12 - Room by Room Heat Loss/Gain Calculation">
@@ -718,7 +727,7 @@ export default function Performance9367Section({
                                     </div>
                                 </div>
                             </InfoButton>
-                        </div>  
+                        </div>                
                         <Select value={selections.heatingType} onValueChange={value => setSelections(prev => ({
                             ...prev,
                             heatingType: value
@@ -755,7 +764,7 @@ export default function Performance9367Section({
                         </WarningButton>
                     </div>
 
-                    {selections.heatingType && <div className="space-y-2">
+                    {selections.heatingType && <div id="heatingEfficiency" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">
                             {selections.heatingType === 'furnace' ? 'Furnace' : selections.heatingType === 'boiler' ? 'Boiler' : selections.heatingType === 'heat-pump' ? 'Heat Pump' : 'Heating Efficiency'}
                         </label>
@@ -766,7 +775,7 @@ export default function Performance9367Section({
                     </div>}
 
                     {selections.heatingType === 'boiler' && <div className="space-y-4">
-                        <div className="space-y-2">
+                        <div id="indirectTank" className="space-y-2">
                             <label className="text-sm font-medium text-slate-100">Are you installing an indirect tank?</label>
                             <Select value={selections.indirectTank} onValueChange={value => setSelections(prev => ({
                                 ...prev,
@@ -782,7 +791,7 @@ export default function Performance9367Section({
                             </Select>
                         </div>
 
-                        {selections.indirectTank === 'yes' && <div className="space-y-2">
+                        {selections.indirectTank === 'yes' && <div id="indirectTankSize" className="space-y-2">
                             <label className="text-sm font-medium text-slate-100">Indirect tank size (gallons)</label>
                             <Input type="number" placeholder="Enter tank size in gallons" value={selections.indirectTankSize} onChange={e => setSelections(prev => ({
                                 ...prev,
@@ -791,7 +800,7 @@ export default function Performance9367Section({
                         </div>}
                     </div>}
 
-                    <div className="space-y-2">
+                    <div id="coolingApplicable" className="space-y-2">
                         <label className="text-sm font-medium text-slate-100">Are you installing cooling/air conditioning?</label>
                         <Select value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
                             ...prev,
@@ -808,14 +817,14 @@ export default function Performance9367Section({
                     </div>
 
                     {selections.coolingApplicable === "yes" && <div className="space-y-4">
-                        <div className="space-y-2">
+                        <div id="coolingMakeModel" className="space-y-2">
                             <label className="text-sm font-medium text-slate-100">Cooling System Make/Model</label>
                             <Input type="text" value={selections.coolingMakeModel} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 coolingMakeModel: e.target.value
                             }))} placeholder="Enter cooling system make and model" className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                         </div>
-                        <div className="space-y-2">
+                        <div id="coolingEfficiency" className="space-y-2">
                             <label className="text-sm font-medium text-slate-100">Cooling System Efficiency</label>
                             <Input
                                 type="text"
@@ -834,7 +843,7 @@ export default function Performance9367Section({
                     {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
                         <h5 className="font-medium text-white">Secondary Suite HRV/ERV</h5>
 
-                        <div className="space-y-2">
+                        <div id="hasSecondaryHrv" className="space-y-2">
                             <div className="flex items-center gap-3">
                                 <label className="text-sm font-medium text-slate-100">Will there be a second HRV/ERV for the secondary suite?</label>
                                 <InfoButton title="Secondary Suite HRV/ERV Information">
@@ -877,7 +886,7 @@ export default function Performance9367Section({
                             </Select>
                         </div>
 
-                        {selections.hasSecondaryHrv === "separate" && <div className="space-y-2">
+                        {selections.hasSecondaryHrv === "separate" && <div id="secondaryHrvEfficiency" className="space-y-2">
                             <label className="text-sm font-medium text-slate-100">Secondary Suite HRV/ERV Make/Model</label>
                             <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
                                 ...prev,

@@ -79,7 +79,7 @@ export default function Performance9365Section({
 
     return (
         <>
-            {selections.city && selections.city.toLowerCase().trim() === "red deer" && selections.province === "alberta" && <div className="space-y-2">
+            {selections.city && selections.city.toLowerCase().trim() === "red deer" && selections.province === "alberta" && <div id="hasF280Calculation" className="space-y-2">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium text-slate-100">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
                     <InfoButton title="What is an F280 Calculation?">
@@ -135,7 +135,7 @@ export default function Performance9365Section({
                 </Select>
             </div>}
 
-            <div className="space-y-2">
+            <div id="ceilingsAtticRSI" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Ceilings below Attics</label>
                 <Input type="text" placeholder="e.g., R50 Loose-fill" value={selections.ceilingsAtticRSI} onChange={e => setSelections(prev => ({
                     ...prev,
@@ -143,7 +143,7 @@ export default function Performance9365Section({
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
             </div>
 
-            <div className="space-y-2">
+            <div id="hasCathedralOrFlatRoof" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Is there any cathedral ceilings or flat roof?</label>
                 <Select value={selections.hasCathedralOrFlatRoof} onValueChange={value => setSelections(prev => ({
                     ...prev,
@@ -160,7 +160,7 @@ export default function Performance9365Section({
                 </Select>
             </div>
 
-            {selections.hasCathedralOrFlatRoof === "yes" && <div className="space-y-2">
+            {selections.hasCathedralOrFlatRoof === "yes" && <div id="cathedralFlatRSI" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Cathedral / Flat Roofs</label>
                 <Input type="text" placeholder="Enter insulation type &/or R-value, or N/A" value={selections.cathedralFlatRSI} onChange={e => setSelections(prev => ({
                     ...prev,
@@ -168,7 +168,7 @@ export default function Performance9365Section({
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
             </div>}
 
-            <div className="space-y-2">
+            <div id="wallRSI" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Above Grade Walls</label>
                 <Input type="text" placeholder='Enter insulation type &/or R-value (e.g., R20 Batt/2x6/16"OC), or N/A' value={selections.wallRSI} onChange={e => setSelections(prev => ({
                     ...prev,
@@ -176,7 +176,7 @@ export default function Performance9365Section({
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
             </div>
 
-            <div className="space-y-2">
+            <div id="belowGradeRSI" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Below Grade Walls (Foundation Walls)</label>
                 <Input type="text" placeholder='Enter insulation type &/or R-value (e.g., R12 Batt/2x4/24"OC), or N/A' value={selections.belowGradeRSI} onChange={e => setSelections(prev => ({
                     ...prev,
@@ -184,7 +184,7 @@ export default function Performance9365Section({
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
             </div>
 
-            <div className="space-y-4">
+            <div id="floorsSlabsSelected" className="space-y-4">
                 <label className="text-sm font-medium text-slate-100">Floors/Slabs (Select all that apply)</label>
                 <div className="space-y-2">
                     <label className="flex items-center gap-2">
@@ -307,7 +307,7 @@ export default function Performance9365Section({
             </div>
 
             {/* In-Floor Heat Dropdown for 9365 */}
-            <div className="space-y-2">
+            <div id="hasInFloorHeat9365" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Are you installing or roughing in in-floor heat?</label>
                 <Select value={selections.hasInFloorHeat9365} onValueChange={value => {
                     setSelections(prev => {
@@ -356,7 +356,7 @@ export default function Performance9365Section({
                 </p>
             </WarningButton>}
 
-            {selections.floorsSlabsSelected.includes("floorsUnheated") && <div className="space-y-2">
+            {selections.floorsSlabsSelected.includes("floorsUnheated") && <div id="floorsUnheatedRSI" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</label>
                 <Input type="text" placeholder="Enter insulation type &/or RSI/R-value, or N/A" value={selections.floorsUnheatedRSI} onChange={e => setSelections(prev => ({
                     ...prev,
@@ -364,7 +364,7 @@ export default function Performance9365Section({
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
             </div>}
 
-            {selections.floorsSlabsSelected.includes("floorsGarage") && <div className="space-y-2">
+            {selections.floorsSlabsSelected.includes("floorsGarage") && <div id="floorsGarageRSI" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Floors above Garages</label>
                 <Input type="text" placeholder="Enter insulation type &/or RSI/R-value, or N/A" value={selections.floorsGarageRSI} onChange={e => setSelections(prev => ({
                     ...prev,
@@ -372,7 +372,7 @@ export default function Performance9365Section({
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
             </div>}
 
-            {selections.floorsSlabsSelected.includes("unheatedBelowFrost") && <div className="space-y-2">
+            {selections.floorsSlabsSelected.includes("unheatedBelowFrost") && <div id="unheatedFloorBelowFrostRSI" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Unheated Floor Below Frost Line</label>
                 <Input type="text" placeholder="Enter RSI value or 'uninsulated'" value={selections.unheatedFloorBelowFrostRSI} onChange={e => setSelections(prev => ({
                     ...prev,
@@ -380,7 +380,7 @@ export default function Performance9365Section({
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
             </div>}
 
-            {selections.floorsSlabsSelected.includes("unheatedAboveFrost") && <div className="space-y-2">
+            {selections.floorsSlabsSelected.includes("unheatedAboveFrost") && <div id="unheatedFloorAboveFrostRSI" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Unheated Floor Above Frost Line</label>
                 <Input type="text" placeholder='Enter insulation type & R-value (e.g., 2" XPS or R10 Rigid), or N/A' value={selections.unheatedFloorAboveFrostRSI} onChange={e => setSelections(prev => ({
                     ...prev,
@@ -388,7 +388,7 @@ export default function Performance9365Section({
                 }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
             </div>}
 
-            {selections.floorsSlabsSelected.includes("heatedFloors") && <div className="space-y-2">
+            {selections.floorsSlabsSelected.includes("heatedFloors") && <div id="heatedFloorsRSI" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Heated Floors</label>
                 <Input type="text" placeholder='Enter insulation type & R-value (e.g., 2" XPS or R10 Rigid)' value={selections.heatedFloorsRSI} onChange={e => setSelections(prev => ({
                     ...prev,
@@ -401,7 +401,7 @@ export default function Performance9365Section({
                 </WarningButton>
             </div>}
 
-            {selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting") && <div className="space-y-2">
+            {selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting") && <div id="slabOnGradeIntegralFootingRSI" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Slab on grade with integral Footing</label>
                 <Input type="text" placeholder="Enter insulation type &/or R-value, or N/A" value={selections.slabOnGradeIntegralFootingRSI} onChange={e => setSelections(prev => ({
                     ...prev,
@@ -457,7 +457,7 @@ export default function Performance9365Section({
                 </div>}
             </div>
 
-            <div className="space-y-2">
+            <div id="hasSkylights" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Do you have skylights?</label>
                 <Select value={selections.hasSkylights} onValueChange={value => setSelections(prev => ({
                     ...prev,
@@ -472,7 +472,7 @@ export default function Performance9365Section({
                     </SelectContent>
                 </Select>
 
-                {selections.hasSkylights === "yes" && <div className="space-y-2">
+                {selections.hasSkylights === "yes" && <div id="skylightUValue" className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Skylight U-Value</label>
                     <Input type="text" placeholder="Enter U-Value (W/(m²·K))" value={selections.skylightUValue || ""} onChange={e => setSelections(prev => ({
                         ...prev,
@@ -481,21 +481,21 @@ export default function Performance9365Section({
                 </div>}
             </div>
 
-            <div className="space-y-2">
+            <div id="airtightness" className="space-y-2">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium text-slate-100">Airtightness Level</label>
                     <InfoButton title="What's a Blower Door Test?">
                         <div className="space-y-4">
                             <div>
-                                <p className="text-sm text-muted-foreground">A blower door test measures air leakage in a home. A fan is placed in an exterior door to pressurize or depressurize the building, and sensors track how much air is needed to maintain a pressure difference (usually 50 Pascals). This tells us how "leaky" the building is.</p>
+                                <p className="text-base text-muted-foreground">A blower door test measures air leakage in a home. A fan is placed in an exterior door to pressurize or depressurize the building, and sensors track how much air is needed to maintain a pressure difference (usually 50 Pascals). This tells us how "leaky" the building is.</p>
                             </div>
 
                             <div className="w-full h-px bg-muted"></div>
 
                             <div className="space-y-4">
                                 <div>
-                                    <h5 className="font-medium text-sm mb-2">What Do the Numbers Mean?</h5>
-                                    <div className="space-y-3 text-sm text-muted-foreground">
+                                    <h5 className="font-medium text-base mb-2">What Do the Numbers Mean?</h5>
+                                    <div className="space-y-3 text-base text-muted-foreground">
                                         <div>
                                             <p className="font-medium">• ACH₅₀ (Air Changes per Hour @ 50 Pa):</p>
                                             <p className="ml-4">How many times the air inside the home is replaced in one hour.</p>
@@ -518,28 +518,28 @@ export default function Performance9365Section({
                                 <div className="w-full h-px bg-muted"></div>
 
                                 <div>
-                                    <h5 className="font-medium text-sm mb-2">What's a Zone?</h5>
-                                    <p className="text-sm text-muted-foreground mb-2">A zone is any part of a building tested for air leakage. It could be:</p>
-                                    <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                    <h5 className="font-medium text-base mb-2">What's a Zone?</h5>
+                                    <p className="text-base text-muted-foreground mb-2">A zone is any part of a building tested for air leakage. It could be:</p>
+                                    <div className="text-base text-muted-foreground ml-4 space-y-1">
                                         <p>• A full detached house</p>
                                         <p>• A single unit in a row house or duplex</p>
                                         <p>• A section of a large home or multi-unit building</p>
                                     </div>
-                                    <p className="text-sm text-muted-foreground mt-2">Each zone is tested separately because leakage patterns vary.</p>
+                                    <p className="text-base text-muted-foreground mt-2">Each zone is tested separately because leakage patterns vary.</p>
                                 </div>
 
                                 <div className="w-full h-px bg-muted"></div>
 
                                 <div>
-                                    <h5 className="font-medium text-sm mb-2">What's an Attached Zone?</h5>
-                                    <p className="text-sm text-muted-foreground">Zones that share a wall, ceiling, or floor with another zone are attached zones. Air can leak through shared assemblies, so careful testing is important — especially in row houses, duplexes, and condos.</p>
+                                    <h5 className="font-medium text-base mb-2">What's an Attached Zone?</h5>
+                                    <p className="text-base text-muted-foreground">Zones that share a wall, ceiling, or floor with another zone are attached zones. Air can leak through shared assemblies, so careful testing is important — especially in row houses, duplexes, and condos.</p>
                                 </div>
 
                                 <div className="w-full h-px bg-muted"></div>
 
                                 <div>
-                                    <h5 className="font-medium text-sm mb-2">Why Small Units Often Show Higher Leakage</h5>
-                                    <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                    <h5 className="font-medium text-base mb-2">Why Small Units Often Show Higher Leakage</h5>
+                                    <div className="text-base text-muted-foreground ml-4 space-y-1">
                                         <p>• Small homes have more corners and connections relative to their size.</p>
                                         <p>• Mechanical equipment leaks the same amount — but it's a bigger deal in a small space.</p>
                                         <p>• As a result, ACH₅₀ values tend to look worse in smaller units.</p>
@@ -549,8 +549,8 @@ export default function Performance9365Section({
                                 <div className="w-full h-px bg-muted"></div>
 
                                 <div>
-                                    <h5 className="font-medium text-sm mb-2">Guarded vs. Unguarded Testing</h5>
-                                    <div className="space-y-3 text-sm text-muted-foreground">
+                                    <h5 className="font-medium text-base mb-2">Guarded vs. Unguarded Testing</h5>
+                                    <div className="space-y-3 text-base text-muted-foreground">
                                         <div>
                                             <p className="font-medium">Unguarded Test</p>
                                             <div className="ml-4 space-y-1">
@@ -573,21 +573,21 @@ export default function Performance9365Section({
                                 <div className="w-full h-px bg-muted"></div>
 
                                 <div>
-                                    <h5 className="font-medium text-sm mb-2">How Do You Pass?</h5>
-                                    <p className="text-sm text-muted-foreground mb-2">You can earn energy code points by hitting an Airtightness Level (AL). You only need to meet one of the three metrics (ACH, NLA, or NLR):</p>
-                                    <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                    <h5 className="font-medium text-base mb-2">How Do You Pass?</h5>
+                                    <p className="text-base text-muted-foreground mb-2">You can earn energy code points by hitting an Airtightness Level (AL). You only need to meet one of the three metrics (ACH, NLA, or NLR):</p>
+                                    <div className="text-base text-muted-foreground ml-4 space-y-1">
                                         <p>• Use Table 9.36.-A for guarded tests (stricter limits)</p>
                                         <p>• Use Table 9.36.-B for unguarded tests (more lenient for attached buildings)</p>
                                     </div>
-                                    <p className="text-sm text-muted-foreground mt-2">The design air leakage rate, established by the builder and energy modeller, is incorporated into the energy model and later verified through testing at either the mid-construction or final stage. If the measured air changes per hour (ACH, if chosen) exceed the code-specified airtightness level, the building fails; if the measured ACH is lower, it passes.</p>                                            
-                                    <p className="text-sm text-muted-foreground mt-2">In multi-unit buildings, the worst-performing zone sets the final score.</p>
+                                    <p className="text-base text-muted-foreground mt-2">The design air leakage rate, established by the builder and energy modeller, is incorporated into the energy model and later verified through testing at either the mid-construction or final stage. If the measured air changes per hour (ACH, if chosen) exceed the code-specified airtightness level, the building fails; if the measured ACH is lower, it passes.</p>                                            
+                                    <p className="text-base text-muted-foreground mt-2">In multi-unit buildings, the worst-performing zone sets the final score.</p>
                                 </div>
 
                                 <div className="w-full h-px bg-muted"></div>
 
                                 <div>
-                                    <h5 className="font-medium text-sm mb-2">Other Key Points</h5>
-                                    <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                    <h5 className="font-medium text-base mb-2">Other Key Points</h5>
+                                    <div className="text-base text-muted-foreground ml-4 space-y-1">
                                         <p>• For energy modelling, a multi-point test is required, reporting ACH₅₀, pressure exponent, and leakage area.</p>
                                         <p>• For basic code compliance, single- or two-point tests are fine — except NLA₁₀, which needs multi-point.</p>
                                         <p>• Combining zones? You must test each one. Use the lowest Airtightness Level for scoring if they're different. Reference the Illustrated Guide for the image above.</p>
@@ -597,8 +597,8 @@ export default function Performance9365Section({
                                 <div className="w-full h-px bg-muted"></div>
 
                                 <div>
-                                    <h5 className="font-medium text-sm mb-2">Potential Air Leakage Locations</h5>
-                                    <p className="text-sm text-muted-foreground mb-3">Common areas where air leakage occurs in buildings:</p>
+                                    <h5 className="font-medium text-base mb-2">Potential Air Leakage Locations</h5>
+                                    <p className="text-base text-muted-foreground mb-3">Common areas where air leakage occurs in buildings:</p>
                                     <div className="mb-3">
                                         <img src="/lovable-uploads/9d231144-3c4e-430b-9f8c-914698eae23e.png" alt="Figure 9.25-9 Potential air leakage locations in a house showing various points where air can escape including joints at attic hatches, ceiling light fixtures, windows, electrical outlets, around posts and columns, chimney leaks, plumbing stack penetrations, and more" className="w-full h-auto border border-border rounded" onLoad={() => console.log('Air leakage diagram loaded successfully')} onError={e => console.log('Failed to load air leakage diagram:', e)} />
                                     </div>
@@ -610,12 +610,12 @@ export default function Performance9365Section({
 
                             <div className="space-y-2">
                                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-2">
-                                    <p className="text-sm font-medium text-blue-800">📋 Helpful Resources:</p>
+                                    <p className="text-base font-medium text-blue-800">📋 Helpful Resources:</p>
                                     <div className="space-y-1">
-                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-700 hover:text-red-800 block">
+                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-base text-blue-700 hover:text-red-800 block">
                                             🔗 View the Blower Door Checklist
                                         </a>
-                                        <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-700 hover:text-red-800 block">
+                                        <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-base text-blue-700 hover:text-red-800 block">
                                             🔗 More airtightness information
                                         </a>
                                     </div>
@@ -655,7 +655,7 @@ export default function Performance9365Section({
                 })()}
 
                 {/* Mid-Construction Blower Door Test Checkbox */}
-                <div className="space-y-3 pt-4 border-t border-border/20">
+                <div id="midConstructionBlowerDoorPlanned" className="space-y-3 pt-4 border-t border-border/20">
                     <Checkbox
                         id="midConstructionBlowerDoor-9367-3"
                         checked={selections.midConstructionBlowerDoorPlanned}
@@ -708,7 +708,7 @@ export default function Performance9365Section({
             </div>
 
             {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <>
-                <div className="space-y-2">
+                <div id="waterHeaterType" className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Water Heater Type</label>
                     <Select value={selections.waterHeaterType} onValueChange={value => setSelections(prev => ({
                         ...prev,
@@ -724,7 +724,7 @@ export default function Performance9365Section({
                     </Select>
                 </div>
 
-                <div className="space-y-2">
+                <div id="waterHeater" className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Water Heater</label>
                     <Input type="text" placeholder="Enter Water Heater Make/Model" value={selections.waterHeater} onChange={e => setSelections(prev => ({
                         ...prev,
@@ -733,38 +733,33 @@ export default function Performance9365Section({
                 </div>
             </>}
 
-            <div className="space-y-2">
+            <div id="hasDWHR" className="space-y-2">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium text-slate-100">Is a drain water heat recovery system being installed?</label>
                     <InfoButton title="Drain Water Heat Recovery System Information">
                         <div className="space-y-4">
                             <div className="border-b pb-2">
-                                <h4 className="font-medium text-sm">ℹ️ Drain Water Heat Recovery (DWHR)</h4>
+                                <h4 className="font-medium text-base">ℹ️ Drain Water Heat Recovery (DWHR)</h4>
                             </div>
 
                             <div className="space-y-3">
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-base text-muted-foreground">
                                     DWHR systems capture heat from shower drain water and use it to preheat incoming cold water, reducing hot water energy use by 20–40%.
                                 </p>
 
                                 <div className="space-y-2">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-green-600 text-xs">✅</span>
-                                        <span className="text-xs">Improves energy efficiency</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-green-600 text-xs">✅</span>
-                                        <span className="text-xs">Helps earn NBC tiered compliance points</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-green-600 text-xs">✅</span>
-                                        <span className="text-xs">Great for homes with frequent showers</span>
-                                    </div>
+                                    <h5 className="font-medium text-base">How it works:</h5>
+                                    <p className="text-base text-muted-foreground">When hot water goes down the drain (like from a shower), the DWHR unit uses a heat exchanger to transfer that thermal energy to the incoming cold water supply before it reaches your water heater.</p>
                                 </div>
 
-                                <div className="space-y-1 text-xs text-muted-foreground">
-                                    <p><strong>Estimated cost:</strong> $800–$1,200 installed</p>
-                                    <p><strong>Best fit:</strong> Homes with vertical drain stacks and electric or heat pump water heaters.</p>
+                                <div className="space-y-2">
+                                    <h5 className="font-medium text-base">Benefits:</h5>
+                                    <div className="text-base text-muted-foreground space-y-1">
+                                        <p>• Reduces water heating energy consumption</p>
+                                        <p>• Lowers utility bills</p>
+                                        <p>• Contributes to overall building energy efficiency</p>
+                                        <p>• Works continuously with no maintenance required</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -784,7 +779,7 @@ export default function Performance9365Section({
                 </Select>
             </div>
 
-            <div className="space-y-2">
+            <div id="heatingType" className="space-y-2">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium text-slate-100">Heating Type <span className="text-red-400">*</span></label>
                     <InfoButton title="CAN/CSA F280-12 - Room by Room Heat Loss/Gain Calculation">
@@ -849,7 +844,7 @@ export default function Performance9365Section({
                 </WarningButton>
             </div>
 
-            {selections.heatingType && <div className="space-y-2">
+            {selections.heatingType && <div id="heatingEfficiency" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">
                     {selections.heatingType === 'furnace' ? 'Furnace' : selections.heatingType === 'boiler' ? 'Boiler' : selections.heatingType === 'heat-pump' ? 'Heat Pump' : 'Heating Efficiency'}
                 </label>
@@ -860,7 +855,7 @@ export default function Performance9365Section({
             </div>}
 
             {selections.heatingType === 'boiler' && <div className="space-y-4">
-                <div className="space-y-2">
+                <div id="indirectTank" className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Are you installing an indirect tank?</label>
                     <Select value={selections.indirectTank} onValueChange={value => setSelections(prev => ({
                         ...prev,
@@ -876,7 +871,7 @@ export default function Performance9365Section({
                     </Select>
                 </div>
 
-                {selections.indirectTank === 'yes' && <div className="space-y-2">
+                {selections.indirectTank === 'yes' && <div id="indirectTankSize" className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Indirect tank size (gallons)</label>
                     <Input type="number" placeholder="Enter tank size in gallons" value={selections.indirectTankSize} onChange={e => setSelections(prev => ({
                         ...prev,
@@ -885,7 +880,7 @@ export default function Performance9365Section({
                 </div>}
             </div>}
 
-            <div className="space-y-2">
+            <div id="coolingApplicable" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Are you installing cooling/air conditioning?</label>
                 <Select value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
                     ...prev,
@@ -902,14 +897,14 @@ export default function Performance9365Section({
             </div>
 
             {selections.coolingApplicable === "yes" && <div className="space-y-4">
-                <div className="space-y-2">
+                <div id="coolingMakeModel" className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Cooling System Make/Model</label>
                     <Input type="text" value={selections.coolingMakeModel} onChange={e => setSelections(prev => ({
                         ...prev,
                         coolingMakeModel: e.target.value
                     }))} placeholder="Enter cooling system make and model" className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                 </div>
-                <div className="space-y-2">
+                <div id="coolingEfficiency" className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Cooling System Efficiency</label>
                     <Input
                         type="text"
@@ -928,7 +923,7 @@ export default function Performance9365Section({
             {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
                 <h5 className="font-medium text-white">Secondary Suite HRV/ERV</h5>
 
-                <div className="space-y-2">
+                <div id="hasSecondaryHrv" className="space-y-2">
                     <div className="flex items-center gap-3">
                         <label className="text-sm font-medium text-slate-100">Will there be a second HRV/ERV for the secondary suite?</label>
                         <InfoButton title="Secondary Suite HRV/ERV Information">
@@ -971,7 +966,7 @@ export default function Performance9365Section({
                     </Select>
                 </div>
 
-                {selections.hasSecondaryHrv === "separate" && <div className="space-y-2">
+                {selections.hasSecondaryHrv === "separate" && <div id="secondaryHrvEfficiency" className="space-y-2">
                     <label className="text-sm font-medium text-slate-100">Secondary Suite HRV/ERV Make/Model</label>
                     <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
                         ...prev,
@@ -981,4 +976,4 @@ export default function Performance9365Section({
             </div>}
         </>
     );
-};
+}

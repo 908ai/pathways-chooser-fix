@@ -118,7 +118,7 @@ export default function Prescriptive9368Section({
                         parsedValue: parseFloat(selections.ceilingsAtticRSI || "0"),
                         minRSI: selections.hasHrv === "with_hrv" ? 8.67 : 10.43
                     });
-                    const minRSI = selections.hasHrv === "with_hrv" ? 8.67 : 10.43;
+                    const minRSI = selections.hasHrv === "with_hrv" ? 8.67 : selections.hasHrv === "without_hrv" ? 10.43 : 8.67;
                     const validation = validateRSI(selections.ceilingsAtticRSI, minRSI, `ceilings below attics ${selections.hasHrv === "with_hrv" ? "with HRV" : "without HRV"}`);
                     if (!validation.isValid && validation.warning) {
                         return <InfoCollapsible title={validation.warning.type === "rvalue-suspected" ? "R-Value Detected" : "RSI Value Too Low"} variant={validation.warning.type === "rvalue-suspected" ? "warning" : "destructive"}>

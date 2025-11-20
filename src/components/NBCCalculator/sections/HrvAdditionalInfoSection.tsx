@@ -96,7 +96,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                     {selections.compliancePath !== "9362" && (
                         <>
                             <h3 className="text-lg font-semibold text-white">HRV/ERV Information</h3>
-                            <div className="space-y-2">
+                            <div id="hasHrv" className="space-y-2">
                                 <div className="flex items-center gap-3">
                                     <label className="text-sm font-medium text-slate-100">Does this building include an HRV or ERV?</label>
                                     <InfoButton title="Should I include an HRV (Heat Recovery Ventilator)?">
@@ -149,7 +149,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                 </Select>
                             </div>
 
-                            {selections.hasHrv === "with_hrv" && <div className="space-y-2">
+                            {selections.hasHrv === "with_hrv" && <div id="hrvEfficiency" className="space-y-2">
                                 <label className="text-sm font-medium text-slate-100">HRV/ERV Make/Model</label>
                                 <Input type="text" placeholder="Input HRV/ERV make/model (e.g. Fantech SHR 1504)" value={selections.hrvEfficiency || ""} onChange={e => setSelections(prev => ({
                                     ...prev,
@@ -161,7 +161,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                             {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv" && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
                                 <h5 className="font-medium text-white">Secondary Suite HRV/ERV</h5>
 
-                                <div className="space-y-2">
+                                <div id="hasSecondaryHrv" className="space-y-2">
                                     <div className="flex items-center gap-3">
                                         <label className="text-sm font-medium text-slate-100">Will there be a second HRV/ERV for the secondary suite?</label>
                                         <InfoButton title="Secondary Suite HRV/ERV Information">
@@ -204,7 +204,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                     </Select>
                                 </div>
 
-                                {selections.hasSecondaryHrv === "separate" && <div className="space-y-2">
+                                {selections.hasSecondaryHrv === "separate" && <div id="secondaryHrvEfficiency" className="space-y-2">
                                     <label className="text-sm font-medium text-slate-100">Secondary Suite HRV/ERV Make/Model</label>
                                     <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
                                         ...prev,
@@ -239,7 +239,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                     )}
 
                     {/* Certification Interests */}
-                    <div className="space-y-4">
+                    <div id="interestedCertifications" className="space-y-4">
                         <div className="flex items-center gap-2">
                             <label className="text-sm font-medium text-slate-100">Are you interested in any of the following certifications or programs?</label>
                             <InfoButton title="Certification Information">
