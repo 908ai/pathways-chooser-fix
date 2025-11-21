@@ -585,7 +585,7 @@ const NBCCalculator = ({
         hrv_erv_efficiency: parseFloat(selections.hrvEfficiency) || null,
         airtightness_al: parseFloat(selections.airtightness || selections.customAirtightness) || null,
         building_volume: parseFloat(selections.buildingVolume) || null,
-        compliance_status: 'draft',
+        compliance_status: editingProjectStatus === 'needs_revision' ? 'needs_revision' : 'draft',
         total_points: totalPoints,
         mid_construction_blower_door_planned: selections.midConstructionBlowerDoorPlanned,
       };
