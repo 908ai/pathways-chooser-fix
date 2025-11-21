@@ -800,7 +800,7 @@ const ProjectDetail = () => {
                 <CardContent className="space-y-3 text-sm">
                   <div>
                     <Label className="text-slate-300">Pathway</Label>
-                    <p className="font-medium text-white">{project.selected_pathway === 'performance' ? 'Performance Path' : 'Prescriptive Path'}</p>
+                    <p className="font-medium text-white">{getPathwayDisplay(project.selected_pathway)?.text || 'Not specified'}</p>
                   </div>
                   <div>
                     <Label className="text-slate-300">Performance Result</Label>
