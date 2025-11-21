@@ -1,5 +1,5 @@
 import NewProjectCard from '@/components/dashboard/NewProjectCard';
-import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 interface ProjectKanbanViewProps {
   projects: any[];
@@ -10,12 +10,21 @@ interface ProjectKanbanViewProps {
 }
 
 const ProjectKanbanView = ({ projects, onViewProject, onEditProject, onDuplicateProject, onDeleteProject }: ProjectKanbanViewProps) => {
-  const statuses = [
+  const allStatuses = [
     { id: 'draft', title: 'Draft' },
     { id: 'submitted', title: 'Submitted' },
     { id: 'needs_revision', title: 'Needs Revision' },
     { id: 'complete', title: 'Complete' },
   ];
+
+  const hasNeedsRevisionProjects = projects.some(p => p.compliance_status === 'needs_revision');
+
+  const visibleStatuses = allStatuses.filter(status => {
+    if (status.id === 'needs_revision') {
+      return hasNeedsRevisionProjects;
+    }
+    return true;
+  });
 
   const getProjectsByStatus = (statusId: string) => {
     return projects.filter(p => {
@@ -29,8 +38,11 @@ const ProjectKanbanView = ({ projects, onViewProject, onEditProject, onDuplicate
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {statuses.map(status => {
+    <div className={cn(
+      "grid grid-cols-1 md:grid-cols-2 gap-6",
+      hasNeedsRevisionProjects ? "lg:grid-cols-4" : "lg:grid-cols-3"
+    )}>
+      {visibleStatuses.map(status => {
         const statusProjects = getProjectsByStatus(status.id);
         return (
           <div key={status.id}>
