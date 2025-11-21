@@ -28,9 +28,20 @@ interface ProjectSummaryFormProps {
   editingProjectId?: string;
   autoSave?: boolean;
   onFixItem: (fieldId: string) => void;
+  requiredPendingItems: { label: string; fieldId: string }[];
+  optionalPendingItems: { label: string; fieldId: string }[];
 }
 
-const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectId, autoSave = false, onFixItem }: ProjectSummaryFormProps) => {
+const ProjectSummaryForm = ({ 
+  selections, 
+  uploadedFiles, 
+  onSave, 
+  editingProjectId, 
+  autoSave = false, 
+  onFixItem,
+  requiredPendingItems,
+  optionalPendingItems
+}: ProjectSummaryFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -68,57 +79,8 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
     return pathwayMap[selections.compliancePath] || 'NBC 9.36 Pathway';
   };
 
-  const getPendingItems = (selections: any) => {
-    const pending: { label: string; fieldId: string }[] = [];
-    const addIfMissing = (fieldId: keyof typeof selections, label: string) => {
-      const value = selections[fieldId];
-      if (value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0)) {
-        pending.push({ label, fieldId: String(fieldId) });
-      }
-    };
-
-    // Project & Contact Info
-    addIfMissing('firstName', 'First Name');
-    addIfMissing('lastName', 'Last Name');
-    addIfMissing('company', 'Company Name');
-    addIfMissing('phoneNumber', 'Phone Number');
-    addIfMissing('streetAddress', 'Project Street Address');
-    addIfMissing('city', 'Project City');
-    addIfMissing('province', 'Project Province');
-    addIfMissing('postalCode', 'Project Postal Code');
-    addIfMissing('buildingType', 'Building Type');
-    if (selections.province === 'alberta') addIfMissing('climateZone', 'Climate Zone');
-
-    // Compliance Path
-    addIfMissing('compliancePath', 'Compliance Path');
-
-    // Technical Specs (simplified check)
-    if (selections.compliancePath) {
-      if (selections.compliancePath.includes('9365') || selections.compliancePath.includes('9367')) {
-        addIfMissing('frontDoorOrientation', 'Front Door Orientation');
-        addIfMissing('energuidePathway', 'EnerGuide Pathway Selection');
-      }
-      addIfMissing('ceilingsAtticRSI', 'Ceilings/Attic Insulation');
-      addIfMissing('wallRSI', 'Above Grade Wall Insulation');
-      addIfMissing('belowGradeRSI', 'Below Grade Wall Insulation');
-      addIfMissing('windowUValue', 'Window U-Value');
-      addIfMissing('airtightness', 'Airtightness Level');
-      addIfMissing('heatingType', 'Heating Type');
-      addIfMissing('waterHeaterType', 'Water Heater Type');
-    }
-    
-    if (uploadedFiles.length === 0) {
-      pending.push({ label: 'At least one project document (e.g., building plans)', fieldId: 'fileUploadSection' });
-    }
-
-    return pending;
-  };
-
-  const pendingItems = getPendingItems(selections);
-  const isUploadPending = uploadedFiles.length === 0;
-
   const handleAttemptSubmit = () => {
-    if (pendingItems.length > 0) {
+    if (requiredPendingItems.length > 0) {
       setIsConfirming(true);
     } else {
       handleSave();
@@ -253,18 +215,42 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
             <Input id="projectName" value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="Enter project name" className="bg-slate-900/50 border-slate-600" />
           </div>
 
-          <Accordion type="multiple" defaultValue={['item-pending', 'item-1']} className="w-full">
-            {pendingItems.length > 0 && (
-              <AccordionItem value="item-pending" className="border-yellow-500/30">
-                <AccordionTrigger className="text-lg font-semibold text-yellow-400 hover:no-underline">
+          <Accordion type="multiple" defaultValue={['item-required', 'item-1']} className="w-full">
+            {requiredPendingItems.length > 0 && (
+              <AccordionItem value="item-required" className="border-red-500/30">
+                <AccordionTrigger className="text-lg font-semibold text-red-400 hover:no-underline">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="h-5 w-5" />
-                    Items Pending ({pendingItems.length})
+                    Required Items Pending ({requiredPendingItems.length})
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="space-y-2 pt-4">
-                  <p className="text-sm text-slate-300 mb-2">Click an item to jump to the required field:</p>
-                  {pendingItems.map((item, index) => (
+                  <p className="text-sm text-slate-300 mb-2">The following items are required to submit your project. Click an item to fix it.</p>
+                  {requiredPendingItems.map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={() => onFixItem(item.fieldId)}
+                      className="w-full text-left p-2 rounded-md bg-red-900/20 hover:bg-red-900/40 transition-colors flex items-center justify-between"
+                    >
+                      <span className="text-red-300">{item.label}</span>
+                      <ChevronRight className="h-4 w-4 text-red-400" />
+                    </button>
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
+            )}
+
+            {optionalPendingItems.length > 0 && (
+              <AccordionItem value="item-optional-pending" className="border-yellow-500/30">
+                <AccordionTrigger className="text-lg font-semibold text-yellow-400 hover:no-underline">
+                  <div className="flex items-center gap-2">
+                    <Info className="h-5 w-5" />
+                    Optional Items Pending ({optionalPendingItems.length})
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="space-y-2 pt-4">
+                  <p className="text-sm text-slate-300 mb-2">These items are recommended for a complete submission but are not strictly required.</p>
+                  {optionalPendingItems.map((item, index) => (
                     <button
                       key={index}
                       onClick={() => onFixItem(item.fieldId)}
@@ -387,7 +373,7 @@ const ProjectSummaryForm = ({ selections, uploadedFiles, onSave, editingProjectI
           <AlertDialogHeader>
             <AlertDialogTitle>Submit Incomplete Application?</AlertDialogTitle>
             <AlertDialogDescription>
-              You have {pendingItems.length} missing item(s). Submitting an incomplete application may cause delays in your review. Are you sure you want to proceed?
+              You have {requiredPendingItems.length} required item(s) missing. Submitting an incomplete application may cause delays in your review. Are you sure you want to proceed?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

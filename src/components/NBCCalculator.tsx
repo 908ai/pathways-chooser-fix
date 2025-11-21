@@ -969,6 +969,114 @@ const NBCCalculator = ({
     }
   };
 
+  const getPendingItems = (selections: any, uploadedFiles: any[]) => {
+    const required: { label: string; fieldId: string }[] = [];
+    const optional: { label: string; fieldId: string }[] = [];
+
+    const addIfMissing = (list: { label: string; fieldId: string }[], fieldId: keyof typeof selections, label: string) => {
+      const value = selections[fieldId];
+      if (value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0)) {
+        list.push({ label, fieldId: String(fieldId) });
+      }
+    };
+
+    // Step 1: Always Required
+    addIfMissing(required, 'firstName', 'First Name');
+    addIfMissing(required, 'lastName', 'Last Name');
+    addIfMissing(required, 'company', 'Company Name');
+    addIfMissing(required, 'phoneNumber', 'Phone Number');
+    addIfMissing(required, 'streetAddress', 'Project Street Address');
+    addIfMissing(required, 'city', 'Project City');
+    addIfMissing(required, 'province', 'Project Province');
+    addIfMissing(required, 'postalCode', 'Project Postal Code');
+    addIfMissing(required, 'buildingType', 'Building Type');
+    if (selections.province === 'alberta') {
+        addIfMissing(required, 'climateZone', 'Climate Zone');
+    }
+
+    // Step 2: Always Required
+    addIfMissing(required, 'compliancePath', 'Compliance Path');
+
+    // Step 4: Always Required
+    if (uploadedFiles.length === 0) {
+        required.push({ label: 'At least one project document (e.g., building plans)', fieldId: 'fileUploadSection' });
+    }
+
+    // Step 3: Conditional Fields
+    switch (selections.compliancePath) {
+        case '9362': // Prescriptive
+            addIfMissing(required, 'hasHrv', 'HRV/ERV inclusion');
+            if (selections.hasHrv === 'with_hrv') {
+                addIfMissing(required, 'hrvEfficiency', 'HRV/ERV Efficiency');
+            }
+            addIfMissing(required, 'ceilingsAtticRSI', 'Ceilings/Attic Insulation');
+            addIfMissing(required, 'hasCathedralOrFlatRoof', 'Cathedral/Flat Roof selection');
+            if (selections.hasCathedralOrFlatRoof === 'yes') {
+                addIfMissing(required, 'cathedralFlatRSIValue', 'Cathedral/Flat Roof RSI');
+            }
+            addIfMissing(required, 'wallRSI', 'Above Grade Wall Insulation');
+            addIfMissing(required, 'belowGradeRSI', 'Below Grade Wall Insulation');
+            addIfMissing(required, 'floorsSlabsSelected', 'Floors/Slabs selection');
+            addIfMissing(required, 'windowUValue', 'Window & Door U-Value');
+            addIfMissing(required, 'hasSkylights', 'Skylights selection');
+            if (selections.hasSkylights === 'yes') {
+                addIfMissing(required, 'skylightUValue', 'Skylight U-Value');
+            }
+            addIfMissing(required, 'airtightness', 'Airtightness Level');
+            addIfMissing(required, 'heatingType', 'Heating Type');
+            if (selections.heatingType) {
+                addIfMissing(required, 'heatingEfficiency', 'Heating Efficiency');
+            }
+            addIfMissing(required, 'coolingApplicable', 'Cooling/AC selection');
+            if (selections.coolingApplicable === 'yes') {
+                addIfMissing(required, 'coolingEfficiency', 'Cooling Efficiency');
+            }
+            addIfMissing(required, 'hasDWHR', 'Drain Water Heat Recovery selection');
+            if (!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes')) {
+                addIfMissing(required, 'waterHeaterType', 'Water Heater Type');
+                if (selections.waterHeaterType) {
+                    addIfMissing(required, 'waterHeater', 'Water Heater Efficiency');
+                }
+            }
+            break;
+
+        case '9365': // Performance
+        case '9367': // Tiered Performance
+            addIfMissing(required, 'frontDoorOrientation', 'Front Door Orientation');
+            addIfMissing(required, 'energuidePathway', 'EnerGuide Pathway selection');
+            addIfMissing(required, 'ceilingsAtticRSI', 'Ceilings/Attic assembly info');
+            addIfMissing(required, 'wallRSI', 'Above Grade Wall assembly info');
+            addIfMissing(required, 'belowGradeRSI', 'Below Grade Wall assembly info');
+            addIfMissing(required, 'airtightness', 'Airtightness Level');
+            addIfMissing(required, 'heatingType', 'Heating Type');
+            if (selections.heatingType) {
+                addIfMissing(required, 'heatingEfficiency', 'Heating Make/Model');
+            }
+            addIfMissing(required, 'waterHeaterType', 'Water Heater Type');
+             if (selections.waterHeaterType) {
+                addIfMissing(required, 'waterHeater', 'Water Heater Make/Model');
+            }
+            break;
+
+        case '9368': // Tiered Prescriptive
+            addIfMissing(required, 'ceilingsAtticRSI', 'Ceilings/Attic RSI');
+            addIfMissing(required, 'wallRSI', 'Above Grade Wall RSI');
+            addIfMissing(required, 'belowGradeRSI', 'Below Grade Wall RSI');
+            addIfMissing(required, 'windowUValue', 'Window U-Value');
+            addIfMissing(required, 'airtightness', 'Airtightness Level');
+            addIfMissing(required, 'hrvEfficiency', 'HRV/ERV Efficiency');
+            addIfMissing(required, 'waterHeater', 'Water Heater Type');
+            break;
+    }
+    
+    // Optional but recommended fields
+    addIfMissing(optional, 'midConstructionBlowerDoorPlanned', 'Mid-Construction Blower Door Test');
+
+    return { required, optional };
+  };
+
+  const { required: pendingItems, optional: optionalPendingItems } = getPendingItems(selections, uploadedFiles);
+
   const showSaveDraftButton = !editingProjectStatus || (editingProjectStatus !== 'pass' && editingProjectStatus !== 'fail' && editingProjectStatus !== 'Compliant' && editingProjectStatus !== 'submitted');
 
   if (isLoading) {
@@ -1290,6 +1398,8 @@ const NBCCalculator = ({
                 autoSave={autoSaveTrigger}
                 editingProjectId={projectId || undefined}
                 onSave={() => setShowProjectSummary(false)}
+                requiredPendingItems={pendingItems}
+                optionalPendingItems={optionalPendingItems}
                 onFixItem={handleFixItem}
               />
             </div>
