@@ -579,56 +579,52 @@ const ProjectDetail = () => {
                 </div>
               )}
               
-              {(project.compliance_status !== 'pass' && project.compliance_status !== 'fail') || canDeleteProjects ? (
-                <div className="flex items-center gap-2">
-                  {!isEditing ? (
-                    <>
-                      {(project.compliance_status !== 'pass' && project.compliance_status !== 'fail') && (
-                        <>
-                          <Button 
-                            onClick={() => navigate(`/calculator?edit=${project.id}`)} 
-                            variant="outline"
-                            className="animate-fade-in"
-                          >
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit Project
-                          </Button>
-                        </>
-                      )}
-                      {((project.compliance_status !== 'pass' && project.compliance_status !== 'fail') || canDeleteProjects) && (
-                        <Button 
-                          onClick={handleDelete} 
-                          disabled={deleting}
-                          variant="destructive"
-                          className="animate-fade-in"
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          {deleting ? 'Deleting...' : 'Delete Project'}
-                        </Button>
-                      )}
-                    </>
-                  ) : (
-                    <>
+              <div className="flex items-center gap-2">
+                {!isEditing ? (
+                  <>
+                    {(project.compliance_status !== 'pass' && project.compliance_status !== 'fail' && project.compliance_status !== 'submitted') && (
                       <Button 
-                        onClick={handleSave} 
-                        disabled={saving}
-                        className="animate-fade-in"
-                      >
-                        <Save className="h-4 w-4 mr-2" />
-                        {saving ? 'Saving...' : 'Save Changes'}
-                      </Button>
-                      <Button 
-                        onClick={handleCancelEdit} 
+                        onClick={() => navigate(`/calculator?edit=${project.id}`)} 
                         variant="outline"
                         className="animate-fade-in"
                       >
-                        <X className="h-4 w-4 mr-2" />
-                        Cancel
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit Project
                       </Button>
-                    </>
-                  )}
-                </div>
-              ) : null}
+                    )}
+                    {((project.compliance_status !== 'pass' && project.compliance_status !== 'fail') || canDeleteProjects) && (
+                      <Button 
+                        onClick={handleDelete} 
+                        disabled={deleting}
+                        variant="destructive"
+                        className="animate-fade-in"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        {deleting ? 'Deleting...' : 'Delete Project'}
+                      </Button>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Button 
+                      onClick={handleSave} 
+                      disabled={saving}
+                      className="animate-fade-in"
+                    >
+                      <Save className="h-4 w-4 mr-2" />
+                      {saving ? 'Saving...' : 'Save Changes'}
+                    </Button>
+                    <Button 
+                      onClick={handleCancelEdit} 
+                      variant="outline"
+                      className="animate-fade-in"
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      Cancel
+                    </Button>
+                  </>
+                )}
+              </div>
               
               <AlertDialog>
                 <AlertDialogTrigger asChild>
