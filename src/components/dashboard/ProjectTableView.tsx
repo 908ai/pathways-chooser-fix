@@ -43,6 +43,8 @@ const getStatusInfo = (status: string | null) => {
       return { text: 'Submitted', color: 'bg-blue-500 text-blue-50' };
     case 'draft':
       return { text: 'Draft', color: 'bg-gray-500 text-gray-50' };
+    case 'needs_revision':
+      return { text: 'Needs Revision', color: 'bg-yellow-500 text-yellow-50' };
     default:
       return { text: 'In Progress', color: 'bg-orange-500 text-orange-50' };
   }
