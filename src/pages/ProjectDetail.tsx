@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User, AlertTriangle } from 'lucide-react';
@@ -27,6 +26,17 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+
+const DetailItem = ({ label, value, unit = '' }: { label: string; value: any; unit?: string }) => {
+  if (value === null || value === undefined || value === '') return null;
+  const displayValue = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value);
+  return (
+    <div className="flex justify-between items-center text-sm py-2 border-b border-slate-700 last:border-b-0">
+      <span className="text-slate-300">{label}</span>
+      <span className="font-medium text-white text-right">{displayValue}{unit && ` ${unit}`}</span>
+    </div>
+  );
+};
 
 const ProjectDetail = () => {
   const { id } = useParams();
@@ -790,7 +800,7 @@ const ProjectDetail = () => {
           </TabsContent>
 
           <TabsContent value="technical" className="mt-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-white">
@@ -798,79 +808,13 @@ const ProjectDetail = () => {
                     Building Envelope
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-200 drop-shadow-sm">Attic RSI:</span>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          step="0.1"
-                          value={editedProject?.attic_rsi || ''}
-                          onChange={(e) => handleInputChange('attic_rsi', e.target.value)}
-                          className="w-20 h-6 text-xs"
-                        />
-                      ) : (
-                        <span className="font-medium text-white">{project.attic_rsi || 'N/A'}</span>
-                      )}
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-200 drop-shadow-sm">Wall RSI:</span>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          step="0.1"
-                          value={editedProject?.wall_rsi || ''}
-                          onChange={(e) => handleInputChange('wall_rsi', e.target.value)}
-                          className="w-20 h-6 text-xs"
-                        />
-                      ) : (
-                        <span className="font-medium text-white">{project.wall_rsi || 'N/A'}</span>
-                      )}
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-200 drop-shadow-sm">Floor RSI:</span>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          step="0.1"
-                          value={editedProject?.floor_rsi || ''}
-                          onChange={(e) => handleInputChange('floor_rsi', e.target.value)}
-                          className="w-20 h-6 text-xs"
-                        />
-                      ) : (
-                        <span className="font-medium text-white">{project.floor_rsi || 'N/A'}</span>
-                      )}
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-200 drop-shadow-sm">Below Grade RSI:</span>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          step="0.1"
-                          value={editedProject?.below_grade_rsi || ''}
-                          onChange={(e) => handleInputChange('below_grade_rsi', e.target.value)}
-                          className="w-20 h-6 text-xs"
-                        />
-                      ) : (
-                        <span className="font-medium text-white">{project.below_grade_rsi || 'N/A'}</span>
-                      )}
-                    </div>
-                    <div className="flex justify-between col-span-2">
-                      <span className="text-gray-200 drop-shadow-sm">Window U-Value:</span>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          step="0.01"
-                          value={editedProject?.window_u_value || ''}
-                          onChange={(e) => handleInputChange('window_u_value', e.target.value)}
-                          className="w-20 h-6 text-xs"
-                        />
-                      ) : (
-                        <span className="font-medium text-white">{project.window_u_value || 'N/A'}</span>
-                      )}
-                    </div>
-                  </div>
+                <CardContent className="space-y-1">
+                  <DetailItem label="Attic/Ceiling RSI" value={project.attic_rsi} unit="RSI" />
+                  <DetailItem label="Above-Grade Wall RSI" value={project.wall_rsi} unit="RSI" />
+                  <DetailItem label="Below-Grade Wall RSI" value={project.below_grade_rsi} unit="RSI" />
+                  <DetailItem label="Exposed Floor RSI" value={project.floor_rsi} unit="RSI" />
+                  <DetailItem label="Window & Door U-Value" value={project.window_u_value} unit="W/(m²·K)" />
+                  <DetailItem label="Mid-Construction Blower Door Test" value={project.mid_construction_blower_door_planned} />
                 </CardContent>
               </Card>
 
@@ -881,41 +825,35 @@ const ProjectDetail = () => {
                     Mechanical Systems
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-200 drop-shadow-sm">Heating System:</span>
-                      <span className="font-medium text-white">{project.heating_system_type || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-200 drop-shadow-sm">Heating Efficiency:</span>
-                      <span className="font-medium text-white">{project.heating_efficiency || 'N/A'}</span>
-                    </div>
-                    {project.secondary_heating_system_type && (
-                      <>
-                        <div className="flex justify-between">
-                          <span className="text-gray-200 drop-shadow-sm">Secondary Heating System:</span>
-                          <span className="font-medium text-white">{project.secondary_heating_system_type}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-200 drop-shadow-sm">Secondary Heating Efficiency:</span>
-                          <span className="font-medium text-white">{project.secondary_heating_efficiency || 'N/A'}</span>
-                        </div>
-                      </>
-                    )}
-                    <div className="flex justify-between">
-                      <span className="text-gray-200 drop-shadow-sm">Cooling System:</span>
-                      <span className="font-medium text-white">{project.cooling_system_type || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-200 drop-shadow-sm">Water Heating:</span>
-                      <span className="font-medium text-white">{project.water_heating_type || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-200 drop-shadow-sm">HRV/ERV Type:</span>
-                      <span className="font-medium text-white">{project.hrv_erv_type || 'N/A'}</span>
-                    </div>
-                  </div>
+                <CardContent className="space-y-1">
+                  <DetailItem label="Primary Heating System" value={project.heating_system_type} />
+                  <DetailItem label="Primary Heating Efficiency" value={project.heating_efficiency} />
+                  {project.secondary_heating_system_type && (
+                    <>
+                      <DetailItem label="Secondary Heating System" value={project.secondary_heating_system_type} />
+                      <DetailItem label="Secondary Heating Efficiency" value={project.secondary_heating_efficiency} />
+                    </>
+                  )}
+                  <DetailItem label="Cooling System" value={project.cooling_system_type} />
+                  <DetailItem label="Cooling Efficiency" value={project.cooling_efficiency} unit="SEER" />
+                  <DetailItem label="Water Heating System" value={project.water_heating_type} />
+                  <DetailItem label="Water Heating Efficiency" value={project.water_heating_efficiency} unit="UEF" />
+                  <DetailItem label="Ventilation (HRV/ERV)" value={project.hrv_erv_type} />
+                  <DetailItem label="Ventilation Efficiency" value={project.hrv_erv_efficiency} unit="SRE %" />
+                </CardContent>
+              </Card>
+
+              <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-white">
+                    <FileText className="h-5 w-5" />
+                    Performance Metrics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-1">
+                  <DetailItem label="Airtightness Level" value={project.airtightness_al} unit="ACH₅₀" />
+                  <DetailItem label="Building Volume" value={project.building_volume} unit="m³" />
+                  <DetailItem label="Annual Energy Consumption" value={project.annual_energy_consumption} unit="GJ/year" />
                 </CardContent>
               </Card>
             </div>
