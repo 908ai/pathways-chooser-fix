@@ -35,6 +35,8 @@ const getStatusInfo = (status: string | null) => {
       return { text: 'Submitted', color: 'bg-blue-500' };
     case 'draft':
       return { text: 'Draft', color: 'bg-gray-500' };
+    case 'needs_revision':
+      return { text: 'Needs Revision', color: 'bg-yellow-500' };
     default:
       return { text: 'In Progress', color: 'bg-orange-500' };
   }
@@ -135,7 +137,7 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
           </div>
         </div>
         
-        {(statusInfo.text === 'In Progress' || statusInfo.text === 'Draft' || statusInfo.text === 'Submitted') && (
+        {(statusInfo.text === 'In Progress' || statusInfo.text === 'Draft' || statusInfo.text === 'Submitted' || statusInfo.text === 'Needs Revision') && (
           <div className="space-y-2 pt-2 border-t border-border/50">
             <div className="flex justify-between items-center text-xs text-muted-foreground">
               <span>Compliance Checklist</span>
