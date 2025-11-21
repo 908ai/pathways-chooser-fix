@@ -50,7 +50,7 @@ interface NBCCalculatorProps {
 
 const getStepForField = (fieldId: string) => {
   const step1Fields = ['firstName', 'lastName', 'company', 'phoneNumber', 'companyAddress', 'streetAddress', 'unitNumber', 'city', 'postalCode', 'buildingType', 'province', 'climateZone', 'occupancyClass'];
-  const step2Fields = ['compliancePath', 'frontDoorOrientation', 'energuidePathway'];
+  const step2Fields = ['compliancePath', 'frontDoorOrientation'];
   const step4Fields = ['fileUploadSection'];
 
   if (step1Fields.includes(fieldId)) return 1;
