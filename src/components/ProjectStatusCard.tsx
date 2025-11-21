@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { AlertTriangle, Info, ChevronRight } from 'lucide-react';
 import { getPendingItems } from '@/lib/projectUtils';
 
@@ -91,12 +91,7 @@ const ProjectStatusCard = ({ project, onFixItem }: ProjectStatusCardProps) => {
 
   return (
     <Card className="mb-6 bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-white">
-          Project Status & Action Items
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 pt-6">
         {required.length > 0 && (
           <div className="space-y-3">
             <h4 className="flex items-center gap-2 text-lg font-semibold text-red-400">
