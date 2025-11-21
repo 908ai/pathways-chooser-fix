@@ -190,11 +190,11 @@ const ProjectSummaryForm = ({
     if (value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0)) {
       return null;
     }
-    const displayValue = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value;
+    const displayValue = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value);
     return (
-      <div className="flex justify-between items-center text-sm py-2 border-b border-slate-700">
-        <span className="text-slate-300">{label}:</span>
-        <span className="font-medium text-white">{displayValue} {unit}</span>
+      <div className="flex justify-between items-start text-sm py-2 border-b border-slate-700 md:border-none">
+        <span className="text-slate-300 mr-2">{label}:</span>
+        <span className="font-medium text-white text-right break-words">{displayValue} {unit}</span>
       </div>
     );
   };
@@ -224,18 +224,20 @@ const ProjectSummaryForm = ({
                     Required Items Pending ({requiredPendingItems.length})
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="space-y-2 pt-4">
-                  <p className="text-sm text-slate-300 mb-2">The following items are required to submit your project. Click an item to fix it.</p>
-                  {requiredPendingItems.map((item, index) => (
-                    <button
-                      key={index}
-                      onClick={() => onFixItem(item.fieldId)}
-                      className="w-full text-left p-2 rounded-md bg-red-900/20 hover:bg-red-900/40 transition-colors flex items-center justify-between"
-                    >
-                      <span className="text-red-300">{item.label}</span>
-                      <ChevronRight className="h-4 w-4 text-red-400" />
-                    </button>
-                  ))}
+                <AccordionContent className="pt-4">
+                  <p className="text-sm text-slate-300 mb-4">The following items are required to submit your project. Click an item to fix it.</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {requiredPendingItems.map((item, index) => (
+                      <button
+                        key={index}
+                        onClick={() => onFixItem(item.fieldId)}
+                        className="w-full text-left p-2 rounded-md bg-red-900/20 hover:bg-red-900/40 transition-colors flex items-center justify-between"
+                      >
+                        <span className="text-red-300 text-sm">{item.label}</span>
+                        <ChevronRight className="h-4 w-4 text-red-400 flex-shrink-0" />
+                      </button>
+                    ))}
+                  </div>
                 </AccordionContent>
               </AccordionItem>
             )}
@@ -248,100 +250,110 @@ const ProjectSummaryForm = ({
                     Optional Items Pending ({optionalPendingItems.length})
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="space-y-2 pt-4">
-                  <p className="text-sm text-slate-300 mb-2">These items are recommended for a complete submission but are not strictly required.</p>
-                  {optionalPendingItems.map((item, index) => (
-                    <button
-                      key={index}
-                      onClick={() => onFixItem(item.fieldId)}
-                      className="w-full text-left p-2 rounded-md bg-yellow-900/20 hover:bg-yellow-900/40 transition-colors flex items-center justify-between"
-                    >
-                      <span className="text-yellow-300">{item.label}</span>
-                      <ChevronRight className="h-4 w-4 text-yellow-400" />
-                    </button>
-                  ))}
+                <AccordionContent className="pt-4">
+                  <p className="text-sm text-slate-300 mb-4">These items are recommended for a complete submission but are not strictly required.</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {optionalPendingItems.map((item, index) => (
+                      <button
+                        key={index}
+                        onClick={() => onFixItem(item.fieldId)}
+                        className="w-full text-left p-2 rounded-md bg-yellow-900/20 hover:bg-yellow-900/40 transition-colors flex items-center justify-between"
+                      >
+                        <span className="text-yellow-300 text-sm">{item.label}</span>
+                        <ChevronRight className="h-4 w-4 text-yellow-400 flex-shrink-0" />
+                      </button>
+                    ))}
+                  </div>
                 </AccordionContent>
               </AccordionItem>
             )}
 
             <AccordionItem value="item-1">
               <AccordionTrigger className="text-lg font-semibold"><Building className="h-5 w-5 mr-2" />Project & Contact Information</AccordionTrigger>
-              <AccordionContent className="space-y-2 pt-4">
-                {renderField('First Name', selections.firstName)}
-                {renderField('Last Name', selections.lastName)}
-                {renderField('Company', selections.company)}
-                {renderField('Phone Number', selections.phoneNumber)}
-                {renderField('Company Address', selections.companyAddress)}
-                {renderField('Street Address', selections.streetAddress)}
-                {renderField('Unit Number', selections.unitNumber)}
-                {renderField('City', selections.city)}
-                {renderField('Province', selections.province)}
-                {renderField('Postal Code', selections.postalCode)}
-                {renderField('Building Type', selections.buildingType)}
-                {renderField('Occupancy Class', selections.occupancyClass)}
-                {renderField('Climate Zone', selections.climateZone)}
-                {renderField('Front Door Orientation', selections.frontDoorOrientation)}
-                {renderField('EnerGuide Pathway', selections.energuidePathway)}
+              <AccordionContent className="pt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                  {renderField('First Name', selections.firstName)}
+                  {renderField('Last Name', selections.lastName)}
+                  {renderField('Company', selections.company)}
+                  {renderField('Phone Number', selections.phoneNumber)}
+                  {renderField('Company Address', selections.companyAddress)}
+                  {renderField('Street Address', selections.streetAddress)}
+                  {renderField('Unit Number', selections.unitNumber)}
+                  {renderField('City', selections.city)}
+                  {renderField('Province', selections.province)}
+                  {renderField('Postal Code', selections.postalCode)}
+                  {renderField('Building Type', selections.buildingType)}
+                  {renderField('Occupancy Class', selections.occupancyClass)}
+                  {renderField('Climate Zone', selections.climateZone)}
+                  {renderField('Front Door Orientation', selections.frontDoorOrientation)}
+                  {renderField('EnerGuide Pathway', selections.energuidePathway)}
+                </div>
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-2">
               <AccordionTrigger className="text-lg font-semibold"><Thermometer className="h-5 w-5 mr-2" />Building Envelope</AccordionTrigger>
-              <AccordionContent className="space-y-2 pt-4">
-                {renderField('Ceilings/Attic', selections.ceilingsAtticRSI, 'RSI')}
-                {renderField('Cathedral/Flat Roof', selections.cathedralFlatRSIValue || selections.cathedralFlatRSI, 'RSI')}
-                {renderField('Above Grade Walls', selections.wallRSI, 'RSI')}
-                {renderField('Below Grade Walls', selections.belowGradeRSI || selections.foundationWallsRSI, 'RSI')}
-                {renderField('Floors over Unheated Spaces', selections.floorsUnheatedRSI || selections.floorsOverUnheatedSpacesRSI, 'RSI')}
-                {renderField('Floors over Garages', selections.floorsGarageRSI, 'RSI')}
-                {renderField('Heated Floors', selections.heatedFloorsRSI || selections.inFloorHeatRSI, 'RSI')}
-                {renderField('Slab on Grade', selections.slabOnGradeRSI || selections.slabOnGradeIntegralFootingRSI, 'RSI')}
-                {renderField('Unheated Floor Below Frostline', selections.unheatedFloorBelowFrostRSI)}
-                {renderField('Unheated Floor Above Frostline', selections.unheatedFloorAboveFrostRSI, 'RSI')}
-                {renderField('Window U-Value', selections.windowUValue, 'W/(m²·K)')}
-                {renderField('Skylight U-Value', selections.skylightUValue, 'W/(m²·K)')}
-                {renderField('Airtightness', selections.airtightness || selections.customAirtightness, 'ACH50')}
-                {renderField('Building Volume', selections.buildingVolume, 'm³')}
-                {renderField('Mid-Construction Blower Door Test', selections.midConstructionBlowerDoorPlanned)}
+              <AccordionContent className="pt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                  {renderField('Ceilings/Attic', selections.ceilingsAtticRSI, 'RSI')}
+                  {renderField('Cathedral/Flat Roof', selections.cathedralFlatRSIValue || selections.cathedralFlatRSI, 'RSI')}
+                  {renderField('Above Grade Walls', selections.wallRSI, 'RSI')}
+                  {renderField('Below Grade Walls', selections.belowGradeRSI || selections.foundationWallsRSI, 'RSI')}
+                  {renderField('Floors over Unheated Spaces', selections.floorsUnheatedRSI || selections.floorsOverUnheatedSpacesRSI, 'RSI')}
+                  {renderField('Floors over Garages', selections.floorsGarageRSI, 'RSI')}
+                  {renderField('Heated Floors', selections.heatedFloorsRSI || selections.inFloorHeatRSI, 'RSI')}
+                  {renderField('Slab on Grade', selections.slabOnGradeRSI || selections.slabOnGradeIntegralFootingRSI, 'RSI')}
+                  {renderField('Unheated Floor Below Frostline', selections.unheatedFloorBelowFrostRSI)}
+                  {renderField('Unheated Floor Above Frostline', selections.unheatedFloorAboveFrostRSI, 'RSI')}
+                  {renderField('Window U-Value', selections.windowUValue, 'W/(m²·K)')}
+                  {renderField('Skylight U-Value', selections.skylightUValue, 'W/(m²·K)')}
+                  {renderField('Airtightness', selections.airtightness || selections.customAirtightness, 'ACH50')}
+                  {renderField('Building Volume', selections.buildingVolume, 'm³')}
+                  {renderField('Mid-Construction Blower Door Test', selections.midConstructionBlowerDoorPlanned)}
+                </div>
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-3">
               <AccordionTrigger className="text-lg font-semibold"><Zap className="h-5 w-5 mr-2" />Mechanical Systems</AccordionTrigger>
-              <AccordionContent className="space-y-2 pt-4">
-                {renderField('F280 Calculation Completed', selections.hasF280Calculation)}
-                {renderField('Heating Type', selections.heatingType)}
-                {renderField('Heating Efficiency/Model', selections.heatingEfficiency || selections.heatingMakeModel)}
-                {renderField('Indirect Tank (Main)', selections.indirectTank)}
-                {renderField('Indirect Tank Size (Main)', selections.indirectTankSize, 'gal')}
-                {renderField('Cooling', selections.coolingApplicable)}
-                {renderField('Cooling Efficiency/Model', selections.coolingEfficiency || selections.coolingMakeModel)}
-                {renderField('Water Heater Type', selections.waterHeaterType || selections.waterHeater)}
-                {renderField('Water Heater Model', selections.waterHeaterMakeModel)}
-                {renderField('HRV/ERV', selections.hasHrv || selections.hasHrvErv9365)}
-                {renderField('HRV/ERV Efficiency/Model', selections.hrvEfficiency || selections.hrvMakeModel)}
-                {renderField('Drain Water Heat Recovery', selections.hasDWHR)}
-                {renderField('Separate Secondary Heating', selections.hasSecondaryHeating)}
-                {renderField('Secondary Heating Type', selections.secondaryHeatingType)}
-                {renderField('Secondary Heating Efficiency', selections.secondaryHeatingEfficiency)}
-                {renderField('Indirect Tank (Secondary)', selections.secondaryIndirectTank)}
-                {renderField('Indirect Tank Size (Secondary)', selections.secondaryIndirectTankSize, 'gal')}
-                {renderField('Multiple MURB Heating Systems', selections.hasMurbMultipleHeating)}
-                {renderField('MURB Second Heating Type', selections.murbSecondHeatingType)}
-                {renderField('MURB Second Heating Efficiency', selections.murbSecondHeatingEfficiency)}
-                {renderField('MURB Second Indirect Tank', selections.murbSecondIndirectTank)}
-                {renderField('MURB Second Indirect Tank Size', selections.murbSecondIndirectTankSize, 'gal')}
-                {renderField('Multiple MURB Water Heaters', selections.hasMurbMultipleWaterHeaters)}
-                {renderField('MURB Second Water Heater Type', selections.murbSecondWaterHeaterType)}
-                {renderField('MURB Second Water Heater Efficiency', selections.murbSecondWaterHeater)}
+              <AccordionContent className="pt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                  {renderField('F280 Calculation Completed', selections.hasF280Calculation)}
+                  {renderField('Heating Type', selections.heatingType)}
+                  {renderField('Heating Efficiency/Model', selections.heatingEfficiency || selections.heatingMakeModel)}
+                  {renderField('Indirect Tank (Main)', selections.indirectTank)}
+                  {renderField('Indirect Tank Size (Main)', selections.indirectTankSize, 'gal')}
+                  {renderField('Cooling', selections.coolingApplicable)}
+                  {renderField('Cooling Efficiency/Model', selections.coolingEfficiency || selections.coolingMakeModel)}
+                  {renderField('Water Heater Type', selections.waterHeaterType || selections.waterHeater)}
+                  {renderField('Water Heater Model', selections.waterHeaterMakeModel)}
+                  {renderField('HRV/ERV', selections.hasHrv || selections.hasHrvErv9365)}
+                  {renderField('HRV/ERV Efficiency/Model', selections.hrvEfficiency || selections.hrvMakeModel)}
+                  {renderField('Drain Water Heat Recovery', selections.hasDWHR)}
+                  {renderField('Separate Secondary Heating', selections.hasSecondaryHeating)}
+                  {renderField('Secondary Heating Type', selections.secondaryHeatingType)}
+                  {renderField('Secondary Heating Efficiency', selections.secondaryHeatingEfficiency)}
+                  {renderField('Indirect Tank (Secondary)', selections.secondaryIndirectTank)}
+                  {renderField('Indirect Tank Size (Secondary)', selections.secondaryIndirectTankSize, 'gal')}
+                  {renderField('Multiple MURB Heating Systems', selections.hasMurbMultipleHeating)}
+                  {renderField('MURB Second Heating Type', selections.murbSecondHeatingType)}
+                  {renderField('MURB Second Heating Efficiency', selections.murbSecondHeatingEfficiency)}
+                  {renderField('MURB Second Indirect Tank', selections.murbSecondIndirectTank)}
+                  {renderField('MURB Second Indirect Tank Size', selections.murbSecondIndirectTankSize, 'gal')}
+                  {renderField('Multiple MURB Water Heaters', selections.hasMurbMultipleWaterHeaters)}
+                  {renderField('MURB Second Water Heater Type', selections.murbSecondWaterHeaterType)}
+                  {renderField('MURB Second Water Heater Efficiency', selections.murbSecondWaterHeater)}
+                </div>
               </AccordionContent>
             </AccordionItem>
             
             {selections.interestedCertifications && selections.interestedCertifications.length > 0 && (
               <AccordionItem value="item-optional">
                 <AccordionTrigger className="text-lg font-semibold"><Info className="h-5 w-5 mr-2" />Optional Services</AccordionTrigger>
-                <AccordionContent className="space-y-2 pt-4">
-                  {renderField('Interested Certifications', selections.interestedCertifications.join(', '))}
+                <AccordionContent className="pt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                    {renderField('Interested Certifications', selections.interestedCertifications.join(', '))}
+                  </div>
                 </AccordionContent>
               </AccordionItem>
             )}
