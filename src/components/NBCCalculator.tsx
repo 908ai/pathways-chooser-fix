@@ -1010,79 +1010,80 @@ const NBCCalculator = ({
     }
   
     // Step 3: Conditional Fields
-    switch (selections.compliancePath) {
-      case '9362': // Prescriptive
-        addIfMissing(required, 'hasHrv', 'HRV/ERV selection');
-        addIfMissing(required, 'ceilingsAtticRSI', 'Ceilings/Attic RSI');
-        addIfMissing(required, 'hasCathedralOrFlatRoof', 'Cathedral/Flat Roof selection');
-        addIfMissing(required, 'wallRSI', 'Above Grade Wall RSI');
-        addIfMissing(required, 'belowGradeRSI', 'Below Grade Wall RSI');
-        addIfMissing(required, 'floorsSlabsSelected', 'Floors/Slabs selection');
-        addIfMissing(required, 'windowUValue', 'Window U-Value');
-        addIfMissing(required, 'hasSkylights', 'Skylights selection');
-        addIfMissing(required, 'airtightness', 'Airtightness Level');
-        addIfMissing(required, 'heatingType', 'Heating Type');
-        addIfMissing(required, 'coolingApplicable', 'Cooling/AC selection');
-        addIfMissing(required, 'hasDWHR', 'Drain Water Heat Recovery selection');
+    const pathway = selections.compliancePath;
   
-        if (selections.hasHrv === 'with_hrv') addIfMissing(required, 'hrvEfficiency', 'HRV/ERV Efficiency');
-        if (selections.hasCathedralOrFlatRoof === 'yes') addIfMissing(required, 'cathedralFlatRSIValue', 'Cathedral/Flat Roof RSI');
-        if (selections.hasSkylights === 'yes') addIfMissing(required, 'skylightUValue', 'Skylight U-Value');
-        if (selections.heatingType) addIfMissing(required, 'heatingEfficiency', 'Heating Efficiency');
-        if (!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes')) {
-          addIfMissing(required, 'waterHeaterType', 'Water Heater Type');
-          if (selections.waterHeaterType && selections.waterHeaterType !== 'boiler') addIfMissing(required, 'waterHeater', 'Water Heater Efficiency');
-          if (selections.waterHeaterType === 'other') addIfMissing(required, 'otherWaterHeaterType', 'Other Water Heater Type');
-        }
-        if (selections.heatingType === 'boiler') addIfMissing(required, 'indirectTank', 'Indirect Tank selection');
-        if (selections.heatingType === 'boiler' && selections.indirectTank === 'yes') addIfMissing(required, 'indirectTankSize', 'Indirect Tank Size');
-        if (selections.coolingApplicable === 'yes') addIfMissing(required, 'coolingEfficiency', 'Cooling Efficiency');
-        break;
+    if (pathway) { // Only check step 3 if a pathway is selected
+      switch (pathway) {
+        case '9362': // Prescriptive
+          addIfMissing(required, 'hasHrv', 'HRV/ERV selection');
+          if (selections.hasHrv === 'with_hrv') addIfMissing(required, 'hrvEfficiency', 'HRV/ERV Efficiency');
+          
+          addIfMissing(required, 'ceilingsAtticRSI', 'Ceilings/Attic RSI');
+          addIfMissing(required, 'hasCathedralOrFlatRoof', 'Cathedral/Flat Roof selection');
+          if (selections.hasCathedralOrFlatRoof === 'yes') addIfMissing(required, 'cathedralFlatRSIValue', 'Cathedral/Flat Roof RSI');
+          
+          addIfMissing(required, 'wallRSI', 'Above Grade Wall RSI');
+          addIfMissing(required, 'belowGradeRSI', 'Below Grade Wall RSI');
+          addIfMissing(required, 'floorsSlabsSelected', 'Floors/Slabs selection');
+          
+          if (selections.floorsSlabsSelected.includes("heatedFloors")) addIfMissing(required, 'inFloorHeatRSI', 'Heated Floors RSI');
+          if (selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting")) addIfMissing(required, 'slabOnGradeIntegralFootingRSI', 'Slab on Grade RSI');
+          if (selections.floorsSlabsSelected.includes("floorsOverUnheatedSpaces")) addIfMissing(required, 'floorsOverUnheatedSpacesRSI', 'Floors over Unheated Spaces RSI');
+          if (selections.floorsSlabsSelected.includes("unheatedBelowFrost")) addIfMissing(required, 'unheatedFloorBelowFrostRSI', 'Unheated Floor Below Frostline info');
+          if (selections.floorsSlabsSelected.includes("unheatedAboveFrost")) addIfMissing(required, 'unheatedFloorAboveFrostRSI', 'Unheated Floor Above Frostline RSI');
+
+          addIfMissing(required, 'windowUValue', 'Window U-Value');
+          addIfMissing(required, 'hasSkylights', 'Skylights selection');
+          if (selections.hasSkylights === 'yes') addIfMissing(required, 'skylightUValue', 'Skylight U-Value');
+          
+          addIfMissing(required, 'airtightness', 'Airtightness Level');
+          addIfMissing(required, 'heatingType', 'Heating Type');
+          if (selections.heatingType) addIfMissing(required, 'heatingEfficiency', 'Heating Efficiency');
+          
+          addIfMissing(required, 'coolingApplicable', 'Cooling/AC selection');
+          if (selections.coolingApplicable === 'yes') addIfMissing(required, 'coolingEfficiency', 'Cooling Efficiency');
+          
+          if (!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes')) {
+            addIfMissing(required, 'waterHeaterType', 'Water Heater Type');
+            if (selections.waterHeaterType && selections.waterHeaterType !== 'boiler') addIfMissing(required, 'waterHeater', 'Water Heater Efficiency');
+            if (selections.waterHeaterType === 'other') addIfMissing(required, 'otherWaterHeaterType', 'Other Water Heater Type');
+          }
+          
+          if (selections.heatingType === 'boiler') addIfMissing(required, 'indirectTank', 'Indirect Tank selection');
+          if (selections.heatingType === 'boiler' && selections.indirectTank === 'yes') addIfMissing(required, 'indirectTankSize', 'Indirect Tank Size');
+          
+          addIfMissing(required, 'hasDWHR', 'Drain Water Heat Recovery selection');
+          break;
+
+        case '9365': // Performance
+        case '9367': // Tiered Performance
+          addIfMissing(required, 'frontDoorOrientation', 'Front Door Orientation');
+          addIfMissing(required, 'energuidePathway', 'EnerGuide Pathway selection');
+          
+          // Most are optional for performance paths, so we don't list them as required.
+          addIfMissing(optional, 'ceilingsAtticRSI', 'Ceilings/Attic assembly info');
+          addIfMissing(optional, 'wallRSI', 'Above Grade Wall assembly info');
+          addIfMissing(optional, 'belowGradeRSI', 'Below Grade Wall assembly info');
+          addIfMissing(optional, 'airtightness', 'Airtightness Level');
+          addIfMissing(optional, 'heatingType', 'Heating Type');
+          addIfMissing(optional, 'waterHeaterType', 'Water Heater Type');
+          addIfMissing(optional, 'hasHrv', 'HRV/ERV inclusion');
+          break;
   
-      case '9365': // Performance
-      case '9367': // Tiered Performance
-        addIfMissing(required, 'frontDoorOrientation', 'Front Door Orientation');
-        addIfMissing(required, 'energuidePathway', 'EnerGuide Pathway selection');
-        
-        // Optional for performance
-        addIfMissing(optional, 'ceilingsAtticRSI', 'Ceilings/Attic assembly info');
-        addIfMissing(optional, 'hasCathedralOrFlatRoof', 'Cathedral/Flat Roof selection');
-        addIfMissing(optional, 'cathedralFlatRSI', 'Cathedral/Flat Roof assembly info');
-        addIfMissing(optional, 'wallRSI', 'Above Grade Wall assembly info');
-        addIfMissing(optional, 'belowGradeRSI', 'Below Grade Wall assembly info');
-        addIfMissing(optional, 'floorsSlabsSelected', 'Floors/Slabs selection');
-        addIfMissing(optional, 'floorsUnheatedRSI', 'Floors over Unheated Spaces info');
-        addIfMissing(optional, 'floorsGarageRSI', 'Floors over Garages info');
-        addIfMissing(optional, 'unheatedFloorBelowFrostRSI', 'Unheated Floor Below Frostline info');
-        addIfMissing(optional, 'unheatedFloorAboveFrostRSI', 'Unheated Floor Above Frostline info');
-        addIfMissing(optional, 'heatedFloorsRSI', 'Heated Floors info');
-        addIfMissing(optional, 'slabOnGradeIntegralFootingRSI', 'Slab on Grade info');
-        addIfMissing(optional, 'hasSkylights', 'Skylights selection');
-        addIfMissing(optional, 'skylightUValue', 'Skylight U-Value');
-        addIfMissing(optional, 'airtightness', 'Airtightness Level');
-        addIfMissing(optional, 'heatingType', 'Heating Type');
-        addIfMissing(optional, 'heatingEfficiency', 'Heating Make/Model');
-        addIfMissing(optional, 'waterHeaterType', 'Water Heater Type');
-        addIfMissing(optional, 'waterHeater', 'Water Heater Make/Model');
-        addIfMissing(optional, 'hasHrv', 'HRV/ERV inclusion');
-        addIfMissing(optional, 'hrvEfficiency', 'HRV/ERV Make/Model');
-        addIfMissing(optional, 'hasDWHR', 'Drain Water Heat Recovery selection');
-        addIfMissing(optional, 'coolingApplicable', 'Cooling/AC selection');
-        addIfMissing(optional, 'coolingEfficiency', 'Cooling Efficiency/Model');
-        break;
-  
-      case '9368': // Tiered Prescriptive
-        addIfMissing(required, 'ceilingsAtticRSI', 'Ceilings/Attic RSI');
-        addIfMissing(required, 'wallRSI', 'Above Grade Wall RSI');
-        addIfMissing(required, 'belowGradeRSI', 'Below Grade Wall RSI');
-        addIfMissing(required, 'windowUValue', 'Window U-Value');
-        addIfMissing(required, 'airtightness', 'Airtightness Level');
-        addIfMissing(required, 'hrvEfficiency', 'HRV/ERV Efficiency');
-        addIfMissing(required, 'waterHeater', 'Water Heater Type');
-        break;
+        case '9368': // Tiered Prescriptive
+          addIfMissing(required, 'ceilingsAtticRSI', 'Ceilings/Attic RSI');
+          addIfMissing(required, 'wallRSI', 'Above Grade Wall RSI');
+          addIfMissing(required, 'belowGradeRSI', 'Below Grade Wall RSI');
+          addIfMissing(required, 'windowUValue', 'Window U-Value');
+          addIfMissing(required, 'airtightness', 'Airtightness Level');
+          addIfMissing(required, 'hrvEfficiency', 'HRV/ERV Efficiency');
+          addIfMissing(required, 'waterHeater', 'Water Heater Type');
+          break;
+      }
     }
     
     addIfMissing(optional, 'midConstructionBlowerDoorPlanned', 'Mid-Construction Blower Door Test');
+    addIfMissing(optional, 'occupancyClass', 'Occupancy Class');
   
     return { required, optional };
   };

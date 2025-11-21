@@ -31,24 +31,53 @@ const getPendingItems = (project: any) => {
   // Step 2 fields
   addIfMissing(required, 'selected_pathway', 'Compliance Path');
 
-  // Step 3 fields (simplified for summary)
-  const pathway = project.selected_pathway;
-  if (pathway === 'prescriptive' || pathway === '9362' || pathway === '9368') {
-    addIfMissing(required, 'attic_rsi', 'Ceilings/Attic RSI');
-    addIfMissing(required, 'wall_rsi', 'Above Grade Wall RSI');
-    addIfMissing(required, 'below_grade_rsi', 'Below Grade Wall RSI');
-    addIfMissing(required, 'window_u_value', 'Window U-Value');
-    addIfMissing(required, 'airtightness_al', 'Airtightness Level');
-    addIfMissing(required, 'heating_system_type', 'Heating Type');
-    addIfMissing(required, 'water_heating_type', 'Water Heater Type');
-  }
-
   // Step 4 fields
   if (!project.uploaded_files || project.uploaded_files.length === 0) {
     required.push({ label: 'At least one project document', fieldId: 'fileUploadSection' });
   }
 
-  // Optional fields
+  // Step 3 fields (simplified for summary)
+  const pathway = project.selected_pathway;
+  if (pathway) {
+    switch (pathway) {
+      case '9362':
+        addIfMissing(required, 'hrv_erv_type', 'HRV/ERV selection');
+        if (project.hrv_erv_type && project.hrv_erv_type !== 'None') addIfMissing(required, 'hrv_erv_efficiency', 'HRV/ERV Efficiency');
+        
+        addIfMissing(required, 'attic_rsi', 'Ceilings/Attic RSI');
+        addIfMissing(required, 'wall_rsi', 'Above Grade Wall RSI');
+        addIfMissing(required, 'below_grade_rsi', 'Below Grade Wall RSI');
+        addIfMissing(required, 'window_u_value', 'Window U-Value');
+        addIfMissing(required, 'airtightness_al', 'Airtightness Level');
+        addIfMissing(required, 'heating_system_type', 'Heating Type');
+        if (project.heating_system_type) addIfMissing(required, 'heating_efficiency', 'Heating Efficiency');
+        addIfMissing(required, 'water_heating_type', 'Water Heater Type');
+        break;
+      
+      case '9365':
+      case '9367':
+        // Most are optional for performance paths, so we don't list them as required.
+        addIfMissing(optional, 'attic_rsi', 'Ceilings/Attic assembly info');
+        addIfMissing(optional, 'wall_rsi', 'Above Grade Wall assembly info');
+        addIfMissing(optional, 'below_grade_rsi', 'Below Grade Wall assembly info');
+        addIfMissing(optional, 'airtightness_al', 'Airtightness Level');
+        addIfMissing(optional, 'heating_system_type', 'Heating Type');
+        addIfMissing(optional, 'water_heating_type', 'Water Heater Type');
+        addIfMissing(optional, 'hrv_erv_type', 'HRV/ERV inclusion');
+        break;
+
+      case '9368':
+        addIfMissing(required, 'attic_rsi', 'Ceilings/Attic RSI');
+        addIfMissing(required, 'wall_rsi', 'Above Grade Wall RSI');
+        addIfMissing(required, 'below_grade_rsi', 'Below Grade Wall RSI');
+        addIfMissing(required, 'window_u_value', 'Window U-Value');
+        addIfMissing(required, 'airtightness_al', 'Airtightness Level');
+        addIfMissing(required, 'hrv_erv_efficiency', 'HRV/ERV Efficiency');
+        addIfMissing(required, 'water_heating_type', 'Water Heater Type');
+        break;
+    }
+  }
+
   addIfMissing(optional, 'floor_area', 'Floor Area');
   addIfMissing(optional, 'mid_construction_blower_door_planned', 'Mid-Construction Blower Door Test');
   addIfMissing(optional, 'occupancy_class', 'Occupancy Class');
