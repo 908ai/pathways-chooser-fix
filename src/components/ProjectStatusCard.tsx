@@ -1,97 +1,58 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { AlertTriangle, Info, ChevronRight } from 'lucide-react';
+import { getPendingItems } from '@/lib/projectUtils';
 
 interface ProjectStatusCardProps {
   project: any;
   onFixItem: (fieldId: string) => void;
 }
 
-const getPendingItems = (project: any) => {
-  const required: { label: string; fieldId: string }[] = [];
-  const optional: { label: string; fieldId: string }[] = [];
-
-  const addIfMissing = (list: { label: string; fieldId: string }[], fieldId: keyof typeof project, label: string) => {
-    const value = project[fieldId];
-    if (value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0)) {
-      list.push({ label, fieldId: String(fieldId) });
-    }
+const mapProjectToSelections = (project: any) => {
+  if (!project) return {};
+  return {
+    // Map all relevant snake_case fields from the DB to camelCase fields
+    firstName: 'filled', // Assume filled as project exists
+    lastName: 'filled',
+    company: 'filled',
+    phoneNumber: 'filled',
+    streetAddress: project.street_address,
+    city: project.city,
+    province: project.province,
+    postalCode: project.postal_code,
+    buildingType: project.building_type,
+    climateZone: project.climate_zone,
+    occupancyClass: project.occupancy_class,
+    compliancePath: project.selected_pathway,
+    frontDoorOrientation: project.front_door_orientation,
+    energuidePathway: project.energuide_pathway,
+    hasHrv: project.hrv_erv_type && project.hrv_erv_type !== 'None' ? 'with_hrv' : project.hrv_erv_type === 'None' ? 'without_hrv' : '',
+    hrvEfficiency: project.hrv_erv_efficiency,
+    ceilingsAtticRSI: project.attic_rsi,
+    hasCathedralOrFlatRoof: project.has_cathedral_or_flat_roof,
+    cathedralFlatRSIValue: project.cathedral_flat_rsi,
+    wallRSI: project.wall_rsi,
+    belowGradeRSI: project.below_grade_rsi,
+    floorsSlabsSelected: project.floors_slabs_selected || [],
+    inFloorHeatRSI: project.has_in_floor_heat, // Simplified mapping
+    windowUValue: project.window_u_value,
+    hasSkylights: project.has_skylights,
+    skylightUValue: project.skylight_u_value,
+    airtightness: project.airtightness_al,
+    heatingType: project.heating_system_type,
+    heatingEfficiency: project.heating_efficiency,
+    coolingApplicable: project.cooling_system_type && project.cooling_system_type !== 'None' ? 'yes' : 'no',
+    coolingEfficiency: project.cooling_efficiency,
+    waterHeaterType: project.water_heating_type,
+    waterHeater: project.water_heating_efficiency,
+    hasDWHR: project.has_dwhr,
+    midConstructionBlowerDoorPlanned: project.mid_construction_blower_door_planned,
   };
-
-  // Step 1 fields
-  addIfMissing(required, 'street_address', 'Project Street Address');
-  addIfMissing(required, 'city', 'Project City');
-  addIfMissing(required, 'province', 'Project Province');
-  addIfMissing(required, 'postal_code', 'Project Postal Code');
-  addIfMissing(required, 'building_type', 'Building Type');
-  if (project.province === 'alberta') {
-    addIfMissing(required, 'climate_zone', 'Climate Zone');
-  }
-
-  // Step 2 fields
-  addIfMissing(required, 'selected_pathway', 'Compliance Path');
-
-  // Step 4 fields
-  if (!project.uploaded_files || project.uploaded_files.length === 0) {
-    required.push({ label: 'At least one project document', fieldId: 'fileUploadSection' });
-  }
-
-  // Step 3 fields (simplified for summary)
-  const pathway = project.selected_pathway;
-  if (pathway) {
-    switch (pathway) {
-      case '9362':
-        addIfMissing(required, 'hrv_erv_type', 'HRV/ERV selection');
-        if (project.hrv_erv_type && project.hrv_erv_type !== 'None') addIfMissing(required, 'hrv_erv_efficiency', 'HRV/ERV Efficiency');
-        
-        addIfMissing(required, 'attic_rsi', 'Ceilings/Attic RSI');
-        addIfMissing(required, 'wall_rsi', 'Above Grade Wall RSI');
-        addIfMissing(required, 'below_grade_rsi', 'Below Grade Wall RSI');
-        addIfMissing(required, 'window_u_value', 'Window U-Value');
-        addIfMissing(required, 'airtightness_al', 'Airtightness Level');
-        addIfMissing(required, 'heating_system_type', 'Heating Type');
-        if (project.heating_system_type) addIfMissing(required, 'heating_efficiency', 'Heating Efficiency');
-        addIfMissing(required, 'water_heating_type', 'Water Heater Type');
-        break;
-      
-      case '9365':
-      case '9367':
-        // Most are optional for performance paths, so we don't list them as required.
-        addIfMissing(optional, 'attic_rsi', 'Ceilings/Attic assembly info');
-        addIfMissing(optional, 'wall_rsi', 'Above Grade Wall assembly info');
-        addIfMissing(optional, 'below_grade_rsi', 'Below Grade Wall assembly info');
-        addIfMissing(optional, 'airtightness_al', 'Airtightness Level');
-        addIfMissing(optional, 'heating_system_type', 'Heating Type');
-        addIfMissing(optional, 'water_heating_type', 'Water Heater Type');
-        addIfMissing(optional, 'hrv_erv_type', 'HRV/ERV inclusion');
-        break;
-
-      case '9368':
-        addIfMissing(required, 'attic_rsi', 'Ceilings/Attic RSI');
-        addIfMissing(required, 'wall_rsi', 'Above Grade Wall RSI');
-        addIfMissing(required, 'below_grade_rsi', 'Below Grade Wall RSI');
-        addIfMissing(required, 'window_u_value', 'Window U-Value');
-        addIfMissing(required, 'airtightness_al', 'Airtightness Level');
-        addIfMissing(required, 'hrv_erv_efficiency', 'HRV/ERV Efficiency');
-        addIfMissing(required, 'water_heating_type', 'Water Heater Type');
-        break;
-    }
-  }
-
-  addIfMissing(optional, 'floor_area', 'Floor Area');
-  addIfMissing(optional, 'mid_construction_blower_door_planned', 'Mid-Construction Blower Door Test');
-  addIfMissing(optional, 'occupancy_class', 'Occupancy Class');
-
-  const totalRequiredFields = 10; // An approximation for progress calculation
-  const completedCount = totalRequiredFields - required.length;
-  const progress = Math.max(0, (completedCount / totalRequiredFields) * 100);
-
-  return { required, optional, progress };
 };
 
-
 const ProjectStatusCard = ({ project, onFixItem }: ProjectStatusCardProps) => {
-  const { required, optional, progress } = getPendingItems(project);
+  const selections = mapProjectToSelections(project);
+  const { required, optional, progress } = getPendingItems(selections, project.uploaded_files || []);
 
   if (required.length === 0 && optional.length === 0) {
     return null;
