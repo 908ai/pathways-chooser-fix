@@ -66,6 +66,7 @@ const Dashboard2 = () => {
         const status = p.compliance_status;
         if (statusFilter === 'draft') return status === 'draft';
         if (statusFilter === 'submitted') return status === 'submitted';
+        if (statusFilter === 'needs-revision') return status === 'needs_revision';
         if (statusFilter === 'compliant') return status === 'pass' || status === 'Compliant';
         if (statusFilter === 'non-compliant') return status === 'fail';
         return false;
