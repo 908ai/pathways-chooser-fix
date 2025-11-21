@@ -26,6 +26,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const ProjectDetail = () => {
   const { id } = useParams();
@@ -525,6 +526,11 @@ const ProjectDetail = () => {
     }
   };
 
+  const isSubmitted = project.compliance_status === 'submitted';
+  const isCompleted = project.compliance_status === 'pass' || project.compliance_status === 'fail' || project.compliance_status === 'Compliant';
+  const isEditable = !isSubmitted && !isCompleted;
+  const isDeletable = canDeleteProjects || (!isSubmitted && !isCompleted);
+
   return (
     <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
       <Header showSignOut={true} onSignOut={signOut} pathwayInfo="" />
@@ -580,57 +586,54 @@ const ProjectDetail = () => {
               )}
               
               <div className="flex items-center gap-2">
-                {!isEditing ? (
-                  <>
-                    {(project.compliance_status !== 'pass' && project.compliance_status !== 'fail' && project.compliance_status !== 'submitted') && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="inline-block">
                       <Button 
                         onClick={() => navigate(`/calculator?edit=${project.id}`)} 
                         variant="outline"
                         className="animate-fade-in"
+                        disabled={!isEditable}
                       >
                         <Edit className="h-4 w-4 mr-2" />
-                        Edit Project
+                        Edit
                       </Button>
-                    )}
-                    {((project.compliance_status !== 'pass' && project.compliance_status !== 'fail') || canDeleteProjects) && (
+                    </div>
+                  </TooltipTrigger>
+                  {!isEditable && (
+                    <TooltipContent>
+                      <p>Cannot edit a project that is under review or completed.</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="inline-block">
                       <Button 
                         onClick={handleDelete} 
-                        disabled={deleting}
+                        disabled={!isDeletable || deleting}
                         variant="destructive"
                         className="animate-fade-in"
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
-                        {deleting ? 'Deleting...' : 'Delete Project'}
+                        {deleting ? 'Deleting...' : 'Delete'}
                       </Button>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <Button 
-                      onClick={handleSave} 
-                      disabled={saving}
-                      className="animate-fade-in"
-                    >
-                      <Save className="h-4 w-4 mr-2" />
-                      {saving ? 'Saving...' : 'Save Changes'}
-                    </Button>
-                    <Button 
-                      onClick={handleCancelEdit} 
-                      variant="outline"
-                      className="animate-fade-in"
-                    >
-                      <X className="h-4 w-4 mr-2" />
-                      Cancel
-                    </Button>
-                  </>
-                )}
+                    </div>
+                  </TooltipTrigger>
+                  {!isDeletable && (
+                    <TooltipContent>
+                      <p>Cannot delete a project that is under review or completed.</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
               </div>
               
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button disabled={duplicating} className="animate-fade-in">
                     <Copy className="h-4 w-4 mr-2" />
-                    {duplicating ? 'Duplicating...' : 'Duplicate Project'}
+                    {duplicating ? 'Duplicating...' : 'Duplicate'}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
