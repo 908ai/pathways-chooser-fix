@@ -249,7 +249,7 @@ const ProjectDetail = () => {
     }
   };
 
-  const handleApproveProject = async (newStatus: 'pass' | 'fail') => {
+  const handleUpdateStatus = async (newStatus: 'pass' | 'fail' | 'needs_revision') => {
     if (!project || !user || !isAdmin) return;
 
     try {
@@ -267,9 +267,16 @@ const ProjectDetail = () => {
 
       setProject(data);
       setEditedProject({ ...data });
+      
+      let toastTitle = "Project Status Updated";
+      let toastDescription = `Project has been marked as ${newStatus.replace('_', ' ')}.`;
+      if (newStatus === 'pass') toastDescription = `Project has been marked as compliant.`;
+      if (newStatus === 'fail') toastDescription = `Project has been marked as non-compliant.`;
+      if (newStatus === 'needs_revision') toastDescription = `Project has been sent back for revision.`;
+
       toast({
-        title: "Project Status Updated",
-        description: `Project has been marked as ${newStatus === 'pass' ? 'compliant' : 'non-compliant'}.`,
+        title: toastTitle,
+        description: toastDescription,
       });
 
     } catch (error) {
@@ -503,6 +510,7 @@ const ProjectDetail = () => {
   const getComplianceStatusBadge = () => {
     switch (project.compliance_status) {
       case 'pass':
+      case 'Compliant':
         return <Badge className="bg-green-100 text-green-800">Compliant</Badge>;
       case 'fail':
         return <Badge className="bg-red-100 text-red-800">Non-Compliant</Badge>;
@@ -510,6 +518,8 @@ const ProjectDetail = () => {
         return <Badge className="bg-blue-100 text-blue-800">Submitted for Review</Badge>;
       case 'draft':
         return <Badge className="bg-gray-100 text-gray-800">Draft</Badge>;
+      case 'needs_revision':
+        return <Badge className="bg-yellow-100 text-yellow-800">Needs Revision</Badge>;
       default:
         return <Badge className="bg-orange-100 text-orange-800">Under Review</Badge>;
     }
@@ -543,7 +553,7 @@ const ProjectDetail = () => {
               {isAdmin && project.compliance_status === 'submitted' && (
                 <div className="flex items-center gap-2">
                   <Button 
-                    onClick={() => handleApproveProject('pass')} 
+                    onClick={() => handleUpdateStatus('pass')} 
                     variant="default"
                     className="bg-green-600 hover:bg-green-700 text-white animate-fade-in"
                   >
@@ -551,7 +561,15 @@ const ProjectDetail = () => {
                     Approve
                   </Button>
                   <Button 
-                    onClick={() => handleApproveProject('fail')} 
+                    onClick={() => handleUpdateStatus('needs_revision')} 
+                    variant="outline"
+                    className="animate-fade-in border-yellow-500 text-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400"
+                  >
+                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    Request Revision
+                  </Button>
+                  <Button 
+                    onClick={() => handleUpdateStatus('fail')} 
                     variant="destructive"
                     className="animate-fade-in"
                   >
