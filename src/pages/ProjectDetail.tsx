@@ -804,10 +804,7 @@ const ProjectDetail = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="technical" className="mt-6">
-            {project && !isCompleted && (
-              <ProjectStatusCard project={project} onFixItem={handleFixItem} />
-            )}
+          <TabsContent value="technical" className="mt-6 space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
                 <CardHeader>
@@ -865,6 +862,9 @@ const ProjectDetail = () => {
                 </CardContent>
               </Card>
             </div>
+            {project && !isCompleted && (
+              <ProjectStatusCard project={project} onFixItem={handleFixItem} />
+            )}
           </TabsContent>
 
           <TabsContent value="compliance" className="mt-6">
