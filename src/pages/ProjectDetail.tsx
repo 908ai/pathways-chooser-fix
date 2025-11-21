@@ -55,6 +55,28 @@ const ProjectDetail = () => {
   const [deleting, setDeleting] = useState(false);
   const [uploading, setUploading] = useState(false);
 
+  const getPathwayDisplay = (pathway: string | null) => {
+    if (!pathway) return null;
+
+    const isPerformance = pathway.includes('performance') || pathway.includes('9365') || pathway.includes('9367');
+    const isPrescriptive = pathway.includes('prescriptive') || pathway.includes('9362') || pathway.includes('9368');
+
+    let text = 'Unknown Pathway';
+    if (isPerformance) text = 'Performance Path';
+    if (isPrescriptive) text = 'Prescriptive Path';
+
+    if (pathway === '9365') text = 'NBC 9.36.5 Performance';
+    if (pathway === '9362') text = 'NBC 9.36.2 Prescriptive';
+    if (pathway === '9367') text = 'NBC 9.36.7 Tiered Performance';
+    if (pathway === '9368') text = 'NBC 9.36.8 Tiered Prescriptive';
+    
+    return {
+      text,
+      isPerformance,
+      isPrescriptive
+    };
+  };
+
   useEffect(() => {
     const loadProject = async () => {
       if (!user || !id) return;
@@ -578,6 +600,26 @@ const ProjectDetail = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold mb-3 text-white drop-shadow-lg">{project.project_name}</h1>
+              
+              {(() => {
+                const pathwayInfo = getPathwayDisplay(project.selected_pathway);
+                if (!pathwayInfo) return null;
+                
+                return (
+                  <Badge 
+                    variant="outline" 
+                    className={`text-sm font-medium border-2 px-3 py-1 flex items-center gap-1.5 w-fit mb-3 ${
+                      pathwayInfo.isPerformance 
+                        ? 'border-blue-400 text-blue-300 bg-blue-950/30' 
+                        : 'border-orange-400 text-orange-300 bg-orange-950/30'
+                    }`}
+                  >
+                    {pathwayInfo.isPerformance ? <Zap className="h-3.5 w-3.5" /> : <FileText className="h-3.5 w-3.5" />}
+                    {pathwayInfo.text}
+                  </Badge>
+                );
+              })()}
+
               <div className="flex items-center gap-4 text-gray-200 drop-shadow-md text-sm">
                 <span>Created: {new Date(project.created_at).toLocaleDateString()}</span>
                 <span className="text-gray-400">|</span>
