@@ -52,6 +52,7 @@ const ProjectToolbar = ({
             <SelectItem value="all">All Statuses</SelectItem>
             <SelectItem value="draft">Draft</SelectItem>
             <SelectItem value="submitted">Submitted</SelectItem>
+            <SelectItem value="needs-revision">Needs Revision</SelectItem>
             <SelectItem value="compliant">Compliant</SelectItem>
             <SelectItem value="non-compliant">Non-Compliant</SelectItem>
           </SelectContent>
