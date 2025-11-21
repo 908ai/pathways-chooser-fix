@@ -295,10 +295,11 @@ const NBCCalculator = ({
 
   useEffect(() => {
     const focusField = searchParams.get('focus');
-    if (focusField) {
+    // Only run this if we are NOT loading a project and there is a field to focus on.
+    if (focusField && !isLoading) {
       handleFixItem(focusField);
     }
-  }, [searchParams]);
+  }, [searchParams, isLoading]); // Add isLoading as a dependency
 
   useEffect(() => {
     // Clear validation errors as user fills them out
