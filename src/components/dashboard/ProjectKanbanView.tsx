@@ -13,6 +13,7 @@ const ProjectKanbanView = ({ projects, onViewProject, onEditProject, onDuplicate
   const statuses = [
     { id: 'draft', title: 'Draft' },
     { id: 'submitted', title: 'Submitted' },
+    { id: 'needs_revision', title: 'Needs Revision' },
     { id: 'complete', title: 'Complete' },
   ];
 
@@ -21,13 +22,14 @@ const ProjectKanbanView = ({ projects, onViewProject, onEditProject, onDuplicate
       const status = p.compliance_status;
       if (statusId === 'draft') return status === 'draft';
       if (statusId === 'submitted') return status === 'submitted';
+      if (statusId === 'needs_revision') return status === 'needs_revision';
       if (statusId === 'complete') return status === 'pass' || status === 'Compliant' || status === 'fail';
       return false;
     });
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {statuses.map(status => {
         const statusProjects = getProjectsByStatus(status.id);
         return (
