@@ -294,6 +294,13 @@ const NBCCalculator = ({
   }, [searchParams, user]);
 
   useEffect(() => {
+    const focusField = searchParams.get('focus');
+    if (focusField) {
+      handleFixItem(focusField);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     // Clear validation errors as user fills them out
     if (Object.keys(validationErrors).length > 0) {
       const newErrors = { ...validationErrors };

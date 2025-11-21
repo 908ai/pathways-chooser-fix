@@ -26,6 +26,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import ProjectStatusCard from '@/components/ProjectStatusCard';
 
 const DetailItem = ({ label, value, unit = '' }: { label: string; value: any; unit?: string }) => {
   if (value === null || value === undefined || value === '') return null;
@@ -504,6 +505,10 @@ const ProjectDetail = () => {
     navigate('/dashboard');
   };
 
+  const handleFixItem = (fieldId: string) => {
+    navigate(`/calculator?edit=${id}&focus=${fieldId}`);
+  };
+
   if (loading || roleLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
@@ -800,6 +805,9 @@ const ProjectDetail = () => {
           </TabsContent>
 
           <TabsContent value="technical" className="mt-6">
+            {project && !isCompleted && (
+              <ProjectStatusCard project={project} onFixItem={handleFixItem} />
+            )}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
                 <CardHeader>
