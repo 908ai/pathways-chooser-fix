@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Droplets, Wind, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User, AlertTriangle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
@@ -35,6 +35,7 @@ const ProjectDetail = () => {
   const { canDeleteProjects, canViewAllProjects, isAdmin, loading: roleLoading } = useUserRole();
   const { toast } = useToast();
   const [project, setProject] = useState<any>(null);
+  const [companyInfo, setCompanyInfo] = useState<any>(null);
   const [editedProject, setEditedProject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [duplicating, setDuplicating] = useState(false);
@@ -68,6 +69,19 @@ const ProjectDetail = () => {
         if (data) {
           setProject(data);
           setEditedProject({ ...data });
+
+          // Fetch company info
+          const { data: companyData, error: companyError } = await supabase
+            .from('companies')
+            .select('*')
+            .eq('user_id', data.user_id)
+            .single();
+          
+          if (companyError && companyError.code !== 'PGRST116') {
+            console.error("Error fetching company info:", companyError);
+          }
+          setCompanyInfo(companyData);
+
         } else {
           toast({
             title: "Project Not Found",
@@ -549,9 +563,11 @@ const ProjectDetail = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold mb-3 text-white drop-shadow-lg">{project.project_name}</h1>
-              <p className="text-gray-200 drop-shadow-md">
-                Created on {new Date(project.created_at).toLocaleDateString()}
-              </p>
+              <div className="flex items-center gap-4 text-gray-200 drop-shadow-md text-sm">
+                <span>Created: {new Date(project.created_at).toLocaleDateString()}</span>
+                <span className="text-gray-400">|</span>
+                <span>Last Updated: {new Date(project.updated_at).toLocaleDateString()}</span>
+              </div>
             </div>
             <div className="flex items-center gap-4">
               {getComplianceStatusBadge()}
@@ -685,110 +701,88 @@ const ProjectDetail = () => {
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Card className="lg:col-span-1 bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-white">
                     <Building className="h-5 w-5" />
-                    Project Information
+                    Project Details
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-white drop-shadow-md">Building Type</label>
-                      {isEditing ? (
-                        <Select value={editedProject?.building_type || ''} onValueChange={(value) => handleInputChange('building_type', value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select building type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="single-detached">Single Detached</SelectItem>
-                            <SelectItem value="single-family">Single Family Home</SelectItem>
-                            <SelectItem value="duplex">Duplex</SelectItem>
-                            <SelectItem value="row-house">Row House</SelectItem>
-                            <SelectItem value="apartment">Apartment Building</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <p className="font-medium text-white">{project.building_type || 'Not specified'}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-white drop-shadow-md">Location</label>
-                      {isEditing ? (
-                        <Input
-                          value={editedProject?.location || ''}
-                          onChange={(e) => handleInputChange('location', e.target.value)}
-                          placeholder="Enter location"
-                        />
-                      ) : (
-                        <p className="font-medium text-white">{project.location || 'Not specified'}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-white drop-shadow-md">Floor Area</label>
-                      {isEditing ? (
-                        <Input
-                          type="number"
-                          value={editedProject?.floor_area || ''}
-                          onChange={(e) => handleInputChange('floor_area', e.target.value)}
-                          placeholder="Enter floor area (m²)"
-                        />
-                      ) : (
-                        <p className="font-medium text-white">{project.floor_area ? `${project.floor_area} m²` : 'Not specified'}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-white drop-shadow-md">Pathway</label>
-                      {isEditing ? (
-                        <Select value={editedProject?.selected_pathway || ''} onValueChange={(value) => handleInputChange('selected_pathway', value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select pathway" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="prescriptive">Prescriptive Path</SelectItem>
-                            <SelectItem value="performance">Performance Path</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <p className="font-medium text-white">
-                          {project.selected_pathway === 'performance' ? 'Performance Path' : 'Prescriptive Path'}
-                        </p>
-                      )}
-                    </div>
+                <CardContent className="space-y-3 text-sm">
+                  <div>
+                    <Label className="text-slate-300">Address</Label>
+                    <p className="font-medium text-white">{project.location || 'Not specified'}</p>
+                  </div>
+                  <div>
+                    <Label className="text-slate-300">Building Type</Label>
+                    <p className="font-medium text-white">{project.building_type || 'Not specified'}</p>
+                  </div>
+                  <div>
+                    <Label className="text-slate-300">Occupancy Class</Label>
+                    <p className="font-medium text-white">{project.occupancy_class || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <Label className="text-slate-300">Climate Zone</Label>
+                    <p className="font-medium text-white">{project.climate_zone || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <Label className="text-slate-300">Floor Area</Label>
+                    <p className="font-medium text-white">{project.floor_area ? `${project.floor_area} m²` : 'Not specified'}</p>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
+              <Card className="lg:col-span-1 bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-white">
                     <FileText className="h-5 w-5" />
-                    Project Summary
+                    Compliance Summary
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-white drop-shadow-md">Total Points</label>
-                      <p className="font-medium text-white">{project.total_points || 'TBD'}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-white drop-shadow-md">Upgrade Costs</label>
-                      <p className="font-medium text-white">
-                        {project.upgrade_costs ? `$${project.upgrade_costs.toLocaleString()}` : 'TBD'}
-                      </p>
-                    </div>
-                    <div className="col-span-2">
-                      <label className="text-sm font-medium text-white drop-shadow-md">Performance Result</label>
-                      <p className="font-medium text-white">{project.performance_compliance_result || 'Under review'}</p>
-                    </div>
-                    <div className="col-span-2">
-                      <label className="text-sm font-medium text-white drop-shadow-md">Status</label>
-                      <div className="mt-1">{getComplianceStatusBadge()}</div>
-                    </div>
+                <CardContent className="space-y-3 text-sm">
+                  <div>
+                    <Label className="text-slate-300">Pathway</Label>
+                    <p className="font-medium text-white">{project.selected_pathway === 'performance' ? 'Performance Path' : 'Prescriptive Path'}</p>
+                  </div>
+                  <div>
+                    <Label className="text-slate-300">Performance Result</Label>
+                    <p className="font-medium text-white">{project.performance_compliance_result || 'Under review'}</p>
+                  </div>
+                  <div>
+                    <Label className="text-slate-300">Total Points</Label>
+                    <p className="font-medium text-white">{project.total_points || 'TBD'}</p>
+                  </div>
+                  <div>
+                    <Label className="text-slate-300">Upgrade Costs</Label>
+                    <p className="font-medium text-white">{project.upgrade_costs ? `$${project.upgrade_costs.toLocaleString()}` : 'TBD'}</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="lg:col-span-1 bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-white">
+                    <User className="h-5 w-5" />
+                    Client Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 text-sm">
+                  <div>
+                    <Label className="text-slate-300">Company</Label>
+                    <p className="font-medium text-white">{companyInfo?.company_name || 'Not specified'}</p>
+                  </div>
+                  <div>
+                    <Label className="text-slate-300">Contact Email</Label>
+                    <p className="font-medium text-white">{companyInfo?.contact_email || 'Not specified'}</p>
+                  </div>
+                  <div>
+                    <Label className="text-slate-300">Phone</Label>
+                    <p className="font-medium text-white">{companyInfo?.phone || 'Not specified'}</p>
+                  </div>
+                  <div>
+                    <Label className="text-slate-300">Company Address</Label>
+                    <p className="font-medium text-white">{companyInfo?.address || 'Not specified'}</p>
                   </div>
                 </CardContent>
               </Card>
