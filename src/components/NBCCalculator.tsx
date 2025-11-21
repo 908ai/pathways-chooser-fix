@@ -346,6 +346,14 @@ const NBCCalculator = ({
         const nameParts = namePart.split(' ');
         const firstName = nameParts[0] || "";
         const lastName = nameParts.slice(1).join(' ') || "";
+        
+        let loadedCompliancePath = project.selected_pathway || "";
+        if (loadedCompliancePath === 'performance') {
+          loadedCompliancePath = '9365'; // Default for old data
+        } else if (loadedCompliancePath === 'prescriptive') {
+          loadedCompliancePath = '9362'; // Default for old data
+        }
+
         const newSelections = {
           firstName: firstName || companyData?.company_name?.split(' ')[0] || "",
           lastName: lastName || companyData?.company_name?.split(' ').slice(1).join(' ') || "",
@@ -361,7 +369,7 @@ const NBCCalculator = ({
           frontDoorOrientation: "",
           climateZone: project.climate_zone || "",
           occupancyClass: project.occupancy_class || "",
-          compliancePath: project.selected_pathway ? (project.selected_pathway === 'performance' ? '9365' : '9362') : "",
+          compliancePath: loadedCompliancePath,
           isVolumeOver380: project.building_volume && project.building_volume > 380 ? "yes" : "no",
           buildingVolume: project.building_volume && project.building_volume !== 0 ? project.building_volume.toString() : "",
           ceilingsAtticRSI: project.attic_rsi && project.attic_rsi !== 0 ? project.attic_rsi.toString() : "",
@@ -577,7 +585,7 @@ const NBCCalculator = ({
         climate_zone: selections.climateZone,
         occupancy_class: selections.occupancyClass,
         location: [selections.streetAddress, selections.city, selections.province].filter(Boolean).join(', '),
-        selected_pathway: selections.compliancePath.includes('9362') || selections.compliancePath.includes('9368') ? 'prescriptive' : 'performance',
+        selected_pathway: selections.compliancePath,
         attic_rsi: parseFloat(selections.ceilingsAtticRSI) || null,
         wall_rsi: parseFloat(selections.wallRSI) || null,
         below_grade_rsi: parseFloat(selections.belowGradeRSI || selections.foundationWallsRSI) || null,
