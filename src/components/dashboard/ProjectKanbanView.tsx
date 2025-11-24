@@ -12,8 +12,8 @@ interface ProjectKanbanViewProps {
 const ProjectKanbanView = ({ projects, onViewProject, onEditProject, onDuplicateProject, onDeleteProject }: ProjectKanbanViewProps) => {
   const allStatuses = [
     { id: 'draft', title: 'Draft' },
-    { id: 'submitted', title: 'Submitted' },
     { id: 'needs_revision', title: 'Needs Revision' },
+    { id: 'submitted', title: 'Submitted' },
     { id: 'complete', title: 'Complete' },
   ];
 
