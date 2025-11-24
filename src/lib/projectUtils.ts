@@ -98,6 +98,8 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
         addIfMissing(optional, 'waterHeaterType', 'Water Heater Type');
         addIfMissing(optional, 'hasDWHR', 'Drain Water Heat Recovery selection');
         addIfMissing(optional, 'interestedCertifications', 'Certification interests');
+        addIfMissing(optional, 'midConstructionBlowerDoorPlanned', 'Mid-Construction Blower Door Test');
+        addIfMissing(optional, 'occupancyClass', 'Occupancy Class');
 
         // Conditional optional fields that depend on other selections
         if (selections.hasCathedralOrFlatRoof === 'yes') {
@@ -117,6 +119,12 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
         }
         if (selections.heatingType) {
           addIfMissing(optional, 'heatingEfficiency', 'Heating Make/Model');
+          if (selections.heatingType === 'boiler') {
+            addIfMissing(optional, 'indirectTank', 'Indirect Tank selection');
+            if (selections.indirectTank === 'yes') {
+              addIfMissing(optional, 'indirectTankSize', 'Indirect Tank Size');
+            }
+          }
         }
         if (selections.coolingApplicable === 'yes') {
           addIfMissing(optional, 'coolingMakeModel', 'Cooling System Make/Model');
