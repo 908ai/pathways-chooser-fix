@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import ProjectStatusCard from '@/components/ProjectStatusCard';
+import ComplianceDetails from '@/components/ComplianceDetails';
 
 const DetailItem = ({ label, value, unit = '' }: { label: string; value: any; unit?: string }) => {
   if (value === null || value === undefined || value === '') return null;
@@ -934,49 +935,7 @@ const ProjectDetail = () => {
           </TabsContent>
 
           <TabsContent value="compliance" className="mt-6">
-            <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-white">
-                  <FileText className="h-5 w-5" />
-                  NBC 9.36 Compliance Details
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  <div className="text-center p-4 bg-blue-900/30 rounded-lg">
-                    <h4 className="font-semibold text-blue-300 mb-2">Total Points</h4>
-                    <p className="text-2xl font-bold text-blue-200">{project.total_points || 'TBD'}</p>
-                    <p className="text-sm text-blue-300 mt-1">Required: 50+ points</p>
-                  </div>
-                  <div className="text-center p-4 bg-green-900/30 rounded-lg">
-                    <h4 className="font-semibold text-green-300 mb-2">Status</h4>
-                    <div className="flex justify-center mb-2">{getComplianceStatusBadge()}</div>
-                    <p className="text-sm text-green-300">{project.performance_compliance_result || 'Under review'}</p>
-                  </div>
-                  <div className="text-center p-4 bg-purple-900/30 rounded-lg">
-                    <h4 className="font-semibold text-purple-300 drop-shadow-md mb-2">Upgrade Costs</h4>
-                    <p className="text-2xl font-bold text-purple-200 drop-shadow-lg">
-                      {project.upgrade_costs ? `$${project.upgrade_costs.toLocaleString()}` : 'TBD'}
-                    </p>
-                    <p className="text-sm text-purple-300 drop-shadow-sm mt-1">Estimated investment</p>
-                  </div>
-                </div>
-                
-                {project.recommendations && project.recommendations.length > 0 && (
-                  <div>
-                    <h4 className="font-semibold mb-3 text-white">Recommendations</h4>
-                    <div className="space-y-2">
-                      {project.recommendations.map((rec: string, index: number) => (
-                        <div key={index} className="flex items-start gap-2 p-3 bg-slate-800/60 rounded-md">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                          <p className="text-sm text-slate-200">{rec}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <ComplianceDetails project={project} />
           </TabsContent>
 
           <TabsContent value="documents" className="mt-6">
