@@ -137,7 +137,10 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                 </div>
                                 <Select value={selections.hasHrv} onValueChange={value => setSelections(prev => ({
                                     ...prev,
-                                    hasHrv: value
+                                    hasHrv: value,
+                                    hrvEfficiency: value === 'without_hrv' ? '' : prev.hrvEfficiency,
+                                    hasSecondaryHrv: value === 'without_hrv' ? '' : prev.hasSecondaryHrv,
+                                    secondaryHrvEfficiency: value === 'without_hrv' ? '' : prev.secondaryHrvEfficiency,
                                 }))}>
                                     <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                                         <SelectValue placeholder="Select option" />
@@ -191,7 +194,8 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                     </div>
                                     <Select value={selections.hasSecondaryHrv} onValueChange={value => setSelections(prev => ({
                                         ...prev,
-                                        hasSecondaryHrv: value
+                                        hasSecondaryHrv: value,
+                                        secondaryHrvEfficiency: value !== 'separate' ? '' : prev.secondaryHrvEfficiency,
                                     }))}>
                                         <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                                             <SelectValue placeholder="Select option" />

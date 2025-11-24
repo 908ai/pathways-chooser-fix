@@ -131,7 +131,8 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                     <Select value={selections.hasCathedralOrFlatRoof} onValueChange={value => setSelections(prev => ({
                         ...prev,
                         hasCathedralOrFlatRoof: value,
-                        cathedralFlatRSI: ""
+                        cathedralFlatRSI: "",
+                        cathedralFlatRSIValue: ""
                     }))}>
                         <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                             <SelectValue placeholder="Select option" />
@@ -672,7 +673,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                                             <div>
                                                 <p className="font-medium">Guarded Test</p>
                                                 <div className="ml-4 space-y-1">
-                                                    <p>• All adjacent units are depressurized at the same time.</p>
+                                                    <p>• All adjacent units are depressurized (or pressurized) at the same time.</p>
                                                     <p>• Blocks airflow between units, giving a more accurate picture of leakage to the outside.</p>
                                                     <p>• Ideal for multi-unit buildings, but more complex.</p>
                                                 </div>
@@ -689,6 +690,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                                             <p>• Use Table 9.36.-A for guarded tests (stricter limits)</p>
                                             <p>• Use Table 9.36.-B for unguarded tests (more lenient for attached buildings)</p>
                                         </div>
+                                        <p className="text-sm text-muted-foreground mt-2">The design air leakage rate, established by the builder and energy modeller, is incorporated into the energy model and later verified through testing at either the mid-construction or final stage. If the measured air changes per hour (ACH, if chosen) exceed the code-specified airtightness level, the building fails; if the measured ACH is lower, it passes.</p>                                            
                                         <p className="text-sm text-muted-foreground mt-2">In multi-unit buildings, the worst-performing zone sets the final score.</p>
                                     </div>
 
@@ -869,7 +871,12 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                     </div>  
                     <Select value={selections.heatingType} onValueChange={value => setSelections(prev => ({
                         ...prev,
-                        heatingType: value
+                        heatingType: value,
+                        heatingEfficiency: "",
+                        otherHeatingEfficiency: "",
+                        heatingMakeModel: "",
+                        indirectTank: value !== 'boiler' ? '' : prev.indirectTank,
+                        indirectTankSize: value !== 'boiler' ? '' : prev.indirectTankSize,
                     }))}>
                         <SelectTrigger>
                             <SelectValue placeholder="Select heating type" />
@@ -1060,7 +1067,8 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                         <label className="text-sm font-medium text-slate-100">Are you installing an indirect tank?</label>
                         <Select value={selections.indirectTank} onValueChange={value => setSelections(prev => ({
                             ...prev,
-                            indirectTank: value
+                            indirectTank: value,
+                            indirectTankSize: value === 'no' ? '' : prev.indirectTankSize,
                         }))}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select if installing indirect tank" />
@@ -1085,7 +1093,9 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                     <label className="text-sm font-medium text-slate-100">Are you installing cooling/air conditioning?</label>
                     <Select value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
                         ...prev,
-                        coolingApplicable: value
+                        coolingApplicable: value,
+                        coolingEfficiency: value === 'no' ? '' : prev.coolingEfficiency,
+                        coolingMakeModel: value === 'no' ? '' : prev.coolingMakeModel,
                     }))}>
                         <SelectTrigger>
                             <SelectValue placeholder="Select if cooling is applicable" />

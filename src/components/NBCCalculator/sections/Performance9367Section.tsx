@@ -350,7 +350,8 @@ export default function Performance9367Section({
                         <label className="text-sm font-medium text-slate-100">Do you have skylights?</label>
                         <Select value={selections.hasSkylights} onValueChange={value => setSelections(prev => ({
                             ...prev,
-                            hasSkylights: value
+                            hasSkylights: value,
+                            skylightUValue: ""
                         }))}>
                             <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                                 <SelectValue placeholder="Select option" />
@@ -527,12 +528,15 @@ export default function Performance9367Section({
                         {(() => {
                             const airtightnessValue = parseFloat(selections.airtightness || "0");
 
-                            // Determine minimum threshold based on province
-                            let minimumThreshold = 3.0; // Default for Alberta
-                            let thresholdText = "3.0";
+                            // Determine minimum threshold based on province and building type
+                            let minimumThreshold = 2.5; // Default for Alberta single-detached
+                            let thresholdText = "2.5";
                             if (selections.province === "saskatchewan") {
                                 minimumThreshold = 3.2;
                                 thresholdText = "3.2";
+                            } else if (selections.province === "alberta" && selections.buildingType === "multi-unit") {
+                                minimumThreshold = 3.0;
+                                thresholdText = "3.0";
                             }
                             const showWarning = airtightnessValue > 0 && airtightnessValue < minimumThreshold;
                             return showWarning ? (
@@ -545,34 +549,6 @@ export default function Performance9367Section({
                                 </Alert>
                             ) : null;   
                         })()}
-
-                        <WarningButton warningId="airtightness-caution-9367" title="⚠️ Caution: Air-Tightness Targets Without Testing History">
-                            <div className="text-xs text-white space-y-2">
-                                <p>
-                                    Choosing an air-tightness target lower than prescribed by NBC2020 without prior test results is risky.
-                                </p>
-                                <p>
-                                    We strongly recommend having at least 4–5 blower door tests from similar builds to know what levels you can reliably achieve.
-                                </p>
-                                <p>
-                                    If your final blower door test doesn't meet the target you've claimed, you could:
-                                </p>
-                                <ul className="list-disc ml-4 space-y-1">
-                                    <li>Miss required performance metrics</li>
-                                    <li>Be denied a permit or occupancy</li>
-                                    <li>Face expensive late-stage upgrades or rework</li>
-                                </ul>
-                                <p>
-                                    <strong>Tip:</strong> Track airtightness results across all projects to set realistic targets, reduce build costs & optimize performance from day one.
-                                </p>
-                                <div className="flex items-center gap-1 text-sm mt-3">
-                                    <span>🔗</span>
-                                    <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">
-                                        More information
-                                    </a>
-                                </div>
-                            </div>
-                        </WarningButton>
 
                         {/* Mid-Construction Blower Door Test Checkbox */}
                         <div id="midConstructionBlowerDoorPlanned" className="space-y-3 pt-4 border-t border-border/20">
@@ -730,7 +706,11 @@ export default function Performance9367Section({
                         </div>                
                         <Select value={selections.heatingType} onValueChange={value => setSelections(prev => ({
                             ...prev,
-                            heatingType: value
+                            heatingType: value,
+                            heatingEfficiency: "",
+                            heatingMakeModel: "",
+                            indirectTank: value !== 'boiler' ? '' : prev.indirectTank,
+                            indirectTankSize: value !== 'boiler' ? '' : prev.indirectTankSize,
                         }))}>
                             <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                                 <SelectValue placeholder="Select heating type" />
@@ -779,7 +759,8 @@ export default function Performance9367Section({
                             <label className="text-sm font-medium text-slate-100">Are you installing an indirect tank?</label>
                             <Select value={selections.indirectTank} onValueChange={value => setSelections(prev => ({
                                 ...prev,
-                                indirectTank: value
+                                indirectTank: value,
+                                indirectTankSize: value === 'no' ? '' : prev.indirectTankSize,
                             }))}>
                                 <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                                     <SelectValue placeholder="Select if installing indirect tank" />
@@ -804,7 +785,9 @@ export default function Performance9367Section({
                         <label className="text-sm font-medium text-slate-100">Are you installing cooling/air conditioning?</label>
                         <Select value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
                             ...prev,
-                            coolingApplicable: value
+                            coolingApplicable: value,
+                            coolingMakeModel: value === 'no' ? '' : prev.coolingMakeModel,
+                            coolingEfficiency: value === 'no' ? '' : prev.coolingEfficiency,
                         }))}>
                             <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                                 <SelectValue placeholder="Select if cooling is applicable" />
@@ -873,7 +856,8 @@ export default function Performance9367Section({
                             </div>
                             <Select value={selections.hasSecondaryHrv} onValueChange={value => setSelections(prev => ({
                                 ...prev,
-                                hasSecondaryHrv: value
+                                hasSecondaryHrv: value,
+                                secondaryHrvEfficiency: value !== 'separate' ? '' : prev.secondaryHrvEfficiency,
                             }))}>
                                 <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                                     <SelectValue placeholder="Select option" />

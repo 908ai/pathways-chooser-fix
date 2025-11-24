@@ -160,6 +160,7 @@ export default function Prescriptive9362Section({
                     setSelections((prev: any) => {
                         const newSelections = { ...prev, hasHrv: value };
                         if (value === 'without_hrv') {
+                            newSelections.hrvEfficiency = "";
                             newSelections.hasSecondaryHrv = "";
                             newSelections.secondaryHrvEfficiency = "";
                         }
@@ -287,7 +288,6 @@ export default function Prescriptive9362Section({
                 <Select required value={selections.hasCathedralOrFlatRoof} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     hasCathedralOrFlatRoof: value,
-                    cathedralFlatRSI: "",
                     cathedralFlatRSIValue: ""
                 }))}>
                     <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.hasCathedralOrFlatRoof && "border-red-500 ring-2 ring-red-500")}>
@@ -666,7 +666,8 @@ export default function Prescriptive9362Section({
                     <label className="flex items-center gap-2">
                         <input required type="radio" name="hasSkylights-9362" value="no" checked={selections.hasSkylights === "no"} onChange={e => setSelections(prev => ({
                             ...prev,
-                            hasSkylights: e.target.value
+                            hasSkylights: e.target.value,
+                            skylightUValue: ""
                         }))} className="w-4 h-4 text-primary" />
                         <span className="text-sm text-slate-100">No</span>
                     </label>
@@ -1069,7 +1070,8 @@ export default function Prescriptive9362Section({
                     <label className="text-sm font-medium text-slate-100">Are you installing an indirect tank? <span className="text-red-400">*</span></label>
                     <Select required value={selections.indirectTank} onValueChange={value => setSelections(prev => ({
                         ...prev,
-                        indirectTank: value
+                        indirectTank: value,
+                        indirectTankSize: value === 'no' ? '' : prev.indirectTankSize
                     }))}>
                         <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.indirectTank && "border-red-500 ring-2 ring-red-500")}>
                             <SelectValue placeholder="Select if installing indirect tank" />
@@ -1133,8 +1135,8 @@ export default function Prescriptive9362Section({
                             secondaryHeatingType: value,
                             secondaryHeatingEfficiency: "",
                             otherSecondaryHeatingEfficiency: "",
-                            secondaryIndirectTank: "",
-                            secondaryIndirectTankSize: ""
+                            secondaryIndirectTank: value !== 'boiler' ? '' : prev.secondaryIndirectTank,
+                            secondaryIndirectTankSize: value !== 'boiler' ? '' : prev.secondaryIndirectTankSize,
                         }))}>
                             <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryHeatingType && "border-red-500 ring-2 ring-red-500")}>
                                 <SelectValue placeholder="Select heating type" />
@@ -1238,7 +1240,8 @@ export default function Prescriptive9362Section({
                             <label className="text-sm font-medium text-slate-100">Are you installing an indirect tank for the secondary suite? <span className="text-red-400">*</span></label>
                             <Select required value={selections.secondaryIndirectTank} onValueChange={value => setSelections(prev => ({
                                 ...prev,
-                                secondaryIndirectTank: value
+                                secondaryIndirectTank: value,
+                                secondaryIndirectTankSize: value === 'no' ? '' : prev.secondaryIndirectTankSize,
                             }))}>
                                 <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.secondaryIndirectTank && "border-red-500 ring-2 ring-red-500")}>
                                     <SelectValue placeholder="Select option" />
@@ -1265,7 +1268,8 @@ export default function Prescriptive9362Section({
                 <label className="text-sm font-medium text-slate-100">Are you installing cooling/air conditioning? <span className="text-red-400">*</span></label>
                 <Select required value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
                     ...prev,
-                    coolingApplicable: value
+                    coolingApplicable: value,
+                    coolingEfficiency: value === 'no' ? '' : prev.coolingEfficiency,
                 }))}>
                     <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.coolingApplicable && "border-red-500 ring-2 ring-red-500")}>
                         <SelectValue placeholder="Select if cooling is applicable" />
@@ -1300,7 +1304,8 @@ export default function Prescriptive9362Section({
                     setSelections((prev: any) => ({
                         ...prev,
                         waterHeaterType: value,
-                        waterHeater: "" // Reset efficiency when type changes
+                        waterHeater: "", // Reset efficiency when type changes
+                        otherWaterHeaterType: value !== 'other' ? '' : prev.otherWaterHeaterType,
                     }));
                 }} disabled={isWaterHeaterBoiler}>
                     <SelectTrigger className={cn("bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400", validationErrors.waterHeaterType && "border-red-500 ring-2 ring-red-500")}>

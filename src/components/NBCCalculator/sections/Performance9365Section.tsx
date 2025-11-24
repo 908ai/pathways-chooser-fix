@@ -44,13 +44,15 @@ export default function Performance9365Section({
         title,
         children,
         variant = "warning",
+        defaultOpen = false,
     }: {
         warningId: string;
         title: string;
         children: React.ReactNode;
         variant?: "warning" | "destructive";
+        defaultOpen?: boolean;
     }) => {
-        const [isOpen, setIsOpen] = useState(false);
+        const [isOpen, setIsOpen] = useState(defaultOpen);
         const bgColor =
             variant === "warning"
                 ? "bg-gradient-to-r from-slate-800/60 to-teal-800/60"
@@ -457,11 +459,20 @@ export default function Performance9365Section({
                 </div>}
             </div>
 
+            <div id="windowUValue" className="space-y-2">
+                <WarningButton warningId="windowUValue-9367" title="ℹ️ Window Schedule Required">
+                    <p className="text-xs text-white">
+                        Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value (ie, highest U-value W/(m²×K)).
+                    </p>
+                </WarningButton>
+            </div>
+
             <div id="hasSkylights" className="space-y-2">
                 <label className="text-sm font-medium text-slate-100">Do you have skylights?</label>
                 <Select value={selections.hasSkylights} onValueChange={value => setSelections(prev => ({
                     ...prev,
-                    hasSkylights: value
+                    hasSkylights: value,
+                    skylightUValue: ""
                 }))}>
                     <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                         <SelectValue placeholder="Select option" />
@@ -480,6 +491,12 @@ export default function Performance9365Section({
                     }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
                 </div>}
             </div>
+
+            {selections.hasSkylights === "yes" && <WarningButton warningId="skylight-shaft-insulation-9368" title="⚠️ Important: Skylight Shaft Insulation">
+                <p className="text-xs">
+                    Skylight shafts must be insulated. Be prepared to provide further details upon request.
+                </p>
+            </WarningButton>}
 
             <div id="airtightness" className="space-y-2">
                 <div className="flex items-center gap-3">
@@ -810,7 +827,10 @@ export default function Performance9365Section({
                 </div>                
                 <Select value={selections.heatingType} onValueChange={value => setSelections(prev => ({
                     ...prev,
-                    heatingType: value
+                    heatingType: value,
+                    heatingEfficiency: "",
+                    indirectTank: value !== 'boiler' ? '' : prev.indirectTank,
+                    indirectTankSize: value !== 'boiler' ? '' : prev.indirectTankSize,
                 }))}>
                     <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                         <SelectValue placeholder="Select heating type" />
@@ -859,7 +879,8 @@ export default function Performance9365Section({
                     <label className="text-sm font-medium text-slate-100">Are you installing an indirect tank?</label>
                     <Select value={selections.indirectTank} onValueChange={value => setSelections(prev => ({
                         ...prev,
-                        indirectTank: value
+                        indirectTank: value,
+                        indirectTankSize: value === 'no' ? '' : prev.indirectTankSize,
                     }))}>
                         <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                             <SelectValue placeholder="Select if installing indirect tank" />
@@ -884,7 +905,9 @@ export default function Performance9365Section({
                 <label className="text-sm font-medium text-slate-100">Are you installing cooling/air conditioning?</label>
                 <Select value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
                     ...prev,
-                    coolingApplicable: value
+                    coolingApplicable: value,
+                    coolingMakeModel: value === 'no' ? '' : prev.coolingMakeModel,
+                    coolingEfficiency: value === 'no' ? '' : prev.coolingEfficiency,
                 }))}>
                     <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                         <SelectValue placeholder="Select if cooling is applicable" />
@@ -953,7 +976,8 @@ export default function Performance9365Section({
                     </div>
                     <Select value={selections.hasSecondaryHrv} onValueChange={value => setSelections(prev => ({
                         ...prev,
-                        hasSecondaryHrv: value
+                        hasSecondaryHrv: value,
+                        secondaryHrvEfficiency: value !== 'separate' ? '' : prev.secondaryHrvEfficiency,
                     }))}>
                         <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
                             <SelectValue placeholder="Select option" />
