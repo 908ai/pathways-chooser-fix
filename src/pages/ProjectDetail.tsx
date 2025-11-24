@@ -55,6 +55,7 @@ const ProjectDetail = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
 
   const getPathwayDisplay = (pathway: string | null) => {
     if (!pathway) return null;
@@ -562,6 +563,42 @@ const ProjectDetail = () => {
     navigate(`/calculator?edit=${id}&focus=${fieldId}`);
   };
 
+  const handleGeneratePdf = async () => {
+    if (!project) return;
+    setGeneratingPdf(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-pdf', {
+        body: { projectId: project.id },
+      });
+
+      if (error) throw error;
+
+      const blob = new Blob([data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${project.project_name}_Report.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "PDF Generated",
+        description: "Your project report has been downloaded.",
+      });
+    } catch (error: any) {
+      console.error('Error generating PDF:', error);
+      toast({
+        title: "PDF Generation Failed",
+        description: error.message || "There was an error creating the PDF report.",
+        variant: "destructive",
+      });
+    } finally {
+      setGeneratingPdf(false);
+    }
+  };
+
   if (loading || roleLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
@@ -770,6 +807,13 @@ const ProjectDetail = () => {
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
+
+                {isAdmin && (
+                  <Button onClick={handleGeneratePdf} disabled={generatingPdf} variant="outline" className="animate-fade-in">
+                    <FileText className="h-4 w-4 mr-2" />
+                    {generatingPdf ? 'Generating...' : 'PDF'}
+                  </Button>
+                )}
               </div>
             </div>
           </div>
