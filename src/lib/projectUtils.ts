@@ -107,7 +107,7 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
           addIfMissing(optional, 'skylightUValue', 'Skylight U-Value');
         }
         if (selections.hasHrv === 'with_hrv') {
-          addIfMissing(optional, 'hrvMakeModel', 'HRV/ERV Make/Model');
+          addIfMissing(optional, 'hrvEfficiency', 'HRV/ERV Make/Model');
         }
         if ((selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv") {
           addIfMissing(optional, 'hasSecondaryHrv', 'Secondary Suite HRV/ERV selection');
@@ -116,7 +116,7 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
           }
         }
         if (selections.heatingType) {
-          addIfMissing(optional, 'heatingMakeModel', 'Heating Make/Model');
+          addIfMissing(optional, 'heatingEfficiency', 'Heating Make/Model');
         }
         if (selections.coolingApplicable === 'yes') {
           addIfMissing(optional, 'coolingMakeModel', 'Cooling System Make/Model');
@@ -124,11 +124,30 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
         }
         if (!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes')) {
           if (selections.waterHeaterType) {
-            addIfMissing(optional, 'waterHeaterMakeModel', 'Water Heater Make/Model');
+            addIfMissing(optional, 'waterHeater', 'Water Heater Make/Model');
           }
         }
         if (selections.city?.toLowerCase().trim() === "red deer" && selections.province === "alberta") {
           addIfMissing(optional, 'hasF280Calculation', 'F280 Calculation status');
+        }
+        
+        if (selections.floorsSlabsSelected?.includes("floorsUnheated")) {
+          addIfMissing(optional, 'floorsUnheatedRSI', 'Floors over Unheated Spaces info');
+        }
+        if (selections.floorsSlabsSelected?.includes("floorsGarage")) {
+          addIfMissing(optional, 'floorsGarageRSI', 'Floors above Garages info');
+        }
+        if (selections.floorsSlabsSelected?.includes("unheatedBelowFrost")) {
+          addIfMissing(optional, 'unheatedFloorBelowFrostRSI', 'Unheated Floor Below Frostline info');
+        }
+        if (selections.floorsSlabsSelected?.includes("unheatedAboveFrost")) {
+          addIfMissing(optional, 'unheatedFloorAboveFrostRSI', 'Unheated Floor Above Frostline info');
+        }
+        if (selections.floorsSlabsSelected?.includes("heatedFloors")) {
+          addIfMissing(optional, 'heatedFloorsRSI', 'Heated Floors info');
+        }
+        if (selections.floorsSlabsSelected?.includes("slabOnGradeIntegralFooting")) {
+          addIfMissing(optional, 'slabOnGradeIntegralFootingRSI', 'Slab on Grade info');
         }
         break;
 
