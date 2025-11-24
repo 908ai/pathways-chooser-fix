@@ -787,6 +787,7 @@ const ProjectDetail = () => {
                     <Label className="text-slate-300">Floor Area</Label>
                     <p className="font-medium text-white">{project.floor_area ? `${project.floor_area} m²` : 'Not specified'}</p>
                   </div>
+                  <DetailItem label="Comments" value={project.comments} />
                 </CardContent>
               </Card>
 
@@ -857,10 +858,25 @@ const ProjectDetail = () => {
                 </CardHeader>
                 <CardContent className="space-y-1">
                   <DetailItem label="Attic/Ceiling RSI" value={project.attic_rsi} unit="RSI" />
+                  <DetailItem label="Other Attic Type" value={project.ceilings_attic_other_type} />
+                  <DetailItem label="Cathedral/Flat Roof" value={project.has_cathedral_or_flat_roof} />
+                  <DetailItem label="Cathedral/Flat Roof RSI" value={project.cathedral_flat_rsi} unit="RSI" />
+                  <DetailItem label="Other Cathedral/Flat Roof Type" value={project.cathedral_flat_other_type} />
                   <DetailItem label="Above-Grade Wall RSI" value={project.wall_rsi} unit="RSI" />
                   <DetailItem label="Below-Grade Wall RSI" value={project.below_grade_rsi} unit="RSI" />
                   <DetailItem label="Exposed Floor RSI" value={project.floor_rsi} unit="RSI" />
+                  <DetailItem label="Floors over Garage RSI" value={project.floors_garage_rsi} unit="RSI" />
+                  <DetailItem label="Slab Insulation Type" value={project.slab_insulation_type} />
+                  <DetailItem label="Slab Insulation Value" value={project.slab_insulation_value} unit="RSI" />
+                  <DetailItem label="In-Floor Heat RSI" value={project.in_floor_heat_rsi} unit="RSI" />
+                  <DetailItem label="Slab on Grade RSI" value={project.slab_on_grade_rsi} unit="RSI" />
+                  <DetailItem label="Slab on Grade Integral Footing RSI" value={project.slab_on_grade_integral_footing_rsi} unit="RSI" />
+                  <DetailItem label="Unheated Floor Below Frost" value={project.unheated_floor_below_frost_rsi} />
+                  <DetailItem label="Unheated Floor Above Frost RSI" value={project.unheated_floor_above_frost_rsi} unit="RSI" />
+                  <DetailItem label="Heated Floors RSI" value={project.heated_floors_rsi} unit="RSI" />
                   <DetailItem label="Window & Door U-Value" value={project.window_u_value} unit="W/(m²·K)" />
+                  <DetailItem label="Has Skylights" value={project.has_skylights} />
+                  <DetailItem label="Skylight U-Value" value={project.skylight_u_value} unit="W/(m²·K)" />
                   <DetailItem label="Mid-Construction Blower Door Test" value={project.mid_construction_blower_door_planned} />
                 </CardContent>
               </Card>
@@ -887,6 +903,14 @@ const ProjectDetail = () => {
                   <DetailItem label="Water Heating Efficiency" value={project.water_heating_efficiency} unit="UEF" />
                   <DetailItem label="Ventilation (HRV/ERV)" value={project.hrv_erv_type} />
                   <DetailItem label="Ventilation Efficiency" value={project.hrv_erv_efficiency} unit="SRE %" />
+                  <DetailItem label="Multiple MURB Heating" value={project.has_murb_multiple_heating} />
+                  <DetailItem label="MURB Second Heating Type" value={project.murb_second_heating_type} />
+                  <DetailItem label="MURB Second Heating Efficiency" value={project.murb_second_heating_efficiency} />
+                  <DetailItem label="MURB Second Indirect Tank" value={project.murb_second_indirect_tank} />
+                  <DetailItem label="MURB Second Indirect Tank Size" value={project.murb_second_indirect_tank_size} />
+                  <DetailItem label="Multiple MURB Water Heaters" value={project.has_murb_multiple_water_heaters} />
+                  <DetailItem label="MURB Second Water Heater Type" value={project.murb_second_water_heater_type} />
+                  <DetailItem label="MURB Second Water Heater" value={project.murb_second_water_heater} />
                 </CardContent>
               </Card>
 

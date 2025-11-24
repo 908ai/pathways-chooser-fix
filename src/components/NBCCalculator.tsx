@@ -178,7 +178,7 @@ const NBCCalculator = ({
     coolingEfficiency: "",
     coolingMakeModel: "",
     hasF280Calculation: "",
-    additionalInfo: "",
+    comments: "",
     interestedCertifications: [] as string[],
     midConstructionBlowerDoorPlanned: false,
     energuidePathway: ""
@@ -331,8 +331,9 @@ const NBCCalculator = ({
       if (!project) {
         throw new Error('Project not found');
       }
-      setEditingProjectName(project.project_name);
-      setEditingProjectStatus(project.compliance_status);
+      const p = project as any; // Cast to any to access new properties
+      setEditingProjectName(p.project_name);
+      setEditingProjectStatus(p.compliance_status);
 
       const {
         data: companyData,
@@ -342,13 +343,13 @@ const NBCCalculator = ({
         console.error('Error loading company data:', companyError);
       }
 
-      if (project) {
-        const namePart = project.project_name?.split(' - ')[0] || "";
+      if (p) {
+        const namePart = p.project_name?.split(' - ')[0] || "";
         const nameParts = namePart.split(' ');
         const firstName = nameParts[0] || "";
         const lastName = nameParts.slice(1).join(' ') || "";
         
-        let loadedCompliancePath = project.selected_pathway || "";
+        let loadedCompliancePath = p.selected_pathway || "";
         if (loadedCompliancePath === 'performance') {
           loadedCompliancePath = '9365'; // Default for old data
         } else if (loadedCompliancePath === 'prescriptive') {
@@ -360,100 +361,100 @@ const NBCCalculator = ({
           lastName: lastName || companyData?.company_name?.split(' ').slice(1).join(' ') || "",
           company: companyData?.company_name || "",
           companyAddress: companyData?.address || "",
-          streetAddress: project.street_address || project.location || "",
-          unitNumber: project.unit_number || "",
-          city: project.city || "",
-          postalCode: project.postal_code || "",
-          buildingType: project.building_type || "",
+          streetAddress: p.street_address || p.location || "",
+          unitNumber: p.unit_number || "",
+          city: p.city || "",
+          postalCode: p.postal_code || "",
+          buildingType: p.building_type || "",
           phoneNumber: companyData?.phone || "",
-          province: project.province || "",
-          frontDoorOrientation: "",
-          climateZone: project.climate_zone || "",
-          occupancyClass: project.occupancy_class || "",
+          province: p.province || "",
+          frontDoorOrientation: p.front_door_orientation || "",
+          climateZone: p.climate_zone || "",
+          occupancyClass: p.occupancy_class || "",
           compliancePath: loadedCompliancePath,
-          isVolumeOver380: project.building_volume && project.building_volume > 380 ? "yes" : "no",
-          buildingVolume: project.building_volume && project.building_volume !== 0 ? project.building_volume.toString() : "",
-          ceilingsAtticRSI: project.attic_rsi && project.attic_rsi !== 0 ? project.attic_rsi.toString() : "",
-          ceilingsAtticOtherType: "",
-          hasCathedralOrFlatRoof: "",
-          cathedralFlatRSI: "",
-          cathedralFlatRSIValue: "",
-          cathedralFlatOtherType: "",
-          wallRSI: project.wall_rsi && project.wall_rsi !== 0 ? project.wall_rsi.toString() : "",
-          floorsUnheatedRSI: project.floor_rsi && project.floor_rsi !== 0 ? project.floor_rsi.toString() : "",
-          floorsGarageRSI: "",
-          hasSkylights: "",
-          skylightUValue: "",
-          hasSlabOnGrade: "",
-          hasSlabIntegralFooting: "",
-          slabInsulation: "",
-          slabInsulationValue: "",
-          hasInFloorHeat: "",
-          hasInFloorHeat9365: "",
-          floorsSlabsSelected: [],
-          inFloorHeatRSI: "",
+          isVolumeOver380: p.building_volume && p.building_volume > 380 ? "yes" : "no",
+          buildingVolume: p.building_volume && p.building_volume !== 0 ? p.building_volume.toString() : "",
+          ceilingsAtticRSI: p.attic_rsi && p.attic_rsi !== 0 ? p.attic_rsi.toString() : "",
+          ceilingsAtticOtherType: p.ceilings_attic_other_type || "",
+          hasCathedralOrFlatRoof: p.has_cathedral_or_flat_roof || "",
+          cathedralFlatRSI: p.cathedral_flat_rsi ? String(p.cathedral_flat_rsi) : "",
+          cathedralFlatRSIValue: p.cathedral_flat_rsi ? String(p.cathedral_flat_rsi) : "",
+          cathedralFlatOtherType: p.cathedral_flat_other_type || "",
+          wallRSI: p.wall_rsi && p.wall_rsi !== 0 ? p.wall_rsi.toString() : "",
+          floorsUnheatedRSI: p.floor_rsi && p.floor_rsi !== 0 ? p.floor_rsi.toString() : "",
+          floorsGarageRSI: p.floors_garage_rsi ? String(p.floors_garage_rsi) : "",
+          hasSkylights: p.has_skylights || "",
+          skylightUValue: p.skylight_u_value || "",
+          hasSlabOnGrade: p.slab_on_grade_rsi ? "yes" : "no",
+          hasSlabIntegralFooting: p.slab_on_grade_integral_footing_rsi ? "yes" : "no",
+          slabInsulation: p.slab_insulation_type || "",
+          slabInsulationValue: p.slab_insulation_value ? String(p.slab_insulation_value) : "",
+          hasInFloorHeat: p.has_in_floor_heat ? "yes" : "no",
+          hasInFloorHeat9365: p.has_in_floor_heat || "",
+          floorsSlabsSelected: p.floors_slabs_selected || [],
+          inFloorHeatRSI: p.in_floor_heat_rsi ? String(p.in_floor_heat_rsi) : "",
           foundationWallsRSI: "",
-          slabOnGradeRSI: "",
-          slabOnGradeIntegralFootingRSI: "",
-          floorsOverUnheatedSpacesRSI: "",
-          unheatedFloorBelowFrostRSI: "",
-          unheatedFloorAboveFrostRSI: "",
-          heatedFloorsRSI: "",
-          windowUValue: project.window_u_value && project.window_u_value !== 0 ? project.window_u_value.toString() : "",
-          belowGradeRSI: project.below_grade_rsi && project.below_grade_rsi !== 0 ? project.below_grade_rsi.toString() : "",
-          airtightness: project.airtightness_al && project.airtightness_al !== 0 ? project.airtightness_al.toString() : "",
+          slabOnGradeRSI: p.slab_on_grade_rsi ? String(p.slab_on_grade_rsi) : "",
+          slabOnGradeIntegralFootingRSI: p.slab_on_grade_integral_footing_rsi ? String(p.slab_on_grade_integral_footing_rsi) : "",
+          floorsOverUnheatedSpacesRSI: p.floor_rsi ? String(p.floor_rsi) : "",
+          unheatedFloorBelowFrostRSI: p.unheated_floor_below_frost_rsi || "",
+          unheatedFloorAboveFrostRSI: p.unheated_floor_above_frost_rsi ? String(p.unheated_floor_above_frost_rsi) : "",
+          heatedFloorsRSI: p.heated_floors_rsi ? String(p.heated_floors_rsi) : "",
+          windowUValue: p.window_u_value && p.window_u_value !== 0 ? p.window_u_value.toString() : "",
+          belowGradeRSI: p.below_grade_rsi && p.below_grade_rsi !== 0 ? p.below_grade_rsi.toString() : "",
+          airtightness: p.airtightness_al && p.airtightness_al !== 0 ? p.airtightness_al.toString() : "",
           customAirtightness: "",
-          atticRSI: project.attic_rsi && project.attic_rsi !== 0 ? project.attic_rsi.toString() : "",
-          hasHrv: project.hrv_erv_type && project.hrv_erv_type !== 'None' ? "yes" : "no",
-          hrv: project.hrv_erv_efficiency && project.hrv_erv_efficiency !== 0 ? project.hrv_erv_efficiency.toString() : "",
-          hasHrvErv9365: project.hrv_erv_type && project.hrv_erv_type !== 'None' ? "yes" : "no",
-          hrvMakeModel: "",
-          hrvEfficiency: project.hrv_erv_efficiency && project.hrv_erv_efficiency !== 0 ? project.hrv_erv_efficiency.toString() : "",
-          hasSecondaryHrv: "",
-          secondaryHrvEfficiency: "",
-          waterHeater: project.water_heating_type || "",
-          waterHeaterMakeModel: "",
-          waterHeaterType: project.water_heating_type || "",
-          otherWaterHeaterType: "",
-          hasSecondaryWaterHeater: "",
-          secondaryWaterHeaterSameAsMain: "",
-          secondaryWaterHeater: "",
-          secondaryWaterHeaterType: "",
-          hasDWHR: "",
-          heatingType: project.heating_system_type || "",
-          heatingMakeModel: "",
-          otherHeatingMakeModel: "",
-          heatingEfficiency: project.heating_efficiency ? project.heating_efficiency.toString() : "",
-          otherHeatingEfficiency: "",
-          hasSecondaryHeating: "",
-          secondaryHeatingType: "",
-          secondaryHeatingEfficiency: "",
-          otherSecondaryHeatingEfficiency: "",
-          secondaryIndirectTank: "",
-          secondaryIndirectTankSize: "",
-          hasMurbMultipleHeating: "",
-          murbSecondHeatingType: "",
-          murbSecondHeatingEfficiency: "",
-          murbSecondIndirectTank: "",
-          murbSecondIndirectTankSize: "",
-          hasMurbMultipleWaterHeaters: "",
-          murbSecondWaterHeaterType: "",
-          murbSecondWaterHeater: "",
-          indirectTank: "",
-          indirectTankSize: "",
-          coolingApplicable: project.cooling_system_type && project.cooling_system_type !== "" ? "yes" : "no",
-          coolingEfficiency: project.cooling_efficiency && project.cooling_efficiency !== 0 ? project.cooling_efficiency.toString() : "",
-          coolingMakeModel: "",
-          hasF280Calculation: "",
-          additionalInfo: "",
-          interestedCertifications: [],
-          midConstructionBlowerDoorPlanned: project.mid_construction_blower_door_planned || false,
-          energuidePathway: ""
+          atticRSI: p.attic_rsi && p.attic_rsi !== 0 ? p.attic_rsi.toString() : "",
+          hasHrv: p.hrv_erv_type && p.hrv_erv_type !== 'None' ? "yes" : "no",
+          hrv: p.hrv_erv_efficiency && p.hrv_erv_efficiency !== 0 ? p.hrv_erv_efficiency.toString() : "",
+          hasHrvErv9365: p.hrv_erv_type && p.hrv_erv_type !== 'None' ? "yes" : "no",
+          hrvMakeModel: p.hrv_make_model || "",
+          hrvEfficiency: p.hrv_erv_efficiency && p.hrv_erv_efficiency !== 0 ? p.hrv_erv_efficiency.toString() : "",
+          hasSecondaryHrv: p.has_secondary_hrv || "",
+          secondaryHrvEfficiency: p.secondary_hrv_efficiency || "",
+          waterHeater: p.water_heating_type || "",
+          waterHeaterMakeModel: p.water_heater_make_model || "",
+          waterHeaterType: p.water_heating_type || "",
+          otherWaterHeaterType: p.other_water_heater_type || "",
+          hasSecondaryWaterHeater: p.has_secondary_water_heater || "",
+          secondaryWaterHeaterSameAsMain: p.secondary_water_heater_same_as_main || "",
+          secondaryWaterHeater: p.secondary_water_heater || "",
+          secondaryWaterHeaterType: p.secondary_water_heater_type || "",
+          hasDWHR: p.has_dwhr || "",
+          heatingType: p.heating_system_type || "",
+          heatingMakeModel: p.heating_make_model || "",
+          otherHeatingMakeModel: p.other_heating_make_model || "",
+          heatingEfficiency: p.heating_efficiency ? p.heating_efficiency.toString() : "",
+          otherHeatingEfficiency: p.other_heating_efficiency || "",
+          hasSecondaryHeating: p.has_secondary_heating || "",
+          secondaryHeatingType: p.secondary_heating_system_type || "",
+          secondaryHeatingEfficiency: p.secondary_heating_efficiency || "",
+          otherSecondaryHeatingEfficiency: p.other_secondary_heating_efficiency || "",
+          secondaryIndirectTank: p.secondary_indirect_tank || "",
+          secondaryIndirectTankSize: p.secondary_indirect_tank_size || "",
+          hasMurbMultipleHeating: p.has_murb_multiple_heating ? 'yes' : '',
+          murbSecondHeatingType: p.murb_second_heating_type || "",
+          murbSecondHeatingEfficiency: p.murb_second_heating_efficiency || "",
+          murbSecondIndirectTank: p.murb_second_indirect_tank || "",
+          murbSecondIndirectTankSize: p.murb_second_indirect_tank_size || "",
+          hasMurbMultipleWaterHeaters: p.has_murb_multiple_water_heaters ? 'yes' : '',
+          murbSecondWaterHeaterType: p.murb_second_water_heater_type || "",
+          murbSecondWaterHeater: p.murb_second_water_heater || "",
+          indirectTank: p.indirect_tank || "",
+          indirectTankSize: p.indirect_tank_size || "",
+          coolingApplicable: p.cooling_system_type && p.cooling_system_type !== "" ? "yes" : "no",
+          coolingEfficiency: p.cooling_efficiency && p.cooling_efficiency !== 0 ? p.cooling_efficiency.toString() : "",
+          coolingMakeModel: p.cooling_make_model || "",
+          hasF280Calculation: p.has_f280_calculation || "",
+          comments: p.comments || "",
+          interestedCertifications: p.interested_certifications || [],
+          midConstructionBlowerDoorPlanned: p.mid_construction_blower_door_planned || false,
+          energuidePathway: p.energuide_pathway || ""
         };
         setSelections(newSelections);
 
-        if (project.uploaded_files && Array.isArray(project.uploaded_files) && project.uploaded_files.length > 0) {
-          const validFileMetadata = project.uploaded_files.filter((fileMetadata: any) =>
+        if (p.uploaded_files && Array.isArray(p.uploaded_files) && p.uploaded_files.length > 0) {
+          const validFileMetadata = p.uploaded_files.filter((fileMetadata: any) =>
             fileMetadata && typeof fileMetadata === 'object' && fileMetadata.name && (fileMetadata.url || fileMetadata.path)
           );
           if (validFileMetadata.length > 0) {
@@ -1054,7 +1055,9 @@ const NBCCalculator = ({
           
           if (!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes')) {
             addIfMissing(required, 'waterHeaterType', 'Water Heater Type');
-            if (selections.waterHeaterType && selections.waterHeaterType !== 'boiler') addIfMissing(required, 'waterHeater', 'Water Heater Efficiency');
+            if (selections.waterHeaterType && selections.waterHeaterType !== 'boiler' && !selections.waterHeater) {
+              addIfMissing(required, 'waterHeater', 'Water Heater Efficiency');
+            }
             if (selections.waterHeaterType === 'other') addIfMissing(required, 'otherWaterHeaterType', 'Other Water Heater Type');
           }
           
