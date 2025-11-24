@@ -1,15 +1,26 @@
-import ComplianceStatusCard from '@/components/compliance/ComplianceStatusCard';
-import PerformanceComplianceView from '@/components/compliance/PerformanceComplianceView';
-import TieredPrescriptiveComplianceView from '@/components/compliance/TieredPrescriptiveComplianceView';
-import PrescriptiveComplianceView from '@/components/compliance/PrescriptiveComplianceView';
+import ComplianceStatusCard from './ComplianceStatusCard';
+import PerformanceComplianceView from './PerformanceComplianceView';
+import TieredPrescriptiveComplianceView from './TieredPrescriptiveComplianceView';
+import PrescriptiveComplianceView from './PrescriptiveComplianceView';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, ChevronRight } from 'lucide-react';
 
 interface ComplianceDetailsProps {
   project: any;
+  onFixItem: (fieldId: string) => void;
 }
 
-const ComplianceDetails = ({ project }: ComplianceDetailsProps) => {
+const mapRecommendationToFieldId = (rec: string): string | null => {
+    const lowerRec = rec.toLowerCase();
+    if (lowerRec.includes('wall rsi')) return 'wallRSI';
+    if (lowerRec.includes('window')) return 'windowUValue';
+    if (lowerRec.includes('airtightness')) return 'airtightness';
+    if (lowerRec.includes('attic rsi')) return 'ceilingsAtticRSI';
+    if (lowerRec.includes('below grade')) return 'belowGradeRSI';
+    return null;
+};
+
+const ComplianceDetails = ({ project, onFixItem }: ComplianceDetailsProps) => {
   const renderComplianceView = () => {
     switch (project.selected_pathway) {
       case '9365':
@@ -38,7 +49,6 @@ const ComplianceDetails = ({ project }: ComplianceDetailsProps) => {
       return null;
     }
 
-    // Mock recommendations
     const recommendations = project.recommendations || [
       "Increase Wall RSI to 3.69 to gain an additional 4.6 points.",
       "Upgrade windows to a U-Value of 1.44 or lower.",
@@ -52,15 +62,32 @@ const ComplianceDetails = ({ project }: ComplianceDetailsProps) => {
         <CardHeader>
           <CardTitle className="text-yellow-300 flex items-center gap-2">
             <AlertTriangle className="h-5 w-5" />
-            Actionable Recommendations
+            Recommendations
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <ul className="list-disc list-inside space-y-2 text-yellow-200">
-            {recommendations.map((rec: string, index: number) => (
-              <li key={index}>{rec}</li>
-            ))}
-          </ul>
+          <div className="space-y-2">
+            {recommendations.map((rec: string, index: number) => {
+              const fieldId = mapRecommendationToFieldId(rec);
+              if (fieldId) {
+                return (
+                  <button
+                    key={index}
+                    onClick={() => onFixItem(fieldId)}
+                    className="w-full text-left p-3 rounded-md bg-yellow-900/20 hover:bg-yellow-900/40 transition-colors flex items-center justify-between"
+                  >
+                    <span className="text-yellow-200 text-sm">{rec}</span>
+                    <ChevronRight className="h-4 w-4 text-yellow-300 flex-shrink-0" />
+                  </button>
+                );
+              }
+              return (
+                <div key={index} className="p-3 text-yellow-200 text-sm">
+                  {rec}
+                </div>
+              );
+            })}
+          </div>
         </CardContent>
       </Card>
     );

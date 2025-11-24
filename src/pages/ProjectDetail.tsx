@@ -935,7 +935,7 @@ const ProjectDetail = () => {
           </TabsContent>
 
           <TabsContent value="compliance" className="mt-6">
-            <ComplianceDetails project={project} />
+            <ComplianceDetails project={project} onFixItem={handleFixItem} />
           </TabsContent>
 
           <TabsContent value="documents" className="mt-6">
