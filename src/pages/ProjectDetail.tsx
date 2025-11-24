@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User, AlertTriangle, Eye } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
@@ -428,6 +428,29 @@ const ProjectDetail = () => {
         variant: "destructive"
       });
     }
+  };
+
+  const handleFilePreview = (file: any) => {
+    if (!file.path) {
+      toast({ title: "Preview Error", description: "File path is missing.", variant: "destructive" });
+      return;
+    }
+    const { data } = supabase.storage.from('project-files').getPublicUrl(file.path);
+    if (data.publicUrl) {
+      window.open(data.publicUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      toast({
+        title: "Preview Unavailable",
+        description: "Could not generate a preview link for this file.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const isPreviewable = (fileName: string) => {
+    if (!fileName) return false;
+    const ext = fileName.split('.').pop()?.toLowerCase();
+    return ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext || '');
   };
 
   const handleFileDelete = async (fileToDelete: any) => {
@@ -1018,25 +1041,39 @@ const ProjectDetail = () => {
                                     </div>
                                   </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => handleFileDownload(file)}
-                                    className="h-8 px-3"
-                                  >
-                                    <Download className="h-3 w-3 mr-1" />
-                                    Download
-                                  </Button>
-                                  <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    onClick={() => handleFileDelete(file)}
-                                    className="h-8 px-3"
-                                  >
-                                    <Trash2 className="h-3 w-3 mr-1" />
-                                    Delete
-                                  </Button>
+                                <div className="flex items-center gap-1">
+                                  {isPreviewable(file.name) && (
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); handleFilePreview(file); }}>
+                                          <Eye className="h-4 w-4" />
+                                        </Button>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p>Preview File</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  )}
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); handleFileDownload(file); }}>
+                                        <Download className="h-4 w-4" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Download File</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-600" onClick={(e) => { e.stopPropagation(); handleFileDelete(file); }}>
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Delete File</p>
+                                    </TooltipContent>
+                                  </Tooltip>
                                 </div>
                               </div>
                             ))}
