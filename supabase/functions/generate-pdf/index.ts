@@ -2,14 +2,13 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
-import PDFDocument from 'https://esm.sh/pdfkit@0.14.0';
+import { PDFDocument, rgb, StandardFonts } from 'https://esm.sh/pdf-lib@1.17.1';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Helper to fetch image and convert to Uint8Array
 async function fetchImage(url: string) {
     try {
         const response = await fetch(url);
@@ -18,53 +17,94 @@ async function fetchImage(url: string) {
             return null;
         }
         const arrayBuffer = await response.arrayBuffer();
-        return new Uint8Array(arrayBuffer);
+        return arrayBuffer;
     } catch (error) {
         console.error('Error fetching image:', error);
         return null;
     }
 }
 
-const FONT_REGULAR = 'Helvetica';
-const FONT_BOLD = 'Helvetica-Bold';
-const FONT_OBLIQUE = 'Helvetica-Oblique';
+const buildPdf = async (project: any, company: any) => {
+    const pdfDoc = await PDFDocument.create();
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-const buildPdf = async (doc: typeof PDFDocument, project: any, company: any) => {
-    // Fetch logo
-    const logoUrl = `${Deno.env.get('SUPABASE_URL')!}/storage/v1/object/public/assets/NBC936-logo.png`;
-    const logoBuffer = await fetchImage(logoUrl);
+    let page = pdfDoc.addPage();
+    const { width, height } = page.getSize();
+    const margin = 50;
+    let y = height - margin;
 
-    let pageNumber = 0;
-    doc.on('pageAdded', () => {
-        pageNumber++;
-        // Header
-        if (logoBuffer) {
-            doc.image(logoBuffer, 50, 45, { width: 100 });
+    const checkPageBreak = (spaceNeeded: number) => {
+        if (y - spaceNeeded < margin) {
+            page = pdfDoc.addPage();
+            y = height - margin;
+            drawHeader();
         }
-        doc.fontSize(10).font(FONT_BOLD).text(project.project_name, 200, 50, { align: 'right' });
-        doc.fontSize(8).font(FONT_REGULAR).text(new Date().toLocaleDateString(), 200, 65, { align: 'right' });
+    };
 
-        // Footer
-        doc.fontSize(8).font(FONT_REGULAR).text(`Page ${pageNumber}`, 50, doc.page.height - 50, { align: 'center' });
-    });
+    const drawHeader = async () => {
+        const logoUrl = `${Deno.env.get('SUPABASE_URL')!}/storage/v1/object/public/assets/NBC936-logo.png`;
+        const logoBuffer = await fetchImage(logoUrl);
+        if (logoBuffer) {
+            const logoImage = await pdfDoc.embedPng(logoBuffer);
+            page.drawImage(logoImage, { x: margin, y: height - margin - 30, width: 100 });
+        }
+        
+        const projectNameText = project.project_name;
+        const projectNameWidth = boldFont.widthOfTextAtSize(projectNameText, 10);
+        page.drawText(projectNameText, {
+            x: width - margin - projectNameWidth,
+            y: height - margin,
+            font: boldFont,
+            size: 10,
+        });
 
-    doc.addPage();
+        const dateText = new Date().toLocaleDateString();
+        const dateWidth = font.widthOfTextAtSize(dateText, 8);
+        page.drawText(dateText, {
+            x: width - margin - dateWidth,
+            y: height - margin - 15,
+            font: font,
+            size: 8,
+        });
+    };
+
+    await drawHeader();
+    y -= 50; // Space for header
 
     // Title
-    doc.fontSize(24).font(FONT_BOLD).text('Project Compliance Report', { align: 'center' });
-    doc.moveDown(2);
+    checkPageBreak(50);
+    const title = 'Project Compliance Report';
+    const titleSize = 24;
+    const titleWidth = boldFont.widthOfTextAtSize(title, titleSize);
+    page.drawText(title, {
+        x: (width - titleWidth) / 2,
+        y: y,
+        font: boldFont,
+        size: titleSize,
+    });
+    y -= titleSize * 2;
 
-    // --- Helper Functions ---
     const addSectionTitle = (title: string) => {
-        doc.fontSize(16).font(FONT_BOLD).text(title, { underline: true });
-        doc.moveDown();
+        checkPageBreak(30);
+        page.drawText(title, { x: margin, y, font: boldFont, size: 16 });
+        page.drawLine({
+            start: { x: margin, y: y - 5 },
+            end: { x: margin + boldFont.widthOfTextAtSize(title, 16), y: y - 5 },
+            thickness: 1,
+        });
+        y -= 16 * 1.5;
     };
 
     const addDetailItem = (label: string, value: any, unit = '') => {
         if (value === null || value === undefined || value === '') return;
+        checkPageBreak(15);
         const displayValue = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value);
-        doc.fontSize(10).font(FONT_BOLD).text(label + ':', { continued: true }).font(FONT_REGULAR).text(` ${displayValue}${unit}`);
-        doc.moveDown(0.5);
+        
+        page.drawText(`${label}:`, { x: margin, y, font: boldFont, size: 10 });
+        const labelWidth = boldFont.widthOfTextAtSize(`${label}:`, 10);
+        page.drawText(` ${displayValue}${unit}`, { x: margin + labelWidth, y, font, size: 10 });
+        y -= 15;
     };
 
     // --- Sections ---
@@ -74,28 +114,30 @@ const buildPdf = async (doc: typeof PDFDocument, project: any, company: any) => 
     addDetailItem('Building Type', project.building_type);
     addDetailItem('Compliance Pathway', project.selected_pathway);
     addDetailItem('Status', project.compliance_status);
-    doc.moveDown();
+    y -= 15;
 
     if (company) {
         addSectionTitle('Client Information');
         addDetailItem('Company', company.company_name);
         addDetailItem('Contact Email', company.contact_email);
         addDetailItem('Phone', company.phone);
-        doc.moveDown();
+        y -= 15;
     }
 
     addSectionTitle('Technical Specifications');
-    doc.fontSize(12).font(FONT_BOLD).text('Building Envelope');
-    doc.moveDown(0.5);
+    checkPageBreak(20);
+    page.drawText('Building Envelope', { x: margin, y, font: boldFont, size: 12 });
+    y -= 20;
     addDetailItem('Attic/Ceiling RSI', project.attic_rsi);
     addDetailItem('Above-Grade Wall RSI', project.wall_rsi);
     addDetailItem('Below-Grade Wall RSI', project.below_grade_rsi);
     addDetailItem('Exposed Floor RSI', project.floor_rsi);
     addDetailItem('Window & Door U-Value', project.window_u_value, ' W/(m²·K)');
-    doc.moveDown();
+    y -= 15;
 
-    doc.fontSize(12).font(FONT_BOLD).text('Mechanical Systems');
-    doc.moveDown(0.5);
+    checkPageBreak(20);
+    page.drawText('Mechanical Systems', { x: margin, y, font: boldFont, size: 12 });
+    y -= 20;
     addDetailItem('Heating System', project.heating_system_type);
     addDetailItem('Heating Efficiency', project.heating_efficiency);
     addDetailItem('Cooling System', project.cooling_system_type);
@@ -103,26 +145,43 @@ const buildPdf = async (doc: typeof PDFDocument, project: any, company: any) => 
     addDetailItem('Water Heating System', project.water_heating_type);
     addDetailItem('Ventilation (HRV/ERV)', project.hrv_erv_type);
     addDetailItem('Ventilation Efficiency', project.hrv_erv_efficiency, ' SRE %');
-    doc.moveDown();
+    y -= 15;
 
-    doc.fontSize(12).font(FONT_BOLD).text('Performance Metrics');
-    doc.moveDown(0.5);
+    checkPageBreak(20);
+    page.drawText('Performance Metrics', { x: margin, y, font: boldFont, size: 12 });
+    y -= 20;
     addDetailItem('Airtightness Level', project.airtightness_al, ' ACH₅₀');
     addDetailItem('Building Volume', project.building_volume, ' m³');
-    doc.moveDown();
+    y -= 15;
 
     addSectionTitle('Compliance Summary');
     addDetailItem('Compliance Status', project.compliance_status);
     addDetailItem('Performance Result', project.performance_compliance_result);
     addDetailItem('Total Points (Tiered Path)', project.total_points);
-    doc.moveDown();
+    y -= 15;
 
     if (project.uploaded_files && project.uploaded_files.length > 0) {
         addSectionTitle('Uploaded Documents');
         project.uploaded_files.forEach((file: any) => {
-            doc.fontSize(10).font(FONT_REGULAR).text(`• ${file.name}`);
+            checkPageBreak(15);
+            page.drawText(`• ${file.name}`, { x: margin, y, font, size: 10 });
+            y -= 15;
         });
     }
+
+    // Add page numbers to all pages
+    const pages = pdfDoc.getPages();
+    for (let i = 0; i < pages.length; i++) {
+        const p = pages[i];
+        p.drawText(`Page ${i + 1} of ${pages.length}`, {
+            x: width / 2 - 20,
+            y: 30,
+            size: 8,
+            font,
+        });
+    }
+
+    return await pdfDoc.save();
 };
 
 serve(async (req) => {
@@ -159,30 +218,9 @@ serve(async (req) => {
       console.error("Error fetching company info:", companyError.message);
     }
 
-    const doc = new PDFDocument({ autoFirstPage: false, margin: 50, size: 'A4' });
+    const pdfBytes = await buildPdf(project, company);
 
-    const pdfBuffer = await new Promise<Uint8Array>(async (resolve) => {
-        const chunks: Uint8Array[] = [];
-        doc.on('data', (chunk: Uint8Array) => {
-            chunks.push(chunk);
-        });
-        doc.on('end', () => {
-            const totalLength = chunks.reduce((acc, val) => acc + val.length, 0);
-            const result = new Uint8Array(totalLength);
-            let offset = 0;
-            for (const chunk of chunks) {
-                result.set(chunk, offset);
-                offset += chunk.length;
-            }
-            resolve(result);
-        });
-
-        await buildPdf(doc, project, company);
-        
-        doc.end();
-    });
-
-    return new Response(pdfBuffer, { 
+    return new Response(pdfBytes, { 
         headers: { 
             ...corsHeaders, 
             'Content-Type': 'application/pdf',
