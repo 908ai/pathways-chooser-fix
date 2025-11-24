@@ -550,7 +550,7 @@ const ProjectDetail = () => {
     } else if (name.includes('report') || name.includes('compliance') || name.includes('assessment')) {
       return 'Reports';
     } else {
-      return 'Other Documents';
+      return 'General Documents';
     }
   };
 
@@ -1013,7 +1013,7 @@ const ProjectDetail = () => {
 
                 {project.uploaded_files && project.uploaded_files.length > 0 ? (
                   <div className="space-y-6">
-                    {['Building Plans', 'Window/Door Schedule', 'Technical Specifications', 'Reports', 'Photos', 'Other Documents'].map((category) => {
+                    {['Building Plans', 'Window/Door Schedule', 'Technical Specifications', 'Reports', 'Photos', 'General Documents'].map((category) => {
                       const categoryFiles = (project.uploaded_files || []).filter((file: any) => 
                         file && file.name && getFileCategory(file.name) === category
                       );
