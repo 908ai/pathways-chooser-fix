@@ -11,7 +11,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { MoreHorizontal, Edit, Copy, Trash2, Building, Calendar, AlertTriangle, MapPin, Eye, Info, CheckCircle } from 'lucide-react';
+import { MoreHorizontal, Edit, Copy, Trash2, Building, Calendar, AlertTriangle, MapPin, Eye, Info, CheckCircle, Zap, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { getPendingItems, formatPathwayName } from '@/lib/projectUtils';
@@ -90,6 +90,7 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
   const selections = mapProjectToSelections(project);
   const { required, optional } = getPendingItems(selections, project.uploaded_files || []);
   const isComplete = statusInfo.text === 'Compliant' || statusInfo.text === 'Non-Compliant';
+  const isPerformance = project.selected_pathway?.includes('performance') || project.selected_pathway === '9365' || project.selected_pathway === '9367';
 
   const formatBuildingType = (type: string | null) => {
     if (!type) return 'N/A';
@@ -104,11 +105,12 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
       <div className={cn("h-2 w-full", statusInfo.color)} />
       
       <Badge className={cn(
-        "absolute top-0 right-0 px-2 py-1 text-xs font-semibold shadow-md rounded-none rounded-bl-[15px]",
-        project.selected_pathway?.includes('performance') || project.selected_pathway === '9365' || project.selected_pathway === '9367'
+        "absolute top-0 right-0 px-2 py-1 text-xs font-semibold shadow-md rounded-none rounded-bl-[15px] flex items-center gap-1.5",
+        isPerformance
           ? 'bg-blue-100 text-blue-800 hover:bg-blue-100' 
           : 'bg-orange-100 text-orange-800 hover:bg-orange-100'
       )}>
+        {isPerformance ? <Zap className="h-3.5 w-3.5" /> : <FileText className="h-3.5 w-3.5" />}
         {formatPathwayName(project.selected_pathway)}
       </Badge>
 
