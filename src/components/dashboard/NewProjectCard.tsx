@@ -204,9 +204,12 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
                 </TooltipTrigger>
                 <TooltipContent>
                   <div className="p-2">
-                    <p className="font-semibold mb-2">All Recommended Items:</p>
+                    <p className="font-semibold mb-2">Recommended Items:</p>
                     <ul className="list-disc list-inside space-y-1 text-xs">
-                      {optional.map(item => <li key={item.fieldId}>{item.label}</li>)}
+                      {optional.slice(0, 5).map(item => <li key={item.fieldId}>{item.label}</li>)}
+                      {optional.length > 5 && (
+                        <li className="font-medium text-muted-foreground">...and {optional.length - 5} more</li>
+                      )}
                     </ul>
                   </div>
                 </TooltipContent>

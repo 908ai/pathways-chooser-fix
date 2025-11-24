@@ -3,6 +3,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Edit, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 import { getPendingItems } from '@/lib/projectUtils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ProjectCardProps {
   project: any;
@@ -142,27 +147,42 @@ const ProjectCard = ({ project, status, handleViewProject, handleEditProject }: 
               )}
 
               {optional.length > 0 && (
-                <div className="p-3 bg-slate-800/60 border border-blue-400/50 rounded-md">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Info className="h-4 w-4 text-blue-300" />
-                    <span className="text-sm font-medium text-blue-300">
-                      {optional.length} Recommended Item(s)
-                    </span>
-                  </div>
-                  <div className="space-y-1">
-                    {optional.slice(0, 1).map((item, index) => (
-                      <div key={index} className="flex items-center gap-2 text-xs text-blue-200">
-                        <div className="h-1.5 w-1.5 bg-blue-400 rounded-full flex-shrink-0"></div>
-                        <span className="truncate">{item.label}</span>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="p-3 bg-slate-800/60 border border-blue-400/50 rounded-md">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Info className="h-4 w-4 text-blue-300" />
+                        <span className="text-sm font-medium text-blue-300">
+                          {optional.length} Recommended Item(s)
+                        </span>
                       </div>
-                    ))}
-                    {optional.length > 1 && (
-                      <div className="text-xs text-blue-300 font-medium mt-1">
-                        +{optional.length - 1} more...
+                      <div className="space-y-1">
+                        {optional.slice(0, 1).map((item, index) => (
+                          <div key={index} className="flex items-center gap-2 text-xs text-blue-200">
+                            <div className="h-1.5 w-1.5 bg-blue-400 rounded-full flex-shrink-0"></div>
+                            <span className="truncate">{item.label}</span>
+                          </div>
+                        ))}
+                        {optional.length > 1 && (
+                          <div className="text-xs text-blue-300 font-medium mt-1">
+                            +{optional.length - 1} more...
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </div>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <div className="p-2">
+                      <p className="font-semibold mb-2">Recommended Items:</p>
+                      <ul className="list-disc list-inside space-y-1 text-xs">
+                        {optional.slice(0, 5).map(item => <li key={item.fieldId}>{item.label}</li>)}
+                        {optional.length > 5 && (
+                          <li className="font-medium text-muted-foreground">...and {optional.length - 5} more</li>
+                        )}
+                      </ul>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
               )}
             </div>
           )}
