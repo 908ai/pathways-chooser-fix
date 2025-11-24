@@ -117,12 +117,12 @@ const ProjectTableView = ({ projects, onViewProject, onEditProject, onDuplicateP
                     <DropdownMenuItem onClick={(e) => onEditProject(project.id, e)}>
                       <Edit className="mr-2 h-4 w-4" /> Edit
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={(e) => onDuplicateProject(project.id, e)}>
+                    {/* <DropdownMenuItem onClick={(e) => onDuplicateProject(project.id, e)}>
                       <Copy className="mr-2 h-4 w-4" /> Duplicate
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={(e) => onDeleteProject(project.id, e)} className="text-red-500">
                       <Trash2 className="mr-2 h-4 w-4" /> Delete
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

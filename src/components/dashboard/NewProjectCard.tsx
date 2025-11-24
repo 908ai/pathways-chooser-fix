@@ -136,12 +136,12 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
               <DropdownMenuItem onClick={(e) => onEdit(project.id, e)}>
                 <Edit className="mr-2 h-4 w-4" /> Edit
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={(e) => onDuplicate(project.id, e)}>
+              {/* <DropdownMenuItem onClick={(e) => onDuplicate(project.id, e)}>
                 <Copy className="mr-2 h-4 w-4" /> Duplicate
               </DropdownMenuItem>
               <DropdownMenuItem onClick={(e) => onDelete(project.id, e)} className="text-red-500">
                 <Trash2 className="mr-2 h-4 w-4" /> Delete
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
