@@ -194,6 +194,28 @@ const ProjectSummaryForm = ({
         secondary_water_heater_type: selections.secondaryWaterHeaterType,
         secondary_water_heater: selections.secondaryWaterHeater,
         interested_certifications: selections.interestedCertifications,
+        
+        // NEWLY ADDED COLUMNS
+        comments: selections.comments,
+        ceilings_attic_other_type: selections.ceilingsAtticOtherType,
+        cathedral_flat_other_type: selections.cathedralFlatOtherType,
+        floors_garage_rsi: parseFloat(selections.floorsGarageRSI) || null,
+        slab_insulation_type: selections.slabInsulation,
+        slab_insulation_value: parseFloat(selections.slabInsulationValue) || null,
+        in_floor_heat_rsi: parseFloat(selections.inFloorHeatRSI) || null,
+        slab_on_grade_rsi: parseFloat(selections.slabOnGradeRSI) || null,
+        slab_on_grade_integral_footing_rsi: parseFloat(selections.slabOnGradeIntegralFootingRSI) || null,
+        unheated_floor_below_frost_rsi: selections.unheatedFloorBelowFrostRSI,
+        unheated_floor_above_frost_rsi: parseFloat(selections.unheatedFloorAboveFrostRSI) || null,
+        heated_floors_rsi: parseFloat(selections.heatedFloorsRSI) || null,
+        has_murb_multiple_heating: selections.hasMurbMultipleHeating === 'yes',
+        murb_second_heating_type: selections.murbSecondHeatingType,
+        murb_second_heating_efficiency: selections.murbSecondHeatingEfficiency,
+        murb_second_indirect_tank: selections.murbSecondIndirectTank,
+        murb_second_indirect_tank_size: selections.murbSecondIndirectTankSize,
+        has_murb_multiple_water_heaters: selections.hasMurbMultipleWaterHeaters === 'yes',
+        murb_second_water_heater_type: selections.murbSecondWaterHeaterType,
+        murb_second_water_heater: selections.murbSecondWaterHeater,
       };
 
       let savedProject;
