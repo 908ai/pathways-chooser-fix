@@ -83,7 +83,7 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
         addIfMissing(required, 'frontDoorOrientation', 'Front Door Orientation');
         addIfMissing(required, 'energuidePathway', 'EnerGuide Pathway selection');
 
-        // OPTIONAL technical specs
+        // OPTIONAL technical specs - This is the rewritten logic
         addIfMissing(optional, 'ceilingsAtticRSI', 'Ceilings/Attics assembly info');
         addIfMissing(optional, 'hasCathedralOrFlatRoof', 'Cathedral/Flat Roof selection');
         addIfMissing(optional, 'wallRSI', 'Above Grade Walls assembly info');
