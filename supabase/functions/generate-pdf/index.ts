@@ -150,11 +150,17 @@ serve(async (req) => {
 
     if (projectError) throw projectError;
 
-    const { data: company } = await supabaseAdmin
+    // Use maybeSingle() to avoid error if no company is found
+    const { data: company, error: companyError } = await supabaseAdmin
       .from('companies')
       .select('*')
       .eq('user_id', project.user_id)
-      .single();
+      .maybeSingle();
+
+    if (companyError) {
+      // Log the error but don't fail the function, as company is optional
+      console.error("Error fetching company info:", companyError.message);
+    }
 
     const doc = new PDFDocument({ autoFirstPage: false, margin: 50, size: 'A4' });
 
