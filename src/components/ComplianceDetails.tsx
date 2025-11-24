@@ -1,7 +1,7 @@
-import ComplianceStatusCard from '@/components/ComplianceStatusCard';
-import PerformanceComplianceView from '@/components/PerformanceComplianceView';
-import TieredPrescriptiveComplianceView from '@/components/TieredPrescriptiveComplianceView';
-import PrescriptiveComplianceView from '@/components/PrescriptiveComplianceView';
+import ComplianceStatusCard from './compliance/ComplianceStatusCard';
+import PerformanceComplianceView from './compliance/PerformanceComplianceView';
+import TieredPrescriptiveComplianceView from './compliance/TieredPrescriptiveComplianceView';
+import PrescriptiveComplianceView from './compliance/PrescriptiveComplianceView';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle } from 'lucide-react';
 
