@@ -86,37 +86,26 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
         // OPTIONAL technical specs
         addIfMissing(optional, 'ceilingsAtticRSI', 'Ceilings/Attics assembly info');
         addIfMissing(optional, 'hasCathedralOrFlatRoof', 'Cathedral/Flat Roof selection');
-        if (selections.hasCathedralOrFlatRoof === 'yes') {
-          addIfMissing(optional, 'cathedralFlatRSI', 'Cathedral/Flat Roofs assembly info');
-        }
         addIfMissing(optional, 'wallRSI', 'Above Grade Walls assembly info');
         addIfMissing(optional, 'belowGradeRSI', 'Below Grade Walls assembly info');
         addIfMissing(optional, 'floorsSlabsSelected', 'Floors/Slabs selection');
-        if (selections.floorsSlabsSelected?.includes("floorsUnheated")) {
-          addIfMissing(optional, 'floorsUnheatedRSI', 'Floors over Unheated Spaces info');
-        }
-        if (selections.floorsSlabsSelected?.includes("floorsGarage")) {
-          addIfMissing(optional, 'floorsGarageRSI', 'Floors above Garages info');
-        }
-        if (selections.floorsSlabsSelected?.includes("unheatedBelowFrost")) {
-          addIfMissing(optional, 'unheatedFloorBelowFrostRSI', 'Unheated Floor Below Frostline info');
-        }
-        if (selections.floorsSlabsSelected?.includes("unheatedAboveFrost")) {
-          addIfMissing(optional, 'unheatedFloorAboveFrostRSI', 'Unheated Floor Above Frostline info');
-        }
-        if (selections.floorsSlabsSelected?.includes("heatedFloors")) {
-          addIfMissing(optional, 'heatedFloorsRSI', 'Heated Floors info');
-        }
-        if (selections.floorsSlabsSelected?.includes("slabOnGradeIntegralFooting")) {
-          addIfMissing(optional, 'slabOnGradeIntegralFootingRSI', 'Slab on Grade info');
-        }
         addIfMissing(optional, 'hasInFloorHeat9365', 'In-floor heat selection');
         addIfMissing(optional, 'hasSkylights', 'Skylights selection');
+        addIfMissing(optional, 'airtightness', 'Airtightness Level');
+        addIfMissing(optional, 'hasHrv', 'HRV/ERV selection');
+        addIfMissing(optional, 'heatingType', 'Heating Type');
+        addIfMissing(optional, 'coolingApplicable', 'Cooling/AC selection');
+        addIfMissing(optional, 'waterHeaterType', 'Water Heater Type');
+        addIfMissing(optional, 'hasDWHR', 'Drain Water Heat Recovery selection');
+        addIfMissing(optional, 'interestedCertifications', 'Certification interests');
+
+        // Conditional optional fields that depend on other selections
+        if (selections.hasCathedralOrFlatRoof === 'yes') {
+          addIfMissing(optional, 'cathedralFlatRSI', 'Cathedral/Flat Roofs assembly info');
+        }
         if (selections.hasSkylights === 'yes') {
           addIfMissing(optional, 'skylightUValue', 'Skylight U-Value');
         }
-        addIfMissing(optional, 'airtightness', 'Airtightness Level');
-        addIfMissing(optional, 'hasHrv', 'HRV/ERV selection');
         if (selections.hasHrv === 'with_hrv') {
           addIfMissing(optional, 'hrvMakeModel', 'HRV/ERV Make/Model');
         }
@@ -126,22 +115,18 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
             addIfMissing(optional, 'secondaryHrvEfficiency', 'Secondary HRV/ERV Make/Model');
           }
         }
-        addIfMissing(optional, 'heatingType', 'Heating Type');
         if (selections.heatingType) {
           addIfMissing(optional, 'heatingMakeModel', 'Heating Make/Model');
         }
-        addIfMissing(optional, 'coolingApplicable', 'Cooling/AC selection');
         if (selections.coolingApplicable === 'yes') {
           addIfMissing(optional, 'coolingMakeModel', 'Cooling System Make/Model');
           addIfMissing(optional, 'coolingEfficiency', 'Cooling System Efficiency');
         }
         if (!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes')) {
-          addIfMissing(optional, 'waterHeaterType', 'Water Heater Type');
           if (selections.waterHeaterType) {
             addIfMissing(optional, 'waterHeaterMakeModel', 'Water Heater Make/Model');
           }
         }
-        addIfMissing(optional, 'hasDWHR', 'Drain Water Heat Recovery selection');
         if (selections.city?.toLowerCase().trim() === "red deer" && selections.province === "alberta") {
           addIfMissing(optional, 'hasF280Calculation', 'F280 Calculation status');
         }
