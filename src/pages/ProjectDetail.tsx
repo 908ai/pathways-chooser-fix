@@ -1073,12 +1073,20 @@ const ProjectDetail = () => {
                                   </Tooltip>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-600" onClick={(e) => { e.stopPropagation(); handleFileDelete(file); }}>
-                                        <Trash2 className="h-4 w-4" />
-                                      </Button>
+                                      <span tabIndex={0}>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-8 w-8 text-red-500 hover:text-red-600"
+                                          onClick={(e) => { e.stopPropagation(); handleFileDelete(file); }}
+                                          disabled={project.compliance_status === 'submitted'}
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                      </span>
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                      <p>Delete File</p>
+                                      {project.compliance_status === 'submitted' ? <p>Cannot delete files from a submitted project.</p> : <p>Delete File</p>}
                                     </TooltipContent>
                                   </Tooltip>
                                 </div>
