@@ -55,9 +55,12 @@ const Dashboard = () => {
         if (error) throw error;
 
         const projectsData = data || [];
+        const inProgressStatuses = ['draft', 'submitted', 'needs_revision', null];
+        const completeStatuses = ['pass', 'fail', 'Compliant'];
+
         setProjects({
-          inProgress: projectsData.filter((p: any) => p.compliance_status === null || p.compliance_status === 'pending' || p.compliance_status === 'submitted'),
-          complete: projectsData.filter((p: any) => p.compliance_status === 'pass' || p.compliance_status === 'fail' || p.compliance_status === 'Compliant')
+          inProgress: projectsData.filter((p: any) => inProgressStatuses.includes(p.compliance_status)),
+          complete: projectsData.filter((p: any) => completeStatuses.includes(p.compliance_status))
         });
       } catch (error) {
         console.error('Error loading projects:', error);

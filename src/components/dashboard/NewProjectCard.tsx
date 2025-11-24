@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,9 +11,10 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { MoreHorizontal, Edit, Copy, Trash2, Building, Calendar, AlertTriangle, MapPin, Eye } from 'lucide-react';
+import { MoreHorizontal, Edit, Copy, Trash2, Building, Calendar, AlertTriangle, MapPin, Eye, Info, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { getPendingItems } from '@/lib/projectUtils';
 
 interface NewProjectCardProps {
   project: any;
@@ -23,6 +23,49 @@ interface NewProjectCardProps {
   onDuplicate: (id: string, e: React.MouseEvent) => void;
   onDelete: (id: string, e: React.MouseEvent) => void;
 }
+
+const mapProjectToSelections = (project: any) => {
+  if (!project) return {};
+  return {
+    firstName: 'filled',
+    lastName: 'filled',
+    company: 'filled',
+    phoneNumber: 'filled',
+    streetAddress: project.street_address,
+    city: project.city,
+    province: project.province,
+    postalCode: project.postal_code,
+    buildingType: project.building_type,
+    climateZone: project.climate_zone,
+    occupancyClass: project.occupancy_class,
+    compliancePath: project.selected_pathway,
+    frontDoorOrientation: project.front_door_orientation,
+    energuidePathway: project.energuide_pathway,
+    hasHrv: project.hrv_erv_type && project.hrv_erv_type !== 'None' ? 'with_hrv' : project.hrv_erv_type === 'None' ? 'without_hrv' : '',
+    hrvEfficiency: project.hrv_erv_efficiency,
+    ceilingsAtticRSI: project.attic_rsi,
+    hasCathedralOrFlatRoof: project.has_cathedral_or_flat_roof,
+    cathedralFlatRSIValue: project.cathedral_flat_rsi,
+    wallRSI: project.wall_rsi,
+    belowGradeRSI: project.below_grade_rsi,
+    floorsSlabsSelected: project.floors_slabs_selected || [],
+    inFloorHeatRSI: project.in_floor_heat_rsi,
+    windowUValue: project.window_u_value,
+    hasSkylights: project.has_skylights,
+    skylightUValue: project.skylight_u_value,
+    airtightness: project.airtightness_al,
+    heatingType: project.heating_system_type,
+    heatingEfficiency: project.heating_efficiency,
+    indirectTank: project.indirect_tank,
+    indirectTankSize: project.indirect_tank_size,
+    coolingApplicable: project.cooling_system_type && project.cooling_system_type !== 'None' ? 'yes' : 'no',
+    coolingEfficiency: project.cooling_efficiency,
+    waterHeaterType: project.water_heating_type,
+    waterHeater: project.water_heating_efficiency,
+    hasDWHR: project.has_dwhr,
+    midConstructionBlowerDoorPlanned: project.mid_construction_blower_door_planned,
+  };
+};
 
 const getStatusInfo = (status: string | null) => {
   switch (status) {
@@ -38,34 +81,15 @@ const getStatusInfo = (status: string | null) => {
     case 'needs_revision':
       return { text: 'Needs Revision', color: 'bg-yellow-500' };
     default:
-      return { text: 'In Progress', color: 'bg-orange-500' };
+      return { text: 'Draft', color: 'bg-gray-500' }; // Default to Draft if null/undefined
   }
-};
-
-const getPendingItems = (project: any) => {
-  const items = [];
-  const totalItems = 6;
-
-  if (!project.uploaded_files || project.uploaded_files.length === 0) {
-    items.push("Building plans");
-  }
-  if (!project.uploaded_files?.some((f: any) => f.name?.toLowerCase().includes('window') || f.name?.toLowerCase().includes('door'))) {
-    items.push("Window/door schedule");
-  }
-  if (!project.heating_system_type) items.push("Heating system details");
-  if (project.cooling_system_type && !project.cooling_efficiency) items.push("Cooling system details");
-  if (!project.water_heating_type) items.push("Water heater details");
-  if (!project.floor_area) items.push("Floor area");
-
-  const completedCount = totalItems - items.length;
-  const progress = (completedCount / totalItems) * 100;
-
-  return { pending: items, progress, completedCount, totalItems };
 };
 
 const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewProjectCardProps) => {
   const statusInfo = getStatusInfo(project.compliance_status);
-  const { pending, progress, completedCount, totalItems } = getPendingItems(project);
+  const selections = mapProjectToSelections(project);
+  const { required, optional } = getPendingItems(selections, project.uploaded_files || []);
+  const isComplete = statusInfo.text === 'Compliant' || statusInfo.text === 'Non-Compliant';
 
   const formatBuildingType = (type: string | null) => {
     if (!type) return 'N/A';
@@ -77,6 +101,7 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
 
   const formatPathway = (pathway: string | null) => {
       if (!pathway) return 'N/A';
+      if (pathway.includes('936')) return pathway.split(' ')[0]; // e.g. 9365
       return pathway.charAt(0).toUpperCase() + pathway.slice(1);
   }
 
@@ -86,7 +111,7 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
       
       <Badge className={cn(
         "absolute top-0 right-0 px-2 py-1 text-xs font-semibold shadow-md rounded-none rounded-bl-[15px]",
-        project.selected_pathway === 'performance' 
+        project.selected_pathway?.includes('performance') || project.selected_pathway?.includes('9365') || project.selected_pathway?.includes('9367')
           ? 'bg-blue-100 text-blue-800 hover:bg-blue-100' 
           : 'bg-orange-100 text-orange-800 hover:bg-orange-100'
       )}>
@@ -137,31 +162,57 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
           </div>
         </div>
         
-        {(statusInfo.text === 'In Progress' || statusInfo.text === 'Draft' || statusInfo.text === 'Submitted' || statusInfo.text === 'Needs Revision') && (
-          <div className="space-y-2 pt-2 border-t border-border/50">
-            <div className="flex justify-between items-center text-xs text-muted-foreground">
-              <span>Compliance Checklist</span>
-              <span>{completedCount}/{totalItems} Complete</span>
-            </div>
-            <Progress value={progress} className="h-2" />
-            {pending.length > 0 && (
+        {!isComplete && (
+          <div className="pt-2 border-t border-border/50 space-y-2">
+            {required.length > 0 ? (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="mt-2 p-1.5 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/30">
+                  <div className="p-1.5 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/30">
                     <div className="flex items-start gap-2 text-xs text-orange-700 dark:text-orange-300">
-                      <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5 animate-bounce text-orange-500" />
+                      <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5 text-orange-500" />
                       <p>
-                        <span className="font-semibold">Pending ({pending.length}):</span> {pending.slice(0, 2).join(', ')}
-                        {pending.length > 2 && `, +${pending.length - 2} more`}
+                        <span className="font-semibold">Required ({required.length}):</span> {required[0].label}
+                        {required.length > 1 && `, +${required.length - 1} more`}
                       </p>
                     </div>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
                   <div className="p-2">
-                    <p className="font-semibold mb-2">All Pending Items:</p>
+                    <p className="font-semibold mb-2">All Required Items:</p>
                     <ul className="list-disc list-inside space-y-1 text-xs">
-                      {pending.map(item => <li key={item}>{item}</li>)}
+                      {required.map(item => <li key={item.fieldId}>{item.label}</li>)}
+                    </ul>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <div className="p-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/30 rounded-lg">
+                <div className="flex items-center gap-2 text-xs text-green-800 dark:text-green-300">
+                  <CheckCircle className="h-4 w-4" />
+                  <span className="font-semibold">All required items complete!</span>
+                </div>
+              </div>
+            )}
+
+            {optional.length > 0 && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30">
+                    <div className="flex items-start gap-2 text-xs text-blue-700 dark:text-blue-300">
+                      <Info className="h-4 w-4 flex-shrink-0 mt-0.5 text-blue-500" />
+                      <p>
+                        <span className="font-semibold">Recommended ({optional.length}):</span> {optional[0].label}
+                        {optional.length > 1 && `, +${optional.length - 1} more`}
+                      </p>
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="p-2">
+                    <p className="font-semibold mb-2">All Recommended Items:</p>
+                    <ul className="list-disc list-inside space-y-1 text-xs">
+                      {optional.map(item => <li key={item.fieldId}>{item.label}</li>)}
                     </ul>
                   </div>
                 </TooltipContent>
