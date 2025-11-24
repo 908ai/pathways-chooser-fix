@@ -37,32 +37,32 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
   if (pathway) {
     switch (pathway) {
       case '9362': // Prescriptive
-        addIfMissing(required, 'hasHrv', 'HRV/ERV selection');
+        addIfMissing(required, 'hasHrv', 'HRV/ERV');
         if (selections.hasHrv === 'with_hrv') addIfMissing(required, 'hrvEfficiency', 'HRV/ERV Efficiency');
         
         addIfMissing(required, 'ceilingsAtticRSI', 'Ceilings/Attic RSI');
-        addIfMissing(required, 'hasCathedralOrFlatRoof', 'Cathedral/Flat Roof selection');
+        addIfMissing(required, 'hasCathedralOrFlatRoof', 'Cathedral/Flat Roof');
         if (selections.hasCathedralOrFlatRoof === 'yes') addIfMissing(required, 'cathedralFlatRSIValue', 'Cathedral/Flat Roof RSI');
         
         addIfMissing(required, 'wallRSI', 'Above Grade Wall RSI');
         addIfMissing(required, 'belowGradeRSI', 'Below Grade Wall RSI');
-        addIfMissing(required, 'floorsSlabsSelected', 'Floors/Slabs selection');
+        addIfMissing(required, 'floorsSlabsSelected', 'Floors/Slabs');
         
         if (selections.floorsSlabsSelected?.includes("heatedFloors")) addIfMissing(required, 'inFloorHeatRSI', 'Heated Floors RSI');
         if (selections.floorsSlabsSelected?.includes("slabOnGradeIntegralFooting")) addIfMissing(required, 'slabOnGradeIntegralFootingRSI', 'Slab on Grade RSI');
         if (selections.floorsSlabsSelected?.includes("floorsOverUnheatedSpaces")) addIfMissing(required, 'floorsOverUnheatedSpacesRSI', 'Floors over Unheated Spaces RSI');
-        if (selections.floorsSlabsSelected?.includes("unheatedBelowFrost")) addIfMissing(required, 'unheatedFloorBelowFrostRSI', 'Unheated Floor Below Frostline info');
+        if (selections.floorsSlabsSelected?.includes("unheatedBelowFrost")) addIfMissing(required, 'unheatedFloorBelowFrostRSI', 'Unheated Floor Below Frostline');
         if (selections.floorsSlabsSelected?.includes("unheatedAboveFrost")) addIfMissing(required, 'unheatedFloorAboveFrostRSI', 'Unheated Floor Above Frostline RSI');
 
         addIfMissing(required, 'windowUValue', 'Window U-Value');
-        addIfMissing(required, 'hasSkylights', 'Skylights selection');
+        addIfMissing(required, 'hasSkylights', 'Skylights');
         if (selections.hasSkylights === 'yes') addIfMissing(required, 'skylightUValue', 'Skylight U-Value');
         
         addIfMissing(required, 'airtightness', 'Airtightness Level');
         addIfMissing(required, 'heatingType', 'Heating Type');
         if (selections.heatingType) addIfMissing(required, 'heatingEfficiency', 'Heating Efficiency');
         
-        addIfMissing(required, 'coolingApplicable', 'Cooling/AC selection');
+        addIfMissing(required, 'coolingApplicable', 'Cooling/AC');
         if (selections.coolingApplicable === 'yes') addIfMissing(required, 'coolingEfficiency', 'Cooling Efficiency');
         
         if (!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes')) {
@@ -75,39 +75,39 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
           }
         }
         
-        if (selections.heatingType === 'boiler') addIfMissing(required, 'indirectTank', 'Indirect Tank selection');
+        if (selections.heatingType === 'boiler') addIfMissing(required, 'indirectTank', 'Indirect Tank');
         if (selections.heatingType === 'boiler' && selections.indirectTank === 'yes') addIfMissing(required, 'indirectTankSize', 'Indirect Tank Size');
         
-        addIfMissing(required, 'hasDWHR', 'Drain Water Heat Recovery selection');
+        addIfMissing(required, 'hasDWHR', 'Drain Water Heat Recovery');
         break;
 
       case '9365': // Performance
       case '9367': // Tiered Performance
         // REQUIRED for this step
         addIfMissing(required, 'frontDoorOrientation', 'Front Door Orientation');
-        addIfMissing(required, 'energuidePathway', 'EnerGuide Pathway selection');
+        addIfMissing(required, 'energuidePathway', 'EnerGuide Pathway');
 
         // OPTIONAL technical specs - This is the rewritten logic
-        addIfMissing(optional, 'ceilingsAtticRSI', 'Ceilings/Attics assembly info');
-        addIfMissing(optional, 'hasCathedralOrFlatRoof', 'Cathedral/Flat Roof selection');
-        addIfMissing(optional, 'wallRSI', 'Above Grade Walls assembly info');
-        addIfMissing(optional, 'belowGradeRSI', 'Below Grade Walls assembly info');
-        addIfMissing(optional, 'floorsSlabsSelected', 'Floors/Slabs selection');
-        addIfMissing(optional, 'hasInFloorHeat9365', 'In-floor heat selection');
-        addIfMissing(optional, 'hasSkylights', 'Skylights selection');
+        addIfMissing(optional, 'ceilingsAtticRSI', 'Ceilings/Attics');
+        addIfMissing(optional, 'hasCathedralOrFlatRoof', 'Cathedral/Flat Roof');
+        addIfMissing(optional, 'wallRSI', 'Above Grade Walls');
+        addIfMissing(optional, 'belowGradeRSI', 'Below Grade Walls');
+        addIfMissing(optional, 'floorsSlabsSelected', 'Floors/Slabs');
+        addIfMissing(optional, 'hasInFloorHeat9365', 'In-floor heat');
+        addIfMissing(optional, 'hasSkylights', 'Skylights');
         addIfMissing(optional, 'airtightness', 'Airtightness Level');
-        addIfMissing(optional, 'hasHrv', 'HRV/ERV selection');
+        addIfMissing(optional, 'hasHrv', 'HRV/ERV');
         addIfMissing(optional, 'heatingType', 'Heating Type');
-        addIfMissing(optional, 'coolingApplicable', 'Cooling/AC selection');
+        addIfMissing(optional, 'coolingApplicable', 'Cooling/AC');
         addIfMissing(optional, 'waterHeaterType', 'Water Heater Type');
-        addIfMissing(optional, 'hasDWHR', 'Drain Water Heat Recovery selection');
+        addIfMissing(optional, 'hasDWHR', 'Drain Water Heat Recovery');
         addIfMissing(optional, 'interestedCertifications', 'Certification interests');
         addIfMissing(optional, 'midConstructionBlowerDoorPlanned', 'Mid-Construction Blower Door Test');
         addIfMissing(optional, 'occupancyClass', 'Occupancy Class');
 
         // Conditional optional fields that depend on other selections
         if (selections.hasCathedralOrFlatRoof === 'yes') {
-          addIfMissing(optional, 'cathedralFlatRSI', 'Cathedral/Flat Roofs assembly info');
+          addIfMissing(optional, 'cathedralFlatRSI', 'Cathedral/Flat Roofs');
         }
         if (selections.hasSkylights === 'yes') {
           addIfMissing(optional, 'skylightUValue', 'Skylight U-Value');
@@ -116,7 +116,7 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
           addIfMissing(optional, 'hrvEfficiency', 'HRV/ERV Make/Model');
         }
         if ((selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv") {
-          addIfMissing(optional, 'hasSecondaryHrv', 'Secondary Suite HRV/ERV selection');
+          addIfMissing(optional, 'hasSecondaryHrv', 'Secondary Suite HRV/ERV');
           if (selections.hasSecondaryHrv === 'separate') {
             addIfMissing(optional, 'secondaryHrvEfficiency', 'Secondary HRV/ERV Make/Model');
           }
@@ -124,7 +124,7 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
         if (selections.heatingType) {
           addIfMissing(optional, 'heatingEfficiency', 'Heating Make/Model');
           if (selections.heatingType === 'boiler') {
-            addIfMissing(optional, 'indirectTank', 'Indirect Tank selection');
+            addIfMissing(optional, 'indirectTank', 'Indirect Tank');
             if (selections.indirectTank === 'yes') {
               addIfMissing(optional, 'indirectTankSize', 'Indirect Tank Size');
             }
@@ -144,22 +144,22 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
         }
         
         if (selections.floorsSlabsSelected?.includes("floorsUnheated")) {
-          addIfMissing(optional, 'floorsUnheatedRSI', 'Floors over Unheated Spaces info');
+          addIfMissing(optional, 'floorsUnheatedRSI', 'Floors over Unheated Spaces');
         }
         if (selections.floorsSlabsSelected?.includes("floorsGarage")) {
-          addIfMissing(optional, 'floorsGarageRSI', 'Floors above Garages info');
+          addIfMissing(optional, 'floorsGarageRSI', 'Floors above Garages');
         }
         if (selections.floorsSlabsSelected?.includes("unheatedBelowFrost")) {
-          addIfMissing(optional, 'unheatedFloorBelowFrostRSI', 'Unheated Floor Below Frostline info');
+          addIfMissing(optional, 'unheatedFloorBelowFrostRSI', 'Unheated Floor Below Frostline');
         }
         if (selections.floorsSlabsSelected?.includes("unheatedAboveFrost")) {
-          addIfMissing(optional, 'unheatedFloorAboveFrostRSI', 'Unheated Floor Above Frostline info');
+          addIfMissing(optional, 'unheatedFloorAboveFrostRSI', 'Unheated Floor Above Frostline');
         }
         if (selections.floorsSlabsSelected?.includes("heatedFloors")) {
-          addIfMissing(optional, 'heatedFloorsRSI', 'Heated Floors info');
+          addIfMissing(optional, 'heatedFloorsRSI', 'Heated Floors');
         }
         if (selections.floorsSlabsSelected?.includes("slabOnGradeIntegralFooting")) {
-          addIfMissing(optional, 'slabOnGradeIntegralFootingRSI', 'Slab on Grade info');
+          addIfMissing(optional, 'slabOnGradeIntegralFootingRSI', 'Slab on Grade');
         }
         break;
 
