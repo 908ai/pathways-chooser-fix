@@ -430,18 +430,25 @@ const ProjectDetail = () => {
     }
   };
 
-  const handleFilePreview = (file: any) => {
+  const handleFilePreview = async (file: any) => {
     if (!file.path) {
       toast({ title: "Preview Error", description: "File path is missing.", variant: "destructive" });
       return;
     }
-    const { data } = supabase.storage.from('project-files').getPublicUrl(file.path);
-    if (data.publicUrl) {
-      window.open(data.publicUrl, '_blank', 'noopener,noreferrer');
-    } else {
+    try {
+      const { data, error } = await supabase.storage
+        .from('project-files')
+        .download(file.path);
+
+      if (error) throw error;
+
+      const url = URL.createObjectURL(data);
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } catch (error: any) {
+      console.error('Error previewing file:', error);
       toast({
-        title: "Preview Unavailable",
-        description: "Could not generate a preview link for this file.",
+        title: "Preview Failed",
+        description: error.message || "Could not generate a preview for this file.",
         variant: "destructive",
       });
     }
@@ -966,7 +973,7 @@ const ProjectDetail = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
                   <FolderOpen className="h-5 w-5" />
-                  Project Documents
+                  Uploaded Documents
                 </CardTitle>
                 <CardDescription className="text-slate-200">
                   Upload and manage project files including building plans, reports, and compliance documents
@@ -1045,7 +1052,7 @@ const ProjectDetail = () => {
                                   {isPreviewable(file.name) && (
                                     <Tooltip>
                                       <TooltipTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); handleFilePreview(file); }}>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-400/10" onClick={(e) => { e.stopPropagation(); handleFilePreview(file); }}>
                                           <Eye className="h-4 w-4" />
                                         </Button>
                                       </TooltipTrigger>
@@ -1056,7 +1063,7 @@ const ProjectDetail = () => {
                                   )}
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); handleFileDownload(file); }}>
+                                      <Button variant="ghost" size="icon" className="h-8 w-8 text-green-400 hover:bg-green-400/10" onClick={(e) => { e.stopPropagation(); handleFileDownload(file); }}>
                                         <Download className="h-4 w-4" />
                                       </Button>
                                     </TooltipTrigger>
