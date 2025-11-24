@@ -3,14 +3,13 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 import PDFDocument from 'https://esm.sh/pdfkit@0.14.0';
-import { Buffer } from "https://deno.land/std@0.168.0/io/buffer.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Helper to fetch image and convert to buffer
+// Helper to fetch image and convert to Uint8Array
 async function fetchImage(url: string) {
     try {
         const response = await fetch(url);
@@ -19,7 +18,7 @@ async function fetchImage(url: string) {
             return null;
         }
         const arrayBuffer = await response.arrayBuffer();
-        return new Buffer(arrayBuffer);
+        return new Uint8Array(arrayBuffer);
     } catch (error) {
         console.error('Error fetching image:', error);
         return null;
@@ -150,7 +149,6 @@ serve(async (req) => {
 
     if (projectError) throw projectError;
 
-    // Use maybeSingle() to avoid error if no company is found
     const { data: company, error: companyError } = await supabaseAdmin
       .from('companies')
       .select('*')
@@ -158,24 +156,39 @@ serve(async (req) => {
       .maybeSingle();
 
     if (companyError) {
-      // Log the error but don't fail the function, as company is optional
       console.error("Error fetching company info:", companyError.message);
     }
 
     const doc = new PDFDocument({ autoFirstPage: false, margin: 50, size: 'A4' });
 
-    const stream = new ReadableStream({
-        async start(controller) {
-            doc.on('data', (chunk) => controller.enqueue(chunk));
-            doc.on('end', () => controller.close());
+    const pdfBuffer = await new Promise<Uint8Array>(async (resolve) => {
+        const chunks: Uint8Array[] = [];
+        doc.on('data', (chunk: Uint8Array) => {
+            chunks.push(chunk);
+        });
+        doc.on('end', () => {
+            const totalLength = chunks.reduce((acc, val) => acc + val.length, 0);
+            const result = new Uint8Array(totalLength);
+            let offset = 0;
+            for (const chunk of chunks) {
+                result.set(chunk, offset);
+                offset += chunk.length;
+            }
+            resolve(result);
+        });
 
-            await buildPdf(doc, project, company);
-            
-            doc.end();
-        }
+        await buildPdf(doc, project, company);
+        
+        doc.end();
     });
 
-    return new Response(stream, { headers: { ...corsHeaders, 'Content-Disposition': `attachment; filename="${project.project_name}_Report.pdf"` } });
+    return new Response(pdfBuffer, { 
+        headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename="${project.project_name}_Report.pdf"` 
+        } 
+    });
 
   } catch (error) {
     console.error('Error in generate-pdf function:', error);
