@@ -14,7 +14,7 @@ import {
 import { MoreHorizontal, Edit, Copy, Trash2, Building, Calendar, AlertTriangle, MapPin, Eye, Info, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { getPendingItems } from '@/lib/projectUtils';
+import { getPendingItems, formatPathwayName } from '@/lib/projectUtils';
 
 interface NewProjectCardProps {
   project: any;
@@ -99,23 +99,17 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
       .join(' ');
   };
 
-  const formatPathway = (pathway: string | null) => {
-      if (!pathway) return 'N/A';
-      if (pathway.includes('936')) return pathway.split(' ')[0]; // e.g. 9365
-      return pathway.charAt(0).toUpperCase() + pathway.slice(1);
-  }
-
   return (
     <Card className="w-full overflow-hidden relative transition-all hover:shadow-lg hover:-translate-y-1 rounded-lg border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 cursor-pointer" onClick={() => onView(project.id)}>
       <div className={cn("h-2 w-full", statusInfo.color)} />
       
       <Badge className={cn(
         "absolute top-0 right-0 px-2 py-1 text-xs font-semibold shadow-md rounded-none rounded-bl-[15px]",
-        project.selected_pathway?.includes('performance') || project.selected_pathway?.includes('9365') || project.selected_pathway?.includes('9367')
+        project.selected_pathway?.includes('performance') || project.selected_pathway === '9365' || project.selected_pathway === '9367'
           ? 'bg-blue-100 text-blue-800 hover:bg-blue-100' 
           : 'bg-orange-100 text-orange-800 hover:bg-orange-100'
       )}>
-        {formatPathway(project.selected_pathway)}
+        {formatPathwayName(project.selected_pathway)}
       </Badge>
 
       <CardHeader>

@@ -67,8 +67,12 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
         
         if (!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes')) {
           addIfMissing(required, 'waterHeaterType', 'Water Heater Type');
-          if (selections.waterHeaterType && selections.waterHeaterType !== 'boiler') addIfMissing(required, 'waterHeater', 'Water Heater Efficiency');
-          if (selections.waterHeaterType === 'other') addIfMissing(required, 'otherWaterHeaterType', 'Other Water Heater Type');
+          if (selections.waterHeaterType && selections.waterHeaterType !== 'boiler') {
+            addIfMissing(required, 'waterHeater', 'Water Heater Efficiency');
+          }
+          if (selections.waterHeaterType === 'other') {
+            addIfMissing(required, 'otherWaterHeaterType', 'Specify Other Water Heater Type');
+          }
         }
         
         if (selections.heatingType === 'boiler') addIfMissing(required, 'indirectTank', 'Indirect Tank selection');
@@ -179,4 +183,18 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
   const progress = Math.max(0, (completedCount / totalRequiredFields) * 100);
 
   return { required, optional, progress };
+};
+
+export const formatPathwayName = (pathway: string | null): string => {
+  if (!pathway) return 'N/A';
+  switch (pathway) {
+    case '9365': return 'Performance';
+    case '9362': return 'Prescriptive';
+    case '9367': return 'Tiered Performance';
+    case '9368': return 'Tiered Prescriptive';
+    // Fallbacks for old data
+    case 'performance': return 'Performance';
+    case 'prescriptive': return 'Prescriptive';
+    default: return pathway;
+  }
 };

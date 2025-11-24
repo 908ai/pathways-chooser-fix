@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/tooltip";
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Edit, Copy, Trash2, FileText, Zap, AlertTriangle, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { formatPathwayName } from '@/lib/projectUtils';
 
 interface ProjectTableViewProps {
   projects: any[];
@@ -79,7 +79,6 @@ const ProjectTableView = ({ projects, onViewProject, onEditProject, onDuplicateP
           <TableHead className="text-white">Project Name</TableHead>
           <TableHead className="text-white">Status</TableHead>
           <TableHead className="text-white">Pathway</TableHead>
-          <TableHead className="text-white">Progress</TableHead>
           <TableHead className="text-white">Last Updated</TableHead>
           <TableHead className="text-right text-white">Actions</TableHead>
         </TableRow>
@@ -87,7 +86,7 @@ const ProjectTableView = ({ projects, onViewProject, onEditProject, onDuplicateP
       <TableBody>
         {projects.map(project => {
           const statusInfo = getStatusInfo(project.compliance_status);
-          const { pending, progress } = getPendingItems(project);
+          const isPerformance = project.selected_pathway === '9365' || project.selected_pathway === '9367' || project.selected_pathway === 'performance';
           return (
             <TableRow key={project.id} onClick={() => onViewProject(project.id)} className="cursor-pointer bg-slate-700/40 border-b border-slate-400/50 backdrop-blur-md hover:bg-slate-600/50">
               <TableCell>
@@ -99,36 +98,9 @@ const ProjectTableView = ({ projects, onViewProject, onEditProject, onDuplicateP
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2 text-white">
-                  {project.selected_pathway === 'performance' ? <Zap className="h-4 w-4 text-blue-400" /> : <FileText className="h-4 w-4 text-orange-400" />}
-                  <span className="capitalize">{project.selected_pathway}</span>
+                  {isPerformance ? <Zap className="h-4 w-4 text-blue-400" /> : <FileText className="h-4 w-4 text-orange-400" />}
+                  <span>{formatPathwayName(project.selected_pathway)}</span>
                 </div>
-              </TableCell>
-              <TableCell>
-                {statusInfo.text === 'In Progress' ? (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="w-32">
-                          <Progress value={progress} className="h-2" />
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {pending.length > 0 ? (
-                          <div className="p-2">
-                            <p className="font-semibold mb-2 flex items-center gap-2"><AlertTriangle className="h-4 w-4 text-orange-400" /> Pending Items:</p>
-                            <ul className="list-disc list-inside space-y-1 text-xs">
-                              {pending.map(item => <li key={item}>{item}</li>)}
-                            </ul>
-                          </div>
-                        ) : (
-                          <p className="text-xs p-2">All items complete!</p>
-                        )}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                ) : (
-                  <span className="text-slate-300">-</span>
-                )}
               </TableCell>
               <TableCell className="text-slate-300">{new Date(project.updated_at).toLocaleDateString()}</TableCell>
               <TableCell className="text-right">
