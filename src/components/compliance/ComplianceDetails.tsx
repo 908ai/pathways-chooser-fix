@@ -82,7 +82,7 @@ const ComplianceDetails = ({ project, onFixItem }: ComplianceDetailsProps) => {
                 );
               }
               return (
-                <div key={index} className="p-3 text-yellow-200 text-sm col-span-2">
+                <div key={index} className="p-3 text-yellow-200 text-sm bg-yellow-900/20 rounded-md flex items-center col-span-2">
                   {rec}
                 </div>
               );
