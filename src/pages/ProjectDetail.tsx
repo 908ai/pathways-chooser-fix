@@ -660,6 +660,7 @@ const ProjectDetail = () => {
             <div className="flex items-center gap-4">
               {getComplianceStatusBadge()}
               
+              {/* Admin Review Actions */}
               {isAdmin && project.compliance_status === 'submitted' && (
                 <div className="flex items-center gap-2">
                   <Button 
@@ -689,6 +690,12 @@ const ProjectDetail = () => {
                 </div>
               )}
               
+              {/* Separator */}
+              {isAdmin && project.compliance_status === 'submitted' && (
+                <div className="h-6 w-px bg-slate-600 mx-2"></div>
+              )}
+
+              {/* Project Management & Export Actions */}
               <div className="flex items-center gap-2">
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -731,39 +738,39 @@ const ProjectDetail = () => {
                     </TooltipContent>
                   )}
                 </Tooltip>
-              </div>
-              
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button disabled={duplicating} className="animate-fade-in">
-                    <Copy className="h-4 w-4 mr-2" />
-                    {duplicating ? 'Duplicating...' : 'Duplicate'}
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Duplicate This Project</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Create a copy of this project with all specifications intact. The duplicate will be placed in your "In Progress" section with a reset compliance status, allowing you to modify it as needed for new projects.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-md p-4">
-                    <div className="flex items-start gap-3">
-                      <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-red-600 mb-1">Important Notice</p>
-                        <p className="text-sm text-red-600">
-                          <span className="font-semibold">New building plans and window schedule must be uploaded</span> to accompany the duplicated project. The existing project files will not be carried over and fresh documentation is required for compliance review.
-                        </p>
+                
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button disabled={duplicating} className="animate-fade-in">
+                      <Copy className="h-4 w-4 mr-2" />
+                      {duplicating ? 'Duplicating...' : 'Duplicate'}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Duplicate This Project</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Create a copy of this project with all specifications intact. The duplicate will be placed in your "In Progress" section with a reset compliance status, allowing you to modify it as needed for new projects.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-md p-4">
+                      <div className="flex items-start gap-3">
+                        <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-sm font-medium text-red-600 mb-1">Important Notice</p>
+                          <p className="text-sm text-red-600">
+                            <span className="font-semibold">New building plans and window schedule must be uploaded</span> to accompany the duplicated project. The existing project files will not be carried over and fresh documentation is required for compliance review.
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDuplicate}>Duplicate</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDuplicate}>Duplicate</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </div>
           </div>
         </div>
