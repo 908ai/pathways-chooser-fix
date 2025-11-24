@@ -4,6 +4,7 @@ import TieredPrescriptiveComplianceView from './TieredPrescriptiveComplianceView
 import PrescriptiveComplianceView from './PrescriptiveComplianceView';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle, ChevronRight } from 'lucide-react';
+import ProjectStatusCard from '@/components/ProjectStatusCard';
 
 interface ComplianceDetailsProps {
   project: any;
@@ -21,6 +22,8 @@ const mapRecommendationToFieldId = (rec: string): string | null => {
 };
 
 const ComplianceDetails = ({ project, onFixItem }: ComplianceDetailsProps) => {
+  const isCompleted = project.compliance_status === 'pass' || project.compliance_status === 'fail' || project.compliance_status === 'Compliant';
+
   const renderComplianceView = () => {
     switch (project.selected_pathway) {
       case '9365':
@@ -95,6 +98,9 @@ const ComplianceDetails = ({ project, onFixItem }: ComplianceDetailsProps) => {
 
   return (
     <div className="space-y-6">
+      {project && !isCompleted && (
+        <ProjectStatusCard project={project} onFixItem={onFixItem} />
+      )}
       <ComplianceStatusCard project={project} />
       {renderRecommendations()}
       {renderComplianceView()}

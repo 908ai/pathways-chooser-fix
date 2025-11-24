@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import ProjectStatusCard from '@/components/ProjectStatusCard';
-import ComplianceDetails from '@/components/ComplianceDetails';
+import ComplianceDetails from '@/components/compliance/ComplianceDetails';
 
 const DetailItem = ({ label, value, unit = '' }: { label: string; value: any; unit?: string }) => {
   if (value === null || value === undefined || value === '') return null;
@@ -929,9 +929,9 @@ const ProjectDetail = () => {
                 </CardContent>
               </Card>
             </div>
-            {project && !isCompleted && (
+            {/* {project && !isCompleted && (
               <ProjectStatusCard project={project} onFixItem={handleFixItem} />
-            )}
+            )} */}
           </TabsContent>
 
           <TabsContent value="compliance" className="mt-6">
