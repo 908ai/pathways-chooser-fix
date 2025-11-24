@@ -28,7 +28,7 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
 
   // Step 4: Always Required
   if (uploadedFiles.length === 0) {
-    required.push({ label: 'At least one project document (e.g., building plans)', fieldId: 'fileUploadSection' });
+    required.push({ label: 'At least 1 project document', fieldId: 'fileUploadSection' });
   }
 
   // Step 3: Conditional Fields
