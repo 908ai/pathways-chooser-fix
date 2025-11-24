@@ -26,7 +26,7 @@ const ComplianceStatusCard = ({ project }: ComplianceStatusCardProps) => {
         };
       case 'needs_revision':
         return {
-          icon: <AlertTriangle className="h-12 w-12 text-yellow-400" />,
+          icon: <AlertTriangle className="h-6 w-6 text-yellow-400" />,
           title: 'Needs Revision',
           description: 'The project requires updates. Please review the pending items and resubmit.',
           badge: <Badge className="bg-yellow-500 text-white">Needs Revision</Badge>,
@@ -42,6 +42,19 @@ const ComplianceStatusCard = ({ project }: ComplianceStatusCardProps) => {
   };
 
   const { icon, title, description, badge } = getStatusInfo();
+
+  if (project.compliance_status === 'needs_revision') {
+    return (
+      <Card className="bg-yellow-900/30 border-yellow-500/50">
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-4">
+            <div className="flex-shrink-0">{icon}</div>
+            <p className="text-yellow-200">{description}</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-slate-800/60 border-slate-700">

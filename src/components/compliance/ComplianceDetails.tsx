@@ -66,7 +66,7 @@ const ComplianceDetails = ({ project, onFixItem }: ComplianceDetailsProps) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {recommendations.map((rec: string, index: number) => {
               const fieldId = mapRecommendationToFieldId(rec);
               if (fieldId) {
@@ -82,7 +82,7 @@ const ComplianceDetails = ({ project, onFixItem }: ComplianceDetailsProps) => {
                 );
               }
               return (
-                <div key={index} className="p-3 text-yellow-200 text-sm">
+                <div key={index} className="p-3 text-yellow-200 text-sm sm:col-span-2">
                   {rec}
                 </div>
               );
