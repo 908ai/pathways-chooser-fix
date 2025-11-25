@@ -5,12 +5,13 @@ import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
-import { Loader2, BarChart2, CheckSquare, PieChart, Thermometer } from 'lucide-react';
+import { Loader2, BarChart2, CheckSquare, PieChart, Thermometer, DollarSign, TrendingUp, Zap as EnergyIcon } from 'lucide-react';
 import StatCard from '@/components/dashboard3/StatCard';
 import CompliancePathwayChart from '@/components/dashboard3/CompliancePathwayChart';
 import ProjectStatusChart from '@/components/dashboard3/ProjectStatusChart';
 import AverageRsiCard from '@/components/dashboard3/AverageRsiCard';
 import RecentProjectsList from '@/components/dashboard3/RecentProjectsList';
+import TopComplianceContributors from '@/components/dashboard3/TopComplianceContributors';
 
 const fetchUserProjects = async (userId: string | undefined) => {
   if (!userId) return [];
@@ -39,6 +40,9 @@ const Dashboard3 = () => {
         inProgressCount: 0,
         averagePoints: 0,
         averageRsi: { attic: 0, wall: 0, belowGrade: 0 },
+        totalSavings: 0,
+        averageSavings: 0,
+        topContributors: [],
       };
     }
 
@@ -55,6 +59,49 @@ const Dashboard3 = () => {
       return validProjects.reduce((sum, p) => sum + (p[field] as number), 0) / validProjects.length;
     };
 
+    // Cost Savings Calculation
+    const performanceProjects = projects.filter(p => p.selected_pathway === '9365' || p.selected_pathway === '9367');
+    const totalSavings = performanceProjects.reduce((sum, p) => {
+      const isTier2OrHigher = p.selected_pathway === '9367';
+      const prescriptiveCost = isTier2OrHigher ? 13550 : 6888;
+      const performanceCost = isTier2OrHigher ? 8150 : 1718;
+      return sum + (prescriptiveCost - performanceCost);
+    }, 0);
+    const averageSavings = performanceProjects.length > 0 ? totalSavings / performanceProjects.length : 0;
+
+    // Top Compliance Contributors Calculation
+    const pointCategories = {
+      'Airtightness': 'airtightness_points',
+      'Walls': 'wall_points',
+      'Attic': 'attic_points',
+      'Windows': 'window_points',
+      'Below Grade': 'below_grade_points',
+      'HRV/ERV': 'hrv_erv_points',
+      'Water Heater': 'water_heating_points',
+    };
+
+    const pointSums = Object.keys(pointCategories).reduce((acc, key) => {
+      acc[key] = 0;
+      return acc;
+    }, {} as Record<string, number>);
+
+    tieredProjects.forEach(p => {
+      for (const [name, field] of Object.entries(pointCategories)) {
+        if (p[field]) {
+          pointSums[name] += p[field];
+        }
+      }
+    });
+
+    const topContributors = Object.entries(pointSums)
+      .map(([name, sum]) => ({
+        name,
+        averagePoints: tieredProjects.length > 0 ? sum / tieredProjects.length : 0,
+      }))
+      .filter(item => item.averagePoints > 0)
+      .sort((a, b) => b.averagePoints - a.averagePoints)
+      .slice(0, 5);
+
     return {
       totalProjects: projects.length,
       complianceRate: Math.round(complianceRate),
@@ -65,6 +112,9 @@ const Dashboard3 = () => {
         wall: getAverage('wall_rsi'),
         belowGrade: getAverage('below_grade_rsi'),
       },
+      totalSavings,
+      averageSavings,
+      topContributors,
     };
   }, [projects]);
 
@@ -87,6 +137,12 @@ const Dashboard3 = () => {
           </p>
         </div>
 
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-6">
+          <StatCard title="Total Estimated Savings" value={`$${analytics.totalSavings.toLocaleString()}`} icon={<DollarSign />} description="vs. Prescriptive Path" />
+          <StatCard title="Avg. Savings per Project" value={`$${analytics.averageSavings.toLocaleString()}`} icon={<TrendingUp />} description="For Performance Path projects" />
+          <StatCard title="Avg. Energy Reduction" value="N/A" icon={<EnergyIcon />} description="Data not yet available" />
+        </div>
+
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6">
           <StatCard title="Total Projects" value={analytics.totalProjects} icon={<BarChart2 />} />
           <StatCard title="Compliance Rate" value={`${analytics.complianceRate}%`} icon={<CheckSquare />} description="Of completed projects" />
@@ -101,6 +157,7 @@ const Dashboard3 = () => {
           </div>
           <div className="lg:col-span-2 space-y-6">
             <RecentProjectsList data={projects || []} />
+            <TopComplianceContributors data={analytics.topContributors} />
             <AverageRsiCard data={analytics.averageRsi} />
           </div>
         </div>
