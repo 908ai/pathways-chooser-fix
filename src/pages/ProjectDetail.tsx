@@ -573,8 +573,7 @@ const ProjectDetail = () => {
 
       if (error) throw error;
 
-      const blob = new Blob([data], { type: 'application/pdf' });
-      const url = window.URL.createObjectURL(blob);
+      const url = window.URL.createObjectURL(data);
       const a = document.createElement('a');
       a.href = url;
       a.download = `${project.project_name}_Report.pdf`;
