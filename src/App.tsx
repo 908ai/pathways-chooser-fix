@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Dashboard2 from "./pages/Dashboard2";
+import Dashboard3 from "./pages/Dashboard3";
 import Calculator from "./pages/Calculator";
 import ProjectDetail from "./pages/ProjectDetail";
 import MockEditor from "./pages/MockEditor";
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/dashboard1" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard2 /></ProtectedRoute>} />
+            <Route path="/dashboard3" element={<ProtectedRoute><Dashboard3 /></ProtectedRoute>} />
             <Route path="/calculator" element={<ProtectedRoute><Calculator /></ProtectedRoute>} />
             <Route path="/project/:id" element={<ProtectedRoute><ProjectDetail /></ProtectedRoute>} />
             <Route path="/test-upload" element={<ProtectedRoute><TestUpload /></ProtectedRoute>} />
