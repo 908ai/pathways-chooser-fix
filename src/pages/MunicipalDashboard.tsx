@@ -6,9 +6,9 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 import { Loader2 } from 'lucide-react';
-import MunicipalStats from '@/components/dashboard/MunicipalStats';
-import ProjectFilterBar from '@/components/dashboard/ProjectFilterBar';
-import ProjectDataTable from '@/components/dashboard/ProjectDataTable';
+import MunicipalStats from '../components/dashboard/MunicipalStats';
+import ProjectFilterBar from '../components/dashboard/ProjectFilterBar';
+import ProjectDataTable from '../components/dashboard/ProjectDataTable';
 
 const fetchAllProjects = async () => {
   const { data: projects, error: projectsError } = await supabase
