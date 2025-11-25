@@ -6,11 +6,11 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 import { Loader2, BarChart2, CheckSquare, PieChart, Thermometer } from 'lucide-react';
-import StatCard from '../components/dashboard/StatCard';
-import CompliancePathwayChart from '../components/dashboard/CompliancePathwayChart';
-import ProjectStatusChart from '../components/dashboard/ProjectStatusChart';
-import AverageRsiCard from '../components/dashboard/AverageRsiCard';
-import RecentProjectsList from '../components/dashboard/RecentProjectsList';
+import StatCard from '@/components/dashboard/StatCard';
+import CompliancePathwayChart from '@/components/dashboard/CompliancePathwayChart';
+import ProjectStatusChart from '@/components/dashboard/ProjectStatusChart';
+import AverageRsiCard from '@/components/dashboard/AverageRsiCard';
+import RecentProjectsList from '@/components/dashboard/RecentProjectsList';
 
 const fetchUserProjects = async (userId: string | undefined) => {
   if (!userId) return [];
