@@ -201,7 +201,7 @@ serve(async (req) => {
     return new Response(pdfBytes, { 
         headers: { 
             ...corsHeaders, 
-            'Content-Type': 'application/pdf',
+            'Content-Type': 'application/octet-stream',
             'Content-Disposition': `attachment; filename="${project.project_name}_Report.pdf"` 
         } 
     });

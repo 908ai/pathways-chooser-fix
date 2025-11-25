@@ -573,12 +573,14 @@ const ProjectDetail = () => {
 
       if (error) throw error;
 
-      if (!(data instanceof Blob)) {
-        console.error("Function returned unexpected data:", data);
-        throw new Error("PDF generation failed on the server. The function did not return a valid file.");
+      if (!data || !data.pdfData) {
+        throw new Error("PDF generation failed: No data received from server.");
       }
 
-      const url = window.URL.createObjectURL(data);
+      const base64Response = await fetch(`data:application/pdf;base64,${data.pdfData}`);
+      const blob = await base64Response.blob();
+
+      const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `${project.project_name}_Report.pdf`;
