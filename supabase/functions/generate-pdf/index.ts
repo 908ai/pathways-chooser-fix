@@ -9,21 +9,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-async function fetchImage(url: string) {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            console.error(`Failed to fetch image: ${response.statusText}`);
-            return null;
-        }
-        const arrayBuffer = await response.arrayBuffer();
-        return arrayBuffer;
-    } catch (error) {
-        console.error('Error fetching image:', error);
-        return null;
-    }
-}
-
 const buildPdf = async (project: any, company: any) => {
     const pdfDoc = await PDFDocument.create();
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -42,14 +27,7 @@ const buildPdf = async (project: any, company: any) => {
         }
     };
 
-    const drawHeader = async () => {
-        const logoUrl = `${Deno.env.get('SUPABASE_URL')!}/storage/v1/object/public/assets/NBC936-logo.png`;
-        const logoBuffer = await fetchImage(logoUrl);
-        if (logoBuffer) {
-            const logoImage = await pdfDoc.embedPng(logoBuffer);
-            page.drawImage(logoImage, { x: margin, y: height - margin - 30, width: 100 });
-        }
-        
+    const drawHeader = () => {
         const projectNameText = project.project_name;
         const projectNameWidth = boldFont.widthOfTextAtSize(projectNameText, 10);
         page.drawText(projectNameText, {
@@ -69,7 +47,7 @@ const buildPdf = async (project: any, company: any) => {
         });
     };
 
-    await drawHeader();
+    drawHeader();
     y -= 50; // Space for header
 
     // Title
