@@ -110,7 +110,7 @@ const buildPdf = async (project: any, company: any) => {
     addDetailItem('Above-Grade Wall RSI', project.wall_rsi);
     addDetailItem('Below-Grade Wall RSI', project.below_grade_rsi);
     addDetailItem('Exposed Floor RSI', project.floor_rsi);
-    addDetailItem('Window & Door U-Value', project.window_u_value, ' W/(m2·K)');
+    addDetailItem('Window & Door U-Value', project.window_u_value, ' W/(m2.K)');
     y -= 15;
 
     checkPageBreak(20);
