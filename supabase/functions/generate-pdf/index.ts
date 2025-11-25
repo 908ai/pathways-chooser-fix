@@ -132,7 +132,7 @@ const buildPdf = async (project: any, company: any) => {
     addDetailItem('Above-Grade Wall RSI', project.wall_rsi);
     addDetailItem('Below-Grade Wall RSI', project.below_grade_rsi);
     addDetailItem('Exposed Floor RSI', project.floor_rsi);
-    addDetailItem('Window & Door U-Value', project.window_u_value, ' W/(m²·K)');
+    addDetailItem('Window & Door U-Value', project.window_u_value, ' W/(m2·K)');
     y -= 15;
 
     checkPageBreak(20);
@@ -150,8 +150,8 @@ const buildPdf = async (project: any, company: any) => {
     checkPageBreak(20);
     page.drawText('Performance Metrics', { x: margin, y, font: boldFont, size: 12 });
     y -= 20;
-    addDetailItem('Airtightness Level', project.airtightness_al, ' ACH₅₀');
-    addDetailItem('Building Volume', project.building_volume, ' m³');
+    addDetailItem('Airtightness Level', project.airtightness_al, ' ACH50');
+    addDetailItem('Building Volume', project.building_volume, ' m3');
     y -= 15;
 
     addSectionTitle('Compliance Summary');
