@@ -28,7 +28,7 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { isAdmin } = useUserRole();
+  const { isAdmin, canViewMunicipalDashboard } = useUserRole();
   const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -126,6 +126,14 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
                     FAQ
                   </Button>
                 </Link>
+                {canViewMunicipalDashboard && (
+                  <Link to="/municipal-dashboard">
+                    <Button variant="ghost" size="sm" className={cn("text-xs text-cyan-400", isLinkActive('/municipal-dashboard') && "underline")}>
+                      <Shield className="h-3 w-3 mr-1" />
+                      Municipal
+                    </Button>
+                  </Link>
+                )}
                 {isAdmin && (
                   <Link to="/admin">
                     <Button variant="ghost" size="sm" className={cn("text-xs text-yellow-400", isLinkActive('/admin') && "underline")}>

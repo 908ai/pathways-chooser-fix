@@ -60,16 +60,21 @@ export const useUserRole = () => {
     return userRole === 'admin' || userRole === 'account_manager';
   }, [userRole]);
 
+  const canViewMunicipalDashboard = useMemo((): boolean => {
+    return userRole === 'admin' || userRole === 'account_manager';
+  }, [userRole]);
+
   const value = useMemo(() => ({
     userRole,
     loading,
     hasRole,
     canDeleteProjects,
     canViewAllProjects,
+    canViewMunicipalDashboard,
     isAdmin: userRole === 'admin',
     isAccountManager: userRole === 'account_manager',
     isUser: userRole === 'user'
-  }), [userRole, loading, hasRole, canDeleteProjects, canViewAllProjects]);
+  }), [userRole, loading, hasRole, canDeleteProjects, canViewAllProjects, canViewMunicipalDashboard]);
 
   return value;
 };
