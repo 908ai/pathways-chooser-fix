@@ -1,7 +1,78 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Zap } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+// Define the structure for an insight
+interface Insight {
+  title: string;
+  stats: {
+    value: string;
+    label: string;
+  }[];
+  progress: {
+    value: number;
+    label: string;
+  };
+}
+
+// Create a list of insights
+const insights: Insight[] = [
+  {
+    title: "Portfolio performance is trending up by 12% this quarter.",
+    stats: [
+      { value: "105.5 GJ", label: "AVG CONSUMPTION" },
+      { value: "Tier 2", label: "AVG TARGET LEVEL" },
+    ],
+    progress: { value: 85, label: "COMPLIANCE RATE" },
+  },
+  {
+    title: "Performance pathways are saving an average of $5,400 per project.",
+    stats: [
+      { value: "$8,150", label: "AVG PERFORMANCE COST" },
+      { value: "$13,550", label: "AVG PRESCRIPTIVE COST" },
+    ],
+    progress: { value: 40, label: "% COST SAVING" },
+  },
+  {
+    title: "Upgrading to triple-pane windows is the most common path to Tier 2.",
+    stats: [
+      { value: "65%", label: "OF TIER 2 PROJECTS" },
+      { value: "1.22 U", label: "AVG U-VALUE" },
+    ],
+    progress: { value: 65, label: "ADOPTION RATE" },
+  },
+  {
+    title: "Airtightness improvements show the highest point gains for Tiered projects.",
+    stats: [
+      { value: "+9.3 pts", label: "AVG GAIN (AL-3A)" },
+      { value: "1.5 ACH", label: "COMMON TARGET" },
+    ],
+    progress: { value: 75, label: "% PROJECTS TESTED" },
+  },
+  {
+    title: "Performance pathways are chosen in 78% of new projects.",
+    stats: [
+      { value: "78%", label: "PERFORMANCE PATH" },
+      { value: "22%", label: "PRESCRIPTIVE PATH" },
+    ],
+    progress: { value: 78, label: "PERFORMANCE ADOPTION" },
+  },
+];
 
 const EfficiencyInsightCard = () => {
+  const [currentInsight, setCurrentInsight] = useState<Insight | null>(null);
+
+  useEffect(() => {
+    // Select a random insight when the component mounts
+    const randomIndex = Math.floor(Math.random() * insights.length);
+    setCurrentInsight(insights[randomIndex]);
+  }, []);
+
+  if (!currentInsight) {
+    // Return a loading state or null while the insight is being selected
+    return null; 
+  }
+
   return (
     <Card className="bg-gradient-to-br from-purple-600 to-indigo-600 text-white shadow-lg rounded-xl p-6">
       <CardContent className="p-0">
@@ -11,16 +82,14 @@ const EfficiencyInsightCard = () => {
               <Zap className="h-4 w-4" />
               <span>Efficiency Insight</span>
             </div>
-            <h2 className="text-2xl font-bold">Average Portfolio Performance is trending up by 12%</h2>
+            <h2 className="text-2xl font-bold">{currentInsight.title}</h2>
             <div className="flex gap-8 mt-4">
-              <div>
-                <p className="text-3xl font-bold">105.5 GJ</p>
-                <p className="text-xs opacity-80">AVG CONSUMPTION</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold">Tier 2</p>
-                <p className="text-xs opacity-80">TARGET LEVEL</p>
-              </div>
+              {currentInsight.stats.map((stat, index) => (
+                <div key={index}>
+                  <p className="text-3xl font-bold">{stat.value}</p>
+                  <p className="text-xs opacity-80">{stat.label}</p>
+                </div>
+              ))}
             </div>
           </div>
           <div className="relative h-32 w-32">
@@ -35,7 +104,7 @@ const EfficiencyInsightCard = () => {
               />
               <path
                 className="stroke-current text-white"
-                strokeDasharray="85, 100"
+                strokeDasharray={`${currentInsight.progress.value}, 100`}
                 d="M18 2.0845
                   a 15.9155 15.9155 0 0 1 0 31.831
                   a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -45,8 +114,8 @@ const EfficiencyInsightCard = () => {
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-bold">85%</span>
-              <span className="text-xs">COMPLIANCE</span>
+              <span className="text-3xl font-bold">{currentInsight.progress.value}%</span>
+              <span className="text-xs">{currentInsight.progress.label}</span>
             </div>
           </div>
         </div>
