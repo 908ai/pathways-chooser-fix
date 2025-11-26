@@ -25,7 +25,7 @@ const Footer = () => {
           >
             <Phone className="h-4 w-4 text-slate-500" />
             <div className="text-right">
-              <p className="text-[10.5px] text-slate-500">Need Help? Call Us</p>
+              <p className="text-[10.5px] text-slate-500 leading-[15px]">Need Help? Call Us</p>
               <p className="font-semibold text-slate-500">403-872-2441</p>
             </div>
           </Button>
