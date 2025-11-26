@@ -75,31 +75,30 @@ const Header = ({ showSignOut = false, onSignOut }: HeaderProps) => {
 
   return (
     <header className="bg-[rgb(238_241_244_/_0.9)] dark:bg-slate-900/90 backdrop-blur-sm border-b dark:border-slate-700 sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center relative">
-        <div className="flex items-center">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div className="flex items-center gap-8">
           <Link to="/dashboard">
             <img src="/assets/energy-navigator-logo.png" alt="Energy Navigator 9.36 Logo" className="h-[55px] dark:hidden" />
             <img src="/assets/energy-navigator-logo-w.png" alt="Energy Navigator 9.36 Logo" className="h-[55px] hidden dark:block" />
           </Link>
+          <nav className="hidden md:flex items-center gap-1">
+            {mainNavLinks.map(link => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={cn(
+                  "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  isLinkActive(link.path)
+                    ? "bg-primary/10 text-primary"
+                    : "text-slate-500 hover:bg-[rgb(216,222,227)] hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-50"
+                )}
+              >
+                {link.icon}
+                {link.label}
+              </Link>
+            ))}
+          </nav>
         </div>
-
-        <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-1">
-          {mainNavLinks.map(link => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={cn(
-                "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                isLinkActive(link.path)
-                  ? "bg-primary/10 text-primary"
-                  : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-50"
-              )}
-            >
-              {link.icon}
-              {link.label}
-            </Link>
-          ))}
-        </nav>
 
         <div className="flex items-center gap-4">
           <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
@@ -128,9 +127,9 @@ const Header = ({ showSignOut = false, onSignOut }: HeaderProps) => {
           {showSignOut && user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full bg-white border-2 border-[#d8dee3] p-0 hover:bg-slate-100">
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback>{getInitials(user.email || '')}</AvatarFallback>
+                    <AvatarFallback className="bg-transparent text-slate-900">{getInitials(user.email || '')}</AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
