@@ -108,9 +108,9 @@ const Dashboard2 = () => {
       <Header showSignOut={true} onSignOut={signOut} />
       <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-800">Project Dashboard</h1>
+          <h1 className="text-3xl font-bold text-slate-800">My Projects</h1>
           <p className="text-slate-500 mt-1">
-            Manage your NBC 9.36 compliance projects and account information.
+            View, manage, and track all your NBC 9.36 compliance projects.
           </p>
         </div>
         
