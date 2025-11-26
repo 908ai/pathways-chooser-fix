@@ -24,8 +24,8 @@ const Footer = () => {
             className="flex items-center gap-2 hover:bg-transparent"
           >
             <Phone className="h-4 w-4 text-slate-500" />
-            <div className="text-left">
-              <p className="text-xs text-slate-500">Need Help? Call Us</p>
+            <div className="text-right">
+              <p className="text-[10.5px] text-slate-500">Need Help? Call Us</p>
               <p className="font-semibold text-slate-500">403-872-2441</p>
             </div>
           </Button>
