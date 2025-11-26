@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -29,11 +29,32 @@ const fetchUserProjects = async (userId: string | undefined) => {
 const Dashboard3 = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [userName, setUserName] = useState<string | null>(null);
   const { data: projects, isLoading } = useQuery({
     queryKey: ['userProjects', user?.id],
     queryFn: () => fetchUserProjects(user?.id),
     enabled: !!user,
   });
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      if (user) {
+        const { data: companyData, error: companyError } = await supabase
+          .from('companies')
+          .select('company_name')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (companyData && companyData.company_name) {
+          setUserName(companyData.company_name);
+        } else if (companyError && companyError.code !== 'PGRST116') {
+          console.error("Error fetching company name:", companyError);
+        }
+      }
+    };
+
+    fetchUserName();
+  }, [user]);
 
   const analytics = useMemo(() => {
     if (!projects || projects.length === 0) {
@@ -162,7 +183,7 @@ const Dashboard3 = () => {
           <div>
             <h1 className="text-3xl font-bold text-slate-800">Executive Overview</h1>
             <p className="text-slate-500 mt-1">
-              Welcome back, Energy Advisor. You have <span className="font-semibold text-primary">{analytics.activeProjects} active projects</span> requiring attention.
+              Welcome back{userName ? `, ${userName}` : ''}! You have <span className="font-semibold text-primary">{analytics.activeProjects} active projects</span> requiring attention.
             </p>
           </div>
           <div className="flex items-center gap-2">
