@@ -45,10 +45,6 @@ import { cn } from "@/lib/utils";
 import { getPathwayDisplayName } from "./NBCCalculator/utils/helpers";
 import { getPendingItems } from "@/lib/projectUtils";
 
-interface NBCCalculatorProps {
-  onPathwayChange?: (pathwayInfo: string) => void;
-}
-
 const getStepForField = (fieldId: string) => {
   const step1Fields = ['firstName', 'lastName', 'company', 'phoneNumber', 'companyAddress', 'streetAddress', 'unitNumber', 'city', 'postalCode', 'buildingType', 'province', 'climateZone', 'occupancyClass'];
   const step2Fields = ['compliancePath', 'frontDoorOrientation'];
@@ -62,9 +58,7 @@ const getStepForField = (fieldId: string) => {
   return 3;
 };
 
-const NBCCalculator = ({
-  onPathwayChange
-}: NBCCalculatorProps = {}) => {
+const NBCCalculator = () => {
   const {
     user
   } = useAuth();
@@ -1042,7 +1036,6 @@ const NBCCalculator = ({
               <CompliancePathSection
                 selections={selections}
                 setSelections={setSelections}
-                onPathwayChange={onPathwayChange}
               />
             )}
 

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import NBCCalculator from "@/components/NBCCalculator";
@@ -9,7 +8,6 @@ import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 const Calculator = () => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
-  const [pathwayInfo, setPathwayInfo] = useState<string>('');
 
   const handleBackToDashboard = () => {
     navigate('/dashboard');
@@ -20,7 +18,6 @@ const Calculator = () => {
       <Header 
         showSignOut={true} 
         onSignOut={signOut} 
-        pathwayInfo={pathwayInfo}
       />
       <main className="flex-1 relative z-10 pb-12">
         {/* <div className="container mx-auto px-4 py-4">
@@ -31,7 +28,7 @@ const Calculator = () => {
             ← Back to Dashboard
           </button>
         </div> */}
-        <NBCCalculator onPathwayChange={setPathwayInfo} />
+        <NBCCalculator />
       </main>
       <Footer />
     </div>

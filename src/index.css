@@ -17,7 +17,7 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 25 95% 53%; /* orange-500 */
+    --primary: 32 100% 50%; /* New Orange */
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%; /* slate-100 */
@@ -34,7 +34,7 @@ All colors MUST be HSL.
 
     --border: 214.3 31.8% 91.4%; /* slate-200 */
     --input: 214.3 31.8% 91.4%;
-    --ring: 25 95% 53%;
+    --ring: 32 100% 50%;
 
     --radius: 0.75rem; /* Increased for more rounded corners */
   }
@@ -49,7 +49,7 @@ All colors MUST be HSL.
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 25 95% 53%;
+    --primary: 32 100% 50%; /* New Orange */
     --primary-foreground: 210 40% 98%;
 
     --secondary: 217 33% 17%;
@@ -66,7 +66,7 @@ All colors MUST be HSL.
 
     --border: 217 27% 22%; /* slate-700 */
     --input: 217 27% 22%;
-    --ring: 25 95% 53%;
+    --ring: 32 100% 50%;
   }
 }
 

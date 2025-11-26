@@ -608,7 +608,7 @@ const ProjectDetail = () => {
   if (loading || roleLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        <Header showSignOut={true} onSignOut={signOut} pathwayInfo="" />
+        <Header showSignOut={true} onSignOut={signOut} />
         <main className="flex-1 container mx-auto px-4 py-8">
           <div className="flex items-center justify-center h-64">
             <p className="text-gray-200 drop-shadow-sm">Loading project details...</p>
@@ -622,7 +622,7 @@ const ProjectDetail = () => {
   if (!project) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        <Header showSignOut={true} onSignOut={signOut} pathwayInfo="" />
+        <Header showSignOut={true} onSignOut={signOut} />
         <main className="flex-1 container mx-auto px-4 py-8">
           <div className="flex items-center justify-center h-64">
             <p className="text-gray-200 drop-shadow-sm">Project not found.</p>
@@ -658,7 +658,7 @@ const ProjectDetail = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
-      <Header showSignOut={true} onSignOut={signOut} pathwayInfo="" />
+      <Header showSignOut={true} onSignOut={signOut} />
       
       <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
         <div className="mb-6">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import NBCCalculator from "@/components/NBCCalculator";
@@ -9,7 +9,6 @@ import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 const Index = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
-  const [pathwayInfo, setPathwayInfo] = useState<string>('');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -34,9 +33,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
-      <Header showSignOut={true} onSignOut={signOut} pathwayInfo={pathwayInfo} />
+      <Header showSignOut={true} onSignOut={signOut} />
       <main className="flex-1 relative z-10">
-        <NBCCalculator onPathwayChange={setPathwayInfo} />
+        <NBCCalculator />
       </main>
       <Footer />
     </div>

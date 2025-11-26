@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FileText, Zap, LogOut, UserCircle, Shield } from 'lucide-react';
+import { LogOut, UserCircle, Shield } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import {
@@ -13,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import nbcLogo from '@/assets/NBC936-logo.png';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,15 +19,16 @@ import { supabase } from '@/integrations/supabase/client';
 interface HeaderProps {
   showSignOut?: boolean;
   onSignOut?: () => void;
-  pathwayInfo?: string;
 }
 
-const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) => {
+const Header = ({ showSignOut = false, onSignOut }: HeaderProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { isAdmin, canViewMunicipalDashboard } = useUserRole();
+  const { isAdmin } = useUserRole();
   const [userName, setUserName] = useState<string | null>(null);
+
+  const isLinkActive = (path: string) => location.pathname === path;
 
   useEffect(() => {
     const fetchUserName = async () => {
@@ -60,91 +59,40 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
     return email.substring(0, 2).toUpperCase();
   }
 
-  const isLinkActive = (path: string) => location.pathname === path;
+  const navLinks = [
+    { path: '/dashboard', label: 'Projects' },
+    { path: '/dashboard3', label: 'Analytics' },
+    { path: '/calculator', label: 'Calculator' },
+    { path: '/building-officials', label: 'Building Officials' },
+  ];
 
   return (
-    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <div>
-            <img src={nbcLogo} alt="NBC 9.36 Navigator Logo" className="h-14 [filter:drop-shadow(0_0_15px_#FFF)_drop-shadow(0_0_30px_#fff)] [transition:filter_0.3s_ease]" />
-          </div>
-          {pathwayInfo && (
-            <div className="flex items-center gap-2">
-              {pathwayInfo.includes('Prescriptive') && (
-                <Badge 
-                  variant="outline" 
-                  className="text-sm font-medium border-2 border-orange-500 text-orange-700 bg-orange-50 dark:border-orange-400 dark:text-orange-300 dark:bg-orange-950/30 px-3 py-1 flex items-center gap-1.5 hover:bg-orange-50 dark:hover:bg-orange-950/30"
-                >
-                  <FileText className="h-3.5 w-3.5" />
-                  Prescriptive Path
-                </Badge>
-              )}
-              {pathwayInfo.includes('Performance') && (
-                <Badge 
-                  variant="outline" 
-                  className="text-sm font-medium border-2 border-blue-500 text-blue-700 bg-blue-50 dark:border-blue-400 dark:text-blue-300 dark:bg-blue-950/30 px-3 py-1 flex items-center gap-1.5 hover:bg-blue-50 dark:hover:bg-blue-950/30"
-                >
-                  <Zap className="h-3.5 w-3.5" />
-                  Performance Path
-                </Badge>
-              )}
-            </div>
-          )}
+    <header className="bg-white border-b sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div className="flex items-center gap-8">
+          <Link to="/dashboard">
+            <img src="/assets/energy-navigator-logo.png" alt="Energy Navigator 9.36 Logo" className="h-10" />
+          </Link>
+          <nav className="hidden md:flex items-center gap-6">
+            {navLinks.map(link => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={cn(
+                  "text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors",
+                  isLinkActive(link.path) && "text-primary font-bold"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
         </div>
         <div className="flex items-center gap-4">
-          {showSignOut && (
-            <nav className="flex items-center gap-4 mr-4">
-              {/* Primary Buttons */}
-              <div className="flex items-center gap-2">
-                <Link to="/dashboard">
-                  <Button variant={isLinkActive('/dashboard') ? 'default' : 'secondary'} size="sm">
-                    Dashboard
-                  </Button>
-                </Link>
-                <Link to="/calculator?showHelp=true">
-                  <Button variant={isLinkActive('/calculator') ? 'default' : 'secondary'} size="sm">
-                    Calculator
-                  </Button>
-                </Link>
-              </div>
-
-              {/* Secondary Links */}
-              <div className="flex items-center gap-1">
-                <Link to="/building-officials">
-                  <Button variant="ghost" size="sm" className={cn("text-xs", isLinkActive('/building-officials') && "underline")}>
-                    Building Officials
-                  </Button>
-                </Link>
-                <Link to="/resources">
-                  <Button variant="ghost" size="sm" className={cn("text-xs", isLinkActive('/resources') && "underline")}>
-                    Resources
-                  </Button>
-                </Link>
-                <Link to="/faq">
-                  <Button variant="ghost" size="sm" className={cn("text-xs", isLinkActive('/faq') && "underline")}>
-                    FAQ
-                  </Button>
-                </Link>
-                {/* {canViewMunicipalDashboard && (
-                  <Link to="/municipal-dashboard">
-                    <Button variant="ghost" size="sm" className={cn("text-xs text-cyan-400", isLinkActive('/municipal-dashboard') && "underline")}>
-                      <Shield className="h-3 w-3 mr-1" />
-                      Municipal
-                    </Button>
-                  </Link>
-                )} */}
-                {isAdmin && (
-                  <Link to="/admin">
-                    <Button variant="ghost" size="sm" className={cn("text-xs text-yellow-400", isLinkActive('/admin') && "underline")}>
-                      <Shield className="h-3 w-3 mr-1" />
-                      Admin
-                    </Button>
-                  </Link>
-                )}
-              </div>
-            </nav>
-          )}
+          <div className="flex items-center rounded-full border p-0.5">
+            <Button variant="ghost" size="sm" className="text-xs font-semibold h-6 px-3 rounded-full bg-slate-100 text-slate-800">EN</Button>
+            <Button variant="ghost" size="sm" className="text-xs text-slate-500 h-6 px-3 rounded-full">ES</Button>
+          </div>
           {showSignOut && user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -170,6 +118,12 @@ const Header = ({ showSignOut = false, onSignOut, pathwayInfo }: HeaderProps) =>
                   <UserCircle className="mr-2 h-4 w-4" />
                   <span>Account Details</span>
                 </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem onClick={() => navigate('/admin')} className="cursor-pointer">
+                    <Shield className="mr-2 h-4 w-4" />
+                    <span>Admin Panel</span>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={onSignOut} className="cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />
