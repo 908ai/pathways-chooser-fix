@@ -22,23 +22,20 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
         variant?: "warning" | "destructive";
     }) => {
         const [isOpen, setIsOpen] = useState(true);
-        const bgColor =
-            variant === "warning"
-                ? "bg-gradient-to-r from-slate-800/60 to-teal-800/60"
-                : "bg-gradient-to-r from-slate-800/60 to-red-800/60";
-        const borderColor =
-            variant === "warning"
-                ? "border border-orange-400"
-                : "border-2 border-red-400";
+        const bgColor = variant === "warning" ? "bg-orange-50" : "bg-red-50";
+        const borderColor = variant === "warning" ? "border-orange-200" : "border-red-200";
+        const titleColor = variant === "warning" ? "text-orange-800" : "text-red-800";
+        const iconColor = variant === "warning" ? "text-orange-700" : "text-red-700";
+        const contentColor = variant === "warning" ? "text-orange-700" : "text-red-700";
 
         return (
-            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
+            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} ${borderColor} rounded-lg`}>
                 <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
-                    <span className="text-xs font-bold text-white">{title}</span>
-                    <ChevronDown className={`h-5 w-5 text-white transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                    <span className={`text-xs font-bold ${titleColor}`}>{title}</span>
+                    <ChevronDown className={`h-5 w-5 ${iconColor} transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
                 </CollapsibleTrigger>
-                <CollapsibleContent className="mt-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
-                    <div className="text-white text-xs">{children}</div>
+                <CollapsibleContent className="mt-4 data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden">
+                    <div className={`${contentColor} text-xs`}>{children}</div>
                 </CollapsibleContent>
             </Collapsible>
         );
@@ -92,13 +89,13 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
     return (
         <>
             {
-                <div className="pt-6 border-t border-slate-600 space-y-6">
+                <div className="pt-6 border-t border-slate-200 space-y-6">
                     {selections.compliancePath !== "9362" && (
                         <>
-                            <h3 className="text-lg font-semibold text-white">HRV/ERV Information</h3>
+                            <h3 className="text-lg font-semibold text-slate-800">HRV/ERV Information</h3>
                             <div id="hasHrv" className="space-y-2">
                                 <div className="flex items-center gap-3">
-                                    <label className="text-sm font-medium text-slate-100">Does this building include an HRV or ERV?</label>
+                                    <label className="text-sm font-medium text-slate-900">Does this building include an HRV or ERV?</label>
                                     <InfoButton title="Should I include an HRV (Heat Recovery Ventilator)?">
                                         <div className="space-y-4">
                                             <div>
@@ -142,10 +139,10 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                     hasSecondaryHrv: value === 'without_hrv' ? '' : prev.hasSecondaryHrv,
                                     secondaryHrvEfficiency: value === 'without_hrv' ? '' : prev.secondaryHrvEfficiency,
                                 }))}>
-                                    <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                                    <SelectTrigger>
                                         <SelectValue placeholder="Select option" />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-background border shadow-lg z-50">
+                                    <SelectContent>
                                         <SelectItem value="with_hrv">Yes - with HRV/ERV</SelectItem>
                                         <SelectItem value="without_hrv">No</SelectItem>
                                     </SelectContent>
@@ -153,20 +150,20 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                             </div>
 
                             {selections.hasHrv === "with_hrv" && <div id="hrvEfficiency" className="space-y-2">
-                                <label className="text-sm font-medium text-slate-100">HRV/ERV Make/Model</label>
+                                <label className="text-sm font-medium text-slate-900">HRV/ERV Make/Model</label>
                                 <Input type="text" placeholder="Input HRV/ERV make/model (e.g. Fantech SHR 1504)" value={selections.hrvEfficiency || ""} onChange={e => setSelections(prev => ({
                                     ...prev,
                                     hrvEfficiency: e.target.value
-                                }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                                }))} />
                             </div>}
 
                             {/* Secondary Suite HRV - Show for buildings with multiple units */}
-                            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv" && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
-                                <h5 className="font-medium text-white">Secondary Suite HRV/ERV</h5>
+                            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv" && <div className="space-y-4 p-4 bg-slate-50 border border-slate-200 rounded-md">
+                                <h5 className="font-medium text-slate-900">Secondary Suite HRV/ERV</h5>
 
                                 <div id="hasSecondaryHrv" className="space-y-2">
                                     <div className="flex items-center gap-3">
-                                        <label className="text-sm font-medium text-slate-100">Will there be a second HRV/ERV for the secondary suite?</label>
+                                        <label className="text-sm font-medium text-slate-900">Will there be a second HRV/ERV for the secondary suite?</label>
                                         <InfoButton title="Secondary Suite HRV/ERV Information">
                                             <div className="space-y-4">
                                                 <div>
@@ -197,10 +194,10 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                         hasSecondaryHrv: value,
                                         secondaryHrvEfficiency: value !== 'separate' ? '' : prev.secondaryHrvEfficiency,
                                     }))}>
-                                        <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                                        <SelectTrigger>
                                             <SelectValue placeholder="Select option" />
                                         </SelectTrigger>
-                                        <SelectContent className="bg-background border shadow-lg z-50">
+                                        <SelectContent>
                                             <SelectItem value="shared">Shared system (one HRV/ERV for both units)</SelectItem>
                                             <SelectItem value="separate">Separate HRV/ERV for secondary suite</SelectItem>
                                             <SelectItem value="none">No secondary HRV/ERV</SelectItem>
@@ -209,11 +206,11 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                 </div>
 
                                 {selections.hasSecondaryHrv === "separate" && <div id="secondaryHrvEfficiency" className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-100">Secondary Suite HRV/ERV Make/Model</label>
+                                    <label className="text-sm font-medium text-slate-900">Secondary Suite HRV/ERV Make/Model</label>
                                     <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
                                         ...prev,
                                         secondaryHrvEfficiency: e.target.value
-                                    }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                                    }))} />
                                 </div>}
                             </div>}
 
@@ -245,7 +242,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                     {/* Certification Interests */}
                     <div id="interestedCertifications" className="space-y-4">
                         <div className="flex items-center gap-2">
-                            <label className="text-sm font-medium text-slate-100">Are you interested in any of the following certifications or programs?</label>
+                            <label className="text-sm font-medium text-slate-900">Are you interested in any of the following certifications or programs?</label>
                             <InfoButton title="Certification Information">
                                 <div className="space-y-6 text-base">
                                     {/* Summary Table */}
@@ -435,7 +432,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                         </div>
                         <div className="space-y-3">
                             {certifications.map(cert => (
-                                <div key={cert.id} className="flex items-center gap-4 p-4 bg-slate-900/50 rounded-lg border border-slate-600/50 transition-all hover:border-slate-500/80">
+                                <div key={cert.id} className="flex items-center gap-4 p-4 bg-white rounded-lg border border-slate-200 transition-all hover:border-slate-300">
                                     <Checkbox
                                         id={cert.id}
                                         checked={selections.interestedCertifications.includes(cert.id)}
@@ -452,9 +449,9 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                             <img src={cert.imageUrl} alt={`${cert.label} Logo`} className="max-h-full max-w-full object-contain" />
                                         </div>
                                         <div className="flex-1">
-                                            <label htmlFor={cert.id} className="font-semibold text-white cursor-pointer block">{cert.label}</label>
-                                            <p className="text-sm text-slate-300">{cert.description}</p>
-                                            🔗<a href={cert.url} target="_blank" rel="noopener noreferrer" className="text-sm text-teal-300 hover:text-teal-200 underline mt-1 inline-block">
+                                            <label htmlFor={cert.id} className="font-semibold text-slate-800 cursor-pointer block">{cert.label}</label>
+                                            <p className="text-sm text-slate-600">{cert.description}</p>
+                                            🔗<a href={cert.url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:text-blue-800 underline mt-1 inline-block">
                                                 Learn more →
                                             </a>
                                         </div>
@@ -466,17 +463,17 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
 
                     {/* Alert for certification interests */}
                     {selections.interestedCertifications.length > 0 && <InfoCollapsible title="Performance Modelling Required">
-                        <div className="text-xs text-white space-y-2">
+                        <div className="text-xs text-slate-600 space-y-2">
                             <p>
                                 Since you're interested in certifications, performance modelling (NBC 9.36.5 or 9.36.7) is required.
                                 Performance modelling provides greater design flexibility, can reduce construction costs, and is often
                                 required for certification programs. It also helps optimize your home's energy performance and ensures
                                 you meet certification requirements efficiently.
                             </p>
-                            <p className="font-medium">
+                            <p className="font-medium text-slate-800">
                                 Please note: Additional fees may be incurred for performance modelling services. A detailed estimate will be provided upon request.
                             </p>
-                            <p className="font-medium">
+                            <p className="font-medium text-slate-800">
                                 Contact us to discuss how performance modelling can help achieve your certification goals.
                             </p>
                         </div>
