@@ -108,10 +108,21 @@ const Dashboard2 = () => {
       <Header showSignOut={true} onSignOut={signOut} />
       <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-800">My Projects</h1>
-          <p className="text-slate-500 mt-1">
-            View, manage, and track all your NBC 9.36 compliance projects.
-          </p>
+          {canViewAllProjects ? (
+            <>
+              <h1 className="text-3xl font-bold text-slate-800">All Projects</h1>
+              <p className="text-slate-500 mt-1">
+                Review and manage all compliance projects from all users.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-3xl font-bold text-slate-800">My Projects</h1>
+              <p className="text-slate-500 mt-1">
+                View, manage, and track all your NBC 9.36 compliance projects.
+              </p>
+            </>
+          )}
         </div>
         
         {canViewAllProjects && (
