@@ -17,7 +17,7 @@ const BuildingOfficialsPage = () => {
             Supporting builders in meeting NBC Section 9.36 energy efficiency requirements
           </p>
         </div>
-        <Card className="bg-white shadow-sm rounded-lg max-w-4xl mx-auto">
+        <Card className="bg-white shadow-sm rounded-lg">
           <CardContent className="p-6 space-y-6 text-slate-600">
             <div className="p-4 bg-slate-100 border border-slate-200 rounded-lg">
               <p>
