@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, UserCircle, Shield, LayoutGrid, PieChart, Calculator, BookOpen } from 'lucide-react';
+import { LogOut, UserCircle, Shield, LayoutGrid, PieChart, Calculator, BookOpen, FileText, HelpCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import {
@@ -65,6 +65,8 @@ const Header = ({ showSignOut = false, onSignOut }: HeaderProps) => {
     { path: '/dashboard3', label: 'Analytics', icon: <PieChart className="h-4 w-4" /> },
     { path: '/calculator', label: 'Calculator', icon: <Calculator className="h-4 w-4" /> },
     { path: '/building-officials', label: 'Building Officials', icon: <BookOpen className="h-4 w-4" /> },
+    { path: '/resources', label: 'Resources', icon: <FileText className="h-4 w-4" /> },
+    { path: '/faq', label: 'FAQ', icon: <HelpCircle className="h-4 w-4" /> },
   ];
 
   return (
