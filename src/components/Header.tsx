@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, UserCircle, Shield } from 'lucide-react';
+import { LogOut, UserCircle, Shield, LayoutGrid, PieChart, Calculator, BookOpen } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import {
@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { ThemeToggle } from './ThemeToggle';
 
 interface HeaderProps {
   showSignOut?: boolean;
@@ -60,39 +61,40 @@ const Header = ({ showSignOut = false, onSignOut }: HeaderProps) => {
   }
 
   const navLinks = [
-    { path: '/dashboard', label: 'Projects' },
-    { path: '/dashboard3', label: 'Analytics' },
-    { path: '/calculator', label: 'Calculator' },
-    { path: '/building-officials', label: 'Building Officials' },
+    { path: '/dashboard', label: 'Projects', icon: <LayoutGrid className="h-4 w-4" /> },
+    { path: '/dashboard3', label: 'Analytics', icon: <PieChart className="h-4 w-4" /> },
+    { path: '/calculator', label: 'Calculator', icon: <Calculator className="h-4 w-4" /> },
+    { path: '/building-officials', label: 'Building Officials', icon: <BookOpen className="h-4 w-4" /> },
   ];
 
   return (
-    <header className="bg-white border-b sticky top-0 z-50">
+    <header className="bg-white dark:bg-slate-900 border-b dark:border-slate-700 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center gap-8">
           <Link to="/dashboard">
-            <img src="/assets/energy-navigator-logo.png" alt="Energy Navigator 9.36 Logo" className="h-10" />
+            <img src="/assets/energy-navigator-logo.png" alt="Energy Navigator 9.36 Logo" className="h-10 dark:hidden" />
+            <img src="/assets/energy-navigator-logo-w.png" alt="Energy Navigator 9.36 Logo" className="h-10 hidden dark:block" />
           </Link>
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-1">
             {navLinks.map(link => (
               <Link
                 key={link.path}
                 to={link.path}
                 className={cn(
-                  "text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors",
-                  isLinkActive(link.path) && "text-primary font-bold"
+                  "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  isLinkActive(link.path)
+                    ? "bg-primary/10 text-primary"
+                    : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-50"
                 )}
               >
+                {link.icon}
                 {link.label}
               </Link>
             ))}
           </nav>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center rounded-full border p-0.5">
-            <Button variant="ghost" size="sm" className="text-xs font-semibold h-6 px-3 rounded-full bg-slate-100 text-slate-800">EN</Button>
-            <Button variant="ghost" size="sm" className="text-xs text-slate-500 h-6 px-3 rounded-full">ES</Button>
-          </div>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
           {showSignOut && user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

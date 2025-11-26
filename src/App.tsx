@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -32,38 +33,40 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider delayDuration={0}>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard1" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard2 /></ProtectedRoute>} />
-            <Route path="/dashboard3" element={<ProtectedRoute><Dashboard3 /></ProtectedRoute>} />
-            <Route path="/calculator" element={<ProtectedRoute><Calculator /></ProtectedRoute>} />
-            <Route path="/project/:id" element={<ProtectedRoute><ProjectDetail /></ProtectedRoute>} />
-            <Route path="/test-upload" element={<ProtectedRoute><TestUpload /></ProtectedRoute>} />
-            <Route path="/editor" element={<MockEditor />} />
-            <Route path="/faq" element={<ProtectedRoute><FaqPage /></ProtectedRoute>} />
-            <Route path="/building-officials" element={<ProtectedRoute><BuildingOfficialsPage /></ProtectedRoute>} />
-            <Route path="/resources" element={<ProtectedRoute><ResourcesPage /></ProtectedRoute>} />
-            <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
-            
-            {/* Service Provider Routes */}
-            <Route path="/find-a-provider" element={<ProviderAccessRoute><FindAProvider /></ProviderAccessRoute>} />
-            <Route path="/request-provider-access" element={<ProtectedRoute><RequestProviderAccess /></ProtectedRoute>} />
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+        <TooltipProvider delayDuration={0}>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/dashboard1" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard2 /></ProtectedRoute>} />
+              <Route path="/dashboard3" element={<ProtectedRoute><Dashboard3 /></ProtectedRoute>} />
+              <Route path="/calculator" element={<ProtectedRoute><Calculator /></ProtectedRoute>} />
+              <Route path="/project/:id" element={<ProtectedRoute><ProjectDetail /></ProtectedRoute>} />
+              <Route path="/test-upload" element={<ProtectedRoute><TestUpload /></ProtectedRoute>} />
+              <Route path="/editor" element={<MockEditor />} />
+              <Route path="/faq" element={<ProtectedRoute><FaqPage /></ProtectedRoute>} />
+              <Route path="/building-officials" element={<ProtectedRoute><BuildingOfficialsPage /></ProtectedRoute>} />
+              <Route path="/resources" element={<ProtectedRoute><ResourcesPage /></ProtectedRoute>} />
+              <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
+              
+              {/* Service Provider Routes */}
+              <Route path="/find-a-provider" element={<ProviderAccessRoute><FindAProvider /></ProviderAccessRoute>} />
+              <Route path="/request-provider-access" element={<ProtectedRoute><RequestProviderAccess /></ProtectedRoute>} />
 
-            {/* Admin Routes */}
-            <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-            <Route path="/municipal-dashboard" element={<MunicipalRoute><MunicipalDashboard /></MunicipalRoute>} />
+              {/* Admin Routes */}
+              <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+              <Route path="/municipal-dashboard" element={<MunicipalRoute><MunicipalDashboard /></MunicipalRoute>} />
 
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
