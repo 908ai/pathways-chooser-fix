@@ -13,7 +13,6 @@ import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Edit, Save, X, T
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
-import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,16 +25,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import ProjectStatusCard from '@/components/ProjectStatusCard';
 import ComplianceDetails from '@/components/compliance/ComplianceDetails';
 
 const DetailItem = ({ label, value, unit = '' }: { label: string; value: any; unit?: string }) => {
   if (value === null || value === undefined || value === '') return null;
   const displayValue = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value);
   return (
-    <div className="flex justify-between items-center text-sm py-2 border-b border-slate-700 last:border-b-0">
-      <span className="text-slate-300">{label}</span>
-      <span className="font-medium text-white text-right">{displayValue}{unit && ` ${unit}`}</span>
+    <div className="flex justify-between items-center text-sm py-2 border-b border-slate-200 last:border-b-0">
+      <span className="text-slate-500">{label}</span>
+      <span className="font-medium text-slate-900 text-right">{displayValue}{unit && ` ${unit}`}</span>
     </div>
   );
 };
@@ -524,7 +522,7 @@ const ProjectDetail = () => {
       case 'jpeg':
       case 'png':
       case 'gif':
-        return <FileText className="h-5 w-5 text-purple-300" />;
+        return <FileText className="h-5 w-5 text-purple-500" />;
       default:
         return <FileText className="h-5 w-5 text-gray-500" />;
     }
@@ -607,11 +605,11 @@ const ProjectDetail = () => {
 
   if (loading || roleLoading) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-slate-50 flex flex-col">
         <Header showSignOut={true} onSignOut={signOut} />
         <main className="flex-1 container mx-auto px-4 py-8">
           <div className="flex items-center justify-center h-64">
-            <p className="text-gray-200 drop-shadow-sm">Loading project details...</p>
+            <p className="text-slate-500">Loading project details...</p>
           </div>
         </main>
         <Footer />
@@ -621,11 +619,11 @@ const ProjectDetail = () => {
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-slate-50 flex flex-col">
         <Header showSignOut={true} onSignOut={signOut} />
         <main className="flex-1 container mx-auto px-4 py-8">
           <div className="flex items-center justify-center h-64">
-            <p className="text-gray-200 drop-shadow-sm">Project not found.</p>
+            <p className="text-slate-500">Project not found.</p>
           </div>
         </main>
         <Footer />
@@ -657,15 +655,15 @@ const ProjectDetail = () => {
   const isDeletable = canDeleteProjects || (!isSubmitted && !isCompleted);
 
   return (
-    <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
       <Header showSignOut={true} onSignOut={signOut} />
       
-      <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
+      <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-6">
           <Button
             variant="ghost"
             onClick={handleBackToDashboard}
-            className="mb-4 text-white hover:bg-white/20"
+            className="mb-4 text-slate-600 hover:bg-slate-100"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
@@ -673,7 +671,7 @@ const ProjectDetail = () => {
           
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold mb-3 text-white drop-shadow-lg">{project.project_name}</h1>
+              <h1 className="text-4xl font-bold mb-3 text-slate-800">{project.project_name}</h1>
               
               {(() => {
                 const pathwayInfo = getPathwayDisplay(project.selected_pathway);
@@ -682,10 +680,10 @@ const ProjectDetail = () => {
                 return (
                   <Badge 
                     variant="outline" 
-                    className={`text-sm font-medium border-2 px-3 py-1 flex items-center gap-1.5 w-fit mb-3 ${
+                    className={`text-sm font-medium border px-3 py-1 flex items-center gap-1.5 w-fit mb-3 ${
                       pathwayInfo.isPerformance 
-                        ? 'border-blue-400 text-blue-300 bg-blue-950/30' 
-                        : 'border-orange-400 text-orange-300 bg-orange-950/30'
+                        ? 'border-blue-200 text-blue-800 bg-blue-100' 
+                        : 'border-orange-200 text-orange-800 bg-orange-100'
                     }`}
                   >
                     {pathwayInfo.isPerformance ? <Zap className="h-3.5 w-3.5" /> : <FileText className="h-3.5 w-3.5" />}
@@ -694,16 +692,15 @@ const ProjectDetail = () => {
                 );
               })()}
 
-              <div className="flex items-center gap-4 text-gray-200 drop-shadow-md text-sm">
+              <div className="flex items-center gap-4 text-slate-500 text-sm">
                 <span>Created: {new Date(project.created_at).toLocaleDateString()}</span>
-                <span className="text-gray-400">|</span>
+                <span className="text-slate-300">|</span>
                 <span>Last Updated: {new Date(project.updated_at).toLocaleDateString()}</span>
               </div>
             </div>
             <div className="flex items-center gap-4">
               {getComplianceStatusBadge()}
               
-              {/* Admin Review Actions */}
               {isAdmin && project.compliance_status === 'submitted' && (
                 <div className="flex items-center gap-2">
                   <Button 
@@ -733,12 +730,10 @@ const ProjectDetail = () => {
                 </div>
               )}
               
-              {/* Separator */}
               {isAdmin && project.compliance_status === 'submitted' && (
-                <div className="h-6 w-px bg-slate-600 mx-2"></div>
+                <div className="h-6 w-px bg-slate-300 mx-2"></div>
               )}
 
-              {/* Project Management & Export Actions */}
               <div className="flex items-center gap-2">
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -796,12 +791,12 @@ const ProjectDetail = () => {
                         Create a copy of this project with all specifications intact. The duplicate will be placed in your "In Progress" section with a reset compliance status, allowing you to modify it as needed for new projects.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-md p-4">
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
                       <div className="flex items-start gap-3">
                         <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium text-red-600 mb-1">Important Notice</p>
-                          <p className="text-sm text-red-600">
+                          <p className="text-sm font-medium text-red-700 mb-1">Important Notice</p>
+                          <p className="text-sm text-red-700">
                             <span className="font-semibold">New building plans and window schedule must be uploaded</span> to accompany the duplicated project. The existing project files will not be carried over and fresh documentation is required for compliance review.
                           </p>
                         </div>
@@ -847,88 +842,88 @@ const ProjectDetail = () => {
 
           <TabsContent value="overview" className="mt-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Card className="lg:col-span-1 bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
+              <Card className="lg:col-span-1 bg-white shadow-sm">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
+                  <CardTitle className="flex items-center gap-2 text-slate-900">
                     <Building className="h-5 w-5" />
                     Project Details
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
                   <div>
-                    <Label className="text-slate-300">Address</Label>
-                    <p className="font-medium text-white">{project.location || 'Not specified'}</p>
+                    <Label className="text-slate-500">Address</Label>
+                    <p className="font-medium text-slate-900">{project.location || 'Not specified'}</p>
                   </div>
                   <div>
-                    <Label className="text-slate-300">Building Type</Label>
-                    <p className="font-medium text-white">{project.building_type || 'Not specified'}</p>
+                    <Label className="text-slate-500">Building Type</Label>
+                    <p className="font-medium text-slate-900">{project.building_type || 'Not specified'}</p>
                   </div>
                   <div>
-                    <Label className="text-slate-300">Occupancy Class</Label>
-                    <p className="font-medium text-white">{project.occupancy_class || 'N/A'}</p>
+                    <Label className="text-slate-500">Occupancy Class</Label>
+                    <p className="font-medium text-slate-900">{project.occupancy_class || 'N/A'}</p>
                   </div>
                   <div>
-                    <Label className="text-slate-300">Climate Zone</Label>
-                    <p className="font-medium text-white">{project.climate_zone || 'N/A'}</p>
+                    <Label className="text-slate-500">Climate Zone</Label>
+                    <p className="font-medium text-slate-900">{project.climate_zone || 'N/A'}</p>
                   </div>
                   <div>
-                    <Label className="text-slate-300">Floor Area</Label>
-                    <p className="font-medium text-white">{project.floor_area ? `${project.floor_area} m²` : 'Not specified'}</p>
+                    <Label className="text-slate-500">Floor Area</Label>
+                    <p className="font-medium text-slate-900">{project.floor_area ? `${project.floor_area} m²` : 'Not specified'}</p>
                   </div>
                   <DetailItem label="Comments" value={project.comments} />
                 </CardContent>
               </Card>
 
-              <Card className="lg:col-span-1 bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
+              <Card className="lg:col-span-1 bg-white shadow-sm">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
+                  <CardTitle className="flex items-center gap-2 text-slate-900">
                     <FileText className="h-5 w-5" />
                     Compliance Summary
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
                   <div>
-                    <Label className="text-slate-300">Pathway</Label>
-                    <p className="font-medium text-white">{getPathwayDisplay(project.selected_pathway)?.text || 'Not specified'}</p>
+                    <Label className="text-slate-500">Pathway</Label>
+                    <p className="font-medium text-slate-900">{getPathwayDisplay(project.selected_pathway)?.text || 'Not specified'}</p>
                   </div>
                   <div>
-                    <Label className="text-slate-300">Performance Result</Label>
-                    <p className="font-medium text-white">{project.performance_compliance_result || 'Under review'}</p>
+                    <Label className="text-slate-500">Performance Result</Label>
+                    <p className="font-medium text-slate-900">{project.performance_compliance_result || 'Under review'}</p>
                   </div>
                   <div>
-                    <Label className="text-slate-300">Total Points</Label>
-                    <p className="font-medium text-white">{project.total_points || 'TBD'}</p>
+                    <Label className="text-slate-500">Total Points</Label>
+                    <p className="font-medium text-slate-900">{project.total_points || 'TBD'}</p>
                   </div>
                   <div>
-                    <Label className="text-slate-300">Upgrade Costs</Label>
-                    <p className="font-medium text-white">{project.upgrade_costs ? `$${project.upgrade_costs.toLocaleString()}` : 'TBD'}</p>
+                    <Label className="text-slate-500">Upgrade Costs</Label>
+                    <p className="font-medium text-slate-900">{project.upgrade_costs ? `$${project.upgrade_costs.toLocaleString()}` : 'TBD'}</p>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="lg:col-span-1 bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
+              <Card className="lg:col-span-1 bg-white shadow-sm">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
+                  <CardTitle className="flex items-center gap-2 text-slate-900">
                     <User className="h-5 w-5" />
                     Client Information
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
                   <div>
-                    <Label className="text-slate-300">Company</Label>
-                    <p className="font-medium text-white">{companyInfo?.company_name || 'Not specified'}</p>
+                    <Label className="text-slate-500">Company</Label>
+                    <p className="font-medium text-slate-900">{companyInfo?.company_name || 'Not specified'}</p>
                   </div>
                   <div>
-                    <Label className="text-slate-300">Contact Email</Label>
-                    <p className="font-medium text-white">{companyInfo?.contact_email || 'Not specified'}</p>
+                    <Label className="text-slate-500">Contact Email</Label>
+                    <p className="font-medium text-slate-900">{companyInfo?.contact_email || 'Not specified'}</p>
                   </div>
                   <div>
-                    <Label className="text-slate-300">Phone</Label>
-                    <p className="font-medium text-white">{companyInfo?.phone || 'Not specified'}</p>
+                    <Label className="text-slate-500">Phone</Label>
+                    <p className="font-medium text-slate-900">{companyInfo?.phone || 'Not specified'}</p>
                   </div>
                   <div>
-                    <Label className="text-slate-300">Company Address</Label>
-                    <p className="font-medium text-white">{companyInfo?.address || 'Not specified'}</p>
+                    <Label className="text-slate-500">Company Address</Label>
+                    <p className="font-medium text-slate-900">{companyInfo?.address || 'Not specified'}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -937,9 +932,9 @@ const ProjectDetail = () => {
 
           <TabsContent value="technical" className="mt-6 space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
+              <Card className="bg-white shadow-sm">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
+                  <CardTitle className="flex items-center gap-2 text-slate-900">
                     <Thermometer className="h-5 w-5" />
                     Building Envelope
                   </CardTitle>
@@ -969,9 +964,9 @@ const ProjectDetail = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
+              <Card className="bg-white shadow-sm">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
+                  <CardTitle className="flex items-center gap-2 text-slate-900">
                     <Zap className="h-5 w-5" />
                     Mechanical Systems
                   </CardTitle>
@@ -1002,9 +997,9 @@ const ProjectDetail = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
+              <Card className="bg-white shadow-sm">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
+                  <CardTitle className="flex items-center gap-2 text-slate-900">
                     <FileText className="h-5 w-5" />
                     Performance Metrics
                   </CardTitle>
@@ -1016,9 +1011,6 @@ const ProjectDetail = () => {
                 </CardContent>
               </Card>
             </div>
-            {/* {project && !isCompleted && (
-              <ProjectStatusCard project={project} onFixItem={handleFixItem} />
-            )} */}
           </TabsContent>
 
           <TabsContent value="compliance" className="mt-6">
@@ -1026,22 +1018,22 @@ const ProjectDetail = () => {
           </TabsContent>
 
           <TabsContent value="documents" className="mt-6">
-            <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
+            <Card className="bg-white shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-white">
+                <CardTitle className="flex items-center gap-2 text-slate-900">
                   <FolderOpen className="h-5 w-5" />
                   Uploaded Documents
                 </CardTitle>
-                <CardDescription className="text-slate-200">
+                <CardDescription className="text-slate-500">
                   Upload and manage project files including building plans, reports, and compliance documents
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-                  <Upload className="h-8 w-8 text-gray-400 mx-auto mb-4" />
+                <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 text-center hover:border-slate-300 transition-colors">
+                  <Upload className="h-8 w-8 text-slate-400 mx-auto mb-4" />
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-white">Upload project documents</p>
-                    <p className="text-xs text-gray-200 drop-shadow-sm">
+                    <p className="text-sm font-medium text-slate-700">Upload project documents</p>
+                    <p className="text-xs text-slate-500">
                       Supported formats: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG (Max 10MB per file)
                     </p>
                   </div>
@@ -1079,18 +1071,18 @@ const ProjectDetail = () => {
                       
                       return (
                         <div key={category}>
-                          <h4 className="font-semibold mb-3 flex items-center gap-2 text-white">
+                          <h4 className="font-semibold mb-3 flex items-center gap-2 text-slate-800">
                             <FolderOpen className="h-4 w-4" />
                             {category} ({categoryFiles.length})
                           </h4>
                           <div className="space-y-2">
                             {categoryFiles.map((file: any, index: number) => (
-                              <div key={index} className="flex items-center justify-between p-3 bg-slate-800/60 rounded-md hover:bg-slate-700/60 transition-colors">
+                              <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-md hover:bg-slate-100 transition-colors border border-slate-200">
                                 <div className="flex items-center gap-3 flex-1 min-w-0">
                                   {getFileIcon(file.name)}
                                   <div className="flex-1 min-w-0">
-                                    <p className="font-medium text-sm truncate text-white">{file.name}</p>
-                                    <div className="flex items-center gap-4 text-xs text-gray-400 drop-shadow-sm">
+                                    <p className="font-medium text-sm truncate text-slate-800">{file.name}</p>
+                                    <div className="flex items-center gap-4 text-xs text-slate-500">
                                       <span className="flex items-center gap-1">
                                         <Calendar className="h-3 w-3" />
                                         {file.uploadedAt ? new Date(file.uploadedAt).toLocaleDateString() : 'N/A'}
@@ -1109,7 +1101,7 @@ const ProjectDetail = () => {
                                   {isPreviewable(file.name) && (
                                     <Tooltip>
                                       <TooltipTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:bg-blue-400/10" onClick={(e) => { e.stopPropagation(); handleFilePreview(file); }}>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:bg-blue-100" onClick={(e) => { e.stopPropagation(); handleFilePreview(file); }}>
                                           <Eye className="h-4 w-4" />
                                         </Button>
                                       </TooltipTrigger>
@@ -1120,7 +1112,7 @@ const ProjectDetail = () => {
                                   )}
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <Button variant="ghost" size="icon" className="h-8 w-8 text-green-400 hover:bg-green-400/10" onClick={(e) => { e.stopPropagation(); handleFileDownload(file); }}>
+                                      <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600 hover:bg-green-100" onClick={(e) => { e.stopPropagation(); handleFileDownload(file); }}>
                                         <Download className="h-4 w-4" />
                                       </Button>
                                     </TooltipTrigger>
@@ -1155,7 +1147,7 @@ const ProjectDetail = () => {
                     })}
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-gray-200 drop-shadow-sm">
+                  <div className="text-center py-8 text-slate-500">
                     <FolderOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
                     <p className="text-sm">No documents uploaded yet</p>
                     <p className="text-xs">Upload your first document to get started</p>

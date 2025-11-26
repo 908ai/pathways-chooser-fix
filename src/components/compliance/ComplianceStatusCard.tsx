@@ -12,31 +12,31 @@ const ComplianceStatusCard = ({ project }: ComplianceStatusCardProps) => {
       case 'pass':
       case 'Compliant':
         return {
-          icon: <CheckCircle className="h-12 w-12 text-green-400" />,
+          icon: <CheckCircle className="h-12 w-12 text-green-500" />,
           title: 'Project is Compliant',
           description: 'This project meets the required energy efficiency standards for its selected pathway.',
-          badge: <Badge className="bg-green-500 text-white">Compliant</Badge>,
+          badge: <Badge className="bg-green-100 text-green-800">Compliant</Badge>,
         };
       case 'fail':
         return {
-          icon: <XCircle className="h-12 w-12 text-red-400" />,
+          icon: <XCircle className="h-12 w-12 text-red-500" />,
           title: 'Project is Non-Compliant',
           description: 'This project does not meet the required standards. See recommendations below for next steps.',
           badge: <Badge variant="destructive">Non-Compliant</Badge>,
         };
       case 'needs_revision':
         return {
-          icon: <AlertTriangle className="h-6 w-6 text-yellow-400" />,
+          icon: <AlertTriangle className="h-6 w-6 text-yellow-700" />,
           title: 'Needs Revision',
           description: 'The project requires updates. Please review the pending items and resubmit.',
-          badge: <Badge className="bg-yellow-500 text-white">Needs Revision</Badge>,
+          badge: <Badge className="bg-yellow-100 text-yellow-800">Needs Revision</Badge>,
         };
       default:
         return {
-          icon: <Clock className="h-12 w-12 text-blue-400" />,
+          icon: <Clock className="h-12 w-12 text-blue-500" />,
           title: 'Under Review',
           description: 'This project has been submitted and is currently being reviewed by our team.',
-          badge: <Badge className="bg-blue-500 text-white">Under Review</Badge>,
+          badge: <Badge className="bg-blue-100 text-blue-800">Under Review</Badge>,
         };
     }
   };
@@ -45,11 +45,11 @@ const ComplianceStatusCard = ({ project }: ComplianceStatusCardProps) => {
 
   if (project.compliance_status === 'needs_revision') {
     return (
-      <Card className="bg-yellow-900/30 border-yellow-500/50">
+      <Card className="bg-yellow-50 border-yellow-200">
         <CardContent className="pt-6">
           <div className="flex items-center gap-4">
             <div className="flex-shrink-0">{icon}</div>
-            <p className="text-yellow-200">{description}</p>
+            <p className="text-yellow-800">{description}</p>
           </div>
         </CardContent>
       </Card>
@@ -57,17 +57,17 @@ const ComplianceStatusCard = ({ project }: ComplianceStatusCardProps) => {
   }
 
   return (
-    <Card className="bg-slate-800/60 border-slate-700">
+    <Card className="bg-white shadow-sm">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-white">{title}</CardTitle>
+          <CardTitle className="text-slate-900">{title}</CardTitle>
           {badge}
         </div>
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-4">
           <div className="flex-shrink-0">{icon}</div>
-          <p className="text-slate-300">{description}</p>
+          <p className="text-slate-600">{description}</p>
         </div>
       </CardContent>
     </Card>

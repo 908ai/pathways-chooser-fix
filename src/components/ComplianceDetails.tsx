@@ -4,6 +4,7 @@ import TieredPrescriptiveComplianceView from './compliance/TieredPrescriptiveCom
 import PrescriptiveComplianceView from './compliance/PrescriptiveComplianceView';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle, ChevronRight } from 'lucide-react';
+import ProjectStatusCard from '@/components/ProjectStatusCard';
 
 interface ComplianceDetailsProps {
   project: any;
@@ -21,6 +22,8 @@ const mapRecommendationToFieldId = (rec: string): string | null => {
 };
 
 const ComplianceDetails = ({ project, onFixItem }: ComplianceDetailsProps) => {
+  const isCompleted = project.compliance_status === 'pass' || project.compliance_status === 'fail' || project.compliance_status === 'Compliant';
+
   const renderComplianceView = () => {
     switch (project.selected_pathway) {
       case '9365':
@@ -32,12 +35,12 @@ const ComplianceDetails = ({ project, onFixItem }: ComplianceDetailsProps) => {
         return <PrescriptiveComplianceView project={project} />;
       default:
         return (
-          <Card className="bg-slate-800/60 border-slate-700">
+          <Card className="bg-white shadow-sm">
             <CardHeader>
-              <CardTitle className="text-white">Compliance Details</CardTitle>
+              <CardTitle className="text-slate-900">Compliance Details</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-slate-300">Compliance details for this pathway are not yet available.</p>
+              <p className="text-slate-600">Compliance details for this pathway are not yet available.</p>
             </CardContent>
           </Card>
         );
@@ -58,15 +61,15 @@ const ComplianceDetails = ({ project, onFixItem }: ComplianceDetailsProps) => {
     if (recommendations.length === 0) return null;
 
     return (
-      <Card className="bg-yellow-900/30 border-yellow-500/50">
+      <Card className="bg-yellow-50 border-yellow-200">
         <CardHeader>
-          <CardTitle className="text-yellow-300 flex items-center gap-2">
+          <CardTitle className="text-yellow-800 flex items-center gap-2">
             <AlertTriangle className="h-5 w-5" />
             Recommendations
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
             {recommendations.map((rec: string, index: number) => {
               const fieldId = mapRecommendationToFieldId(rec);
               if (fieldId) {
@@ -74,15 +77,15 @@ const ComplianceDetails = ({ project, onFixItem }: ComplianceDetailsProps) => {
                   <button
                     key={index}
                     onClick={() => onFixItem(fieldId)}
-                    className="w-full text-left p-3 rounded-md bg-yellow-900/20 hover:bg-yellow-900/40 transition-colors flex items-center justify-between"
+                    className="w-full text-left p-3 rounded-md bg-yellow-100 hover:bg-yellow-200 transition-colors flex items-center justify-between"
                   >
-                    <span className="text-yellow-200 text-sm">{rec}</span>
-                    <ChevronRight className="h-4 w-4 text-yellow-300 flex-shrink-0" />
+                    <span className="text-yellow-800 text-sm">{rec}</span>
+                    <ChevronRight className="h-4 w-4 text-yellow-800 flex-shrink-0" />
                   </button>
                 );
               }
               return (
-                <div key={index} className="p-3 text-yellow-200 text-sm">
+                <div key={index} className="p-3 text-yellow-800 text-sm bg-yellow-100 rounded-md flex items-center col-span-2">
                   {rec}
                 </div>
               );
@@ -95,6 +98,9 @@ const ComplianceDetails = ({ project, onFixItem }: ComplianceDetailsProps) => {
 
   return (
     <div className="space-y-6">
+      {project && !isCompleted && (
+        <ProjectStatusCard project={project} onFixItem={onFixItem} />
+      )}
       <ComplianceStatusCard project={project} />
       {renderRecommendations()}
       {renderComplianceView()}

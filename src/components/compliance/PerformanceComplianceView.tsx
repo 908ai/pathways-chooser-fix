@@ -13,29 +13,29 @@ const PerformanceComplianceView = ({ project }: PerformanceComplianceViewProps) 
   const isCompliant = parseFloat(proposedHouseConsumption) <= parseFloat(referenceHouseConsumption);
 
   return (
-    <Card className="bg-slate-800/60 border-slate-700">
+    <Card className="bg-white shadow-sm">
       <CardHeader>
-        <CardTitle className="text-white flex items-center gap-2">
-          <Zap className="h-5 w-5 text-blue-400" />
+        <CardTitle className="text-slate-900 flex items-center gap-2">
+          <Zap className="h-5 w-5 text-blue-500" />
           Energy Modeling Results
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
-          <div className="p-4 bg-slate-900/50 rounded-lg">
-            <h3 className="text-sm uppercase tracking-wider text-slate-400">Reference House</h3>
-            <p className="text-4xl font-bold text-white mt-2">{referenceHouseConsumption}</p>
-            <p className="text-xs text-slate-400">GJ/year</p>
+          <div className="p-4 bg-slate-50 rounded-lg border">
+            <h3 className="text-sm uppercase tracking-wider text-slate-500">Reference House</h3>
+            <p className="text-4xl font-bold text-slate-900 mt-2">{referenceHouseConsumption}</p>
+            <p className="text-xs text-slate-500">GJ/year</p>
           </div>
-          <div className={`p-4 rounded-lg ${isCompliant ? 'bg-green-900/30' : 'bg-red-900/30'}`}>
-            <h3 className="text-sm uppercase tracking-wider text-slate-400">Proposed House</h3>
-            <p className={`text-4xl font-bold mt-2 ${isCompliant ? 'text-green-300' : 'text-red-300'}`}>{proposedHouseConsumption}</p>
-            <p className="text-xs text-slate-400">GJ/year</p>
+          <div className={`p-4 rounded-lg border ${isCompliant ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+            <h3 className="text-sm uppercase tracking-wider text-slate-500">Proposed House</h3>
+            <p className={`text-4xl font-bold mt-2 ${isCompliant ? 'text-green-700' : 'text-red-700'}`}>{proposedHouseConsumption}</p>
+            <p className="text-xs text-slate-500">GJ/year</p>
           </div>
         </div>
-        <Alert className="mt-6 bg-slate-900/50 border-slate-700 text-white">
+        <Alert className="mt-6">
           <AlertTitle>Note on Performance Path</AlertTitle>
-          <AlertDescription className="text-slate-300">
+          <AlertDescription>
             The proposed house's annual energy consumption must be equal to or less than the reference house to be compliant. This comparison demonstrates the overall energy performance based on the submitted design.
           </AlertDescription>
         </Alert>
