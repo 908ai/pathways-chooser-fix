@@ -27,6 +27,9 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 const renderLegend = (props: any) => {
   const { payload } = props;
+  if (!payload || payload.length === 0) {
+    return null;
+  }
   const total = payload.reduce((sum: number, entry: any) => sum + entry.payload.payload.value, 0);
   if (total === 0) return null;
 
