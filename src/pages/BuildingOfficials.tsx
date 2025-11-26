@@ -19,7 +19,7 @@ const BuildingOfficialsPage = () => {
         </div>
         <Card className="bg-white shadow-sm rounded-lg">
           <CardContent className="p-6 space-y-6 text-slate-600">
-            <div className="p-4 bg-slate-100 border border-slate-200 rounded-lg">
+            <div className="p-4 rounded-lg">
               <p>
                 This tool is designed to support builders in meeting the energy efficiency requirements of NBC Section 9.36 (Tier 1 or Tier 2) through either the Prescriptive or Performance Path, using energy modelling to identify compliant, cost-effective upgrade options.
               </p>
