@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 const COLORS = {
   'Prescriptive': '#f97316', // orange-500
@@ -25,29 +25,6 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-const renderLegend = (props: any) => {
-  const { payload } = props;
-  if (!payload || payload.length === 0) {
-    return null;
-  }
-  const total = payload.reduce((sum: number, entry: any) => sum + entry.payload.value, 0);
-  if (total === 0) return null;
-
-  return (
-    <ul className="flex flex-col gap-2">
-      {payload.map((entry: any, index: number) => (
-        <li key={`item-${index}`} className="flex justify-between items-center text-sm">
-          <div className="flex items-center gap-2">
-            <span className="h-3 w-3 rounded-full" style={{ backgroundColor: entry.color }} />
-            <span className="text-slate-600">{entry.value}</span>
-          </div>
-          <span className="font-semibold text-slate-800">{`${Math.round((entry.payload.value / total) * 100)}%`}</span>
-        </li>
-      ))}
-    </ul>
-  );
-};
-
 const CompliancePathwayChart = ({ data }: { data: any[] }) => {
   const chartData: { name: string; value: number }[] = Object.entries(
     data.reduce((acc: Record<string, number>, project) => {
@@ -69,13 +46,13 @@ const CompliancePathwayChart = ({ data }: { data: any[] }) => {
         <CardTitle className="text-slate-900">Compliance Pathways</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="relative" style={{ height: '300px' }}>
+        <div className="relative h-48">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={chartData}
                 cx="50%"
-                cy="40%"
+                cy="50%"
                 labelLine={false}
                 outerRadius={80}
                 innerRadius={60}
@@ -88,13 +65,28 @@ const CompliancePathwayChart = ({ data }: { data: any[] }) => {
                 ))}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
-              <Legend content={renderLegend} wrapperStyle={{ position: 'relative', top: '10px' }} />
             </PieChart>
           </ResponsiveContainer>
-          <div className="absolute top-0 left-0 right-0 flex flex-col items-center justify-center pointer-events-none" style={{ height: '160px' }}>
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
             <span className="text-2xl font-bold text-slate-900">{totalProjects}</span>
             <span className="text-sm text-slate-500">Total Projects</span>
           </div>
+        </div>
+        <div className="mt-6 space-y-2">
+          {chartData.map((entry) => (
+            <div key={entry.name} className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2">
+                <span
+                  className="h-3 w-3 rounded-full"
+                  style={{ backgroundColor: COLORS[entry.name as keyof typeof COLORS] || '#8884d8' }}
+                />
+                <span className="text-slate-600">{entry.name}</span>
+              </div>
+              <span className="font-semibold text-slate-800">
+                {totalProjects > 0 ? `${Math.round((entry.value / totalProjects) * 100)}%` : '0%'}
+              </span>
+            </div>
+          ))}
         </div>
       </CardContent>
     </Card>
