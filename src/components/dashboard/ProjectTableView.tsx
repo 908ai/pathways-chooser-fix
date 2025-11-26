@@ -36,17 +36,17 @@ const getStatusInfo = (status: string | null) => {
   switch (status) {
     case 'pass':
     case 'Compliant':
-      return { text: 'Compliant', color: 'bg-green-500 text-green-50' };
+      return { text: 'Compliant', color: 'bg-green-100 text-green-800' };
     case 'fail':
-      return { text: 'Non-Compliant', color: 'bg-red-500 text-red-50' };
+      return { text: 'Non-Compliant', color: 'bg-red-100 text-red-800' };
     case 'submitted':
-      return { text: 'Submitted', color: 'bg-blue-500 text-blue-50' };
+      return { text: 'Submitted', color: 'bg-blue-100 text-blue-800' };
     case 'draft':
-      return { text: 'Draft', color: 'bg-gray-500 text-gray-50' };
+      return { text: 'Draft', color: 'bg-gray-100 text-gray-800' };
     case 'needs_revision':
-      return { text: 'Needs Revision', color: 'bg-yellow-500 text-yellow-50' };
+      return { text: 'Needs Revision', color: 'bg-yellow-100 text-yellow-800' };
     default:
-      return { text: 'In Progress', color: 'bg-orange-500 text-orange-50' };
+      return { text: 'In Progress', color: 'bg-orange-100 text-orange-800' };
   }
 };
 
@@ -75,12 +75,12 @@ const ProjectTableView = ({ projects, onViewProject, onEditProject, onDuplicateP
   return (
     <Table>
       <TableHeader>
-        <TableRow className="border-b border-slate-400/50 hover:bg-transparent">
-          <TableHead className="text-white">Project Name</TableHead>
-          <TableHead className="text-white">Status</TableHead>
-          <TableHead className="text-white">Pathway</TableHead>
-          <TableHead className="text-white">Last Updated</TableHead>
-          <TableHead className="text-right text-white">Actions</TableHead>
+        <TableRow className="border-b hover:bg-transparent">
+          <TableHead>Project Name</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Pathway</TableHead>
+          <TableHead>Last Updated</TableHead>
+          <TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -88,25 +88,25 @@ const ProjectTableView = ({ projects, onViewProject, onEditProject, onDuplicateP
           const statusInfo = getStatusInfo(project.compliance_status);
           const isPerformance = project.selected_pathway === '9365' || project.selected_pathway === '9367' || project.selected_pathway === 'performance';
           return (
-            <TableRow key={project.id} onClick={() => onViewProject(project.id)} className="cursor-pointer bg-slate-700/40 border-b border-slate-400/50 backdrop-blur-md hover:bg-slate-600/50">
+            <TableRow key={project.id} onClick={() => onViewProject(project.id)} className="cursor-pointer border-b hover:bg-slate-50">
               <TableCell>
-                <div className="font-medium text-white">{project.project_name}</div>
-                <div className="text-sm text-slate-300">{project.location}</div>
+                <div className="font-medium">{project.project_name}</div>
+                <div className="text-sm text-muted-foreground">{project.location}</div>
               </TableCell>
               <TableCell>
-                <Badge className={cn(statusInfo.color)}>{statusInfo.text}</Badge>
+                <Badge variant="outline" className={cn(statusInfo.color)}>{statusInfo.text}</Badge>
               </TableCell>
               <TableCell>
-                <div className="flex items-center gap-2 text-white">
-                  {isPerformance ? <Zap className="h-4 w-4 text-blue-400" /> : <FileText className="h-4 w-4 text-orange-400" />}
+                <div className="flex items-center gap-2">
+                  {isPerformance ? <Zap className="h-4 w-4 text-blue-500" /> : <FileText className="h-4 w-4 text-orange-500" />}
                   <span>{formatPathwayName(project.selected_pathway)}</span>
                 </div>
               </TableCell>
-              <TableCell className="text-slate-300">{new Date(project.updated_at).toLocaleDateString()}</TableCell>
+              <TableCell className="text-muted-foreground">{new Date(project.updated_at).toLocaleDateString()}</TableCell>
               <TableCell className="text-right">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-white" onClick={e => e.stopPropagation()}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={e => e.stopPropagation()}>
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>

@@ -7,7 +7,6 @@ import { Shield, Building } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
-import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 import ProjectToolbar from '@/components/dashboard/ProjectToolbar';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import ProjectKanbanView from '@/components/dashboard/ProjectKanbanView';
@@ -105,27 +104,27 @@ const Dashboard2 = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
       <Header showSignOut={true} onSignOut={signOut} />
       <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-3 text-white drop-shadow-lg">Project Dashboard</h1>
-          <p className="text-gray-200 text-lg drop-shadow-md">
-            Manage your NBC 9.36 compliance projects and account information
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-slate-800">Project Dashboard</h1>
+          <p className="text-slate-500 mt-1">
+            Manage your NBC 9.36 compliance projects and account information.
           </p>
         </div>
         
         {canViewAllProjects && (
-          <div className="mb-6 p-4 bg-blue-900/30 border border-blue-400/50 rounded-lg text-center flex items-center justify-center gap-3">
-            <Shield className="h-5 w-5 text-blue-300" />
-            <p className="font-semibold text-blue-300">
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-center flex items-center justify-center gap-3">
+            <Shield className="h-5 w-5 text-blue-700" />
+            <p className="font-semibold text-blue-700">
               Admin View: You are viewing projects from all users.
             </p>
           </div>
         )}
 
         <div className="space-y-6">
-          <Card className="bg-slate-700/40 border-slate-400/50 backdrop-blur-[100px]">
+          <Card className="bg-white shadow-sm rounded-lg">
             <CardHeader>
               <ProjectToolbar
                 statusFilter={statusFilter}
@@ -141,7 +140,7 @@ const Dashboard2 = () => {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-center py-12 text-white">Loading projects...</div>
+                <div className="text-center py-12 text-slate-500">Loading projects...</div>
               ) : filteredAndSortedProjects.length > 0 ? (
                 view === 'kanban' ? (
                   <ProjectKanbanView 
@@ -161,9 +160,9 @@ const Dashboard2 = () => {
                   />
                 )
               ) : (
-                <div className="text-center py-12 text-white">
+                <div className="text-center py-12">
                   <Building className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-semibold">No Projects Found</h3>
+                  <h3 className="text-xl font-semibold text-slate-800">No Projects Found</h3>
                   <p className="text-muted-foreground mt-2">
                     {searchTerm || statusFilter !== 'all' ? 'Try adjusting your filters.' : 'Get started by creating a new project.'}
                   </p>

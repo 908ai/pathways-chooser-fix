@@ -72,8 +72,8 @@ const ProjectToolbar = ({
                 className={cn(
                   "rounded-r-none",
                   view === 'kanban'
-                    ? 'bg-white text-primary hover:bg-white/90'
-                    : 'bg-transparent text-white hover:bg-yellow-300'
+                    ? 'bg-primary/10 text-primary'
+                    : 'bg-transparent hover:bg-slate-100'
                 )}
               >
                 <LayoutGrid className="h-4 w-4" />
@@ -92,8 +92,8 @@ const ProjectToolbar = ({
                 className={cn(
                   "rounded-l-none -ml-px",
                   view === 'table'
-                    ? 'bg-white text-primary hover:bg-white/90'
-                    : 'bg-transparent text-white hover:bg-yellow-300'
+                    ? 'bg-primary/10 text-primary'
+                    : 'bg-transparent hover:bg-slate-100'
                 )}
               >
                 <List className="h-4 w-4" />
@@ -105,7 +105,7 @@ const ProjectToolbar = ({
           </Tooltip>
         </div>
 
-        <Button onClick={onNewProjectClick} className="border border-white animate-glow-pulse">
+        <Button onClick={onNewProjectClick}>
           <Plus className="mr-2 h-4 w-4" />
           New Project
         </Button>
