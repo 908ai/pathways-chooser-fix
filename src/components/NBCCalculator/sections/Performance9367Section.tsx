@@ -55,19 +55,22 @@ export default function Performance9367Section({
         const [isOpen, setIsOpen] = useState(defaultOpen);
         const bgColor =
             variant === "warning"
-                ? "bg-gradient-to-r from-slate-800/60 to-teal-800/60"
-                : "bg-gradient-to-r from-slate-800/60 to-red-800/60";
+                ? "bg-orange-50"
+                : "bg-red-50";
         const borderColor =
-            variant === "warning" ? "border border-orange-400" : "border-2 border-red-400";
+            variant === "warning" ? "border-orange-200" : "border-red-200";
+        const titleColor = variant === "warning" ? "text-orange-800" : "text-red-800";
+        const iconColor = variant === "warning" ? "text-orange-700" : "text-red-700";
+        const contentColor = variant === "warning" ? "text-orange-700" : "text-red-700";
 
         return (
-            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} ${borderColor} rounded-lg backdrop-blur-sm`}>
+            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} border ${borderColor} rounded-lg`}>
                 <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
-                    <span className="text-xs font-bold text-white">{title}</span>
-                    <ChevronDown className={`h-5 w-5 text-white transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                    <span className={`text-xs font-bold ${titleColor}`}>{title}</span>
+                    <ChevronDown className={`h-5 w-5 ${iconColor} transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
                 </CollapsibleTrigger>
-                <CollapsibleContent className="mt-4 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
-                    <div className="text-white text-xs">{children}</div>
+                <CollapsibleContent className="mt-4 data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden">
+                    <div className={`${contentColor} text-xs`}>{children}</div>
                 </CollapsibleContent>
             </Collapsible>
         );
@@ -84,24 +87,24 @@ export default function Performance9367Section({
                     {/* Building volume section removed for 9.36.7 */}
 
                     <div id="ceilingsAtticRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Ceilings below Attics</label>
+                        <label className="text-sm font-medium text-slate-900">Ceilings below Attics</label>
                         <Input type="text" placeholder='Enter assembly info (e.g., R50 Loose-fill/2x10/16"OC)' value={selections.ceilingsAtticRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             ceilingsAtticRSI: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                        }))} />
                     </div>
 
                     <div id="hasCathedralOrFlatRoof" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Is there any cathedral ceilings or flat roof?</label>
+                        <label className="text-sm font-medium text-slate-900">Is there any cathedral ceilings or flat roof?</label>
                         <Select value={selections.hasCathedralOrFlatRoof} onValueChange={value => setSelections(prev => ({
                             ...prev,
                             hasCathedralOrFlatRoof: value,
                             cathedralFlatRSI: ""
                         }))}>
-                            <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                            <SelectTrigger>
                                 <SelectValue placeholder="Select option" />
                             </SelectTrigger>
-                            <SelectContent className="bg-background border shadow-lg z-50">
+                            <SelectContent>
                                 <SelectItem value="no">No</SelectItem>
                                 <SelectItem value="yes">Yes</SelectItem>
                             </SelectContent>
@@ -109,31 +112,31 @@ export default function Performance9367Section({
                     </div>
 
                     {selections.hasCathedralOrFlatRoof === "yes" && <div id="cathedralFlatRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Cathedral / Flat Roofs</label>
+                        <label className="text-sm font-medium text-slate-900">Cathedral / Flat Roofs</label>
                         <Input type="text" placeholder="Enter insulation type &/or R-value (e.g, R50 Loose-fill)., N/A" value={selections.cathedralFlatRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             cathedralFlatRSI: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                        }))} />
                     </div>}
 
                     <div id="wallRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Above Grade Walls</label>
+                        <label className="text-sm font-medium text-slate-900">Above Grade Walls</label>
                         <Input type="text" placeholder='Enter assembly info (e.g., R20 Batt/2x6/16"OC)' value={selections.wallRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             wallRSI: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                        }))} />
                     </div>
 
                     <div id="belowGradeRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Below Grade Walls (Foundation Walls)</label>
+                        <label className="text-sm font-medium text-slate-900">Below Grade Walls (Foundation Walls)</label>
                         <Input type="text" placeholder='Enter assembly info (e.g., R12 Batt/2x4/24"OC)' value={selections.belowGradeRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             belowGradeRSI: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                        }))} />
                     </div>
 
                     <div id="floorsSlabsSelected" className="space-y-4">
-                        <label className="text-sm font-medium text-slate-100">Floors/Slabs (Select all that apply)</label>
+                        <label className="text-sm font-medium text-slate-900">Floors/Slabs (Select all that apply)</label>
                         <div className="space-y-2">
                             <label className="flex items-center gap-2">
                                 <input type="checkbox" checked={selections.floorsSlabsSelected.includes("floorsUnheated")} onChange={e => {
@@ -143,7 +146,7 @@ export default function Performance9367Section({
                                         floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter(item => item !== value)
                                     }));
                                 }} className="w-4 h-4 text-primary" />
-                                <span className="text-sm text-slate-100">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</span>
+                                <span className="text-sm text-slate-900">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</span>
                             </label>
                             <label className="flex items-center gap-2">
                                 <input type="checkbox" checked={selections.floorsSlabsSelected.includes("floorsGarage")} onChange={e => {
@@ -153,7 +156,7 @@ export default function Performance9367Section({
                                         floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter(item => item !== value)
                                     }));
                                 }} className="w-4 h-4 text-primary" />
-                                <span className="text-sm text-slate-100">Floors above Garages</span>
+                                <span className="text-sm text-slate-900">Floors above Garages</span>
                             </label>
                             <label className={`flex items-center gap-2 ${isHeatedFloorsChecked ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                 <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} disabled={isHeatedFloorsChecked} onChange={e => {
@@ -175,7 +178,7 @@ export default function Performance9367Section({
                                         };
                                     });
                                 }} className="w-4 h-4 text-primary" />
-                                <span className="text-sm text-slate-100">Unheated Floor Below Frostline</span>
+                                <span className="text-sm text-slate-900">Unheated Floor Below Frostline</span>
                             </label>
                             <label className="flex items-center gap-2">
                                 <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedAboveFrost")} onChange={e => {
@@ -185,7 +188,7 @@ export default function Performance9367Section({
                                         floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter(item => item !== value)
                                     }));
                                 }} className="w-4 h-4 text-primary" />
-                                <span className="text-sm text-slate-100">Unheated Floor Above Frost Line (or walk-out basement)</span>
+                                <span className="text-sm text-slate-900">Unheated Floor Above Frost Line (or walk-out basement)</span>
                             </label>
                             <label className={`flex items-center gap-2 ${isUnheatedFloorChecked || isSlabOnGradeChecked ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                 <input type="checkbox" checked={selections.floorsSlabsSelected.includes("heatedFloors")} disabled={isUnheatedFloorChecked || isSlabOnGradeChecked} onChange={e => {
@@ -211,7 +214,7 @@ export default function Performance9367Section({
                                         };
                                     });
                                 }} className="w-4 h-4 text-primary" />
-                                <span className="text-sm text-slate-100">Heated Floors</span>
+                                <span className="text-sm text-slate-900">Heated Floors</span>
                             </label>
                             <label className={`flex items-center gap-2 ${isHeatedFloorsChecked ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                 <input type="checkbox" checked={selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting")} disabled={isHeatedFloorsChecked} onChange={e => {
@@ -235,68 +238,68 @@ export default function Performance9367Section({
                                         };
                                     });
                                 }} className="w-4 h-4 text-primary" />
-                                <span className="text-sm text-slate-100">Slab on grade with integral Footing</span>
+                                <span className="text-sm text-slate-900">Slab on grade with integral Footing</span>
                             </label>
                         </div>
                     </div>
 
                     {selections.floorsSlabsSelected.includes("floorsUnheated") && <div id="floorsUnheatedRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</label>
+                        <label className="text-sm font-medium text-slate-900">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</label>
                         <Input type="text" placeholder="Enter insulation type &/or RSI/R-value, or N/A" value={selections.floorsUnheatedRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             floorsUnheatedRSI: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                        }))} />
                     </div>}
 
                     {selections.floorsSlabsSelected.includes("floorsGarage") && <div id="floorsGarageRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Floors above Garages</label>
+                        <label className="text-sm font-medium text-slate-900">Floors above Garages</label>
                         <Input type="text" placeholder="Enter insulation type &/or RSI/R-value, or N/A" value={selections.floorsGarageRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             floorsGarageRSI: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                        }))} />
                     </div>}
 
                     {selections.floorsSlabsSelected.includes("unheatedBelowFrost") && <div id="unheatedFloorBelowFrostRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Unheated Floor Below Frost Line</label>
+                        <label className="text-sm font-medium text-slate-900">Unheated Floor Below Frost Line</label>
                         <Input type="text" placeholder="Enter RSI value or 'uninsulated'" value={selections.unheatedFloorBelowFrostRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             unheatedFloorBelowFrostRSI: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                        }))} />
                     </div>}
 
                     {selections.floorsSlabsSelected.includes("unheatedAboveFrost") && <div id="unheatedFloorAboveFrostRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Unheated Floor Above Frost Line</label>
+                        <label className="text-sm font-medium text-slate-900">Unheated Floor Above Frost Line</label>
                         <Input type="text" placeholder='Enter insulation type & R-value (e.g., 2" XPS or R10 Rigid), or N/A' value={selections.unheatedFloorAboveFrostRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             unheatedFloorAboveFrostRSI: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                        }))} />
                     </div>}
 
                     {selections.floorsSlabsSelected.includes("heatedFloors") && <div id="heatedFloorsRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Heated Floors</label>
+                        <label className="text-sm font-medium text-slate-900">Heated Floors</label>
                         <Input type="text" placeholder='Enter insulation type & R-value (e.g., 2" XPS or R10 Rigid)' value={selections.heatedFloorsRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             heatedFloorsRSI: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                        }))} />
                         <WarningButton warningId="heatedFloorsRSI-hydronic-9368" title="⚠️ Hydronic Floor Insulation Required">
-                            <p className="text-xs text-white space-y-2">
+                            <p className="text-xs space-y-2">
                                 Hydronic floors must be insulated to prevent heat loss to the ground or unheated areas below. The insulation should be installed between the heated floor and any unheated space, with proper vapor barrier placement. Minimum insulation values vary by province and specific application - consult local building codes and your mechanical designer for specific requirements.
                             </p>
                         </WarningButton>
                     </div>}
 
                     {selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting") && <div id="slabOnGradeIntegralFootingRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Slab on grade with integral Footing</label>
+                        <label className="text-sm font-medium text-slate-900">Slab on grade with integral Footing</label>
                         <Input type="text" placeholder="Enter insulation type &/or R-value, or N/A" value={selections.slabOnGradeIntegralFootingRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             slabOnGradeIntegralFootingRSI: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                        }))} />
                     </div>}
 
                     {/* Window Schedule Upload */}
-                    <div className="space-y-4 p-4 bg-red-50/50 border border-red-200 rounded-lg">
+                    <div className="space-y-4 p-4 bg-red-50 border border-red-200 rounded-lg">
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-100">Upload window/door schedule from your supplier e.g., "All Weather, Plygem, etc."</label>
+                            <label className="text-sm font-medium text-slate-900">Upload window/door schedule from your supplier e.g., "All Weather, Plygem, etc."</label>
                             <div className="flex items-center space-x-4">
                                 <Input
                                     type="file"
@@ -308,29 +311,32 @@ export default function Performance9367Section({
                                             await handleFileUploadRequest(file);
                                         }
                                     }}
-                                    className="file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400"
+                                    className="file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                                 />
                             </div>
                             <p className="text-xs text-muted-foreground">
                                 Accepted formats: PDF, DOC, DOCX, XLS, XLSX, TXT, JPG, JPEG, PNG
                             </p>
-                            <p className="text-xs text-white font-medium">
+                            <p className="text-xs text-slate-900 font-medium">
                                 You're welcome to upload documents later, but please be aware this may cause delays.
                             </p>
                         </div>
 
                         {uploadedFiles.length > 0 && <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-100">Uploaded Files</label>
+                            <div className="flex items-center gap-2 text-green-700">
+                                <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                                <span className="text-sm font-medium">Uploaded Files ({uploadedFiles.length})</span>
+                            </div>
                             <div className="space-y-2">
-                                {uploadedFiles.map((file, index) => <div key={index} className="flex items-center justify-between p-2 bg-background border rounded-md">
+                                {uploadedFiles.map((file, index) => <div key={index} className="flex items-center justify-between p-2 bg-green-50 border border-green-200 rounded-md">
                                     <div className="flex items-center space-x-2">
-                                        <Info className="h-4 w-4 text-primary" />
-                                        <span className="text-sm">{file.name}</span>
-                                        <span className="text-xs text-muted-foreground">
+                                        <Info className="h-4 w-4 text-green-600" />
+                                        <span className="text-sm text-green-800">{file.name}</span>
+                                        <span className="text-xs text-green-600">
                                             ({(file.size / 1024 / 1024).toFixed(2)} MB)
                                         </span>
                                     </div>
-                                    <Button variant="outline" size="sm" onClick={() => removeFile(file)} className="h-6 w-6 p-0">
+                                    <Button variant="outline" size="sm" onClick={() => removeFile(file)} className="h-6 w-6 p-0 text-green-600 hover:text-red-600">
                                         ×
                                     </Button>
                                 </div>)}
@@ -340,34 +346,34 @@ export default function Performance9367Section({
 
                     <div id="windowUValue" className="space-y-2">
                         <WarningButton warningId="windowUValue-9367" title="ℹ️ Window Schedule Required">
-                            <p className="text-xs text-white">
+                            <p className="text-xs">
                                 Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value (ie, highest U-value W/(m²×K)).
                             </p>
                         </WarningButton>
                     </div>
 
                     <div id="hasSkylights" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Do you have skylights?</label>
+                        <label className="text-sm font-medium text-slate-900">Do you have skylights?</label>
                         <Select value={selections.hasSkylights} onValueChange={value => setSelections(prev => ({
                             ...prev,
                             hasSkylights: value,
                             skylightUValue: ""
                         }))}>
-                            <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                            <SelectTrigger>
                                 <SelectValue placeholder="Select option" />
                             </SelectTrigger>
-                            <SelectContent className="bg-background border shadow-lg z-50">
+                            <SelectContent>
                                 <SelectItem value="yes">Yes</SelectItem>
                                 <SelectItem value="no">No</SelectItem>
                             </SelectContent>
                         </Select>
 
                         {selections.hasSkylights === "yes" && <div id="skylightUValue" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-100">Skylight U-Value</label>
+                            <label className="text-sm font-medium text-slate-900">Skylight U-Value</label>
                             <Input type="text" placeholder="Enter U-Value (W/(m²·K))" value={selections.skylightUValue || ""} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 skylightUValue: e.target.value
-                            }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                            }))} />
                         </div>}
                     </div>
 
@@ -379,7 +385,7 @@ export default function Performance9367Section({
 
                     <div id="airtightness" className="space-y-2">
                         <div className="flex items-center gap-3">
-                            <label className="text-sm font-medium text-slate-100">Airtightness Level</label>
+                            <label className="text-sm font-medium text-slate-900">Airtightness Level</label>
                             <InfoButton title="What's a Blower Door Test?">
                                 <div className="space-y-4">
                                     <div>
@@ -523,7 +529,7 @@ export default function Performance9367Section({
                         <Input type="text" placeholder={`Min ${selections.province === "saskatchewan" ? "3.2" : "3.0"} ACH50 for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.airtightness} onChange={e => setSelections(prev => ({
                             ...prev,
                             airtightness: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                        }))} />
 
                         {(() => {
                             const airtightnessValue = parseFloat(selections.airtightness || "0");
@@ -540,11 +546,11 @@ export default function Performance9367Section({
                             }
                             const showWarning = airtightnessValue > 0 && airtightnessValue < minimumThreshold;
                             return showWarning ? (
-                                <Alert variant="destructive" style={{ backgroundColor: 'beige' }}>
+                                <Alert variant="destructive">
                                     <AlertTriangle className="h-4 w-4" />
-                                    <AlertTitle>Airtightness Value Too Low</AlertTitle>
+                                    <AlertTitle>Blower Door Test Required</AlertTitle>
                                     <AlertDescription>
-                                        The airtightness value must be at least {thresholdText} ACH50 for prescriptive unguarded testing in {selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}. Please increase your target value.
+                                        You've selected an air leakage rate below {thresholdText} ACH@50pa. A blower door test is required prior to occupancy to verify this result.
                                     </AlertDescription>
                                 </Alert>
                             ) : null;   
@@ -565,7 +571,7 @@ export default function Performance9367Section({
                             />
                             <label
                                 htmlFor="midConstructionBlowerDoor-9367-3"
-                                className="ml-2 text-sm font-medium cursor-pointer text-slate-100"
+                                className="ml-2 text-sm font-medium cursor-pointer text-slate-900"
                             >
                                 Mid-Construction Blower Door Test Planned (Optional)
                             </label>
@@ -576,7 +582,7 @@ export default function Performance9367Section({
                                 </a>
                             </Button> 
                             <WarningButton warningId="mid-construction-blower-door-info-9367-3" title="ℹ️ Benefits of Mid-Construction Blower Door Testing">
-                                <div className="text-xs text-white space-y-2">
+                                <div className="text-xs space-y-2">
                                     <p className="font-medium">Benefits of a mid-construction (misconstruction) blower door test:</p>
                                     <ul className="list-disc ml-4 space-y-1">
                                         <li>Identifies air leaks early so they can be sealed before drywall.</li>
@@ -588,13 +594,13 @@ export default function Performance9367Section({
                                     </ul>
                                     <div className="flex items-center gap-1 text-sm mt-3">
                                         <span>📄</span>
-                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-purple-300 hover:text-yellow-300/80">
+                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
                                             View the Blower Door Checklist
                                         </a>  
                                     </div>
                                     <div className="flex items-center gap-1 text-sm mt-3">
                                         <span>▶️</span>
-                                        <a href="https://www.youtube.com/watch?v=4KtCansnpLE" target="_blank" rel="noopener noreferrer" className="text-purple-300 hover:text-yellow-300/80">
+                                        <a href="https://www.youtube.com/watch?v=4KtCansnpLE" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
                                             BILD Alberta - Building Airtightness Testing
                                         </a>  
                                     </div>   
@@ -605,15 +611,15 @@ export default function Performance9367Section({
 
                     {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <>
                         <div id="waterHeaterType" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-100">Water Heater Type</label>
+                            <label className="text-sm font-medium text-slate-900">Water Heater Type</label>
                             <Select value={selections.waterHeaterType} onValueChange={value => setSelections(prev => ({
                                 ...prev,
                                 waterHeaterType: value
                             }))}>
-                                <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                                <SelectTrigger>
                                     <SelectValue placeholder="Select water heater type" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-background border shadow-lg z-50">
+                                <SelectContent>
                                     <SelectItem value="gas">Gas</SelectItem>
                                     <SelectItem value="electric">Electric</SelectItem>
                                 </SelectContent>
@@ -621,17 +627,17 @@ export default function Performance9367Section({
                         </div>
 
                         <div id="waterHeater" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-100">Water Heater</label>
+                            <label className="text-sm font-medium text-slate-900">Water Heater</label>
                             <Input type="text" placeholder="Enter Water Heater Make/Model" value={selections.waterHeater} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 waterHeater: e.target.value
-                            }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                            }))} />
                         </div>
                     </>}
 
                     <div id="hasDWHR" className="space-y-2">
                         <div className="flex items-center gap-3">
-                            <label className="text-sm font-medium text-slate-100">Is a drain water heat recovery system being installed?</label>
+                            <label className="text-sm font-medium text-slate-900">Is a drain water heat recovery system being installed?</label>
                             <InfoButton title="Drain Water Heat Recovery System Information">
                                 <div className="space-y-4">
                                     <div className="border-b pb-2">
@@ -665,10 +671,10 @@ export default function Performance9367Section({
                             ...prev,
                             hasDWHR: value
                         }))}>
-                            <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                            <SelectTrigger>
                                 <SelectValue placeholder="Select yes or no" />
                             </SelectTrigger>
-                            <SelectContent className="bg-background border shadow-lg z-50">
+                            <SelectContent>
                                 <SelectItem value="yes">Yes</SelectItem>
                                 <SelectItem value="no">No</SelectItem>
                             </SelectContent>
@@ -677,7 +683,7 @@ export default function Performance9367Section({
 
                     <div id="heatingType" className="space-y-2">
                         <div className="flex items-center gap-3">
-                            <label className="text-sm font-medium text-slate-100">Heating Type <span className="text-red-400">*</span></label>
+                            <label className="text-sm font-medium text-slate-900">Heating Type <span className="text-red-500">*</span></label>
                             <InfoButton title="CAN/CSA F280-12 - Room by Room Heat Loss/Gain Calculation">
                                 <div className="space-y-4">
                                     <div>
@@ -708,14 +714,13 @@ export default function Performance9367Section({
                             ...prev,
                             heatingType: value,
                             heatingEfficiency: "",
-                            heatingMakeModel: "",
                             indirectTank: value !== 'boiler' ? '' : prev.indirectTank,
                             indirectTankSize: value !== 'boiler' ? '' : prev.indirectTankSize,
                         }))}>
-                            <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                            <SelectTrigger>
                                 <SelectValue placeholder="Select heating type" />
                             </SelectTrigger>
-                            <SelectContent className="bg-background border shadow-lg z-50">
+                            <SelectContent>
                                 <SelectItem value="furnace">Furnace</SelectItem>
                                 <SelectItem value="boiler">Boiler</SelectItem>
                                 <SelectItem value="heat-pump">Heat Pump</SelectItem>
@@ -724,7 +729,7 @@ export default function Performance9367Section({
                         </Select>
 
                         <WarningButton warningId="mechanical-equipment-docs-9365" title="⚠️ Mechanical Equipment Documentation">
-                            <div className="text-xs text-white space-y-2">
+                            <div className="text-xs space-y-2">
                                 <p>
                                     The Authority Having Jurisdiction (AHJ) may verify specific makes/models of the mechanical equipment being proposed for heating, cooling, domestic hot water and HRV systems. The AHJ may also request CSA F-280 heat loss & gain calculations.
                                 </p>
@@ -736,7 +741,7 @@ export default function Performance9367Section({
                                 </p>
                                 <div className="flex items-center gap-1 text-sm mt-3">
                                     <span>🔗</span>
-                                    <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-yellow-300/80">
+                                    <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">
                                         More information
                                     </a>
                                 </div>
@@ -745,27 +750,27 @@ export default function Performance9367Section({
                     </div>
 
                     {selections.heatingType && <div id="heatingEfficiency" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">
+                        <label className="text-sm font-medium text-slate-900">
                             {selections.heatingType === 'furnace' ? 'Furnace' : selections.heatingType === 'boiler' ? 'Boiler' : selections.heatingType === 'heat-pump' ? 'Heat Pump' : 'Heating Efficiency'}
                         </label>
                         <Input type="text" placeholder={selections.heatingType === 'furnace' ? "Enter Furnace Make/Model" : selections.heatingType === 'boiler' ? "Enter Boiler Make/Model" : selections.heatingType === 'heat-pump' ? "Enter Heat Pump Make/Model" : "Enter heating equipment make/model"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
                             ...prev,
                             heatingEfficiency: e.target.value
-                        }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                        }))} />
                     </div>}
 
                     {selections.heatingType === 'boiler' && <div className="space-y-4">
                         <div id="indirectTank" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-100">Are you installing an indirect tank?</label>
+                            <label className="text-sm font-medium text-slate-900">Are you installing an indirect tank?</label>
                             <Select value={selections.indirectTank} onValueChange={value => setSelections(prev => ({
                                 ...prev,
                                 indirectTank: value,
                                 indirectTankSize: value === 'no' ? '' : prev.indirectTankSize,
                             }))}>
-                                <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                                <SelectTrigger>
                                     <SelectValue placeholder="Select if installing indirect tank" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-background border shadow-lg z-50">
+                                <SelectContent>
                                     <SelectItem value="yes">Yes</SelectItem>
                                     <SelectItem value="no">No</SelectItem>
                                 </SelectContent>
@@ -773,26 +778,26 @@ export default function Performance9367Section({
                         </div>
 
                         {selections.indirectTank === 'yes' && <div id="indirectTankSize" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-100">Indirect tank size (gallons)</label>
+                            <label className="text-sm font-medium text-slate-900">Indirect tank size (gallons)</label>
                             <Input type="number" placeholder="Enter tank size in gallons" value={selections.indirectTankSize} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 indirectTankSize: e.target.value
-                            }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                            }))} />
                         </div>}
                     </div>}
 
                     <div id="coolingApplicable" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-100">Are you installing cooling/air conditioning?</label>
+                        <label className="text-sm font-medium text-slate-900">Are you installing cooling/air conditioning?</label>
                         <Select value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
                             ...prev,
                             coolingApplicable: value,
                             coolingMakeModel: value === 'no' ? '' : prev.coolingMakeModel,
                             coolingEfficiency: value === 'no' ? '' : prev.coolingEfficiency,
                         }))}>
-                            <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                            <SelectTrigger>
                                 <SelectValue placeholder="Select if cooling is applicable" />
                             </SelectTrigger>
-                            <SelectContent className="bg-background border shadow-lg z-50">
+                            <SelectContent>
                                 <SelectItem value="yes">Yes</SelectItem>
                                 <SelectItem value="no">No</SelectItem>
                             </SelectContent>
@@ -801,14 +806,14 @@ export default function Performance9367Section({
 
                     {selections.coolingApplicable === "yes" && <div className="space-y-4">
                         <div id="coolingMakeModel" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-100">Cooling System Make/Model</label>
+                            <label className="text-sm font-medium text-slate-900">Cooling System Make/Model</label>
                             <Input type="text" value={selections.coolingMakeModel} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 coolingMakeModel: e.target.value
-                            }))} placeholder="Enter cooling system make and model" className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                            }))} placeholder="Enter cooling system make and model" />
                         </div>
                         <div id="coolingEfficiency" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-100">Cooling System Efficiency</label>
+                            <label className="text-sm font-medium text-slate-900">Cooling System Efficiency</label>
                             <Input
                                 type="text"
                                 placeholder="Enter SEER (min 14.5) or SEER2 (min 14.3) value"
@@ -817,18 +822,17 @@ export default function Performance9367Section({
                                     ...prev,
                                     coolingEfficiency: e.target.value
                                 }))}
-                                className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400"
                             />
                         </div>
                     </div>}
 
                     {/* Secondary Suite HRV - Show for buildings with multiple units */}
-                    {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && <div className="space-y-4 p-4 bg-slate-900/50 border border-slate-600 rounded-md">
-                        <h5 className="font-medium text-white">Secondary Suite HRV/ERV</h5>
+                    {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && <div className="space-y-4 p-4 bg-slate-50 border border-slate-200 rounded-md">
+                        <h5 className="font-medium text-slate-900">Secondary Suite HRV/ERV</h5>
 
                         <div id="hasSecondaryHrv" className="space-y-2">
                             <div className="flex items-center gap-3">
-                                <label className="text-sm font-medium text-slate-100">Will there be a second HRV/ERV for the secondary suite?</label>
+                                <label className="text-sm font-medium text-slate-900">Will there be a second HRV/ERV for the secondary suite?</label>
                                 <InfoButton title="Secondary Suite HRV/ERV Information">
                                     <div className="space-y-4">
                                         <div>
@@ -859,10 +863,10 @@ export default function Performance9367Section({
                                 hasSecondaryHrv: value,
                                 secondaryHrvEfficiency: value !== 'separate' ? '' : prev.secondaryHrvEfficiency,
                             }))}>
-                                <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                                <SelectTrigger>
                                     <SelectValue placeholder="Select option" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-background border shadow-lg z-50">
+                                <SelectContent>
                                     <SelectItem value="shared">Shared system (one HRV/ERV for both units)</SelectItem>
                                     <SelectItem value="separate">Separate HRV/ERV for secondary suite</SelectItem>
                                     <SelectItem value="none">No secondary HRV/ERV</SelectItem>
@@ -871,11 +875,11 @@ export default function Performance9367Section({
                         </div>
 
                         {selections.hasSecondaryHrv === "separate" && <div id="secondaryHrvEfficiency" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-100">Secondary Suite HRV/ERV Make/Model</label>
+                            <label className="text-sm font-medium text-slate-900">Secondary Suite HRV/ERV Make/Model</label>
                             <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 secondaryHrvEfficiency: e.target.value
-                            }))} className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400" />
+                            }))} />
                         </div>}
                     </div>}
                 </>

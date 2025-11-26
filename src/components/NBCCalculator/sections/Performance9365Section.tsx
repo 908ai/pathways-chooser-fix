@@ -84,7 +84,61 @@ export default function Performance9365Section({
         <>
             {
                 <>
-                    {/* Building volume section removed for 9.36.7 */}
+                    {selections.city && selections.city.toLowerCase().trim() === "red deer" && selections.province === "alberta" && <div id="hasF280Calculation" className="space-y-2">
+                        <div className="flex items-center gap-3">
+                            <label className="text-sm font-medium text-slate-900">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
+                            <InfoButton title="What is an F280 Calculation?">
+                                <div className="space-y-4">
+                                    <div className="space-y-3">
+                                        <p className="text-sm text-muted-foreground">
+                                            An F280 calculation is a heating and cooling load calculation based on CSA Standard F280-12 (or updated versions), which is the Canadian standard for determining how much heating or cooling a home needs. It accounts for factors like insulation levels, windows, air leakage, and local climate.
+                                        </p>
+
+                                        <div>
+                                            <p className="text-sm font-medium mb-2">Why it's beneficial:</p>
+                                            <div className="space-y-1">
+                                                <div className="flex items-start gap-2">
+                                                    <span className="text-green-600 text-sm">•</span>
+                                                    <span className="text-sm">Ensures HVAC systems are properly sized — not too big or too small.</span>
+                                                </div>
+                                                <div className="flex items-start gap-2">
+                                                    <span className="text-green-600 text-sm">•</span>
+                                                    <span className="text-sm">Improves comfort, efficiency, and equipment lifespan.</span>
+                                                </div>
+                                                <div className="flex items-start gap-2">
+                                                    <span className="text-green-600 text-sm">•</span>
+                                                    <span className="text-sm">Reduces energy costs and avoids overspending on unnecessary system capacity.</span>
+                                                </div>
+                                                <div className="flex items-start gap-2">
+                                                    <span className="text-green-600 text-sm">•</span>
+                                                    <span className="text-sm">Often required for building permits or energy code compliance in many jurisdictions.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-3 bg-muted rounded-md">
+                                            <p className="text-sm font-medium mb-1">💡 Pro Tip:</p>
+                                            <p className="text-sm text-muted-foreground">
+                                                F280 calcs are especially valuable in energy-efficient homes where heating loads can be dramatically lower than traditional assumptions.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </InfoButton>
+                        </div>
+                        <Select value={selections.hasF280Calculation} onValueChange={value => setSelections(prev => ({
+                            ...prev,
+                            hasF280Calculation: value
+                        }))}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select option" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-background border shadow-lg z-50">
+                                <SelectItem value="completed">✓ Yes, I have completed the F280 calculation</SelectItem>
+                                <SelectItem value="request-quote">Request a quote for F280 calculation</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>}
 
                     <div id="ceilingsAtticRSI" className="space-y-2">
                         <label className="text-sm font-medium text-slate-900">Ceilings below Attics</label>
