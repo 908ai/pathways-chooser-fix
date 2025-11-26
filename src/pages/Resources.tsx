@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/hooks/useAuth';
-import { Clock } from 'lucide-react';
+import { Clock, ExternalLink } from 'lucide-react';
 
 const ResourcesPage = () => {
   const { signOut } = useAuth();
@@ -76,7 +76,10 @@ const ResourcesPage = () => {
                   rel="noopener noreferrer"
                   className="block p-3 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
                 >
-                  <div className="font-medium text-slate-800 mb-1">Energy Code Hack</div>
+                  <div className="flex items-center gap-2 font-medium text-slate-800 mb-1">
+                    <span>Energy Code Hack</span>
+                    <ExternalLink className="h-4 w-4 text-slate-400" />
+                  </div>
                   <div className="text-sm text-slate-600">Learn which compliance pathway saves you the most money - up to $5000 in potential savings</div>
                 </a>
                 <a
@@ -85,7 +88,10 @@ const ResourcesPage = () => {
                   rel="noopener noreferrer"
                   className="block p-3 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
                 >
-                  <div className="font-medium text-slate-800 mb-1">Airtightness Requirements</div>
+                  <div className="flex items-center gap-2 font-medium text-slate-800 mb-1">
+                    <span>Airtightness Requirements</span>
+                    <ExternalLink className="h-4 w-4 text-slate-400" />
+                  </div>
                   <div className="text-sm text-slate-600">Regional requirements for air-tightness testing in BC, Alberta, and Saskatchewan</div>
                 </a>
                 <a
@@ -94,7 +100,10 @@ const ResourcesPage = () => {
                   rel="noopener noreferrer"
                   className="block p-3 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
                 >
-                  <div className="font-medium text-slate-800 mb-1">Blower Door Checklist (PDF)</div>
+                  <div className="flex items-center gap-2 font-medium text-slate-800 mb-1">
+                    <span>Blower Door Checklist (PDF)</span>
+                    <ExternalLink className="h-4 w-4 text-slate-400" />
+                  </div>
                   <div className="text-sm text-slate-600">Complete checklist for blower door testing procedures</div>
                 </a>
               </CardContent>
@@ -114,7 +123,10 @@ const ResourcesPage = () => {
                   rel="noopener noreferrer"
                   className="block p-3 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
                 >
-                  <div className="font-medium text-slate-800 mb-1">CAN/CSA F280-12 Heat Loss/Gain</div>
+                  <div className="flex items-center gap-2 font-medium text-slate-800 mb-1">
+                    <span>CAN/CSA F280-12 Heat Loss/Gain</span>
+                    <ExternalLink className="h-4 w-4 text-slate-400" />
+                  </div>
                   <div className="text-sm text-slate-600">Room-by-room calculations for properly sizing modern heating and cooling systems</div>
                 </a>
               </CardContent>
