@@ -30,7 +30,7 @@ const renderLegend = (props: any) => {
   if (!payload || payload.length === 0) {
     return null;
   }
-  const total = payload.reduce((sum: number, entry: any) => sum + entry.payload.payload.value, 0);
+  const total = payload.reduce((sum: number, entry: any) => sum + entry.payload.value, 0);
   if (total === 0) return null;
 
   return (
@@ -41,7 +41,7 @@ const renderLegend = (props: any) => {
             <span className="h-3 w-3 rounded-full" style={{ backgroundColor: entry.color }} />
             <span className="text-slate-600">{entry.value}</span>
           </div>
-          <span className="font-semibold text-slate-800">{`${Math.round((entry.payload.payload.value / total) * 100)}%`}</span>
+          <span className="font-semibold text-slate-800">{`${Math.round((entry.payload.value / total) * 100)}%`}</span>
         </li>
       ))}
     </ul>
