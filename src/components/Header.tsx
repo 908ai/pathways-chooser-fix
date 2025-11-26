@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, UserCircle, Shield, LayoutGrid, PieChart, Calculator, BookOpen, FileText, HelpCircle, MoreVertical } from 'lucide-react';
+import { LogOut, UserCircle, Shield, LayoutGrid, PieChart, Calculator } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import {
@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { ThemeToggle } from './ThemeToggle';
+import React from 'react';
 
 interface HeaderProps {
   showSignOut?: boolean;
@@ -67,13 +68,13 @@ const Header = ({ showSignOut = false, onSignOut }: HeaderProps) => {
   ];
 
   const secondaryNavLinks = [
-    { path: '/building-officials', label: 'Building Officials', icon: <BookOpen className="h-4 w-4" /> },
-    { path: '/resources', label: 'Resources', icon: <FileText className="h-4 w-4" /> },
-    { path: '/faq', label: 'FAQ', icon: <HelpCircle className="h-4 w-4" /> },
+    { path: '/building-officials', label: 'Building Officials' },
+    { path: '/resources', label: 'Resources' },
+    { path: '/faq', label: 'FAQ' },
   ];
 
   return (
-    <header className="bg-white dark:bg-slate-900 border-b dark:border-slate-700 sticky top-0 z-50">
+    <header className="bg-[rgb(238_241_244_/_0.9)] dark:bg-slate-900/90 backdrop-blur-sm border-b dark:border-slate-700 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center relative">
         <div className="flex items-center">
           <Link to="/dashboard">
@@ -100,23 +101,27 @@ const Header = ({ showSignOut = false, onSignOut }: HeaderProps) => {
           ))}
         </nav>
 
-        <div className="flex items-center gap-1">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <MoreVertical className="h-5 w-5" />
-                <span className="sr-only">More</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {secondaryNavLinks.map(link => (
-                <DropdownMenuItem key={link.path} onClick={() => navigate(link.path)} className="cursor-pointer">
-                  {link.icon}
-                  <span className="ml-2">{link.label}</span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <div className="flex items-center gap-4">
+          <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
+            {secondaryNavLinks.map((link, index) => (
+              <React.Fragment key={link.path}>
+                <Link
+                  to={link.path}
+                  className={cn(
+                    "transition-colors",
+                    isLinkActive(link.path)
+                      ? "text-primary"
+                      : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-50"
+                  )}
+                >
+                  {link.label}
+                </Link>
+                {index < secondaryNavLinks.length - 1 && (
+                  <span className="h-4 w-px bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span>
+                )}
+              </React.Fragment>
+            ))}
+          </nav>
 
           <ThemeToggle />
 
