@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Loader2, Download, Plus } from 'lucide-react';
+import { Loader2, Plus } from 'lucide-react';
 import StatCard from '@/components/dashboard3/StatCard';
 import CompliancePathwayChart from '@/components/dashboard3/CompliancePathwayChart';
 import ProjectStatusChart from '@/components/dashboard3/ProjectStatusChart';
@@ -12,6 +12,7 @@ import AverageRsiCard from '@/components/dashboard3/AverageRsiCard';
 import RecentProjectsList from '@/components/dashboard3/RecentProjectsList';
 import TopComplianceContributors from '@/components/dashboard3/TopComplianceContributors';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const fetchUserProjects = async (userId: string | undefined) => {
   if (!userId) return [];
@@ -26,6 +27,7 @@ const fetchUserProjects = async (userId: string | undefined) => {
 
 const Dashboard3 = () => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const { data: projects, isLoading } = useQuery({
     queryKey: ['userProjects', user?.id],
     queryFn: () => fetchUserProjects(user?.id),
@@ -141,13 +143,9 @@ const Dashboard3 = () => {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline">
-              <Download className="h-4 w-4 mr-2" />
-              Download Report
-            </Button>
-            <Button>
+            <Button onClick={() => navigate('/calculator')}>
               <Plus className="h-4 w-4 mr-2" />
-              New Model
+              New Project
             </Button>
           </div>
         </div>
