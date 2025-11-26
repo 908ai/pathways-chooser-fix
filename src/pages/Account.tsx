@@ -10,7 +10,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 
 const AccountPage = () => {
   const { user, signOut } = useAuth();
@@ -114,32 +113,32 @@ const AccountPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
       <Header showSignOut={true} onSignOut={signOut} />
-      <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-3 text-white drop-shadow-lg">Account Information</h1>
-          <p className="text-gray-200 text-lg drop-shadow-md">
+      <main className="flex-1 container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-slate-800">Account Information</h1>
+          <p className="text-slate-500 mt-1">
             Manage your personal and company details.
           </p>
         </div>
         <div className="max-w-4xl mx-auto space-y-6">
-          <Card className="bg-slate-800/60 backdrop-blur-[100px] border-slate-400/30 shadow-2xl">
+          <Card className="bg-white shadow-sm rounded-lg">
             <CardHeader>
-              <CardTitle className="text-white">Account Information</CardTitle>
-              <CardDescription className="text-slate-200">
+              <CardTitle>Account Information</CardTitle>
+              <CardDescription>
                 Manage your personal and company information
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-white">Email</label>
-                  <p className="text-sm text-slate-200">{user?.email}</p>
+                  <label className="text-sm font-medium text-slate-900">Email</label>
+                  <p className="text-sm text-slate-500">{user?.email}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-white">Account Status</label>
-                  <p className="text-sm text-slate-200">Active</p>
+                  <label className="text-sm font-medium text-slate-900">Account Status</label>
+                  <p className="text-sm text-slate-500">Active</p>
                 </div>
               </div>
               <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
@@ -190,10 +189,10 @@ const AccountPage = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-800/60 backdrop-blur-[100px] border-slate-400/30 shadow-2xl">
+          <Card className="bg-white shadow-sm rounded-lg">
             <CardHeader>
-              <CardTitle className="text-white">Company Information</CardTitle>
-              <CardDescription className="text-slate-200">
+              <CardTitle>Company Information</CardTitle>
+              <CardDescription>
                 Update your company details for project documentation
               </CardDescription>
             </CardHeader>
@@ -202,19 +201,19 @@ const AccountPage = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="company_name" className="text-white">Company Name</Label>
+                      <Label htmlFor="company_name">Company Name</Label>
                       <Input id="company_name" value={editedCompanyInfo.company_name || ''} onChange={e => setEditedCompanyInfo({ ...editedCompanyInfo, company_name: e.target.value })} placeholder="Enter company name" />
                     </div>
                     <div>
-                      <Label htmlFor="contact_email" className="text-white">Contact Email</Label>
+                      <Label htmlFor="contact_email">Contact Email</Label>
                       <Input id="contact_email" type="email" value={editedCompanyInfo.contact_email || ''} onChange={e => setEditedCompanyInfo({ ...editedCompanyInfo, contact_email: e.target.value })} placeholder="Enter contact email" />
                     </div>
                     <div>
-                      <Label htmlFor="phone" className="text-white">Phone</Label>
+                      <Label htmlFor="phone">Phone</Label>
                       <Input id="phone" value={editedCompanyInfo.phone || ''} onChange={e => setEditedCompanyInfo({ ...editedCompanyInfo, phone: e.target.value })} placeholder="Enter phone number" />
                     </div>
                     <div>
-                      <Label htmlFor="address" className="text-white">Address</Label>
+                      <Label htmlFor="address">Address</Label>
                       <Input id="address" value={editedCompanyInfo.address || ''} onChange={e => setEditedCompanyInfo({ ...editedCompanyInfo, address: e.target.value })} placeholder="Enter address" />
                     </div>
                   </div>
@@ -233,20 +232,20 @@ const AccountPage = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-white">Company Name</label>
-                      <p className="text-sm text-slate-200">{loadingCompany ? 'Loading...' : companyInfo?.company_name || 'No company information yet'}</p>
+                      <label className="text-sm font-medium text-slate-900">Company Name</label>
+                      <p className="text-sm text-slate-500">{loadingCompany ? 'Loading...' : companyInfo?.company_name || 'No company information yet'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-white">Contact Email</label>
-                      <p className="text-sm text-slate-200">{loadingCompany ? 'Loading...' : companyInfo?.contact_email || user?.email || 'Not specified'}</p>
+                      <label className="text-sm font-medium text-slate-900">Contact Email</label>
+                      <p className="text-sm text-slate-500">{loadingCompany ? 'Loading...' : companyInfo?.contact_email || user?.email || 'Not specified'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-white">Phone</label>
-                      <p className="text-sm text-slate-200">{loadingCompany ? 'Loading...' : companyInfo?.phone || 'Not specified'}</p>
+                      <label className="text-sm font-medium text-slate-900">Phone</label>
+                      <p className="text-sm text-slate-500">{loadingCompany ? 'Loading...' : companyInfo?.phone || 'Not specified'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-white">Address</label>
-                      <p className="text-sm text-slate-200">{loadingCompany ? 'Loading...' : companyInfo?.address || 'Not specified'}</p>
+                      <label className="text-sm font-medium text-slate-900">Address</label>
+                      <p className="text-sm text-slate-500">{loadingCompany ? 'Loading...' : companyInfo?.address || 'Not specified'}</p>
                     </div>
                   </div>
                   {!loadingCompany && !companyInfo && <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
