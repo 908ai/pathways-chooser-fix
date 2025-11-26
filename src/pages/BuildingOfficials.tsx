@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
+import BuildingOfficialContact from '@/components/BuildingOfficialContact';
 
 const BuildingOfficialsPage = () => {
   const { signOut } = useAuth();
@@ -142,17 +142,8 @@ const BuildingOfficialsPage = () => {
               </div>
             </div>
             
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-800 mb-4">Need to Verify Something?</h3>
-              <p className="text-sm text-slate-600 mb-4">
-                We welcome questions from plan reviewers or inspectors.
-              </p>
-              <Button variant="default" asChild>
-                <a href="mailto:info@sies.energy?subject=Building Official Inquiry">
-                  Contact Our Team
-                </a>
-              </Button>
-            </div>
+            <BuildingOfficialContact />
+
           </CardContent>
         </Card>
       </main>
