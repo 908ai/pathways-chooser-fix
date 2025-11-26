@@ -4,15 +4,14 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Loader2, Plus } from 'lucide-react';
+import { Loader2, Plus, TrendingUp, CheckCircle } from 'lucide-react';
 import StatCard from '@/components/dashboard3/StatCard';
 import CompliancePathwayChart from '@/components/dashboard3/CompliancePathwayChart';
 import ProjectStatusChart from '@/components/dashboard3/ProjectStatusChart';
-import AverageRsiCard from '@/components/dashboard3/AverageRsiCard';
 import RecentProjectsList from '@/components/dashboard3/RecentProjectsList';
-import TopComplianceContributors from '@/components/dashboard3/TopComplianceContributors';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import EfficiencyInsightCard from '@/components/dashboard3/EfficiencyInsightCard';
 
 const fetchUserProjects = async (userId: string | undefined) => {
   if (!userId) return [];
@@ -150,16 +149,28 @@ const Dashboard3 = () => {
           </div>
         </div>
 
-        {/* The content below is the old content. We will replace it in the next steps. */}
-        <div className="grid gap-6 lg:grid-cols-5">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           <div className="lg:col-span-3 space-y-6">
-            <ProjectStatusChart data={projects || []} />
-            <CompliancePathwayChart data={projects || []} />
+            <EfficiencyInsightCard />
+            <RecentProjectsList data={projects || []} />
           </div>
           <div className="lg:col-span-2 space-y-6">
-            <RecentProjectsList data={projects || []} />
-            <TopComplianceContributors data={analytics.topContributors} />
-            <AverageRsiCard data={analytics.averageRsi} />
+            <div className="grid grid-cols-2 gap-6">
+              <StatCard 
+                title="Projects YTD" 
+                value={analytics.totalProjects} 
+                icon={<TrendingUp className="h-5 w-5 text-orange-600" />}
+                iconBgClassName="bg-orange-100"
+              />
+              <StatCard 
+                title="Pass Rate" 
+                value={`${analytics.complianceRate}%`} 
+                icon={<CheckCircle className="h-5 w-5 text-green-600" />}
+                iconBgClassName="bg-green-100"
+              />
+            </div>
+            <CompliancePathwayChart data={projects || []} />
+            <ProjectStatusChart data={projects || []} />
           </div>
         </div>
       </main>

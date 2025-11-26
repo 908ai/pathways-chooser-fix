@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Building } from 'lucide-react';
 
 const statusMapping: { [key: string]: string } = {
@@ -9,6 +9,17 @@ const statusMapping: { [key: string]: string } = {
   'pass': 'Compliant',
   'Compliant': 'Compliant',
   'fail': 'Non-Compliant',
+};
+
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-2 border border-slate-200 rounded-md shadow-lg text-slate-800">
+        <p className="label">{`${payload[0].payload.name} : ${payload[0].value} project(s)`}</p>
+      </div>
+    );
+  }
+  return null;
 };
 
 const ProjectStatusChart = ({ data }: { data: any[] }) => {
@@ -21,22 +32,22 @@ const ProjectStatusChart = ({ data }: { data: any[] }) => {
   ).map(([name, value]) => ({ name, projects: value }));
 
   return (
-    <Card className="bg-slate-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl text-white">
+    <Card className="bg-white shadow-sm rounded-lg">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Building className="h-5 w-5 text-slate-400" />
+        <CardTitle className="text-slate-900 flex items-center gap-2">
+          <Building className="h-5 w-5 text-slate-500" />
           Project Status
         </CardTitle>
-        <CardDescription className="text-slate-300">Current breakdown of your projects by status.</CardDescription>
+        <CardDescription className="text-slate-500">Current breakdown of your projects by status.</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
-            <XAxis dataKey="name" stroke="#94a3b8" />
-            <YAxis stroke="#94a3b8" allowDecimals={false} />
-            <Tooltip cursor={{fill: 'rgba(255, 255, 255, 0.1)'}} contentStyle={{backgroundColor: 'rgba(30, 41, 59, 0.8)', border: '1px solid #475569'}} />
-            <Bar dataKey="projects" fill="#8884d8" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+            <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
+            <YAxis stroke="#64748b" fontSize={12} allowDecimals={false} />
+            <Tooltip content={<CustomTooltip />} cursor={{fill: '#f1f5f9'}} />
+            <Bar dataKey="projects" fill="#8884d8" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>
