@@ -12,6 +12,7 @@ import RecentProjectsList from '@/components/dashboard3/RecentProjectsList';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import EfficiencyInsightCard from '@/components/dashboard3/EfficiencyInsightCard';
+import MonthlySubmissionsChart from '@/components/dashboard3/MonthlySubmissionsChart';
 
 const fetchUserProjects = async (userId: string | undefined) => {
   if (!userId) return [];
@@ -153,6 +154,7 @@ const Dashboard3 = () => {
           <div className="lg:col-span-3 space-y-6">
             <EfficiencyInsightCard />
             <RecentProjectsList data={projects || []} />
+            <MonthlySubmissionsChart data={projects || []} />
           </div>
           <div className="lg:col-span-2 space-y-6">
             <div className="grid grid-cols-2 gap-6">
