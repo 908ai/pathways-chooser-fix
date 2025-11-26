@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, UserCircle, Shield, LayoutGrid, PieChart, Calculator, BookOpen, FileText, HelpCircle } from 'lucide-react';
+import { LogOut, UserCircle, Shield, LayoutGrid, PieChart, Calculator, BookOpen, FileText, HelpCircle, MoreVertical } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import {
@@ -60,10 +60,13 @@ const Header = ({ showSignOut = false, onSignOut }: HeaderProps) => {
     return email.substring(0, 2).toUpperCase();
   }
 
-  const navLinks = [
+  const mainNavLinks = [
+    { path: '/dashboard3', label: 'Dashboard', icon: <PieChart className="h-4 w-4" /> },
     { path: '/dashboard', label: 'Projects', icon: <LayoutGrid className="h-4 w-4" /> },
-    { path: '/dashboard3', label: 'Analytics', icon: <PieChart className="h-4 w-4" /> },
     { path: '/calculator', label: 'Calculator', icon: <Calculator className="h-4 w-4" /> },
+  ];
+
+  const secondaryNavLinks = [
     { path: '/building-officials', label: 'Building Officials', icon: <BookOpen className="h-4 w-4" /> },
     { path: '/resources', label: 'Resources', icon: <FileText className="h-4 w-4" /> },
     { path: '/faq', label: 'FAQ', icon: <HelpCircle className="h-4 w-4" /> },
@@ -71,32 +74,52 @@ const Header = ({ showSignOut = false, onSignOut }: HeaderProps) => {
 
   return (
     <header className="bg-white dark:bg-slate-900 border-b dark:border-slate-700 sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <div className="flex items-center gap-8">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center relative">
+        <div className="flex items-center">
           <Link to="/dashboard">
             <img src="/assets/energy-navigator-logo.png" alt="Energy Navigator 9.36 Logo" className="h-[55px] dark:hidden" />
             <img src="/assets/energy-navigator-logo-w.png" alt="Energy Navigator 9.36 Logo" className="h-[55px] hidden dark:block" />
           </Link>
-          <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map(link => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={cn(
-                  "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                  isLinkActive(link.path)
-                    ? "bg-primary/10 text-primary"
-                    : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-50"
-                )}
-              >
-                {link.icon}
-                {link.label}
-              </Link>
-            ))}
-          </nav>
         </div>
-        <div className="flex items-center gap-2">
+
+        <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-1">
+          {mainNavLinks.map(link => (
+            <Link
+              key={link.path}
+              to={link.path}
+              className={cn(
+                "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                isLinkActive(link.path)
+                  ? "bg-primary/10 text-primary"
+                  : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-50"
+              )}
+            >
+              {link.icon}
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-1">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreVertical className="h-5 w-5" />
+                <span className="sr-only">More</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {secondaryNavLinks.map(link => (
+                <DropdownMenuItem key={link.path} onClick={() => navigate(link.path)} className="cursor-pointer">
+                  {link.icon}
+                  <span className="ml-2">{link.label}</span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <ThemeToggle />
+
           {showSignOut && user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
