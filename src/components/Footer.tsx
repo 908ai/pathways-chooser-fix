@@ -19,9 +19,9 @@ const Footer = () => {
 
           <Button 
             onClick={handleCallContact}
-            variant="secondary" 
+            variant="ghost" 
             size="sm"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 hover:bg-transparent"
           >
             <Phone className="h-4 w-4 text-slate-500" />
             <div className="text-left">
