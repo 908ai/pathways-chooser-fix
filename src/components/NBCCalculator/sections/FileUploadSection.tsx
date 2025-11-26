@@ -17,7 +17,7 @@ const FileUploadSection = ({
 }: Props) => {
   return (
     <div id="fileUploadSection" className="space-y-2">
-      <label className="text-sm font-medium text-slate-100">Building Plans, Full Window Schedule from Your Supplier & Other Documents.</label>
+      <label className="text-sm font-medium text-slate-900">Building Plans, Full Window Schedule from Your Supplier & Other Documents.</label>
       <div className="space-y-2">
         <FileUpload
           onFileUploadRequest={onFileUploadRequest}
@@ -27,15 +27,15 @@ const FileUploadSection = ({
         />
         {uploadedFiles.length > 0 && (
           <div className="space-y-2 pt-2">
-            <div className="flex items-center gap-2 text-green-400">
+            <div className="flex items-center gap-2 text-green-700">
               <div className="h-2 w-2 bg-green-500 rounded-full"></div>
               <span className="text-sm font-medium">{uploadedFiles.length} file(s) uploaded successfully</span>
             </div>
             <div className="space-y-1">
               {uploadedFiles.map((file, index) => (
-                <div key={index} className="flex items-center justify-between p-2 bg-slate-900/50 border border-slate-600 rounded-md">
-                  <span className="text-sm truncate text-slate-100">{file.name}</span>
-                  <Button type="button" variant="ghost" size="sm" onClick={() => removeFile(file)} className="h-6 w-6 p-0 text-slate-300 hover:text-red-400">
+                <div key={index} className="flex items-center justify-between p-2 bg-slate-50 border border-slate-200 rounded-md">
+                  <span className="text-sm truncate text-slate-800">{file.name}</span>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => removeFile(file)} className="h-6 w-6 p-0 text-slate-500 hover:text-red-600">
                     <X className="h-3 w-3" />
                   </Button>
                 </div>
