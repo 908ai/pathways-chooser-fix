@@ -62,8 +62,8 @@ const Header = ({ showSignOut = false, onSignOut }: HeaderProps) => {
   }
 
   const mainNavLinks = [
-    { path: '/dashboard3', label: 'Dashboard', icon: <PieChart className="h-4 w-4" /> },
-    { path: '/dashboard', label: 'Projects', icon: <LayoutGrid className="h-4 w-4" /> },
+    { path: '/dashboard', label: 'Dashboard', icon: <PieChart className="h-4 w-4" /> },
+    { path: '/projects', label: 'Projects', icon: <LayoutGrid className="h-4 w-4" /> },
     { path: '/calculator', label: 'Calculator', icon: <Calculator className="h-4 w-4" /> },
   ];
 

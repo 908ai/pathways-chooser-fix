@@ -1,140 +1,229 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useMemo, useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
-import { useUserRole } from '@/hooks/useUserRole';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/components/ui/use-toast';
-import { User, Building, FileText, Info, Shield } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { supabase } from '@/integrations/supabase/client';
-import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
-import CreateProjectCard from '@/components/dashboard/CreateProjectCard';
-import FindProviderCard from '@/components/dashboard/FindProviderCard';
-import ProjectList from '@/components/dashboard/ProjectList';
-import BuildingOfficialsTab from '@/components/dashboard/BuildingOfficialsTab';
-import ResourcesTab from '@/components/dashboard/ResourcesTab';
-import FaqTab from '@/components/dashboard/FaqTab';
-import { useProviderAccess } from '@/hooks/useProviderAccess';
-import RequestProviderAccessCard from '@/components/dashboard/RequestProviderAccessCard';
-import { Card } from '@/components/ui/card';
+import { Loader2, Plus, TrendingUp, CheckCircle } from 'lucide-react';
+import StatCard from '@/components/dashboard3/StatCard';
+import CompliancePathwayChart from '@/components/dashboard3/CompliancePathwayChart';
+import ProjectStatusChart from '@/components/dashboard3/ProjectStatusChart';
+import RecentProjectsList from '@/components/dashboard3/RecentProjectsList';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import EfficiencyInsightCard from '@/components/dashboard3/EfficiencyInsightCard';
+import MonthlySubmissionsChart from '@/components/dashboard3/MonthlySubmissionsChart';
+import ComplianceHurdlesChart from '@/components/dashboard3/ComplianceHurdlesChart';
 
-const Dashboard = () => {
+const fetchUserProjects = async (userId: string | undefined) => {
+  if (!userId) return [];
+  const { data, error } = await supabase
+    .from('project_summaries')
+    .select('*')
+    .eq('user_id', userId)
+    .order('updated_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  return data;
+};
+
+const Dashboard3 = () => {
   const { user, signOut } = useAuth();
-  const { canViewAllProjects, userRole, loading: roleLoading } = useUserRole();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { data: providerAccessData, isLoading: isAccessLoading } = useProviderAccess();
-  const [projects, setProjects] = useState<{
-    inProgress: any[];
-    complete: any[];
-  }>({
-    inProgress: [],
-    complete: []
+  const [userName, setUserName] = useState<string | null>(null);
+  const { data: projects, isLoading } = useQuery({
+    queryKey: ['userProjects', user?.id],
+    queryFn: () => fetchUserProjects(user?.id),
+    enabled: !!user,
   });
 
-  let activeTab = searchParams.get('tab') || 'projects';
-  if (activeTab === 'account') {
-    activeTab = 'projects';
-  }
-
-  const handleTabChange = (value: string) => {
-    setSearchParams({ tab: value });
-  };
-
   useEffect(() => {
-    const loadProjects = async () => {
-      if (!user || roleLoading) return;
-      try {
-        let query = supabase.from('project_summaries').select('*');
-        if (!canViewAllProjects) {
-          query = query.eq('user_id', user.id);
+    const fetchUserName = async () => {
+      if (user) {
+        const { data: companyData, error: companyError } = await supabase
+          .from('companies')
+          .select('company_name')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (companyData && companyData.company_name) {
+          setUserName(companyData.company_name);
+        } else if (companyError && companyError.code !== 'PGRST116') {
+          console.error("Error fetching company name:", companyError);
         }
-        const { data, error } = await query;
-        if (error) throw error;
-
-        const projectsData = data || [];
-        const inProgressStatuses = ['draft', 'submitted', 'needs_revision', null];
-        const completeStatuses = ['pass', 'fail', 'Compliant'];
-
-        setProjects({
-          inProgress: projectsData.filter((p: any) => inProgressStatuses.includes(p.compliance_status)),
-          complete: projectsData.filter((p: any) => completeStatuses.includes(p.compliance_status))
-        });
-      } catch (error) {
-        console.error('Error loading projects:', error);
       }
     };
-    loadProjects();
-  }, [user, canViewAllProjects, roleLoading]);
 
-  const handleNewProject = () => navigate('/calculator?showHelp=true');
-  const handleEditProject = (projectId: string, event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (roleLoading || !userRole) {
-      toast({ title: "Please Wait", description: "Loading user permissions..." });
-      return;
+    fetchUserName();
+  }, [user]);
+
+  const analytics = useMemo(() => {
+    if (!projects || projects.length === 0) {
+      return {
+        totalProjects: 0,
+        complianceRate: 0,
+        inProgressCount: 0,
+        averagePoints: 0,
+        averageRsi: { attic: 0, wall: 0, belowGrade: 0 },
+        totalSavings: 0,
+        averageSavings: 0,
+        topContributors: [],
+        activeProjects: 0,
+        complianceHurdlesData: [],
+      };
     }
-    navigate(`/calculator?edit=${projectId}`);
-  };
-  const handleViewProject = (projectId: string) => navigate(`/project/${projectId}`);
+
+    const completed = projects.filter(p => p.compliance_status === 'pass' || p.compliance_status === 'Compliant' || p.compliance_status === 'fail');
+    const compliant = completed.filter(p => p.compliance_status === 'pass' || p.compliance_status === 'Compliant');
+    const complianceRate = completed.length > 0 ? (compliant.length / completed.length) * 100 : 0;
+    const activeProjects = projects.filter(p => p.compliance_status === 'submitted' || p.compliance_status === 'needs_revision').length;
+
+    const tieredProjects = projects.filter(p => p.selected_pathway === '9368' && p.total_points);
+    const averagePoints = tieredProjects.length > 0 ? tieredProjects.reduce((sum, p) => sum + p.total_points, 0) / tieredProjects.length : 0;
+
+    const getAverage = (field: keyof typeof projects[0]) => {
+      const validProjects = projects.filter(p => typeof p[field] === 'number');
+      if (validProjects.length === 0) return 0;
+      return validProjects.reduce((sum, p) => sum + (p[field] as number), 0) / validProjects.length;
+    };
+
+    // Cost Savings Calculation
+    const performanceProjects = projects.filter(p => p.selected_pathway === '9365' || p.selected_pathway === '9367');
+    const totalSavings = performanceProjects.reduce((sum, p) => {
+      const isTier2OrHigher = p.selected_pathway === '9367';
+      const prescriptiveCost = isTier2OrHigher ? 13550 : 6888;
+      const performanceCost = isTier2OrHigher ? 8150 : 1718;
+      return sum + (prescriptiveCost - performanceCost);
+    }, 0);
+    const averageSavings = performanceProjects.length > 0 ? totalSavings / performanceProjects.length : 0;
+
+    // Top Compliance Contributors Calculation
+    const pointCategories = {
+      'Airtightness': 'airtightness_points',
+      'Walls': 'wall_points',
+      'Attic': 'attic_points',
+      'Windows': 'window_points',
+      'Below Grade': 'below_grade_points',
+      'HRV/ERV': 'hrv_erv_points',
+      'Water Heater': 'water_heating_points',
+    };
+
+    const pointSums = Object.keys(pointCategories).reduce((acc, key) => {
+      acc[key] = 0;
+      return acc;
+    }, {} as Record<string, number>);
+
+    tieredProjects.forEach(p => {
+      for (const [name, field] of Object.entries(pointCategories)) {
+        if (p[field]) {
+          pointSums[name] += p[field];
+        }
+      }
+    });
+
+    const topContributors = Object.entries(pointSums)
+      .map(([name, sum]) => ({
+        name,
+        averagePoints: tieredProjects.length > 0 ? sum / tieredProjects.length : 0,
+      }))
+      .filter(item => item.averagePoints > 0)
+      .sort((a, b) => b.averagePoints - a.averagePoints)
+      .slice(0, 5);
+
+    // Compliance Hurdles Calculation
+    const hurdles = projects
+      .filter(p => p.compliance_status === 'fail' || p.compliance_status === 'needs_revision')
+      .flatMap(p => p.recommendations || [])
+      .reduce((acc, rec) => {
+          const lowerRec = rec.toLowerCase();
+          if (lowerRec.includes('wall')) acc['Wall Insulation'] = (acc['Wall Insulation'] || 0) + 1;
+          else if (lowerRec.includes('window')) acc['Windows'] = (acc['Windows'] || 0) + 1;
+          else if (lowerRec.includes('airtightness')) acc['Airtightness'] = (acc['Airtightness'] || 0) + 1;
+          else if (lowerRec.includes('attic')) acc['Attic Insulation'] = (acc['Attic Insulation'] || 0) + 1;
+          else if (lowerRec.includes('below grade')) acc['Foundation'] = (acc['Foundation'] || 0) + 1;
+          else acc['Other'] = (acc['Other'] || 0) + 1;
+          return acc;
+      }, {} as Record<string, number>);
+
+    const complianceHurdlesData = Object.entries(hurdles)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    return {
+      totalProjects: projects.length,
+      complianceRate: Math.round(complianceRate),
+      inProgressCount: projects.length - completed.length,
+      averagePoints: Math.round(averagePoints),
+      averageRsi: {
+        attic: getAverage('attic_rsi'),
+        wall: getAverage('wall_rsi'),
+        belowGrade: getAverage('below_grade_rsi'),
+      },
+      totalSavings,
+      averageSavings,
+      topContributors,
+      activeProjects,
+      complianceHurdlesData,
+    };
+  }, [projects]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <Loader2 className="h-12 w-12 text-slate-500 animate-spin" />
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
       <Header showSignOut={true} onSignOut={signOut} />
       <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-3 text-white drop-shadow-lg">Project Dashboard</h1>
-          <p className="text-gray-200 text-lg drop-shadow-md">
-            Manage your NBC 9.36 compliance projects and account information
-          </p>
-        </div>
-        {canViewAllProjects && (
-          <div className="mb-6 p-4 bg-blue-900/30 border border-blue-400/50 rounded-lg text-center flex items-center justify-center gap-3">
-            <Shield className="h-5 w-5 text-blue-300" />
-            <p className="font-semibold text-blue-300">
-              Admin View: You are viewing projects from all users.
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-800">Executive Overview</h1>
+            <p className="text-slate-500 mt-1">
+              Welcome back{userName ? `, ${userName}` : ''}! You have <span className="font-semibold text-primary">{analytics.activeProjects} active projects</span> requiring attention.
             </p>
           </div>
-        )}
-        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="projects" className="flex items-center gap-2"><Building className="h-4 w-4" />Projects</TabsTrigger>
-            <TabsTrigger value="building-officials" className="flex items-center gap-2"><Building className="h-4 w-4" />Building Officials</TabsTrigger>
-            <TabsTrigger value="resources" className="flex items-center gap-2"><FileText className="h-4 w-4" />Resources</TabsTrigger>
-            <TabsTrigger value="faq" className="flex items-center gap-2"><Info className="h-4 w-4" />FAQ</TabsTrigger>
-          </TabsList>
-          <TabsContent value="projects" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <CreateProjectCard handleNewProject={handleNewProject} />
-              {isAccessLoading ? (
-                <Card className="bg-slate-800/60 border-slate-400/30 backdrop-blur-md flex items-center justify-center min-h-[200px]">
-                  <p className="text-white">Loading...</p>
-                </Card>
-              ) : providerAccessData?.hasAccess ? (
-                <FindProviderCard />
-              ) : (
-                <RequestProviderAccessCard />
-              )}
+          <div className="flex items-center gap-2">
+            <Button onClick={() => navigate('/calculator')}>
+              <Plus className="h-4 w-4 mr-2" />
+              New Project
+            </Button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="lg:col-span-3 space-y-6">
+            <EfficiencyInsightCard />
+            <RecentProjectsList data={projects || []} />
+            <MonthlySubmissionsChart data={projects || []} />
+          </div>
+          <div className="lg:col-span-2 space-y-6">
+            <div className="grid grid-cols-2 gap-6">
+              <StatCard 
+                title="Projects YTD" 
+                value={analytics.totalProjects} 
+                icon={<TrendingUp className="h-5 w-5 text-orange-600" />}
+                iconBgClassName="bg-orange-100"
+              />
+              <StatCard 
+                title="Pass Rate" 
+                value={`${analytics.complianceRate}%`} 
+                icon={<CheckCircle className="h-5 w-5 text-green-600" />}
+                iconBgClassName="bg-green-100"
+              />
             </div>
-            <ProjectList projects={projects} handleViewProject={handleViewProject} handleEditProject={handleEditProject} />
-          </TabsContent>
-          <TabsContent value="building-officials" className="space-y-6">
-            <BuildingOfficialsTab />
-          </TabsContent>
-          <TabsContent value="resources" className="space-y-6">
-            <ResourcesTab />
-          </TabsContent>
-          <TabsContent value="faq" className="space-y-6">
-            <FaqTab />
-          </TabsContent>
-        </Tabs>
+            <CompliancePathwayChart data={projects || []} />
+            <ProjectStatusChart data={projects || []} />
+            <ComplianceHurdlesChart data={analytics.complianceHurdlesData} />
+          </div>
+        </div>
       </main>
       <Footer />
     </div>
   );
 };
 
-export default Dashboard;
+export default Dashboard3;
