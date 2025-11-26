@@ -34,7 +34,7 @@ const renderLegend = (props: any) => {
   if (total === 0) return null;
 
   return (
-    <ul className="flex flex-col gap-2 mt-4">
+    <ul className="flex flex-col gap-2">
       {payload.map((entry: any, index: number) => (
         <li key={`item-${index}`} className="flex justify-between items-center text-sm">
           <div className="flex items-center gap-2">
@@ -69,13 +69,13 @@ const CompliancePathwayChart = ({ data }: { data: any[] }) => {
         <CardTitle className="text-slate-900">Compliance Pathways</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="relative h-48">
+        <div className="relative" style={{ height: '300px' }}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={chartData}
                 cx="50%"
-                cy="50%"
+                cy="40%"
                 labelLine={false}
                 outerRadius={80}
                 innerRadius={60}
@@ -88,15 +88,13 @@ const CompliancePathwayChart = ({ data }: { data: any[] }) => {
                 ))}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
+              <Legend content={renderLegend} wrapperStyle={{ position: 'relative', top: '10px' }} />
             </PieChart>
           </ResponsiveContainer>
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <div className="absolute top-0 left-0 right-0 flex flex-col items-center justify-center pointer-events-none" style={{ height: '160px' }}>
             <span className="text-2xl font-bold text-slate-900">{totalProjects}</span>
             <span className="text-sm text-slate-500">Total Projects</span>
           </div>
-        </div>
-        <div className="mt-4">
-          <Legend content={renderLegend} />
         </div>
       </CardContent>
     </Card>
