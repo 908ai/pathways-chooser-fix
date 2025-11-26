@@ -47,7 +47,7 @@ const insights: Insight[] = [
       { value: "+9.3 pts", label: "AVG GAIN (AL-3A)" },
       { value: "1.5 ACH", label: "COMMON TARGET" },
     ],
-    progress: { value: 75, label: "% PROJECTS TESTED" },
+    progress: { value: 75, label: "PROJECTS TESTED" },
   },
   {
     title: "Performance pathways are chosen in 78% of new projects.",
@@ -92,7 +92,7 @@ const EfficiencyInsightCard = () => {
               ))}
             </div>
           </div>
-          <div className="relative h-32 w-32">
+          <div className="relative h-48 w-48">
             <svg className="h-full w-full" viewBox="0 0 36 36">
               <path
                 className="stroke-current text-white/30"
@@ -115,7 +115,7 @@ const EfficiencyInsightCard = () => {
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="text-3xl font-bold">{currentInsight.progress.value}%</span>
-              <span className="text-xs">{currentInsight.progress.label}</span>
+              <span className="text-xs text-center">{currentInsight.progress.label}</span>
             </div>
           </div>
         </div>
