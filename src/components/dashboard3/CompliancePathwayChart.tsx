@@ -49,8 +49,8 @@ const renderLegend = (props: any) => {
 };
 
 const CompliancePathwayChart = ({ data }: { data: any[] }) => {
-  const chartData = Object.entries(
-    data.reduce((acc, project) => {
+  const chartData: { name: string; value: number }[] = Object.entries(
+    data.reduce((acc: Record<string, number>, project) => {
       const pathway = pathwayMapping[project.selected_pathway] || 'Unknown';
       if (pathway === 'Tiered Prescriptive' || pathway === 'Tiered Performance') {
         acc['Tiered (Tier 2+)'] = (acc['Tiered (Tier 2+)'] || 0) + 1;
@@ -58,10 +58,10 @@ const CompliancePathwayChart = ({ data }: { data: any[] }) => {
         acc[pathway] = (acc[pathway] || 0) + 1;
       }
       return acc;
-    }, {} as Record<string, number>)
+    }, {})
   ).map(([name, value]) => ({ name, value }));
 
-  const totalProjects = chartData.reduce((sum, entry) => sum + (entry.value as number), 0);
+  const totalProjects = chartData.reduce((sum, entry) => sum + entry.value, 0);
 
   return (
     <Card className="bg-white shadow-sm rounded-lg">
