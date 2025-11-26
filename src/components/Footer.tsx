@@ -7,26 +7,26 @@ const Footer = () => {
   };
 
   return (
-    <footer className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mt-auto">
+    <footer className="border-t bg-white mt-auto">
       <div className="container mx-auto px-4 py-6">
         <div className="relative flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-primary/80">
+          <div className="flex items-center gap-2 text-sm text-slate-500">
             <MapPin className="h-4 w-4" />
             <span>Alberta & Saskatchewan</span>
           </div>
           
-          <p className="text-sm text-primary/80 sm:absolute sm:left-1/2 sm:-translate-x-1/2">© 2025. Energy Navigator 9.36</p>
+          <p className="text-sm text-slate-500 sm:absolute sm:left-1/2 sm:-translate-x-1/2">© 2025 Energy Navigator 9.36. All rights reserved.</p>
 
           <Button 
             onClick={handleCallContact}
             variant="secondary" 
             size="sm"
-            className="flex items-center gap-2 shadow-lg hover:shadow-xl transition-transform duration-200 hover:scale-105"
+            className="flex items-center gap-2"
           >
-            <Phone className="h-4 w-4" />
+            <Phone className="h-4 w-4 text-slate-500" />
             <div className="text-left">
-              <p className="text-xs">Need Help? Call Us</p>
-              <p className="font-semibold">403-872-2441</p>
+              <p className="text-xs text-slate-500">Need Help? Call Us</p>
+              <p className="font-semibold text-slate-500">403-872-2441</p>
             </div>
           </Button>
         </div>
