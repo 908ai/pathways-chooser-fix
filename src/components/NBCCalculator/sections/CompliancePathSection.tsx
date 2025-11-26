@@ -40,20 +40,20 @@ export default function CompliancePathSection({
   return (
     <>
       {
-                <Card className="bg-slate-700/40">
+                <Card>
                    <CardHeader className="pb-4">
-                      <CardTitle className="text-lg flex items-center gap-2 text-white">
+                      <CardTitle className="text-lg flex items-center gap-2">
                         Compliance Path Selection
                       </CardTitle>
-                      <CardDescription className="text-slate-200">
+                      <CardDescription>
                         Choose the compliance pathway for your project. This is a critical decision that affects all subsequent steps.
                       </CardDescription>
                    </CardHeader>
                    <CardContent className="space-y-6">
                      {/* Compliance Path Selection */}
                        <div className="space-y-4">
-                         {(!selections.buildingType || (selections.province === "alberta" && !selections.climateZone)) && <div className="p-4 bg-purple-50/80 border border-purple-300/50 rounded-md backdrop-blur-sm">
-                              <p className="text-sm text-purple-300 font-medium drop-shadow-sm">
+                         {(!selections.buildingType || (selections.province === "alberta" && !selections.climateZone)) && <div className="p-4 bg-purple-50 border border-purple-200 rounded-md">
+                              <p className="text-sm text-purple-700 font-medium">
                                 Please complete the Project Information step to continue.
                              </p>
                            </div>}
@@ -61,10 +61,10 @@ export default function CompliancePathSection({
                          {selections.buildingType && (selections.province !== "alberta" || selections.climateZone) && <>
                          <div id="compliancePath" className="space-y-2">
                           <div className="flex items-center gap-3">
-                            <label className="text-sm font-medium text-white">Which compliance path are you using?</label>
+                            <label className="text-sm font-medium">Which compliance path are you using?</label>
                             <LargeInfoButton
                               title="NBC Part 9 Energy Compliance – Simple Overview"
-                              className="animate-glow-pulse rounded-full border-2 border-white"
+                              className="rounded-full border-2"
                             >
                                   <div>
                                     <p className="text-base text-muted-foreground mb-3">
@@ -157,16 +157,16 @@ export default function CompliancePathSection({
                           
                           {/* Current pathway display */}
                           {selections.compliancePath && <div className="flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-muted/50 to-muted/30 rounded-lg border-2 border-dashed border-muted-foreground/20 shadow-sm">
-                              {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? <div className="flex items-center gap-3 text-orange-700 dark:text-orange-300">
-                                  <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-full">
+                              {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? <div className="flex items-center gap-3 text-orange-700">
+                                  <div className="p-2 bg-orange-100 rounded-full">
                                     <FileText className="h-5 w-5" />
                                   </div>
                                   <div className="text-center">
                                     <div className="font-bold text-lg">PRESCRIPTIVE PATH SELECTED</div>
                                     <div className="text-sm opacity-80">Following checklist-based requirements</div>
                                   </div>
-                                </div> : <div className="flex items-center gap-3 text-blue-700 dark:text-blue-300">
-                                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                                </div> : <div className="flex items-center gap-3 text-blue-700">
+                                  <div className="p-2 bg-blue-100 rounded-full">
                                     <Zap className="h-5 w-5" />
                                   </div>
                                   <div className="text-center">
@@ -242,7 +242,7 @@ export default function CompliancePathSection({
                           }));
                           onPathwayChange?.(getPathwayDisplayName(value));
                         }}>
-                           <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                           <SelectTrigger>
                              <SelectValue placeholder="Select compliance path" />
                            </SelectTrigger>
                                 <SelectContent>
@@ -267,7 +267,7 @@ export default function CompliancePathSection({
                                   <SelectItem value="9368" className="border-l-4 border-l-orange-500">
                                     <div className="flex items-center gap-2">
                                       <FileText className="h-4 w-4 text-orange-600" />
-                                      <span>9.36.8 – Tiered <strong>Prescriptive</strong> Path <span className="font-bold text-purple-300">(Tier 2-5)</span>{showTieredComingSoon && <span className="ml-2 text-xs font-bold text-red-500">(Coming Soon)</span>}</span>
+                                      <span>9.36.8 – Tiered <strong>Prescriptive</strong> Path <span className="font-bold text-purple-600">(Tier 2-5)</span>{showTieredComingSoon && <span className="ml-2 text-xs font-bold text-red-500">(Coming Soon)</span>}</span>
                                     </div>
                                   </SelectItem>
                                  </SelectContent>
@@ -278,7 +278,7 @@ export default function CompliancePathSection({
                          {(selections.compliancePath === "9365" ||
                           selections.compliancePath === "9367") && <div id="frontDoorOrientation" className="space-y-2">
                              <div className="flex items-center gap-2">
-                               <label className="text-sm font-medium text-white">Front Door Orientation</label>
+                               <label className="text-sm font-medium">Front Door Orientation</label>
                                   <InfoButton title="Why Orientation Matters in Energy Efficiency">
                                       <div className="space-y-4">
                                         <div>
@@ -315,7 +315,7 @@ export default function CompliancePathSection({
                           ...prev,
                           frontDoorOrientation: value
                         }))}>
-                              <SelectTrigger className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:ring-teal-400">
+                              <SelectTrigger>
                                 <SelectValue placeholder="Select orientation" />
                               </SelectTrigger>
                               <SelectContent>
