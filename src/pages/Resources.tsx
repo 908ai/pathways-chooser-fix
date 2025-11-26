@@ -221,35 +221,6 @@ const ResourcesPage = () => {
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-6">
-            <Card className="bg-white shadow-sm rounded-lg">
-              <CardHeader>
-                <CardTitle className="text-slate-900">External Resources</CardTitle>
-                <CardDescription className="text-slate-500">
-                  A collection of useful links from industry organizations and government bodies.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Tabs defaultValue="alberta" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="alberta">Alberta</TabsTrigger>
-                    <TabsTrigger value="national">National</TabsTrigger>
-                    <TabsTrigger value="saskatchewan">Saskatchewan</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="alberta" className="mt-4 space-y-4">
-                    {resources.alberta.map(resource => <ResourceItem key={resource.title} resource={resource} />)}
-                  </TabsContent>
-                  <TabsContent value="national" className="mt-4 space-y-4">
-                    {resources.national.map(resource => <ResourceItem key={resource.title} resource={resource} />)}
-                  </TabsContent>
-                  <TabsContent value="saskatchewan" className="mt-4 space-y-4">
-                    {resources.saskatchewan.map(resource => <ResourceItem key={resource.title} resource={resource} />)}
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
-          </div>
-
           <div className="lg:col-span-1">
             <div className="lg:sticky lg:top-24 space-y-6">
               <Card className="bg-white shadow-sm rounded-lg">
@@ -346,6 +317,35 @@ const ResourcesPage = () => {
                 </CardContent>
               </Card>
             </div>
+          </div>
+
+          <div className="lg:col-span-2 space-y-6">
+            <Card className="bg-white shadow-sm rounded-lg">
+              <CardHeader>
+                <CardTitle className="text-slate-900">External Resources</CardTitle>
+                <CardDescription className="text-slate-500">
+                  A collection of useful links from industry organizations and government bodies.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="alberta" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="alberta">Alberta</TabsTrigger>
+                    <TabsTrigger value="national">National</TabsTrigger>
+                    <TabsTrigger value="saskatchewan">Saskatchewan</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="alberta" className="mt-4 space-y-4">
+                    {resources.alberta.map(resource => <ResourceItem key={resource.title} resource={resource} />)}
+                  </TabsContent>
+                  <TabsContent value="national" className="mt-4 space-y-4">
+                    {resources.national.map(resource => <ResourceItem key={resource.title} resource={resource} />)}
+                  </TabsContent>
+                  <TabsContent value="saskatchewan" className="mt-4 space-y-4">
+                    {resources.saskatchewan.map(resource => <ResourceItem key={resource.title} resource={resource} />)}
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </main>
