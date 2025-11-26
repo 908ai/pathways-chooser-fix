@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import EfficiencyInsightCard from '@/components/dashboard3/EfficiencyInsightCard';
 import MonthlySubmissionsChart from '@/components/dashboard3/MonthlySubmissionsChart';
+import ComplianceHurdlesChart from '@/components/dashboard3/ComplianceHurdlesChart';
 
 const fetchUserProjects = async (userId: string | undefined) => {
   if (!userId) return [];
@@ -46,6 +47,7 @@ const Dashboard3 = () => {
         averageSavings: 0,
         topContributors: [],
         activeProjects: 0,
+        complianceHurdlesData: [],
       };
     }
 
@@ -106,6 +108,26 @@ const Dashboard3 = () => {
       .sort((a, b) => b.averagePoints - a.averagePoints)
       .slice(0, 5);
 
+    // Compliance Hurdles Calculation
+    const hurdles = projects
+      .filter(p => p.compliance_status === 'fail' || p.compliance_status === 'needs_revision')
+      .flatMap(p => p.recommendations || [])
+      .reduce((acc, rec) => {
+          const lowerRec = rec.toLowerCase();
+          if (lowerRec.includes('wall')) acc['Wall Insulation'] = (acc['Wall Insulation'] || 0) + 1;
+          else if (lowerRec.includes('window')) acc['Windows'] = (acc['Windows'] || 0) + 1;
+          else if (lowerRec.includes('airtightness')) acc['Airtightness'] = (acc['Airtightness'] || 0) + 1;
+          else if (lowerRec.includes('attic')) acc['Attic Insulation'] = (acc['Attic Insulation'] || 0) + 1;
+          else if (lowerRec.includes('below grade')) acc['Foundation'] = (acc['Foundation'] || 0) + 1;
+          else acc['Other'] = (acc['Other'] || 0) + 1;
+          return acc;
+      }, {} as Record<string, number>);
+
+    const complianceHurdlesData = Object.entries(hurdles)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
     return {
       totalProjects: projects.length,
       complianceRate: Math.round(complianceRate),
@@ -120,6 +142,7 @@ const Dashboard3 = () => {
       averageSavings,
       topContributors,
       activeProjects,
+      complianceHurdlesData,
     };
   }, [projects]);
 
@@ -173,6 +196,7 @@ const Dashboard3 = () => {
             </div>
             <CompliancePathwayChart data={projects || []} />
             <ProjectStatusChart data={projects || []} />
+            <ComplianceHurdlesChart data={analytics.complianceHurdlesData} />
           </div>
         </div>
       </main>
