@@ -247,49 +247,49 @@ const ProjectSummaryForm = ({
     }
     const displayValue = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value);
     return (
-      <div className="flex justify-between items-start text-sm py-2 border-b border-slate-700 md:border-none">
-        <span className="text-slate-300 mr-2">{label}:</span>
-        <span className="font-medium text-white text-right break-words">{displayValue} {unit}</span>
+      <div className="flex justify-between items-start text-sm py-2 border-b border-slate-200 md:border-none">
+        <span className="text-slate-500 mr-2">{label}:</span>
+        <span className="font-medium text-slate-900 text-right break-words">{displayValue} {unit}</span>
       </div>
     );
   };
 
   return (
     <>
-      <Card className="w-full max-w-4xl mx-auto bg-slate-800/50 border-slate-700 text-white">
+      <Card className="w-full max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
             <FileText className="h-5 w-5" />
             {getPathwayDisplayName()}
           </CardTitle>
-          <CardDescription className="text-slate-300">Please review all information before submitting.</CardDescription>
+          <CardDescription>Please review all information before submitting.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="projectName" className="text-slate-200">Project Name *</Label>
-            <Input id="projectName" value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="Enter project name" className="bg-slate-900/50 border-slate-600" />
+            <Label htmlFor="projectName">Project Name *</Label>
+            <Input id="projectName" value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="Enter project name" />
           </div>
 
           <Accordion type="multiple" defaultValue={['item-required', 'item-1']} className="w-full">
             {requiredPendingItems.length > 0 && (
-              <AccordionItem value="item-required" className="border-red-500/30">
-                <AccordionTrigger className="text-lg font-semibold text-red-400 hover:no-underline">
+              <AccordionItem value="item-required" className="border-red-200">
+                <AccordionTrigger className="text-lg font-semibold text-red-600 hover:no-underline">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="h-5 w-5" />
                     Required Items Pending ({requiredPendingItems.length})
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="pt-4">
-                  <p className="text-sm text-slate-300 mb-4">The following items are required to submit your project. Click an item to fix it.</p>
+                  <p className="text-sm text-slate-600 mb-4">The following items are required to submit your project. Click an item to fix it.</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {requiredPendingItems.map((item, index) => (
                       <button
                         key={index}
                         onClick={() => onFixItem(item.fieldId)}
-                        className="w-full text-left p-2 rounded-md bg-red-900/20 hover:bg-red-900/40 transition-colors flex items-center justify-between"
+                        className="w-full text-left p-2 rounded-md bg-red-50 hover:bg-red-100 transition-colors flex items-center justify-between"
                       >
-                        <span className="text-red-300 text-sm">{item.label}</span>
-                        <ChevronRight className="h-4 w-4 text-red-400 flex-shrink-0" />
+                        <span className="text-red-700 text-sm">{item.label}</span>
+                        <ChevronRight className="h-4 w-4 text-red-600 flex-shrink-0" />
                       </button>
                     ))}
                   </div>
@@ -298,24 +298,24 @@ const ProjectSummaryForm = ({
             )}
 
             {optionalPendingItems.length > 0 && (
-              <AccordionItem value="item-optional-pending" className="border-yellow-500/30">
-                <AccordionTrigger className="text-lg font-semibold text-yellow-400 hover:no-underline">
+              <AccordionItem value="item-optional-pending" className="border-yellow-200">
+                <AccordionTrigger className="text-lg font-semibold text-yellow-600 hover:no-underline">
                   <div className="flex items-center gap-2">
                     <Info className="h-5 w-5" />
                     Optional Items Pending ({optionalPendingItems.length})
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="pt-4">
-                  <p className="text-sm text-slate-300 mb-4">These items are recommended for a complete submission but are not strictly required.</p>
+                  <p className="text-sm text-slate-600 mb-4">These items are recommended for a complete submission but are not strictly required.</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {optionalPendingItems.map((item, index) => (
                       <button
                         key={index}
                         onClick={() => onFixItem(item.fieldId)}
-                        className="w-full text-left p-2 rounded-md bg-yellow-900/20 hover:bg-yellow-900/40 transition-colors flex items-center justify-between"
+                        className="w-full text-left p-2 rounded-md bg-yellow-50 hover:bg-yellow-100 transition-colors flex items-center justify-between"
                       >
-                        <span className="text-yellow-300 text-sm">{item.label}</span>
-                        <ChevronRight className="h-4 w-4 text-yellow-400 flex-shrink-0" />
+                        <span className="text-yellow-700 text-sm">{item.label}</span>
+                        <ChevronRight className="h-4 w-4 text-yellow-600 flex-shrink-0" />
                       </button>
                     ))}
                   </div>
@@ -427,7 +427,7 @@ const ProjectSummaryForm = ({
             </AccordionItem>
           </Accordion>
 
-          <div className="flex justify-start gap-3 pt-6 border-t border-slate-700">
+          <div className="flex justify-start gap-3 pt-6 border-t">
             <Button onClick={handleAttemptSubmit} disabled={loading || !projectName} className="min-w-[120px]">
               {loading ? <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" /> : <><Save className="h-4 w-4 mr-2" />Submit Project</>}
             </Button>
