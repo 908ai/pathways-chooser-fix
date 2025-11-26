@@ -2,7 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { History } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 
 const getStatusInfo = (status: string | null) => {
@@ -39,32 +38,21 @@ const RecentProjectsList = ({ data }: { data: any[] }) => {
         <Button variant="link" onClick={() => navigate('/dashboard')}>View All</Button>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="space-y-2">
           {data.slice(0, 5).map(project => {
             const statusInfo = getStatusInfo(project.compliance_status);
-            const docCount = project.uploaded_files?.length || 0;
-            const totalDocs = 3; // Mock total
             return (
               <div
                 key={project.id}
                 onClick={() => navigate(`/project/${project.id}`)}
-                className="grid grid-cols-6 items-center gap-4 p-3 rounded-md hover:bg-slate-50 cursor-pointer transition-colors"
+                className="grid grid-cols-4 items-center gap-4 p-3 rounded-md hover:bg-slate-50 cursor-pointer transition-colors"
               >
                 <div className="col-span-2">
-                  <p className="font-semibold text-slate-800">{project.project_name}</p>
-                  <p className="text-xs text-slate-500">Updated: {new Date(project.updated_at).toLocaleDateString()}</p>
+                  <p className="font-semibold text-slate-800 truncate">{project.project_name}</p>
                 </div>
-                <div className="col-span-1 text-sm text-slate-600">
-                  <p>Energy Model</p>
-                  <Progress value={60} className="h-2 mt-1" />
-                </div>
-                <div className="col-span-1 text-sm text-slate-600">
-                  <p>Documents</p>
-                  <Progress value={(docCount/totalDocs)*100} className="h-2 mt-1" />
-                </div>
-                <div className="col-span-1 text-sm text-slate-600">
-                  <p>Submission</p>
-                  <Progress value={statusInfo.text === 'Submitted' || statusInfo.text === 'Compliant' ? 100 : 20} className="h-2 mt-1" />
+                <div className="col-span-1 text-xs text-slate-500">
+                  <p>Created: {new Date(project.created_at).toLocaleDateString()}</p>
+                  <p>Updated: {new Date(project.updated_at).toLocaleDateString()}</p>
                 </div>
                 <div className="col-span-1 text-right">
                   <Badge variant="outline" className={statusInfo.className}>{statusInfo.text}</Badge>
