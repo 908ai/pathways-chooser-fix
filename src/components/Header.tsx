@@ -74,8 +74,8 @@ const Header = ({ showSignOut = false, onSignOut }: HeaderProps) => {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center gap-8">
           <Link to="/dashboard">
-            <img src="/assets/energy-navigator-logo.png" alt="Energy Navigator 9.36 Logo" className="h-10 dark:hidden" />
-            <img src="/assets/energy-navigator-logo-w.png" alt="Energy Navigator 9.36 Logo" className="h-10 hidden dark:block" />
+            <img src="/assets/energy-navigator-logo.png" alt="Energy Navigator 9.36 Logo" className="h-[55px] dark:hidden" />
+            <img src="/assets/energy-navigator-logo-w.png" alt="Energy Navigator 9.36 Logo" className="h-[55px] hidden dark:block" />
           </Link>
           <nav className="hidden md:flex items-center gap-1">
             {navLinks.map(link => (
