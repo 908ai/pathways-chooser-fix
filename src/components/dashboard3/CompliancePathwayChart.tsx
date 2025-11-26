@@ -26,17 +26,20 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 const CompliancePathwayChart = ({ data }: { data: any[] }) => {
-  const chartData: { name: string; value: number }[] = Object.entries(
-    data.reduce((acc: Record<string, number>, project) => {
-      const pathway = pathwayMapping[project.selected_pathway] || 'Unknown';
-      if (pathway === 'Tiered Prescriptive' || pathway === 'Tiered Performance') {
-        acc['Tiered (Tier 2+)'] = (acc['Tiered (Tier 2+)'] || 0) + 1;
-      } else {
-        acc[pathway] = (acc[pathway] || 0) + 1;
-      }
-      return acc;
-    }, {})
-  ).map(([name, value]) => ({ name, value }));
+  const pathwayCounts = data.reduce<Record<string, number>>((acc, project) => {
+    const pathway = pathwayMapping[project.selected_pathway] || 'Unknown';
+    if (pathway === 'Tiered Prescriptive' || pathway === 'Tiered Performance') {
+      acc['Tiered (Tier 2+)'] = (acc['Tiered (Tier 2+)'] || 0) + 1;
+    } else {
+      acc[pathway] = (acc[pathway] || 0) + 1;
+    }
+    return acc;
+  }, {});
+
+  const chartData: { name: string; value: number }[] = Object.keys(pathwayCounts).map((name) => ({
+    name,
+    value: pathwayCounts[name],
+  }));
 
   const totalProjects = chartData.reduce((sum, entry) => sum + entry.value, 0);
 

@@ -105,7 +105,7 @@ const Header = ({ showSignOut = false, onSignOut }: HeaderProps) => {
 
             <span className="h-4 w-px bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span>
 
-            <nav className="flex items-center gap-4 text-sm font-medium">
+            <nav className="flex items-center gap-4 text-xs font-medium">
               {secondaryNavLinks.map((link, index) => (
                 <React.Fragment key={link.path}>
                   <Link
