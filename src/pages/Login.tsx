@@ -233,7 +233,7 @@ const Login = () => {
             <CardContent>
               <p className="text-center text-sm text-muted-foreground mb-4">Sign in to your account</p>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
+                <TabsList className="grid w-full grid-cols-3 bg-[#253247]">
                   <TabsTrigger value="signin">Sign In</TabsTrigger>
                   <TabsTrigger value="signup">Sign Up</TabsTrigger>
                   <TabsTrigger value="reset">Reset Password</TabsTrigger>
