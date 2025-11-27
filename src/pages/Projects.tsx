@@ -104,21 +104,21 @@ const Dashboard2 = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-slate-900">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Header showSignOut={true} onSignOut={signOut} />
       <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
         <div className="mb-8">
           {canViewAllProjects ? (
             <>
-              <h1 className="text-3xl font-bold text-slate-800">All Projects</h1>
-              <p className="text-slate-500 mt-1">
+              <h1 className="text-3xl font-bold text-foreground">All Projects</h1>
+              <p className="text-muted-foreground mt-1">
                 Review and manage all compliance projects from all users.
               </p>
             </>
           ) : (
             <>
-              <h1 className="text-3xl font-bold text-slate-800">My Projects</h1>
-              <p className="text-slate-500 mt-1">
+              <h1 className="text-3xl font-bold text-foreground">My Projects</h1>
+              <p className="text-muted-foreground mt-1">
                 View, manage, and track all your NBC 9.36 compliance projects.
               </p>
             </>
@@ -126,16 +126,16 @@ const Dashboard2 = () => {
         </div>
         
         {canViewAllProjects && (
-          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-center flex items-center justify-center gap-3">
-            <Shield className="h-5 w-5 text-blue-700" />
-            <p className="font-semibold text-blue-700">
+          <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center flex items-center justify-center gap-3">
+            <Shield className="h-5 w-5 text-blue-500" />
+            <p className="font-semibold text-blue-700 dark:text-blue-300">
               Admin View: You are viewing projects from all users.
             </p>
           </div>
         )}
 
         <div className="space-y-6">
-          <Card className="bg-white shadow-sm rounded-lg">
+          <Card>
             <CardHeader>
               <ProjectToolbar
                 statusFilter={statusFilter}
@@ -151,7 +151,7 @@ const Dashboard2 = () => {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-center py-12 text-slate-500">Loading projects...</div>
+                <div className="text-center py-12 text-muted-foreground">Loading projects...</div>
               ) : filteredAndSortedProjects.length > 0 ? (
                 view === 'kanban' ? (
                   <ProjectKanbanView 
@@ -173,7 +173,7 @@ const Dashboard2 = () => {
               ) : (
                 <div className="text-center py-12">
                   <Building className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-semibold text-slate-800">No Projects Found</h3>
+                  <h3 className="text-xl font-semibold text-foreground">No Projects Found</h3>
                   <p className="text-muted-foreground mt-2">
                     {searchTerm || statusFilter !== 'all' ? 'Try adjusting your filters.' : 'Get started by creating a new project.'}
                   </p>

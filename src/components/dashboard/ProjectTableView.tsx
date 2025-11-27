@@ -88,7 +88,7 @@ const ProjectTableView = ({ projects, onViewProject, onEditProject, onDuplicateP
           const statusInfo = getStatusInfo(project.compliance_status);
           const isPerformance = project.selected_pathway === '9365' || project.selected_pathway === '9367' || project.selected_pathway === 'performance';
           return (
-            <TableRow key={project.id} onClick={() => onViewProject(project.id)} className="cursor-pointer border-b hover:bg-slate-50">
+            <TableRow key={project.id} onClick={() => onViewProject(project.id)} className="cursor-pointer border-b hover:bg-accent">
               <TableCell>
                 <div className="font-medium">{project.project_name}</div>
                 <div className="text-sm text-muted-foreground">{project.location}</div>

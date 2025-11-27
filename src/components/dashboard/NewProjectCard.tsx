@@ -101,14 +101,14 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
   };
 
   return (
-    <Card className="w-full overflow-hidden relative transition-all hover:shadow-lg hover:-translate-y-1 rounded-lg border-b bg-white cursor-pointer" onClick={() => onView(project.id)}>
+    <Card className="w-full overflow-hidden relative transition-all hover:shadow-lg hover:-translate-y-1 rounded-lg border-b bg-card cursor-pointer" onClick={() => onView(project.id)}>
       <div className={cn("h-2 w-full", statusInfo.color)} />
       
       <Badge className={cn(
         "absolute top-0 right-0 px-2 py-1 text-xs font-semibold shadow-md rounded-none rounded-bl-[15px] flex items-center gap-1.5",
         isPerformance
-          ? 'bg-blue-100 text-blue-800 hover:bg-blue-100' 
-          : 'bg-orange-100 text-orange-800 hover:bg-orange-100'
+          ? 'bg-blue-500/10 text-blue-700 dark:text-blue-300 hover:bg-blue-500/10' 
+          : 'bg-orange-500/10 text-orange-700 dark:text-orange-300 hover:bg-orange-500/10'
       )}>
         {isPerformance ? <Zap className="h-3.5 w-3.5" /> : <FileText className="h-3.5 w-3.5" />}
         {formatPathwayName(project.selected_pathway)}
@@ -163,8 +163,8 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
             {required.length > 0 ? (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="p-1.5 rounded-lg bg-yellow-50 border border-yellow-200">
-                    <div className="flex items-start gap-2 text-xs text-orange-700">
+                  <div className="p-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                    <div className="flex items-start gap-2 text-xs text-orange-600 dark:text-orange-400">
                       <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5 text-orange-500" />
                       <p>
                         <span className="font-semibold">Required ({required.length}):</span> {required[0].label}
@@ -183,8 +183,8 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
                 </TooltipContent>
               </Tooltip>
             ) : (
-              <div className="p-2 bg-green-50 border border-green-200 rounded-lg">
-                <div className="flex items-center gap-2 text-xs text-green-800">
+              <div className="p-2 bg-green-500/10 border border-green-500/20 rounded-lg">
+                <div className="flex items-center gap-2 text-xs text-green-700 dark:text-green-300">
                   <CheckCircle className="h-4 w-4" />
                   <span className="font-semibold">All required items complete!</span>
                 </div>
@@ -194,8 +194,8 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
             {optional.length > 0 && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="p-1.5 rounded-lg bg-blue-50 border border-blue-200">
-                    <div className="flex items-start gap-2 text-xs text-blue-700">
+                  <div className="p-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                    <div className="flex items-start gap-2 text-xs text-blue-600 dark:text-blue-400">
                       <Info className="h-4 w-4 flex-shrink-0 mt-0.5 text-blue-500" />
                       <p>
                         <span className="font-semibold">Recommended ({optional.length}):</span> {optional[0].label}
