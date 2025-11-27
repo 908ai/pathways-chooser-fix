@@ -24,11 +24,11 @@ const WarningButton: React.FC<WarningButtonProps> = ({
     const contentColor = variant === "warning" ? "text-orange-700" : "text-red-700";
 
     return (
-        <Collapsible open={isOpen} onOpenChange={setIsOpen} className={cn("p-4 rounded-lg border", bgColor, borderColor)}>
+        <Collapsible open={isOpen} onOpenChange={setIsOpen} className={cn("p-2 rounded-lg border", bgColor, borderColor)}>
             <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
                 <div className="flex items-center gap-2">
                     <AlertTriangle className={cn("h-4 w-4", iconColor)} />
-                    <span className={cn("font-semibold", titleColor)}>{title}</span>
+                    <span className={cn("text-xs font-bold", titleColor)}>{title}</span>
                 </div>
                 <ChevronDown className={cn("h-5 w-5 transition-transform duration-300", iconColor, isOpen ? "rotate-180" : "")} />
             </CollapsibleTrigger>
