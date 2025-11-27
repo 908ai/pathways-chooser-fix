@@ -787,7 +787,7 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
                                 midConstructionBlowerDoorPlanned: e.target.checked
                             }))} className="w-4 h-4 text-primary mt-1" />
                             <div className="flex-1">
-                                <label htmlFor="midConstructionBlowerDoor-9367" className="text-sm font-medium cursor-pointer text-slate-100">
+                                <label htmlFor="midConstructionBlowerDoor-9367" className="text-sm font-medium text-slate-900">
                                     Mid-Construction Blower Door Test Planned (Optional)
                                 </label>
                             </div>

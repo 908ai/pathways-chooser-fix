@@ -1,20 +1,28 @@
 import { WarningButton } from "@/components/ui/WarningButton";
-import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Link as LinkIcon } from "lucide-react";
 
 export const EffectiveRSIWarning = () => {
     return (
-        <WarningButton title="ℹ️ Effective RSI/R-Value Required">
-            <div className="space-y-4">
-                <p className="text-slate-600">
-                    You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately. The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it. Supporting documentation (such as results from the 🔗<a href="https://natural-resources.canada.ca/energy-efficiency/energy-star/tables-calculating-effective-thermal-resistance-opaque-assemblies" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">NRCan RSI tables</a> or the 🔗<a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications. On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
+        <WarningButton title="Effective RSI/R-Value Required">
+            <div className="space-y-3">
+                <p>
+                    You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately.
                 </p>
-                <Button asChild variant="secondary" className="h-6 px-2 text-xs">
-                    <a href="/find-a-provider" target="_blank" rel="noopener noreferrer">
-                        <Search className="h-4 w-4 mr-1" />
-                        Find a service provider
+                <p>
+                    The lowest-performing RSI value should be used in this calculator, unless you choose a single target RSI and ensure all assemblies are built to meet or exceed it.
+                </p>
+                <p>
+                    Supporting documentation (such as results from the <a href="https://natural-resources.canada.ca/energy-efficiency/energy-star/tables-calculating-effective-thermal-resistance-opaque-assemblies" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">NRCan RSI tables</a> or the <a href="https://cwc.ca/design-tool/effectiver/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">Canadian Wood Council calculator</a>) must be included in your design drawings and specifications.
+                </p>
+                <p>
+                    On-site testing is not required, but interpolation is not permitted, and all assemblies must still comply with the minimum Code requirements.
+                </p>
+                <div className="pt-2">
+                    <a href="/find-a-provider" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800 text-sm inline-flex items-center gap-1">
+                        <LinkIcon className="h-3 w-3" />
+                        Find a service provider for calculations
                     </a>
-                </Button>
+                </div>
             </div>
         </WarningButton>
     );
