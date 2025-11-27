@@ -23,14 +23,14 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
         variant?: "warning" | "destructive";
     }) => {
         const [isOpen, setIsOpen] = useState(true);
-        const bgColor = variant === "warning" ? "bg-orange-50" : "bg-red-50";
-        const borderColor = variant === "warning" ? "border-orange-200" : "border-red-200";
-        const titleColor = variant === "warning" ? "text-orange-800" : "text-red-800";
-        const iconColor = variant === "warning" ? "text-orange-700" : "text-red-700";
-        const contentColor = variant === "warning" ? "text-orange-700" : "text-red-700";
+        const bgColor = variant === "warning" ? "bg-orange-50 dark:bg-orange-900/30" : "bg-red-50 dark:bg-red-900/30";
+        const borderColor = variant === "warning" ? "border-orange-200 dark:border-orange-500/50" : "border-red-200 dark:border-red-500/50";
+        const titleColor = variant === "warning" ? "text-orange-800 dark:text-orange-300" : "text-red-800 dark:text-red-300";
+        const iconColor = variant === "warning" ? "text-orange-700 dark:text-orange-400" : "text-red-700 dark:text-red-400";
+        const contentColor = variant === "warning" ? "text-orange-700 dark:text-orange-300" : "text-red-700 dark:text-red-300";
 
         return (
-            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} ${borderColor} rounded-lg`}>
+            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} border ${borderColor} rounded-lg`}>
                 <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
                     <span className={`text-xs font-bold ${titleColor}`}>{title}</span>
                     <ChevronDown className={`h-5 w-5 ${iconColor} transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
@@ -90,13 +90,13 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
     return (
         <>
             {
-                <div className="pt-6 border-t border-slate-200 space-y-6">
+                <div className="pt-6 border-t border-slate-200 dark:border-slate-700 space-y-6">
                     {selections.compliancePath !== "9362" && (
                         <>
-                            <h3 className="text-lg font-semibold text-slate-800">HRV/ERV Information</h3>
+                            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">HRV/ERV Information</h3>
                             <div id="hasHrv" className="space-y-2">
                                 <div className="flex items-center gap-3">
-                                    <label className="text-sm font-medium text-slate-900">Does this building include an HRV or ERV?</label>
+                                    <label className="text-sm font-medium text-foreground">Does this building include an HRV or ERV?</label>
                                     <InfoButton title="Should I include an HRV (Heat Recovery Ventilator)?">
                                         <div className="space-y-4">
                                             <div>
@@ -151,7 +151,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                             </div>
 
                             {selections.hasHrv === "with_hrv" && <div id="hrvEfficiency" className="space-y-2">
-                                <label className="text-sm font-medium text-slate-900">HRV/ERV Make/Model</label>
+                                <label className="text-sm font-medium text-foreground">HRV/ERV Make/Model</label>
                                 <Input type="text" placeholder="Input HRV/ERV make/model (e.g. Fantech SHR 1504)" value={selections.hrvEfficiency || ""} onChange={e => setSelections(prev => ({
                                     ...prev,
                                     hrvEfficiency: e.target.value
@@ -159,12 +159,12 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                             </div>}
 
                             {/* Secondary Suite HRV - Show for buildings with multiple units */}
-                            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv" && <div className="space-y-4 p-4 bg-slate-50 border border-slate-200 rounded-md">
-                                <h5 className="font-medium text-slate-900">Secondary Suite HRV/ERV</h5>
+                            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv" && <div className="space-y-4 p-4 bg-muted/50 border rounded-md">
+                                <h5 className="font-medium text-foreground">Secondary Suite HRV/ERV</h5>
 
                                 <div id="hasSecondaryHrv" className="space-y-2">
                                     <div className="flex items-center gap-3">
-                                        <label className="text-sm font-medium text-slate-900">Will there be a second HRV/ERV for the secondary suite?</label>
+                                        <label className="text-sm font-medium text-foreground">Will there be a second HRV/ERV for the secondary suite?</label>
                                         <InfoButton title="Secondary Suite HRV/ERV Information">
                                             <div className="space-y-4">
                                                 <div>
@@ -207,7 +207,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                 </div>
 
                                 {selections.hasSecondaryHrv === "separate" && <div id="secondaryHrvEfficiency" className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-900">Secondary Suite HRV/ERV Make/Model</label>
+                                    <label className="text-sm font-medium text-foreground">Secondary Suite HRV/ERV Make/Model</label>
                                     <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
                                         ...prev,
                                         secondaryHrvEfficiency: e.target.value
@@ -216,17 +216,17 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                             </div>}
 
                             {/* MURB/Secondary Suite Mechanical Systems Warning */}
-                            {(selections.buildingType === "multi-unit" || selections.buildingType === "single-detached-secondary") && <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                            {(selections.buildingType === "multi-unit" || selections.buildingType === "single-detached-secondary") && <div className="p-4 bg-orange-50 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-500/50 rounded-lg">
                                 <div className="flex items-start gap-2">
-                                    <span className="text-orange-600 text-lg">⚠️</span>
+                                    <span className="text-orange-600 dark:text-orange-400 text-lg">⚠️</span>
                                     <div className="space-y-2">
-                                        <h4 className="font-medium text-orange-800">MURB/Secondary Suite Mechanical Systems</h4>
-                                        <p className="text-base text-orange-700">
+                                        <h4 className="font-medium text-orange-800 dark:text-orange-300">MURB/Secondary Suite Mechanical Systems</h4>
+                                        <p className="text-base text-orange-700 dark:text-orange-300">
                                             For {selections.buildingType === "multi-unit" ? "multi-unit residential buildings (MURBs)" : "homes with secondary suites"},
                                             please ensure you list all mechanical system types, make/models, and any other relevant information
                                             in the comments section below. This includes:
                                         </p>
-                                        <ul className="list-disc ml-4 text-base text-orange-700 space-y-1">
+                                        <ul className="list-disc ml-4 text-base text-orange-700 dark:text-orange-300 space-y-1">
                                             <li>Secondary heating system type and make/model (if applicable)</li>
                                             <li>Secondary/multiple service water heating systems</li>
                                             <li>Secondary HRV/ERV systems</li>
@@ -243,7 +243,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                     {/* Certification Interests */}
                     <div id="interestedCertifications" className="space-y-4">
                         <div className="flex items-center gap-2">
-                            <label className="text-sm font-medium text-slate-900">Are you interested in any of the following certifications or programs?</label>
+                            <label className="text-sm font-medium text-foreground">Are you interested in any of the following certifications or programs?</label>
                             <InfoButton title="Certification Information">
                                 <div className="space-y-6 text-base">
                                     {/* Summary Table */}
@@ -433,7 +433,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                         </div>
                         <div className="space-y-3">
                             {certifications.map(cert => (
-                                <div key={cert.id} className="flex items-center gap-4 p-4 bg-white rounded-lg border border-slate-200 transition-all hover:border-slate-300">
+                                <div key={cert.id} className="flex items-center gap-4 p-4 bg-card rounded-lg border transition-all hover:border-border/80">
                                     <Checkbox
                                         id={cert.id}
                                         checked={selections.interestedCertifications.includes(cert.id)}
@@ -443,16 +443,16 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                                 interestedCertifications: checked ? [...prev.interestedCertifications, cert.id] : prev.interestedCertifications.filter(id => id !== cert.id)
                                             }));
                                         }}
-                                        className="h-6 w-6 border-slate-400"
+                                        className="h-6 w-6 border-border"
                                     />
                                     <div className="flex items-center gap-4 flex-1">
-                                        <div className="flex-shrink-0 w-24 h-14 flex items-center justify-center bg-white/0 rounded-md p-1">
+                                        <div className="flex-shrink-0 w-24 h-14 flex items-center justify-center rounded-md p-1">
                                             <img src={cert.imageUrl} alt={`${cert.label} Logo`} className="max-h-full max-w-full object-contain" />
                                         </div>
                                         <div className="flex-1">
-                                            <label htmlFor={cert.id} className="font-semibold text-slate-800 cursor-pointer block">{cert.label}</label>
-                                            <p className="text-sm text-slate-600">{cert.description}</p>
-                                            🔗<a href={cert.url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:text-blue-800 underline mt-1 inline-block">
+                                            <label htmlFor={cert.id} className="font-semibold text-card-foreground cursor-pointer block">{cert.label}</label>
+                                            <p className="text-sm text-muted-foreground">{cert.description}</p>
+                                            <a href={cert.url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary/80 underline mt-1 inline-flex items-center gap-1">
                                                 Learn more →
                                             </a>
                                         </div>
@@ -464,17 +464,17 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
 
                     {/* Alert for certification interests */}
                     {selections.interestedCertifications.length > 0 && <InfoCollapsible title="Performance Modelling Required">
-                        <div className="text-xs text-slate-600 space-y-2">
+                        <div className="text-xs text-muted-foreground space-y-2">
                             <p>
                                 Since you're interested in certifications, performance modelling (NBC 9.36.5 or 9.36.7) is required.
                                 Performance modelling provides greater design flexibility, can reduce construction costs, and is often
                                 required for certification programs. It also helps optimize your home's energy performance and ensures
                                 you meet certification requirements efficiently.
                             </p>
-                            <p className="font-medium text-slate-800">
+                            <p className="font-medium text-foreground">
                                 Please note: Additional fees may be incurred for performance modelling services. A detailed estimate will be provided upon request.
                             </p>
-                            <p className="font-medium text-slate-800">
+                            <p className="font-medium text-foreground">
                                 Contact us to discuss how performance modelling can help achieve your certification goals.
                             </p>
                         </div>
