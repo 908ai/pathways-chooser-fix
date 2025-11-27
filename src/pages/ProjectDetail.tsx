@@ -821,20 +821,20 @@ const ProjectDetail = () => {
         </div>
 
         <Tabs defaultValue="overview" className="animate-fade-in">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-4 bg-slate-100 p-1 rounded-lg">
+            <TabsTrigger value="overview" className="flex items-center gap-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">
               <Building className="h-4 w-4" />
               Overview
             </TabsTrigger>
-            <TabsTrigger value="technical" className="flex items-center gap-2">
+            <TabsTrigger value="technical" className="flex items-center gap-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">
               <Thermometer className="h-4 w-4" />
               Technical
             </TabsTrigger>
-            <TabsTrigger value="compliance" className="flex items-center gap-2">
+            <TabsTrigger value="compliance" className="flex items-center gap-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">
               <FileText className="h-4 w-4" />
               Compliance
             </TabsTrigger>
-            <TabsTrigger value="documents" className="flex items-center gap-2">
+            <TabsTrigger value="documents" className="flex items-center gap-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm">
               <FolderOpen className="h-4 w-4" />
               Documents ({(project.uploaded_files || []).length})
             </TabsTrigger>
