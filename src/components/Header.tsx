@@ -21,15 +21,17 @@ import React from 'react';
 interface HeaderProps {
   showSignOut?: boolean;
   onSignOut?: () => void;
+  variant?: 'default' | 'login';
 }
 
-const Header = ({ showSignOut = false, onSignOut }: HeaderProps) => {
+const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isAdmin } = useUserRole();
   const [userName, setUserName] = useState<string | null>(null);
 
+  const isLoginVariant = variant === 'login';
   const isLinkActive = (path: string) => location.pathname === path;
 
   useEffect(() => {
@@ -77,59 +79,63 @@ const Header = ({ showSignOut = false, onSignOut }: HeaderProps) => {
     <header className="bg-[rgb(255_255_255_/_0.95)] dark:bg-slate-900/90 backdrop-blur-sm border-b dark:border-slate-700 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center">
-          <Link to="/dashboard">
+          <Link to={isLoginVariant ? "/login" : "/dashboard"}>
             <img src="/assets/energy-navigator-logo.png" alt="Energy Navigator 9.36 Logo" className="h-[55px] dark:hidden" />
             <img src="/assets/energy-navigator-logo-w.png" alt="Energy Navigator 9.36 Logo" className="h-[55px] hidden dark:block" />
           </Link>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="hidden md:flex items-center gap-4">
-            <nav className="flex items-center gap-1">
-              {mainNavLinks.map(link => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={cn(
-                    "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                    isLinkActive(link.path)
-                      ? "bg-primary/10 text-primary"
-                      : "text-slate-500 dark:text-slate-400 hover:bg-accent hover:text-accent-foreground"
-                  )}
-                >
-                  {link.icon}
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
+          {!isLoginVariant && (
+            <>
+              <div className="hidden md:flex items-center gap-4">
+                <nav className="flex items-center gap-1">
+                  {mainNavLinks.map(link => (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      className={cn(
+                        "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                        isLinkActive(link.path)
+                          ? "bg-primary/10 text-primary"
+                          : "text-slate-500 dark:text-slate-400 hover:bg-accent hover:text-accent-foreground"
+                      )}
+                    >
+                      {link.icon}
+                      {link.label}
+                    </Link>
+                  ))}
+                </nav>
 
-            <span className="h-4 w-px bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span>
+                <span className="h-4 w-px bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span>
 
-            <nav className="flex items-center gap-4 text-xs font-medium">
-              {secondaryNavLinks.map((link, index) => (
-                <React.Fragment key={link.path}>
-                  <Link
-                    to={link.path}
-                    className={cn(
-                      "transition-colors",
-                      isLinkActive(link.path)
-                        ? "text-primary"
-                        : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-50"
-                    )}
-                  >
-                    {link.label}
-                  </Link>
-                  {index < secondaryNavLinks.length - 1 && (
-                    <span className="h-4 w-px bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span>
-                  )}
-                </React.Fragment>
-              ))}
-            </nav>
-          </div>
+                <nav className="flex items-center gap-4 text-xs font-medium">
+                  {secondaryNavLinks.map((link, index) => (
+                    <React.Fragment key={link.path}>
+                      <Link
+                        to={link.path}
+                        className={cn(
+                          "transition-colors",
+                          isLinkActive(link.path)
+                            ? "text-primary"
+                            : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-50"
+                        )}
+                      >
+                        {link.label}
+                      </Link>
+                      {index < secondaryNavLinks.length - 1 && (
+                        <span className="h-4 w-px bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </nav>
+              </div>
+            </>
+          )}
 
           <ThemeToggle />
 
-          {showSignOut && user && (
+          {!isLoginVariant && showSignOut && user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-9 w-9 rounded-full bg-white border-2 border-[#d8dee3] p-0 hover:bg-slate-100">

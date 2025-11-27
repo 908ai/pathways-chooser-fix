@@ -181,7 +181,7 @@ const Login = () => {
   if (isResetMode) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
+        <Header variant="login" />
         <div className="flex-1 flex items-center justify-center px-4">
           <Card className="w-full max-w-md bg-white shadow-sm rounded-lg">
             <CardHeader className="text-center">
@@ -220,7 +220,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
+      <Header variant="login" />
       <div className="flex-1 flex items-center justify-center px-4">
         <div className="w-full max-w-2xl space-y-6">
           {/* What is the Pathway Selector intro */}
