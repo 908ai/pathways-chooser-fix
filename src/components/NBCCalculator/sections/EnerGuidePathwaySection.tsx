@@ -16,12 +16,12 @@ interface Props {
 
 const EnerGuidePathwaySection: React.FC<Props> = ({ selections, setSelections }) => {
     return (
-        <Card className="bg-white shadow-sm">
+        <Card>
             <CardContent className="pt-6">
                 <div className="space-y-4">
                     <div id="energuidePathway" className="space-y-2">
                         <div className="flex items-center gap-2">
-                            <label className="text-sm font-medium text-slate-900">Would you like to pursue the EnerGuide Rating System (ERS) pathway in conjunction with the Performance Path?</label>
+                            <label className="text-sm font-medium text-foreground">Would you like to pursue the EnerGuide Rating System (ERS) pathway in conjunction with the Performance Path?</label>
                             <InfoButton title="What is the EnerGuide Pathway?">
                                 <div className="space-y-4">
                                     <div>
