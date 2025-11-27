@@ -182,8 +182,11 @@ const Dashboard3 = () => {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Executive Overview</h1>
+            <p className="text-2xl text-foreground mt-2">
+              Welcome back{userName ? `, ${userName}` : ''}!
+            </p>
             <p className="text-muted-foreground mt-1">
-              Welcome back{userName ? `, ${userName}` : ''}! You have <span className="font-semibold text-primary">{analytics.activeProjects} active projects</span> requiring attention.
+              You have <span className="font-semibold text-primary">{analytics.activeProjects} active projects</span> requiring attention.
             </p>
           </div>
           <div className="flex items-center gap-2">
