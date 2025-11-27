@@ -8,7 +8,7 @@ const BuildingOfficialsPage = () => {
   const { signOut } = useAuth();
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+    <div className="min-h-screen flex flex-col bg-background text-slate-900">
       <Header showSignOut={true} onSignOut={signOut} />
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-8 text-center">

@@ -605,7 +605,7 @@ const ProjectDetail = () => {
 
   if (loading || roleLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
+      <div className="min-h-screen bg-background flex flex-col">
         <Header showSignOut={true} onSignOut={signOut} />
         <main className="flex-1 container mx-auto px-4 py-8">
           <div className="flex items-center justify-center h-64">
@@ -619,7 +619,7 @@ const ProjectDetail = () => {
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
+      <div className="min-h-screen bg-background flex flex-col">
         <Header showSignOut={true} onSignOut={signOut} />
         <main className="flex-1 container mx-auto px-4 py-8">
           <div className="flex items-center justify-center h-64">
@@ -655,7 +655,7 @@ const ProjectDetail = () => {
   const isDeletable = canDeleteProjects || (!isSubmitted && !isCompleted);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+    <div className="min-h-screen flex flex-col bg-background text-slate-900">
       <Header showSignOut={true} onSignOut={signOut} />
       
       <main className="flex-1 container mx-auto px-4 py-8">

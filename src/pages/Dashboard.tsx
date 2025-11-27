@@ -169,14 +169,14 @@ const Dashboard3 = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-12 w-12 text-slate-500 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+    <div className="min-h-screen flex flex-col bg-background text-slate-900">
       <Header showSignOut={true} onSignOut={signOut} />
       <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
         <div className="flex justify-between items-center mb-8">
