@@ -183,10 +183,10 @@ const Login = () => {
       <div className="min-h-screen flex flex-col bg-background">
         <Header variant="login" />
         <div className="flex-1 flex items-center justify-center px-4">
-          <Card className="w-full max-w-md bg-white shadow-sm rounded-lg">
+          <Card className="w-full max-w-md shadow-sm rounded-lg">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl text-slate-800">Set New Password</CardTitle>
-              <CardDescription className="text-slate-500">Enter your new password below</CardDescription>
+              <CardTitle className="text-2xl text-foreground">Set New Password</CardTitle>
+              <CardDescription className="text-muted-foreground">Enter your new password below</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleUpdatePassword} className="space-y-4">
@@ -223,15 +223,15 @@ const Login = () => {
       <Header variant="login" />
       <div className="flex-1 flex items-center justify-center px-4">
         <div className="w-full max-w-2xl space-y-6">
-          <Card className="bg-white shadow-sm rounded-lg">
+          <Card className="shadow-sm rounded-lg">
             <CardHeader className="text-center pb-4">
-              <CardTitle className="text-2xl font-bold text-slate-800">Energy Navigator 9.36</CardTitle>
-              <CardDescription className="text-slate-600 leading-relaxed pt-2 px-6">
+              <CardTitle className="text-2xl font-bold text-foreground">Energy Navigator 9.36</CardTitle>
+              <CardDescription className="text-muted-foreground leading-relaxed pt-2 px-6">
                 A specialized tool for energy professionals and building owners to navigate NBC 9.36 compliance pathways. Quickly determine the most cost-effective approach for your building project while ensuring regulatory compliance and optimizing energy performance outcomes.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-center text-sm text-slate-500 mb-4">Sign in to your account</p>
+              <p className="text-center text-sm text-muted-foreground mb-4">Sign in to your account</p>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="signin">Sign In</TabsTrigger>
