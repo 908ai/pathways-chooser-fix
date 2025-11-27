@@ -33,7 +33,7 @@ const WarningButton: React.FC<WarningButtonProps> = ({
                 <ChevronDown className={cn("h-5 w-5 transition-transform duration-300", iconColor, isOpen ? "rotate-180" : "")} />
             </CollapsibleTrigger>
             <CollapsibleContent className="mt-4 data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden">
-                <div className={cn("text-sm space-y-2", contentColor)}>
+                <div className={cn("text-xs space-y-2", contentColor)}>
                     {children}
                 </div>
             </CollapsibleContent>
