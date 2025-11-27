@@ -452,11 +452,11 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                         <div className="flex-1">
                                             <label htmlFor={cert.id} className="font-semibold text-card-foreground cursor-pointer block">{cert.label}</label>
                                             <p className="text-sm text-muted-foreground">{cert.description}</p>
-                                            <a href={cert.url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary/80 underline mt-1 inline-flex items-center gap-1">
-                                                Learn more →
-                                            </a>
                                         </div>
                                     </div>
+                                    <a href={cert.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:text-primary/80 underline self-center whitespace-nowrap">
+                                        Learn more →
+                                    </a>
                                 </div>
                             ))}
                         </div>
