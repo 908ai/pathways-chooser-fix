@@ -94,7 +94,7 @@ const Header = ({ showSignOut = false, onSignOut }: HeaderProps) => {
                     "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                     isLinkActive(link.path)
                       ? "bg-primary/10 text-primary"
-                      : "text-slate-500 hover:bg-[rgb(216,222,227)] hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-50"
+                      : "text-slate-500 dark:text-slate-400 hover:bg-accent hover:text-accent-foreground"
                   )}
                 >
                   {link.icon}
