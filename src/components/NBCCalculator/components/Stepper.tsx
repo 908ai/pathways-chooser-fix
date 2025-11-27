@@ -12,8 +12,8 @@ interface StepperProps {
 const Stepper = ({ steps, currentStep, onStepClick, isSticky = false }: StepperProps) => {
   return (
     <div className={cn(
-      "lg:sticky top-[80px] z-40 backdrop-blur-lg -mx-4 -mt-8 mb-8 px-4 py-4 rounded-t-lg border-b border-slate-200 transition-all duration-300",
-      isSticky ? "bg-white/90" : "bg-white/50"
+      "lg:sticky top-[80px] z-40 backdrop-blur-lg -mx-4 -mt-8 mb-8 px-4 py-4 rounded-t-lg border-b border-border transition-all duration-300",
+      isSticky ? "bg-background/90" : "bg-background/50"
     )}>
       <div className="flex items-start justify-center w-full max-w-3xl mx-auto">
         {steps.map((step, index) => {
@@ -39,7 +39,7 @@ const Stepper = ({ steps, currentStep, onStepClick, isSticky = false }: StepperP
                       ? "bg-green-500 border-green-500 text-white"
                       : isActive
                       ? "bg-primary border-primary/50 text-primary-foreground"
-                      : "bg-slate-100 border-slate-200 text-slate-500",
+                      : "bg-muted border-border text-muted-foreground",
                     isSticky ? "w-6 h-6" : "w-10 h-10"
                   )}
                 >
@@ -48,7 +48,7 @@ const Stepper = ({ steps, currentStep, onStepClick, isSticky = false }: StepperP
                 <p
                   className={cn(
                     "mt-2 font-medium transition-all duration-300",
-                    isActive || isCompleted ? "text-slate-900" : "text-slate-400",
+                    isActive || isCompleted ? "text-foreground" : "text-muted-foreground",
                     isSticky ? "text-xs" : "text-xs"
                   )}
                 >
@@ -59,7 +59,7 @@ const Stepper = ({ steps, currentStep, onStepClick, isSticky = false }: StepperP
                 <div
                   className={cn(
                     "flex-1 h-1 transition-all duration-500",
-                    isCompleted ? "bg-green-500" : "bg-slate-200",
+                    isCompleted ? "bg-green-500" : "bg-border",
                     isSticky ? "mt-3" : "mt-5"
                   )}
                 />
