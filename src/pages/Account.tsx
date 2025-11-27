@@ -113,17 +113,17 @@ const AccountPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-slate-900">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Header showSignOut={true} onSignOut={signOut} />
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-800">Account Information</h1>
-          <p className="text-slate-500 mt-1">
+          <h1 className="text-3xl font-bold text-foreground">Account Information</h1>
+          <p className="text-muted-foreground mt-1">
             Manage your personal and company details.
           </p>
         </div>
         <div className="max-w-4xl mx-auto space-y-6">
-          <Card className="bg-white shadow-sm rounded-lg">
+          <Card className="shadow-sm rounded-lg">
             <CardHeader>
               <CardTitle>Account Information</CardTitle>
               <CardDescription>
@@ -133,12 +133,12 @@ const AccountPage = () => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-slate-900">Email</label>
-                  <p className="text-sm text-slate-500">{user?.email}</p>
+                  <label className="text-sm font-medium text-foreground">Email</label>
+                  <p className="text-sm text-muted-foreground">{user?.email}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-slate-900">Account Status</label>
-                  <p className="text-sm text-slate-500">Active</p>
+                  <label className="text-sm font-medium text-foreground">Account Status</label>
+                  <p className="text-sm text-muted-foreground">Active</p>
                 </div>
               </div>
               <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
@@ -189,7 +189,7 @@ const AccountPage = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-white shadow-sm rounded-lg">
+          <Card className="shadow-sm rounded-lg">
             <CardHeader>
               <CardTitle>Company Information</CardTitle>
               <CardDescription>
@@ -232,24 +232,24 @@ const AccountPage = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-slate-900">Company Name</label>
-                      <p className="text-sm text-slate-500">{loadingCompany ? 'Loading...' : companyInfo?.company_name || 'No company information yet'}</p>
+                      <label className="text-sm font-medium text-foreground">Company Name</label>
+                      <p className="text-sm text-muted-foreground">{loadingCompany ? 'Loading...' : companyInfo?.company_name || 'No company information yet'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-slate-900">Contact Email</label>
-                      <p className="text-sm text-slate-500">{loadingCompany ? 'Loading...' : companyInfo?.contact_email || user?.email || 'Not specified'}</p>
+                      <label className="text-sm font-medium text-foreground">Contact Email</label>
+                      <p className="text-sm text-muted-foreground">{loadingCompany ? 'Loading...' : companyInfo?.contact_email || user?.email || 'Not specified'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-slate-900">Phone</label>
-                      <p className="text-sm text-slate-500">{loadingCompany ? 'Loading...' : companyInfo?.phone || 'Not specified'}</p>
+                      <label className="text-sm font-medium text-foreground">Phone</label>
+                      <p className="text-sm text-muted-foreground">{loadingCompany ? 'Loading...' : companyInfo?.phone || 'Not specified'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-slate-900">Address</label>
-                      <p className="text-sm text-slate-500">{loadingCompany ? 'Loading...' : companyInfo?.address || 'Not specified'}</p>
+                      <label className="text-sm font-medium text-foreground">Address</label>
+                      <p className="text-sm text-muted-foreground">{loadingCompany ? 'Loading...' : companyInfo?.address || 'Not specified'}</p>
                     </div>
                   </div>
-                  {!loadingCompany && !companyInfo && <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                    <p className="text-sm text-blue-800">
+                  {!loadingCompany && !companyInfo && <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md dark:bg-blue-900/30 dark:border-blue-500/50">
+                    <p className="text-sm text-blue-800 dark:text-blue-300">
                       <strong>Tip:</strong> Your account information will be automatically imported when you submit your first project.
                     </p>
                   </div>}
