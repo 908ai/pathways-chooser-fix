@@ -12,7 +12,7 @@ interface StepperProps {
 const Stepper = ({ steps, currentStep, onStepClick, isSticky = false }: StepperProps) => {
   return (
     <div className={cn(
-      "lg:sticky top-0 z-50 backdrop-blur-lg -mx-4 -mt-4 mb-8 px-4 py-4 rounded-t-lg border-b border-slate-200 transition-all duration-300",
+      "lg:sticky top-[80px] z-40 backdrop-blur-lg -mx-4 -mt-4 mb-8 px-4 py-4 rounded-t-lg border-b border-slate-200 transition-all duration-300",
       isSticky ? "bg-white/90" : "bg-white/50"
     )}>
       <div className="flex items-start justify-center w-full max-w-3xl mx-auto">
