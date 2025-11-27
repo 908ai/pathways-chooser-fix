@@ -1010,11 +1010,11 @@ const NBCCalculator = () => {
         )}>
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-2">
-              <Calculator className="h-8 w-8 text-slate-500" />
-              <h1 className="text-4xl font-bold text-slate-800">NBC 9.36 Energy Code Pathways Selector</h1>
+              <Calculator className="h-8 w-8 text-muted-foreground" />
+              <h1 className="text-4xl font-bold text-foreground">NBC 9.36 Energy Code Pathways Selector</h1>
             </div>
-            <p className="text-xl text-slate-600 font-medium mb-4">(Alberta & Saskatchewan)</p>
-            <p className="text-slate-500 text-lg">
+            <p className="text-xl text-muted-foreground font-medium mb-4">(Alberta & Saskatchewan)</p>
+            <p className="text-muted-foreground text-lg">
               National Building Code of Canada - Energy Performance Compliance Tool
             </p>
           </div>

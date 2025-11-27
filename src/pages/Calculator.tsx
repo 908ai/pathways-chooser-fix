@@ -13,7 +13,7 @@ const Calculator = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-slate-900">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Header 
         showSignOut={true} 
         onSignOut={signOut} 

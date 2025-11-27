@@ -156,17 +156,17 @@ export default function CompliancePathSection({
                           </div>
                           
                           {/* Current pathway display */}
-                          {selections.compliancePath && <div className="flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-muted/50 to-muted/30 rounded-lg border-2 border-dashed border-muted-foreground/20 shadow-sm">
-                              {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? <div className="flex items-center gap-3 text-orange-700">
-                                  <div className="p-2 bg-orange-100 rounded-full">
+                          {selections.compliancePath && <div className="flex items-center justify-center gap-2 p-4 bg-muted/50 rounded-lg border-2 border-dashed border-border shadow-sm">
+                              {selections.compliancePath === '9362' || selections.compliancePath === '9368' ? <div className="flex items-center gap-3 text-orange-700 dark:text-orange-400">
+                                  <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-full">
                                     <FileText className="h-5 w-5" />
                                   </div>
                                   <div className="text-center">
                                     <div className="font-bold text-lg">PRESCRIPTIVE PATH SELECTED</div>
                                     <div className="text-sm opacity-80">Following checklist-based requirements</div>
                                   </div>
-                                </div> : <div className="flex items-center gap-3 text-blue-700">
-                                  <div className="p-2 bg-blue-100 rounded-full">
+                                </div> : <div className="flex items-center gap-3 text-blue-700 dark:text-blue-400">
+                                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
                                     <Zap className="h-5 w-5" />
                                   </div>
                                   <div className="text-center">
