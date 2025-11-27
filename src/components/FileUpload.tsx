@@ -55,13 +55,13 @@ const FileUpload: React.FC<FileUploadProps> = ({
   return (
     <div>
       <div
-        className="border-2 border-dashed border-slate-200 rounded-lg p-8 text-center hover:border-slate-300 transition-colors bg-slate-50"
+        className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-border/80 transition-colors bg-muted/50"
         onDrop={handleDrop}
         onDragOver={handleDragOver}
       >
-        <Upload className="mx-auto h-12 w-12 text-slate-400 mb-4" />
+        <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
         <div className="space-y-2">
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-muted-foreground">
             Drag and drop files here, or click to select
           </p>
           <Button
@@ -72,7 +72,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           >
             {uploading ? 'Uploading...' : 'Choose Files'}
           </Button>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             Maximum file size: {formatFileSize(maxSizePerFile)} • 
             Accepted types: {acceptedTypes.join(', ')}
           </p>
