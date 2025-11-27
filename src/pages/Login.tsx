@@ -11,7 +11,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const Login = () => {
@@ -181,18 +180,18 @@ const Login = () => {
 
   if (isResetMode) {
     return (
-      <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
+      <div className="min-h-screen flex flex-col bg-background">
         <Header />
-        <div className="flex-1 flex items-center justify-center px-4 relative z-10">
-          <Card className="w-full max-w-md bg-slate-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+        <div className="flex-1 flex items-center justify-center px-4">
+          <Card className="w-full max-w-md bg-white shadow-sm rounded-lg">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl text-white">Set New Password</CardTitle>
-              <CardDescription className="text-slate-200">Enter your new password below</CardDescription>
+              <CardTitle className="text-2xl text-slate-800">Set New Password</CardTitle>
+              <CardDescription className="text-slate-500">Enter your new password below</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleUpdatePassword} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="new-password" className="text-white">New Password</Label>
+                  <Label htmlFor="new-password">New Password</Label>
                   <Input
                     id="new-password"
                     name="password"
@@ -220,16 +219,16 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
+    <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      <div className="flex-1 flex items-center justify-center px-4 relative z-10">
+      <div className="flex-1 flex items-center justify-center px-4">
         <div className="w-full max-w-2xl space-y-6">
           {/* What is the Pathway Selector intro */}
-          <Card className="bg-slate-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+          <Card className="bg-white shadow-sm rounded-lg">
             <CardContent className="pt-6">
               <div className="text-center space-y-3">
-                <h2 className="text-xl font-semibold text-white">What is the NBC 9.36 Navigator?</h2>
-                <p className="text-sm text-slate-200 leading-relaxed">
+                <h2 className="text-xl font-semibold text-slate-800">What is the NBC 9.36 Navigator?</h2>
+                <p className="text-sm text-slate-600 leading-relaxed">
                   A specialized tool for energy professionals and building owners to navigate NBC 9.36 compliance pathways. 
                   Quickly determine the most cost-effective approach for your building project while ensuring regulatory compliance 
                   and optimizing energy performance outcomes.
@@ -238,10 +237,10 @@ const Login = () => {
             </CardContent>
           </Card>
           
-          <Card className="bg-slate-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+          <Card className="bg-white shadow-sm rounded-lg">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl text-white">NBC 9.36 Navigator</CardTitle>
-              <CardDescription className="text-slate-200">Sign in to your account</CardDescription>
+              <CardTitle className="text-2xl text-slate-800">NBC 9.36 Navigator</CardTitle>
+              <CardDescription className="text-slate-500">Sign in to your account</CardDescription>
             </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -254,7 +253,7 @@ const Login = () => {
               <TabsContent value="signin">
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signin-email" className="text-white">Email</Label>
+                    <Label htmlFor="signin-email">Email</Label>
                     <Input
                       id="signin-email"
                       name="email"
@@ -264,7 +263,7 @@ const Login = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signin-password" className="text-white">Password</Label>
+                    <Label htmlFor="signin-password">Password</Label>
                     <Input
                       id="signin-password"
                       name="password"
@@ -287,7 +286,7 @@ const Login = () => {
               <TabsContent value="signup">
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="profile-type" className="text-white">Profile Type</Label>
+                    <Label htmlFor="profile-type">Profile Type</Label>
                     <Select onValueChange={setProfileType} required>
                       <SelectTrigger id="profile-type">
                         <SelectValue placeholder="Select your profile type" />
@@ -302,7 +301,7 @@ const Login = () => {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-email" className="text-white">Email</Label>
+                    <Label htmlFor="signup-email">Email</Label>
                     <Input
                       id="signup-email"
                       name="email"
@@ -312,7 +311,7 @@ const Login = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-password" className="text-white">Password</Label>
+                    <Label htmlFor="signup-password">Password</Label>
                     <Input
                       id="signup-password"
                       name="password"
@@ -336,7 +335,7 @@ const Login = () => {
               <TabsContent value="reset">
                 <form onSubmit={handlePasswordReset} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="reset-email" className="text-white">Email</Label>
+                    <Label htmlFor="reset-email">Email</Label>
                     <Input
                       id="reset-email"
                       name="email"
