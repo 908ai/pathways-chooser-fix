@@ -13,6 +13,7 @@ import { Info, ChevronDown, AlertTriangle, Search } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import InfoButton from "@/components/InfoButton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
 
 export default function Performance9365Section({
     selections,
@@ -53,24 +54,23 @@ export default function Performance9365Section({
         defaultOpen?: boolean;
     }) => {
         const [isOpen, setIsOpen] = useState(defaultOpen);
-        const bgColor =
-            variant === "warning"
-                ? "bg-orange-50"
-                : "bg-red-50";
-        const borderColor =
-            variant === "warning" ? "border-orange-200" : "border-red-200";
-        const titleColor = variant === "warning" ? "text-orange-800" : "text-red-800";
-        const iconColor = variant === "warning" ? "text-orange-700" : "text-red-700";
-        const contentColor = variant === "warning" ? "text-orange-700" : "text-red-700";
+        
+        const baseClasses = "p-2 border rounded-lg";
+        const variantClasses = {
+            warning: "bg-orange-50 border-orange-200 text-orange-800 dark:bg-orange-900/30 dark:border-orange-500/50 dark:text-orange-300",
+            destructive: "bg-red-50 border-red-200 text-red-800 dark:bg-red-900/30 dark:border-red-500/50 dark:text-red-300",
+        };
+        const iconColor = variant === "warning" ? "text-orange-700 dark:text-orange-400" : "text-red-700 dark:text-red-400";
+        const contentColor = variant === "warning" ? "text-orange-700 dark:text-orange-300" : "text-red-700 dark:text-red-300";
 
         return (
-            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} border ${borderColor} rounded-lg`}>
+            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={cn(baseClasses, variantClasses[variant])}>
                 <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
-                    <span className={`text-xs font-bold ${titleColor}`}>{title}</span>
-                    <ChevronDown className={`h-5 w-5 ${iconColor} transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                    <span className="text-xs font-bold">{title}</span>
+                    <ChevronDown className={cn("h-5 w-5 transition-transform duration-300", isOpen ? "rotate-180" : "", iconColor)} />
                 </CollapsibleTrigger>
                 <CollapsibleContent className="mt-4 data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden">
-                    <div className={`${contentColor} text-xs`}>{children}</div>
+                    <div className={cn("text-xs", contentColor)}>{children}</div>
                 </CollapsibleContent>
             </Collapsible>
         );
@@ -86,7 +86,7 @@ export default function Performance9365Section({
                 <>
                     {selections.city && selections.city.toLowerCase().trim() === "red deer" && selections.province === "alberta" && <div id="hasF280Calculation" className="space-y-2">
                         <div className="flex items-center gap-3">
-                            <label className="text-sm font-medium text-slate-900">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
+                            <label className="text-sm font-medium text-foreground">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
                             <InfoButton title="What is an F280 Calculation?">
                                 <div className="space-y-4">
                                     <div className="space-y-3">
@@ -141,7 +141,7 @@ export default function Performance9365Section({
                     </div>}
 
                     <div id="ceilingsAtticRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-900">Ceilings below Attics</label>
+                        <label className="text-sm font-medium text-foreground">Ceilings below Attics</label>
                         <Input type="text" placeholder='Enter assembly info (e.g., R50 Loose-fill/2x10/16"OC)' value={selections.ceilingsAtticRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             ceilingsAtticRSI: e.target.value
@@ -149,7 +149,7 @@ export default function Performance9365Section({
                     </div>
 
                     <div id="hasCathedralOrFlatRoof" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-900">Is there any cathedral ceilings or flat roof?</label>
+                        <label className="text-sm font-medium text-foreground">Is there any cathedral ceilings or flat roof?</label>
                         <Select value={selections.hasCathedralOrFlatRoof} onValueChange={value => setSelections(prev => ({
                             ...prev,
                             hasCathedralOrFlatRoof: value,
@@ -166,7 +166,7 @@ export default function Performance9365Section({
                     </div>
 
                     {selections.hasCathedralOrFlatRoof === "yes" && <div id="cathedralFlatRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-900">Cathedral / Flat Roofs</label>
+                        <label className="text-sm font-medium text-foreground">Cathedral / Flat Roofs</label>
                         <Input type="text" placeholder="Enter insulation type &/or R-value (e.g, R50 Loose-fill)., N/A" value={selections.cathedralFlatRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             cathedralFlatRSI: e.target.value
@@ -174,7 +174,7 @@ export default function Performance9365Section({
                     </div>}
 
                     <div id="wallRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-900">Above Grade Walls</label>
+                        <label className="text-sm font-medium text-foreground">Above Grade Walls</label>
                         <Input type="text" placeholder='Enter assembly info (e.g., R20 Batt/2x6/16"OC)' value={selections.wallRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             wallRSI: e.target.value
@@ -182,7 +182,7 @@ export default function Performance9365Section({
                     </div>
 
                     <div id="belowGradeRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-900">Below Grade Walls (Foundation Walls)</label>
+                        <label className="text-sm font-medium text-foreground">Below Grade Walls (Foundation Walls)</label>
                         <Input type="text" placeholder='Enter assembly info (e.g., R12 Batt/2x4/24"OC)' value={selections.belowGradeRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             belowGradeRSI: e.target.value
@@ -190,7 +190,7 @@ export default function Performance9365Section({
                     </div>
 
                     <div id="floorsSlabsSelected" className="space-y-4">
-                        <label className="text-sm font-medium text-slate-900">Floors/Slabs (Select all that apply)</label>
+                        <label className="text-sm font-medium text-foreground">Floors/Slabs (Select all that apply)</label>
                         <div className="space-y-2">
                             <label className="flex items-center gap-2">
                                 <input type="checkbox" checked={selections.floorsSlabsSelected.includes("floorsUnheated")} onChange={e => {
@@ -200,7 +200,7 @@ export default function Performance9365Section({
                                         floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter(item => item !== value)
                                     }));
                                 }} className="w-4 h-4 text-primary" />
-                                <span className="text-sm text-slate-900">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</span>
+                                <span className="text-sm text-foreground">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</span>
                             </label>
                             <label className="flex items-center gap-2">
                                 <input type="checkbox" checked={selections.floorsSlabsSelected.includes("floorsGarage")} onChange={e => {
@@ -210,7 +210,7 @@ export default function Performance9365Section({
                                         floorsSlabsSelected: e.target.checked ? [...prev.floorsSlabsSelected, value] : prev.floorsSlabsSelected.filter(item => item !== value)
                                     }));
                                 }} className="w-4 h-4 text-primary" />
-                                <span className="text-sm text-slate-900">Floors above Garages</span>
+                                <span className="text-sm text-foreground">Floors above Garages</span>
                             </label>
                             <label className={`flex items-center gap-2 ${isHeatedFloorsChecked ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                 <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedBelowFrost")} disabled={isHeatedFloorsChecked} onChange={e => {
@@ -233,7 +233,7 @@ export default function Performance9365Section({
                                         };
                                     });
                                 }} className="w-4 h-4 text-primary" />
-                                <span className="text-sm text-slate-900">Unheated Floor Below Frostline</span>
+                                <span className="text-sm text-foreground">Unheated Floor Below Frostline</span>
                             </label>
                             <label className={`flex items-center gap-2 ${isHeatedFloorsChecked ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                 <input type="checkbox" checked={selections.floorsSlabsSelected.includes("unheatedAboveFrost")} disabled={isHeatedFloorsChecked} onChange={e => {
@@ -256,7 +256,7 @@ export default function Performance9365Section({
                                         };
                                     });
                                 }} className="w-4 h-4 text-primary" />
-                                <span className="text-sm text-slate-900">Unheated Floor Above Frost Line (or walk-out basement)</span>
+                                <span className="text-sm text-foreground">Unheated Floor Above Frost Line (or walk-out basement)</span>
                             </label>
                             <label className={`flex items-center gap-2 ${isUnheatedFloorChecked || isSlabOnGradeChecked ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                 <input type="checkbox" checked={selections.floorsSlabsSelected.includes("heatedFloors")} disabled={isUnheatedFloorChecked || isSlabOnGradeChecked} onChange={e => {
@@ -283,7 +283,7 @@ export default function Performance9365Section({
                                         };
                                     });
                                 }} className="w-4 h-4 text-primary" />
-                                <span className="text-sm text-slate-900">Heated Floors</span>
+                                <span className="text-sm text-foreground">Heated Floors</span>
                             </label>
                             <label className={`flex items-center gap-2 ${isHeatedFloorsChecked ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                 <input type="checkbox" checked={selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting")} disabled={isHeatedFloorsChecked} onChange={e => {
@@ -306,14 +306,14 @@ export default function Performance9365Section({
                                         };
                                     });
                                 }} className="w-4 h-4 text-primary" />
-                                <span className="text-sm text-slate-900">Slab on grade with integral Footing</span>
+                                <span className="text-sm text-foreground">Slab on grade with integral Footing</span>
                             </label>
                         </div>
                     </div>
 
                     {/* In-Floor Heat Dropdown for 9365 */}
                     <div id="hasInFloorHeat9365" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-900">Are you installing or roughing in in-floor heat?</label>
+                        <label className="text-sm font-medium text-foreground">Are you installing or roughing in in-floor heat?</label>
                         <Select value={selections.hasInFloorHeat9365} onValueChange={value => {
                             setSelections(prev => {
                                 let newFloorsSlabsSelected = [...prev.floorsSlabsSelected];
@@ -362,7 +362,7 @@ export default function Performance9365Section({
                     </WarningButton>}
 
                     {selections.floorsSlabsSelected.includes("floorsUnheated") && <div id="floorsUnheatedRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-900">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</label>
+                        <label className="text-sm font-medium text-foreground">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</label>
                         <Input type="text" placeholder="Enter insulation type &/or RSI/R-value, or N/A" value={selections.floorsUnheatedRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             floorsUnheatedRSI: e.target.value
@@ -370,7 +370,7 @@ export default function Performance9365Section({
                     </div>}
 
                     {selections.floorsSlabsSelected.includes("floorsGarage") && <div id="floorsGarageRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-900">Floors above Garages</label>
+                        <label className="text-sm font-medium text-foreground">Floors above Garages</label>
                         <Input type="text" placeholder="Enter insulation type &/or RSI/R-value, or N/A" value={selections.floorsGarageRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             floorsGarageRSI: e.target.value
@@ -378,7 +378,7 @@ export default function Performance9365Section({
                     </div>}
 
                     {selections.floorsSlabsSelected.includes("unheatedBelowFrost") && <div id="unheatedFloorBelowFrostRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-900">Unheated Floor Below Frost Line</label>
+                        <label className="text-sm font-medium text-foreground">Unheated Floor Below Frost Line</label>
                         <Input type="text" placeholder="Enter RSI value or 'uninsulated'" value={selections.unheatedFloorBelowFrostRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             unheatedFloorBelowFrostRSI: e.target.value
@@ -386,7 +386,7 @@ export default function Performance9365Section({
                     </div>}
 
                     {selections.floorsSlabsSelected.includes("unheatedAboveFrost") && <div id="unheatedFloorAboveFrostRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-900">Unheated Floor Above Frost Line</label>
+                        <label className="text-sm font-medium text-foreground">Unheated Floor Above Frost Line</label>
                         <Input type="text" placeholder='Enter insulation type & R-value (e.g., 2" XPS or R10 Rigid), or N/A' value={selections.unheatedFloorAboveFrostRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             unheatedFloorAboveFrostRSI: e.target.value
@@ -394,7 +394,7 @@ export default function Performance9365Section({
                     </div>}
 
                     {selections.floorsSlabsSelected.includes("heatedFloors") && <div id="heatedFloorsRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-900">Heated Floors</label>
+                        <label className="text-sm font-medium text-foreground">Heated Floors</label>
                         <Input type="text" placeholder='Enter insulation type & R-value (e.g., 2" XPS or R10 Rigid)' value={selections.heatedFloorsRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             heatedFloorsRSI: e.target.value
@@ -407,7 +407,7 @@ export default function Performance9365Section({
                     </div>}
 
                     {selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting") && <div id="slabOnGradeIntegralFootingRSI" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-900">Slab on grade with integral Footing</label>
+                        <label className="text-sm font-medium text-foreground">Slab on grade with integral Footing</label>
                         <Input type="text" placeholder="Enter insulation type &/or R-value, or N/A" value={selections.slabOnGradeIntegralFootingRSI} onChange={e => setSelections(prev => ({
                             ...prev,
                             slabOnGradeIntegralFootingRSI: e.target.value
@@ -415,9 +415,9 @@ export default function Performance9365Section({
                     </div>}
 
                     {/* Window Schedule Upload */}
-                    <div className="space-y-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="space-y-4 p-4 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/30 dark:border-red-500/50">
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-900">Upload window/door schedule from your supplier e.g., "All Weather, Plygem, etc."</label>
+                            <label className="text-sm font-medium text-foreground">Upload window/door schedule from your supplier e.g., "All Weather, Plygem, etc."</label>
                             <div className="flex items-center space-x-4">
                                 <Input
                                     type="file"
@@ -435,26 +435,26 @@ export default function Performance9365Section({
                             <p className="text-xs text-muted-foreground">
                                 Accepted formats: PDF, DOC, DOCX, XLS, XLSX, TXT, JPG, JPEG, PNG
                             </p>
-                            <p className="text-xs text-slate-900 font-medium">
+                            <p className="text-xs text-foreground font-medium">
                                 You're welcome to upload documents later, but please be aware this may cause delays.
                             </p>
                         </div>
 
                         {uploadedFiles.length > 0 && <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-green-700">
+                            <div className="flex items-center gap-2 text-green-700 dark:text-green-300">
                                 <div className="h-2 w-2 bg-green-500 rounded-full"></div>
                                 <span className="text-sm font-medium">Uploaded Files ({uploadedFiles.length})</span>
                             </div>
                             <div className="space-y-2">
-                                {uploadedFiles.map((file, index) => <div key={index} className="flex items-center justify-between p-2 bg-green-50 border border-green-200 rounded-md">
+                                {uploadedFiles.map((file, index) => <div key={index} className="flex items-center justify-between p-2 bg-green-50 border border-green-200 rounded-md dark:bg-green-900/30 dark:border-green-500/50">
                                     <div className="flex items-center space-x-2">
-                                        <Info className="h-4 w-4 text-green-600" />
-                                        <span className="text-sm text-green-800">{file.name}</span>
-                                        <span className="text-xs text-green-600">
+                                        <Info className="h-4 w-4 text-green-600 dark:text-green-400" />
+                                        <span className="text-sm text-green-800 dark:text-green-300">{file.name}</span>
+                                        <span className="text-xs text-green-600 dark:text-green-400">
                                             ({(file.size / 1024 / 1024).toFixed(2)} MB)
                                         </span>
                                     </div>
-                                    <Button variant="outline" size="sm" onClick={() => removeFile(file)} className="h-6 w-6 p-0 text-green-600 hover:text-red-600">
+                                    <Button variant="outline" size="sm" onClick={() => removeFile(file)} className="h-6 w-6 p-0 text-green-600 hover:text-red-600 dark:text-green-400 dark:hover:text-red-400">
                                         ×
                                     </Button>
                                 </div>)}
@@ -471,7 +471,7 @@ export default function Performance9365Section({
                     </div>
 
                     <div id="hasSkylights" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-900">Do you have skylights?</label>
+                        <label className="text-sm font-medium text-foreground">Do you have skylights?</label>
                         <Select value={selections.hasSkylights} onValueChange={value => setSelections(prev => ({
                             ...prev,
                             hasSkylights: value,
@@ -487,7 +487,7 @@ export default function Performance9365Section({
                         </Select>
 
                         {selections.hasSkylights === "yes" && <div id="skylightUValue" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-900">Skylight U-Value</label>
+                            <label className="text-sm font-medium text-foreground">Skylight U-Value</label>
                             <Input type="text" placeholder="Enter U-Value (W/(m²·K))" value={selections.skylightUValue || ""} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 skylightUValue: e.target.value
@@ -503,7 +503,7 @@ export default function Performance9365Section({
 
                     <div id="airtightness" className="space-y-2">
                         <div className="flex items-center gap-3">
-                            <label className="text-sm font-medium text-slate-900">Airtightness Level</label>
+                            <label className="text-sm font-medium text-foreground">Airtightness Level</label>
                             <InfoButton title="What's a Blower Door Test?">
                                 <div className="space-y-4">
                                     <div>
@@ -629,13 +629,13 @@ export default function Performance9365Section({
                                     </div>
 
                                     <div className="space-y-2">
-                                        <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-2">
-                                            <p className="text-base font-medium text-blue-800">📋 Helpful Resources:</p>
+                                        <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-2 dark:bg-blue-900/30 dark:border-blue-500/50">
+                                            <p className="text-base font-medium text-blue-800 dark:text-blue-300">📋 Helpful Resources:</p>
                                             <div className="space-y-1">
-                                                <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-base text-blue-700 hover:text-red-800 block">
+                                                <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-base text-blue-700 dark:text-blue-400 hover:text-red-800 dark:hover:text-red-400 block">
                                                     🔗 View the Blower Door Checklist
                                                 </a>
-                                                <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-base text-blue-700 hover:text-red-800 block">
+                                                <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-base text-blue-700 dark:text-blue-400 hover:text-red-800 dark:hover:text-red-400 block">
                                                     🔗 More airtightness information
                                                 </a>
                                             </div>
@@ -689,7 +689,7 @@ export default function Performance9365Section({
                             />
                             <label
                                 htmlFor="midConstructionBlowerDoor-9367-3"
-                                className="ml-2 text-sm font-medium cursor-pointer text-slate-900"
+                                className="ml-2 text-sm font-medium cursor-pointer text-foreground"
                             >
                                 Mid-Construction Blower Door Test Planned (Optional)
                             </label>
@@ -712,13 +712,13 @@ export default function Performance9365Section({
                                     </ul>
                                     <div className="flex items-center gap-1 text-sm mt-3">
                                         <span>📄</span>
-                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
+                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                                             View the Blower Door Checklist
                                         </a>  
                                     </div>
                                     <div className="flex items-center gap-1 text-sm mt-3">
                                         <span>▶️</span>
-                                        <a href="https://www.youtube.com/watch?v=4KtCansnpLE" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
+                                        <a href="https://www.youtube.com/watch?v=4KtCansnpLE" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                                             BILD Alberta - Building Airtightness Testing
                                         </a>  
                                     </div>   
@@ -729,7 +729,7 @@ export default function Performance9365Section({
 
                     {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <>
                         <div id="waterHeaterType" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-900">Water Heater Type</label>
+                            <label className="text-sm font-medium text-foreground">Water Heater Type</label>
                             <Select value={selections.waterHeaterType} onValueChange={value => setSelections(prev => ({
                                 ...prev,
                                 waterHeaterType: value
@@ -745,7 +745,7 @@ export default function Performance9365Section({
                         </div>
 
                         <div id="waterHeater" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-900">Water Heater</label>
+                            <label className="text-sm font-medium text-foreground">Water Heater</label>
                             <Input type="text" placeholder="Enter Water Heater Make/Model" value={selections.waterHeater} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 waterHeater: e.target.value
@@ -755,7 +755,7 @@ export default function Performance9365Section({
 
                     <div id="hasDWHR" className="space-y-2">
                         <div className="flex items-center gap-3">
-                            <label className="text-sm font-medium text-slate-900">Is a drain water heat recovery system being installed?</label>
+                            <label className="text-sm font-medium text-foreground">Is a drain water heat recovery system being installed?</label>
                             <InfoButton title="Drain Water Heat Recovery System Information">
                                 <div className="space-y-4">
                                     <div className="border-b pb-2">
@@ -801,7 +801,7 @@ export default function Performance9365Section({
 
                     <div id="heatingType" className="space-y-2">
                         <div className="flex items-center gap-3">
-                            <label className="text-sm font-medium text-slate-900">Heating Type <span className="text-red-500">*</span></label>
+                            <label className="text-sm font-medium text-foreground">Heating Type <span className="text-red-500">*</span></label>
                             <InfoButton title="CAN/CSA F280-12 - Room by Room Heat Loss/Gain Calculation">
                                 <div className="space-y-4">
                                     <div>
@@ -859,7 +859,7 @@ export default function Performance9365Section({
                                 </p>
                                 <div className="flex items-center gap-1 text-sm mt-3">
                                     <span>🔗</span>
-                                    <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">
+                                    <a href="https://solinvictusenergyservices.com/cancsa-f28012" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300">
                                         More information
                                     </a>
                                 </div>
@@ -868,7 +868,7 @@ export default function Performance9365Section({
                     </div>
 
                     {selections.heatingType && <div id="heatingEfficiency" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-900">
+                        <label className="text-sm font-medium text-foreground">
                             {selections.heatingType === 'furnace' ? 'Furnace' : selections.heatingType === 'boiler' ? 'Boiler' : selections.heatingType === 'heat-pump' ? 'Heat Pump' : 'Heating Efficiency'}
                         </label>
                         <Input type="text" placeholder={selections.heatingType === 'furnace' ? "Enter Furnace Make/Model" : selections.heatingType === 'boiler' ? "Enter Boiler Make/Model" : selections.heatingType === 'heat-pump' ? "Enter Heat Pump Make/Model" : "Enter heating equipment make/model"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
@@ -879,7 +879,7 @@ export default function Performance9365Section({
 
                     {selections.heatingType === 'boiler' && <div className="space-y-4">
                         <div id="indirectTank" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-900">Are you installing an indirect tank?</label>
+                            <label className="text-sm font-medium text-foreground">Are you installing an indirect tank?</label>
                             <Select value={selections.indirectTank} onValueChange={value => setSelections(prev => ({
                                 ...prev,
                                 indirectTank: value,
@@ -896,7 +896,7 @@ export default function Performance9365Section({
                         </div>
 
                         {selections.indirectTank === 'yes' && <div id="indirectTankSize" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-900">Indirect tank size (gallons)</label>
+                            <label className="text-sm font-medium text-foreground">Indirect tank size (gallons)</label>
                             <Input type="number" placeholder="Enter tank size in gallons" value={selections.indirectTankSize} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 indirectTankSize: e.target.value
@@ -905,7 +905,7 @@ export default function Performance9365Section({
                     </div>}
 
                     <div id="coolingApplicable" className="space-y-2">
-                        <label className="text-sm font-medium text-slate-900">Are you installing cooling/air conditioning?</label>
+                        <label className="text-sm font-medium text-foreground">Are you installing cooling/air conditioning?</label>
                         <Select value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
                             ...prev,
                             coolingApplicable: value,
@@ -924,14 +924,14 @@ export default function Performance9365Section({
 
                     {selections.coolingApplicable === "yes" && <div className="space-y-4">
                         <div id="coolingMakeModel" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-900">Cooling System Make/Model</label>
+                            <label className="text-sm font-medium text-foreground">Cooling System Make/Model</label>
                             <Input type="text" value={selections.coolingMakeModel} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 coolingMakeModel: e.target.value
                             }))} placeholder="Enter cooling system make and model" />
                         </div>
                         <div id="coolingEfficiency" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-900">Cooling System Efficiency</label>
+                            <label className="text-sm font-medium text-foreground">Cooling System Efficiency</label>
                             <Input
                                 type="text"
                                 placeholder="Enter SEER (min 14.5) or SEER2 (min 14.3) value"
@@ -945,12 +945,12 @@ export default function Performance9365Section({
                     </div>}
 
                     {/* Secondary Suite HRV - Show for buildings with multiple units */}
-                    {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && <div className="space-y-4 p-4 bg-slate-50 border border-slate-200 rounded-md">
-                        <h5 className="font-medium text-slate-900">Secondary Suite HRV/ERV</h5>
+                    {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && <div className="space-y-4 p-4 bg-muted/50 border rounded-md">
+                        <h5 className="font-medium text-foreground">Secondary Suite HRV/ERV</h5>
 
                         <div id="hasSecondaryHrv" className="space-y-2">
                             <div className="flex items-center gap-3">
-                                <label className="text-sm font-medium text-slate-900">Will there be a second HRV/ERV for the secondary suite?</label>
+                                <label className="text-sm font-medium text-foreground">Will there be a second HRV/ERV for the secondary suite?</label>
                                 <InfoButton title="Secondary Suite HRV/ERV Information">
                                     <div className="space-y-4">
                                         <div>
@@ -993,7 +993,7 @@ export default function Performance9365Section({
                         </div>
 
                         {selections.hasSecondaryHrv === "separate" && <div id="secondaryHrvEfficiency" className="space-y-2">
-                            <label className="text-sm font-medium text-slate-900">Secondary Suite HRV/ERV Make/Model</label>
+                            <label className="text-sm font-medium text-foreground">Secondary Suite HRV/ERV Make/Model</label>
                             <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
                                 ...prev,
                                 secondaryHrvEfficiency: e.target.value
