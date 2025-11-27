@@ -181,11 +181,10 @@ const Login = () => {
 
   if (isResetMode) {
     return (
-      <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
-        <div className="absolute inset-0 bg-black/40"></div>
+      <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
         <Header />
         <div className="flex-1 flex items-center justify-center px-4 relative z-10">
-          <Card className="w-full max-w-md bg-slate-800/60 backdrop-blur-[100px] border-slate-400/50 shadow-2xl">
+          <Card className="w-full max-w-md bg-slate-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl text-white">Set New Password</CardTitle>
               <CardDescription className="text-slate-200">Enter your new password below</CardDescription>
@@ -221,13 +220,12 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
-      <div className="absolute inset-0 bg-black/40"></div>
+    <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
       <Header />
       <div className="flex-1 flex items-center justify-center px-4 relative z-10">
         <div className="w-full max-w-2xl space-y-6">
           {/* What is the Pathway Selector intro */}
-          <Card className="bg-slate-800/60 backdrop-blur-[100px] border-slate-400/30 shadow-2xl">
+          <Card className="bg-slate-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
             <CardContent className="pt-6">
               <div className="text-center space-y-3">
                 <h2 className="text-xl font-semibold text-white">What is the NBC 9.36 Navigator?</h2>
@@ -240,7 +238,7 @@ const Login = () => {
             </CardContent>
           </Card>
           
-          <Card className="bg-slate-650/60 backdrop-blur-[100px] border-slate-400/50 shadow-2xl">
+          <Card className="bg-slate-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl text-white">NBC 9.36 Navigator</CardTitle>
               <CardDescription className="text-slate-200">Sign in to your account</CardDescription>
