@@ -7,7 +7,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 import { CheckCircle, Clock, ShieldCheck, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -95,11 +94,10 @@ const RequestProviderAccess = () => {
   const { icon, title, description, button } = getStatusContent();
 
   return (
-    <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
-      <div className="absolute inset-0 bg-background/30 dark:bg-slate-900/70 backdrop-blur-sm" />
+    <div className="min-h-screen flex flex-col bg-background">
       <Header showSignOut={true} onSignOut={signOut} />
-      <main className="flex-1 flex items-center justify-center container mx-auto px-4 py-8 relative z-10">
-        <Card className="w-full max-w-2xl bg-card/80 backdrop-blur-lg shadow-2xl text-center">
+      <main className="flex-1 flex items-center justify-center container mx-auto px-4 py-8">
+        <Card className="w-full max-w-2xl text-center">
           <CardHeader>
             <div className="mx-auto mb-4">{icon}</div>
             <CardTitle className="text-3xl text-card-foreground">{title}</CardTitle>
