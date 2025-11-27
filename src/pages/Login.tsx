@@ -223,139 +223,128 @@ const Login = () => {
       <Header variant="login" />
       <div className="flex-1 flex items-center justify-center px-4">
         <div className="w-full max-w-2xl space-y-6">
-          {/* What is the Pathway Selector intro */}
           <Card className="bg-white shadow-sm rounded-lg">
-            <CardContent className="pt-6">
-              <div className="text-center space-y-3">
-                <h2 className="text-xl font-semibold text-slate-800">What is the NBC 9.36 Navigator?</h2>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  A specialized tool for energy professionals and building owners to navigate NBC 9.36 compliance pathways. 
-                  Quickly determine the most cost-effective approach for your building project while ensuring regulatory compliance 
-                  and optimizing energy performance outcomes.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-white shadow-sm rounded-lg">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl text-slate-800">NBC 9.36 Navigator</CardTitle>
-              <CardDescription className="text-slate-500">Sign in to your account</CardDescription>
+            <CardHeader className="text-center pb-4">
+              <CardTitle className="text-2xl font-bold text-slate-800">Energy Navigator 9.36</CardTitle>
+              <CardDescription className="text-slate-600 leading-relaxed pt-2 px-6">
+                A specialized tool for energy professionals and building owners to navigate NBC 9.36 compliance pathways. Quickly determine the most cost-effective approach for your building project while ensuring regulatory compliance and optimizing energy performance outcomes.
+              </CardDescription>
             </CardHeader>
-          <CardContent>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="signin">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
-                <TabsTrigger value="reset">Reset Password</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="signin">
-                <form onSubmit={handleSignIn} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-email">Email</Label>
-                    <Input
-                      id="signin-email"
-                      name="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-password">Password</Label>
-                    <Input
-                      id="signin-password"
-                      name="password"
-                      type="password"
-                      placeholder="Enter your password"
-                      required
-                    />
-                  </div>
-                  {error && (
-                    <Alert variant="destructive">
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                  )}
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Signing in...' : 'Sign In'}
-                  </Button>
-                </form>
-              </TabsContent>
-              
-              <TabsContent value="signup">
-                <form onSubmit={handleSignUp} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="profile-type">Profile Type</Label>
-                    <Select onValueChange={setProfileType} required>
-                      <SelectTrigger id="profile-type">
-                        <SelectValue placeholder="Select your profile type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="builder_contractor">Builder / Contractor</SelectItem>
-                        <SelectItem value="building_official">Building Official (AHJ)</SelectItem>
-                        <SelectItem value="energy_advisor">Energy Advisor / Modeler</SelectItem>
-                        <SelectItem value="designer_architect">Designer / Architect</SelectItem>
-                        <SelectItem value="homeowner">Homeowner</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
-                    <Input
-                      id="signup-email"
-                      name="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
-                    <Input
-                      id="signup-password"
-                      name="password"
-                      type="password"
-                      placeholder="Create a password"
-                      required
-                      minLength={6}
-                    />
-                  </div>
-                  {error && (
-                    <Alert variant="destructive">
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                  )}
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Creating account...' : 'Create Account'}
-                  </Button>
-                </form>
-              </TabsContent>
-              
-              <TabsContent value="reset">
-                <form onSubmit={handlePasswordReset} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="reset-email">Email</Label>
-                    <Input
-                      id="reset-email"
-                      name="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      required
-                    />
-                  </div>
-                  {error && (
-                    <Alert variant="destructive">
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                  )}
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Sending...' : 'Send Reset Email'}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
+            <CardContent>
+              <p className="text-center text-sm text-slate-500 mb-4">Sign in to your account</p>
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="signin">Sign In</TabsTrigger>
+                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                  <TabsTrigger value="reset">Reset Password</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="signin">
+                  <form onSubmit={handleSignIn} className="space-y-4 pt-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="signin-email">Email</Label>
+                      <Input
+                        id="signin-email"
+                        name="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signin-password">Password</Label>
+                      <Input
+                        id="signin-password"
+                        name="password"
+                        type="password"
+                        placeholder="Enter your password"
+                        required
+                      />
+                    </div>
+                    {error && (
+                      <Alert variant="destructive">
+                        <AlertDescription>{error}</AlertDescription>
+                      </Alert>
+                    )}
+                    <Button type="submit" className="w-full" disabled={isLoading}>
+                      {isLoading ? 'Signing in...' : 'Sign In'}
+                    </Button>
+                  </form>
+                </TabsContent>
+                
+                <TabsContent value="signup">
+                  <form onSubmit={handleSignUp} className="space-y-4 pt-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="profile-type">Profile Type</Label>
+                      <Select onValueChange={setProfileType} required>
+                        <SelectTrigger id="profile-type">
+                          <SelectValue placeholder="Select your profile type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="builder_contractor">Builder / Contractor</SelectItem>
+                          <SelectItem value="building_official">Building Official (AHJ)</SelectItem>
+                          <SelectItem value="energy_advisor">Energy Advisor / Modeler</SelectItem>
+                          <SelectItem value="designer_architect">Designer / Architect</SelectItem>
+                          <SelectItem value="homeowner">Homeowner</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-email">Email</Label>
+                      <Input
+                        id="signup-email"
+                        name="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-password">Password</Label>
+                      <Input
+                        id="signup-password"
+                        name="password"
+                        type="password"
+                        placeholder="Create a password"
+                        required
+                        minLength={6}
+                      />
+                    </div>
+                    {error && (
+                      <Alert variant="destructive">
+                        <AlertDescription>{error}</AlertDescription>
+                      </Alert>
+                    )}
+                    <Button type="submit" className="w-full" disabled={isLoading}>
+                      {isLoading ? 'Creating account...' : 'Create Account'}
+                    </Button>
+                  </form>
+                </TabsContent>
+                
+                <TabsContent value="reset">
+                  <form onSubmit={handlePasswordReset} className="space-y-4 pt-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="reset-email">Email</Label>
+                      <Input
+                        id="reset-email"
+                        name="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        required
+                      />
+                    </div>
+                    {error && (
+                      <Alert variant="destructive">
+                        <AlertDescription>{error}</AlertDescription>
+                      </Alert>
+                    )}
+                    <Button type="submit" className="w-full" disabled={isLoading}>
+                      {isLoading ? 'Sending...' : 'Send Reset Email'}
+                    </Button>
+                  </form>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
           </Card>
         </div>
       </div>
