@@ -4,7 +4,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import InfoButton from "@/components/InfoButton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Props {
     selections: any;
@@ -442,7 +443,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                                 interestedCertifications: checked ? [...prev.interestedCertifications, cert.id] : prev.interestedCertifications.filter(id => id !== cert.id)
                                             }));
                                         }}
-                                        className="h-6 w-6"
+                                        className="h-6 w-6 border-slate-400"
                                     />
                                     <div className="flex items-center gap-4 flex-1">
                                         <div className="flex-shrink-0 w-24 h-14 flex items-center justify-center bg-white/0 rounded-md p-1">
