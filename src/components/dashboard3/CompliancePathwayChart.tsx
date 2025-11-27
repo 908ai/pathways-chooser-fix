@@ -17,7 +17,7 @@ const pathwayMapping: { [key: string]: string } = {
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-2 border border-slate-200 rounded-md shadow-lg text-slate-800">
+      <div className="bg-popover p-2 border border-border rounded-md shadow-lg text-popover-foreground">
         <p className="label">{`${payload[0].name} : ${payload[0].value} project(s)`}</p>
       </div>
     );
@@ -44,9 +44,9 @@ const CompliancePathwayChart = ({ data }: { data: any[] }) => {
   const totalProjects = chartData.reduce((sum, entry) => sum + entry.value, 0);
 
   return (
-    <Card className="bg-white shadow-sm rounded-lg">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-slate-900">Compliance Pathways</CardTitle>
+        <CardTitle className="text-card-foreground">Compliance Pathways</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="relative h-48">
@@ -71,8 +71,8 @@ const CompliancePathwayChart = ({ data }: { data: any[] }) => {
             </PieChart>
           </ResponsiveContainer>
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-2xl font-bold text-slate-900">{totalProjects}</span>
-            <span className="text-sm text-slate-500">Total Projects</span>
+            <span className="text-2xl font-bold text-card-foreground">{totalProjects}</span>
+            <span className="text-sm text-muted-foreground">Total Projects</span>
           </div>
         </div>
         <div className="mt-6 space-y-2">
@@ -83,9 +83,9 @@ const CompliancePathwayChart = ({ data }: { data: any[] }) => {
                   className="h-3 w-3 rounded-full"
                   style={{ backgroundColor: COLORS[entry.name as keyof typeof COLORS] || '#8884d8' }}
                 />
-                <span className="text-slate-600">{entry.name}</span>
+                <span className="text-muted-foreground">{entry.name}</span>
               </div>
-              <span className="font-semibold text-slate-800">
+              <span className="font-semibold text-card-foreground">
                 {totalProjects > 0 ? `${Math.round((entry.value / totalProjects) * 100)}%` : '0%'}
               </span>
             </div>

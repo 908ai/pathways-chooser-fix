@@ -176,13 +176,13 @@ const Dashboard3 = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-slate-900">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Header showSignOut={true} onSignOut={signOut} />
       <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-slate-800">Executive Overview</h1>
-            <p className="text-slate-500 mt-1">
+            <h1 className="text-3xl font-bold text-foreground">Executive Overview</h1>
+            <p className="text-muted-foreground mt-1">
               Welcome back{userName ? `, ${userName}` : ''}! You have <span className="font-semibold text-primary">{analytics.activeProjects} active projects</span> requiring attention.
             </p>
           </div>

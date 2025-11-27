@@ -10,7 +10,7 @@ interface HurdleData {
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-2 border border-slate-200 rounded-md shadow-lg text-slate-800 text-sm">
+      <div className="bg-popover p-2 border border-border rounded-md shadow-lg text-popover-foreground text-sm">
         <p className="label">{`${payload[0].payload.name}: ${payload[0].value} projects`}</p>
       </div>
     );
@@ -21,39 +21,39 @@ const CustomTooltip = ({ active, payload }: any) => {
 const ComplianceHurdlesChart = ({ data }: { data: HurdleData[] }) => {
   if (!data || data.length === 0) {
     return (
-      <Card className="bg-white shadow-sm rounded-lg">
+      <Card>
         <CardHeader>
-          <CardTitle className="text-slate-900 flex items-center gap-2">
+          <CardTitle className="text-card-foreground flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-orange-500" />
             Common Compliance Hurdles
           </CardTitle>
-          <CardDescription className="text-slate-500">Top reasons for project revisions or non-compliance.</CardDescription>
+          <CardDescription>Top reasons for project revisions or non-compliance.</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-slate-500 text-center py-10">No projects with revisions or non-compliance found.</p>
+          <p className="text-muted-foreground text-center py-10">No projects with revisions or non-compliance found.</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="bg-white shadow-sm rounded-lg">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-slate-900 flex items-center gap-2">
+        <CardTitle className="text-card-foreground flex items-center gap-2">
           <AlertTriangle className="h-5 w-5 text-orange-500" />
           Common Compliance Hurdles
         </CardTitle>
-        <CardDescription className="text-slate-500">Top reasons for project revisions or non-compliance.</CardDescription>
+        <CardDescription>Top reasons for project revisions or non-compliance.</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={false} />
-            <XAxis type="number" stroke="#64748b" fontSize={12} allowDecimals={false} />
-            <YAxis type="category" dataKey="name" stroke="#64748b" width={100} tick={{ fontSize: 12 }} />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f1f5f9' }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
+            <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} allowDecimals={false} />
+            <YAxis type="category" dataKey="name" stroke="hsl(var(--muted-foreground))" width={100} tick={{ fontSize: 12 }} />
+            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--accent))' }} />
             <Bar dataKey="count" fill="#fb923c">
-              <LabelList dataKey="count" position="right" fill="#64748b" fontSize={12} />
+              <LabelList dataKey="count" position="right" fill="hsl(var(--muted-foreground))" fontSize={12} />
             </Bar>
           </BarChart>
         </ResponsiveContainer>

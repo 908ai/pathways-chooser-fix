@@ -14,7 +14,7 @@ const statusMapping: { [key: string]: string } = {
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-2 border border-slate-200 rounded-md shadow-lg text-slate-800">
+      <div className="bg-popover p-2 border border-border rounded-md shadow-lg text-popover-foreground">
         <p className="label">{`${payload[0].payload.name} : ${payload[0].value} project(s)`}</p>
       </div>
     );
@@ -32,22 +32,22 @@ const ProjectStatusChart = ({ data }: { data: any[] }) => {
   ).map(([name, value]) => ({ name, projects: value }));
 
   return (
-    <Card className="bg-white shadow-sm rounded-lg">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-slate-900 flex items-center gap-2">
-          <Building className="h-5 w-5 text-slate-500" />
+        <CardTitle className="text-card-foreground flex items-center gap-2">
+          <Building className="h-5 w-5 text-muted-foreground" />
           Project Status
         </CardTitle>
-        <CardDescription className="text-slate-500">Current breakdown of your projects by status.</CardDescription>
+        <CardDescription>Current breakdown of your projects by status.</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-            <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
-            <YAxis stroke="#64748b" fontSize={12} allowDecimals={false} />
-            <Tooltip content={<CustomTooltip />} cursor={{fill: '#f1f5f9'}} />
-            <Bar dataKey="projects" fill="#8884d8" radius={[4, 4, 0, 0]} />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+            <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} allowDecimals={false} />
+            <Tooltip content={<CustomTooltip />} cursor={{fill: 'hsl(var(--accent))'}} />
+            <Bar dataKey="projects" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>
