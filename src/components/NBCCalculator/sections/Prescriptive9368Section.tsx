@@ -52,26 +52,30 @@ export default function Prescriptive9368Section({
         defaultOpen?: boolean;
     }) => {
         const [isOpen, setIsOpen] = useState(defaultOpen);
-        const bgColor =
-            variant === "warning"
-                ? "bg-orange-50"
-                : "bg-red-50";
-        const borderColor =
-            variant === "warning"
-                ? "border-orange-200"
-                : "border-red-300";
-        const titleColor = variant === "warning" ? "text-orange-800" : "text-red-800";
-        const iconColor = variant === "warning" ? "text-orange-700" : "text-red-700";
-        const contentColor = variant === "warning" ? "text-orange-700" : "text-red-700";
 
         return (
-            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={`p-2 ${bgColor} border ${borderColor} rounded-lg`}>
+            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={cn(
+                "p-2 border rounded-lg",
+                variant === "warning" 
+                    ? "bg-orange-50 border-orange-200 dark:bg-orange-900/30 dark:border-orange-500/50" 
+                    : "bg-red-50 border-red-200 dark:bg-red-900/30 dark:border-red-500/50"
+            )}>
                 <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
-                    <span className={`text-xs font-bold ${titleColor}`}>{title}</span>
-                    <ChevronDown className={`h-5 w-5 ${iconColor} transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                    <span className={cn(
+                        "text-xs font-bold",
+                        variant === "warning" ? "text-orange-800 dark:text-orange-300" : "text-red-800 dark:text-red-300"
+                    )}>{title}</span>
+                    <ChevronDown className={cn(
+                        "h-5 w-5 transition-transform duration-300",
+                        isOpen ? "rotate-180" : "",
+                        variant === "warning" ? "text-orange-700 dark:text-orange-400" : "text-red-700 dark:text-red-400"
+                    )} />
                 </CollapsibleTrigger>
                 <CollapsibleContent className="mt-4 data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden">
-                    <div className={`${contentColor} text-xs`}>{children}</div>
+                    <div className={cn(
+                        "text-xs",
+                        variant === "warning" ? "text-orange-700 dark:text-orange-300" : "text-red-700 dark:text-red-300"
+                    )}>{children}</div>
                 </CollapsibleContent>
             </Collapsible>
         );
@@ -95,11 +99,11 @@ export default function Prescriptive9368Section({
         <div className="space-y-6">
             {/* Ceiling/Attic Insulation */}
             <div id="ceilingsAtticRSI" className="space-y-2">
-                <label className="text-sm font-medium text-slate-900">Effective RSI - Ceilings below Attics <span className="text-red-400">*</span></label>
+                <label className="text-sm font-medium text-foreground">Effective RSI - Ceilings below Attics <span className="text-red-400">*</span></label>
                 <Input type="text" placeholder={selections.compliancePath === "9368" ? "Min RSI 8.67 (R-49.2) with HRV" : selections.hasHrv === "with_hrv" ? "Min RSI 8.67 (R-49.2) with HRV" : selections.hasHrv === "without_hrv" ? "Min RSI 10.43 (R-59.2) without HRV" : "Min RSI 8.67 (R-49.2) with HRV, 10.43 (R-59.2) without HRV"} value={selections.ceilingsAtticRSI} onChange={e => setSelections(prev => ({
                     ...prev,
                     ceilingsAtticRSI: e.target.value
-                }))} className={cn("bg-white border-slate-300 text-slate-900 placeholder:text-slate-500 focus:ring-primary", validationErrors.ceilingsAtticRSI && "border-red-500 ring-2 ring-red-500")} />
+                }))} className={cn(validationErrors.ceilingsAtticRSI && "border-red-500 ring-2 ring-red-500")} />
                 {(() => {
                     if (selections.compliancePath === "9368") {
                         const minRSI = 8.67; // For 9368, HRV is mandatory
@@ -137,12 +141,12 @@ export default function Prescriptive9368Section({
 
             {/* Wall Insulation */}
             <div id="wallRSI" className="space-y-2">
-                <label className="text-sm font-medium text-slate-900">Above Grade Walls - RSI Value <span className="text-red-400">*</span></label>
+                <label className="text-sm font-medium text-foreground">Above Grade Walls - RSI Value <span className="text-red-400">*</span></label>
                 <Select value={selections.wallRSI} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     wallRSI: value
                 }))}>
-                    <SelectTrigger className={cn("bg-white border-slate-300 text-slate-900 placeholder:text-slate-500 focus:ring-primary", validationErrors.wallRSI && "border-red-500 ring-2 ring-red-500")}>
+                    <SelectTrigger className={cn(validationErrors.wallRSI && "border-red-500 ring-2 ring-red-500")}>
                         <SelectValue placeholder="Select wall insulation level" />
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px] overflow-y-auto">
@@ -156,12 +160,12 @@ export default function Prescriptive9368Section({
 
             {/* Below Grade Walls */}
             <div id="belowGradeRSI" className="space-y-2">
-                <label className="text-sm font-medium text-slate-900">Below Grade Walls - RSI Value <span className="text-red-400">*</span></label>
+                <label className="text-sm font-medium text-foreground">Below Grade Walls - RSI Value <span className="text-red-400">*</span></label>
                 <Select value={selections.belowGradeRSI} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     belowGradeRSI: value
                 }))}>
-                    <SelectTrigger className={cn("bg-white border-slate-300 text-slate-900 placeholder:text-slate-500 focus:ring-primary", validationErrors.belowGradeRSI && "border-red-500 ring-2 ring-red-500")}>
+                    <SelectTrigger className={cn(validationErrors.belowGradeRSI && "border-red-500 ring-2 ring-red-500")}>
                         <SelectValue placeholder="Select below grade insulation" />
                     </SelectTrigger>
                     <SelectContent>
@@ -176,7 +180,7 @@ export default function Prescriptive9368Section({
             {/* Windows */}
             <div id="windowUValue" className="space-y-2">
                 <div className="flex items-center gap-2">
-                    <label className="text-sm font-medium text-slate-900">Windows - U-Value <span className="text-red-400">*</span></label>
+                    <label className="text-sm font-medium text-foreground">Windows - U-Value <span className="text-red-400">*</span></label>
                     <InfoButton title="Energy Efficiency Points for Windows & Doors">
                         <div className="space-y-4">
                             <p className="text-sm">
@@ -219,7 +223,7 @@ export default function Prescriptive9368Section({
                     ...prev,
                     windowUValue: value
                 }))}>
-                    <SelectTrigger className={cn("bg-white border-slate-300 text-slate-900 placeholder:text-slate-500 focus:ring-primary", validationErrors.windowUValue && "border-red-500 ring-2 ring-red-500")}>
+                    <SelectTrigger className={cn(validationErrors.windowUValue && "border-red-500 ring-2 ring-red-500")}>
                         <SelectValue placeholder="Select window performance" />
                     </SelectTrigger>
                     <SelectContent>
@@ -230,10 +234,10 @@ export default function Prescriptive9368Section({
                 </Select>
 
                 <InfoCollapsible title="ℹ️ Window & Door Performance Verification">
-                    <p className="text-slate-600">
+                    <p className="text-muted-foreground">
                         Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value’s (ie, U-value W/(m²×).
                     </p>
-                    <p className="text-slate-600 mt-2">
+                    <p className="text-muted-foreground mt-2">
                         See below an illustrative example of a window unit showing the performance values that must be recorded in the Window & Door Schedule.                        
                     </p>
                     <img src="/assets/img/window-door-uvalue-example.png" alt="Window & Door Performance Example" className="mt-4 rounded-md border mx-auto block" />
@@ -241,7 +245,7 @@ export default function Prescriptive9368Section({
                 {selections.windowUValue && <>
 
                     <div className="flex items-center gap-2">
-                        <label className="text-sm font-medium text-slate-900">Energy Efficiency Points for Windows & Doors</label>
+                        <label className="text-sm font-medium text-foreground">Energy Efficiency Points for Windows & Doors</label>
                         <InfoButton title="Energy Efficiency Points for Windows & Doors">
                             <div className="space-y-4">
                                 <p className="text-sm text-foreground/80">
@@ -286,7 +290,7 @@ export default function Prescriptive9368Section({
             {/* Airtightness */}
             <div id="airtightness" className="space-y-2">
                 <div className="flex items-center gap-3">
-                    <label className="text-sm font-medium text-slate-900">Airtightness Level <span className="text-red-400">*</span></label>
+                    <label className="text-sm font-medium text-foreground">Airtightness Level <span className="text-red-400">*</span></label>
                     <InfoButton title="What's a Blower Door Test?">
                         <div className="space-y-4">
                             <div>
@@ -411,13 +415,13 @@ export default function Prescriptive9368Section({
                             </div>
 
                             <div className="space-y-2">
-                                <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-2">
-                                    <p className="text-sm font-medium text-blue-800">📋 Helpful Resources:</p>
+                                <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-2 dark:bg-blue-900/30 dark:border-blue-500/50">
+                                    <p className="text-sm font-medium text-blue-800 dark:text-blue-300">📋 Helpful Resources:</p>
                                     <div className="space-y-1">
-                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-700 hover:text-red-800 block">
+                                        <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-700 dark:text-blue-400 hover:text-red-800 dark:hover:text-red-400 block">
                                             🔗 View the Blower Door Checklist
                                         </a>
-                                        <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-700 hover:text-red-800 block">
+                                        <a href="https://www.solinvictusenergyservices.com/airtightness" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-700 dark:text-blue-400 hover:text-red-800 dark:hover:text-red-400 block">
                                             🔗 More airtightness information
                                         </a>
                                     </div>
@@ -430,7 +434,7 @@ export default function Prescriptive9368Section({
                     ...prev,
                     airtightness: value
                 }))}>
-                    <SelectTrigger className={cn("bg-white border-slate-300 text-slate-900 placeholder:text-slate-500 focus:ring-primary", validationErrors.airtightness && "border-red-500 ring-2 ring-red-500")}>
+                    <SelectTrigger className={cn(validationErrors.airtightness && "border-red-500 ring-2 ring-red-500")}>
                         <SelectValue placeholder="Select airtightness level" />
                     </SelectTrigger>
                     <SelectContent>
@@ -441,7 +445,7 @@ export default function Prescriptive9368Section({
                 </Select>
 
                 <InfoCollapsible title="⚠️ Caution: Air-Tightness Targets Without Testing History">
-                    <div className="text-xs text-slate-600 space-y-2">
+                    <div className="text-xs text-muted-foreground space-y-2">
                         <p>
                             Choosing an air-tightness target lower than prescribed by NBC2020 without prior test results is risky.
                         </p>
@@ -472,7 +476,7 @@ export default function Prescriptive9368Section({
                 <div className="space-y-3 pt-4 border-t border-border/20">
                     <Dialog>
                         <DialogTrigger asChild>
-                            <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium bg-emerald-50/80 border-emerald-300/50 hover:bg-emerald-100/80 hover:border-emerald-400/60 backdrop-blur-sm">
+                            <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium bg-emerald-50/80 border-emerald-300/50 hover:bg-emerald-100/80 hover:border-emerald-400/60 backdrop-blur-sm dark:bg-emerald-900/30 dark:border-emerald-500/50 dark:hover:bg-emerald-900/50">
                                 Learn more about points allocation for air-townhouse for MURB/Row/Town-homes
                             </Button>
                         </DialogTrigger>
@@ -614,9 +618,9 @@ export default function Prescriptive9368Section({
                                     </div>
                                 </div>
 
-                                <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
-                                    <p className="text-xs font-medium text-blue-800">💡 Key Takeaways:</p>
-                                    <div className="text-xs text-blue-700 space-y-1">
+                                <div className="p-3 bg-blue-50 border border-blue-200 rounded-md dark:bg-blue-900/30 dark:border-blue-500/50">
+                                    <p className="text-xs font-medium text-blue-800 dark:text-blue-300">💡 Key Takeaways:</p>
+                                    <div className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
                                         <p>• In multi-unit buildings, one poorly-performing unit can impact the entire project's compliance. This is why consistent construction quality and testing across all units is critical for achieving energy efficiency targets.</p>
                                         <p>• Having some air-tightness results from previous projects to apply and guide decision-making for this particular project would reduce risk and ensure that costly changes don't have to happen if the air-leakage targets aren't met.</p>
                                         <p>• Alternatively, performance energy modelling would have likely also met the performance requirements with a lower overall build cost and less risk if they had started down that path to begin with.</p>
@@ -635,7 +639,7 @@ export default function Prescriptive9368Section({
                             midConstructionBlowerDoorPlanned: e.target.checked
                         }))} className="w-4 h-4 text-primary mt-1" />
                         <div className="flex-1">
-                            <label htmlFor="midConstructionBlowerDoor-9368" className="text-sm font-medium cursor-pointer text-slate-900">
+                            <label htmlFor="midConstructionBlowerDoor-9368" className="text-sm font-medium cursor-pointer text-foreground">
                                 Mid-Construction Blower Door Test Planned (Optional)
                             </label>
                         </div>
@@ -648,7 +652,7 @@ export default function Prescriptive9368Section({
                     </div>
 
                     <InfoCollapsible title="ℹ️ Benefits of Mid-Construction Blower Door Testing">
-                        <div className="text-xs text-slate-600 space-y-2">
+                        <div className="text-xs text-muted-foreground space-y-2">
                             <p className="font-medium">Benefits of a mid-construction (misconstruction) blower door test:</p>
                             <ul className="list-disc ml-4 space-y-1">
                                 <li>Identifies air leaks early so they can be sealed before drywall.</li>
@@ -678,7 +682,7 @@ export default function Prescriptive9368Section({
             {/* HRV/ERV Section for 9368 - Mandatory */}
             <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                    <label className="text-sm font-medium text-slate-900">HRV/ERV System (Required for 9.36.8)</label>
+                    <label className="text-sm font-medium text-foreground">HRV/ERV System (Required for 9.36.8)</label>
                     <InfoButton title="HRV/ERV Required for 9.36.8 Path">
                         <div className="space-y-4">
                             <div>
@@ -709,14 +713,14 @@ export default function Prescriptive9368Section({
                 </div>
 
                 {/* Auto-set HRV to required for 9368 and show notification */}
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-md">
-                    <p className="text-sm text-emerald-900">
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-md dark:bg-emerald-900/30 dark:border-emerald-500/50">
+                    <p className="text-sm text-emerald-900 dark:text-emerald-300">
                         ✓ HRV/ERV system is required and automatically included for the 9.36.8 Tiered Prescriptive Path.
                     </p>
                 </div>
 
                 <div id="hrvEfficiency" className="space-y-2">
-                    <label className="text-sm font-medium text-slate-900">HRV/ERV Efficiency <span className="text-red-400">*</span></label>
+                    <label className="text-sm font-medium text-foreground">HRV/ERV Efficiency <span className="text-red-400">*</span></label>
                     <Select value={selections.hrvEfficiency || ""} onValueChange={value => {
                         setSelections(prev => ({
                             ...prev,
@@ -724,7 +728,7 @@ export default function Prescriptive9368Section({
                             hrvEfficiency: value
                         }));
                     }}>
-                        <SelectTrigger className={cn("bg-white border-slate-300 text-slate-900 placeholder:text-slate-500 focus:ring-primary", validationErrors.hrvEfficiency && "border-red-500 ring-2 ring-red-500")}>
+                        <SelectTrigger className={cn(validationErrors.hrvEfficiency && "border-red-500 ring-2 ring-red-500")}>
                             <SelectValue placeholder="Select HRV/ERV efficiency range" />
                         </SelectTrigger>
                         <SelectContent className="bg-background border shadow-lg z-50">
@@ -740,12 +744,12 @@ export default function Prescriptive9368Section({
 
             {/* Service Water Heater */}
             {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <div id="waterHeater" className="space-y-2">
-                <label className="text-sm font-medium text-slate-900">Service Water Heater <span className="text-red-400">*</span></label>
+                <label className="text-sm font-medium text-foreground">Service Water Heater <span className="text-red-400">*</span></label>
                 <Select value={selections.waterHeater} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     waterHeater: value
                 }))}>
-                    <SelectTrigger className={cn("bg-white border-slate-300 text-slate-900 placeholder:text-slate-500 focus:ring-primary", validationErrors.waterHeater && "border-red-500 ring-2 ring-red-500")}>
+                    <SelectTrigger className={cn(validationErrors.waterHeater && "border-red-500 ring-2 ring-red-500")}>
                         <SelectValue placeholder="Select water heater type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -763,11 +767,11 @@ export default function Prescriptive9368Section({
             />
 
             {/* MURB Multiple Heating Systems - Only show for Multi-Unit buildings */}
-            {selections.buildingType === "multi-unit" && <div className="space-y-4 p-4 bg-green-50 border border-green-200 rounded-md">
-                <h5 className="font-medium text-green-800">Multi-Unit Building Heating Systems</h5>
+            {selections.buildingType === "multi-unit" && <div className="space-y-4 p-4 bg-green-50 border border-green-200 rounded-md dark:bg-green-900/30 dark:border-green-500/50">
+                <h5 className="font-medium text-green-800 dark:text-green-300">Multi-Unit Building Heating Systems</h5>
 
                 <div id="hasMurbMultipleHeating" className={cn("space-y-2", validationErrors.hasMurbMultipleHeating && "p-2 border-2 border-red-500 rounded-md")}>
-                    <label className="text-sm font-medium text-green-800">Will there be multiple heating systems in this building? <span className="text-red-400">*</span></label>
+                    <label className="text-sm font-medium text-green-800 dark:text-green-300">Will there be multiple heating systems in this building? <span className="text-red-400">*</span></label>
                     <div className="flex gap-4">
                         <label className="flex items-center gap-2">
                             <input type="radio" name="hasMurbMultipleHeating" value="yes" checked={selections.hasMurbMultipleHeating === "yes"} onChange={e => setSelections(prev => ({
@@ -779,7 +783,7 @@ export default function Prescriptive9368Section({
                                 murbSecondIndirectTank: "",
                                 murbSecondIndirectTankSize: ""
                             }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm text-green-800">Yes</span>
+                            <span className="text-sm text-green-800 dark:text-green-300">Yes</span>
                         </label>
                         <label className="flex items-center gap-2">
                             <input type="radio" name="hasMurbMultipleHeating" value="no" checked={selections.hasMurbMultipleHeating === "no"} onChange={e => setSelections(prev => ({
@@ -790,14 +794,14 @@ export default function Prescriptive9368Section({
                                 murbSecondIndirectTank: "",
                                 murbSecondIndirectTankSize: ""
                             }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm text-green-800">No</span>
+                            <span className="text-sm text-green-800 dark:text-green-300">No</span>
                         </label>
                     </div>
                 </div>
 
                 {selections.hasMurbMultipleHeating === "yes" && <div className="space-y-4">
                     <div id="murbSecondHeatingType" className="space-y-2">
-                        <label className="text-sm font-medium text-green-800">Second Heating System Type <span className="text-red-400">*</span></label>
+                        <label className="text-sm font-medium text-green-800 dark:text-green-300">Second Heating System Type <span className="text-red-400">*</span></label>
                         <Select value={selections.murbSecondHeatingType} onValueChange={value => setSelections(prev => ({
                             ...prev,
                             murbSecondHeatingType: value,
@@ -806,7 +810,7 @@ export default function Prescriptive9368Section({
                             murbSecondIndirectTank: "",
                             murbSecondIndirectTankSize: ""
                         }))}>
-                            <SelectTrigger className={cn("bg-white border-slate-300 text-slate-900 placeholder:text-slate-500 focus:ring-primary", validationErrors.murbSecondHeatingType && "border-red-500 ring-2 ring-red-500")}>
+                            <SelectTrigger className={cn(validationErrors.murbSecondHeatingType && "border-red-500 ring-2 ring-red-500")}>
                                 <SelectValue placeholder="Select heating type" />
                             </SelectTrigger>
                             <SelectContent className="bg-background border shadow-lg z-50">
@@ -818,11 +822,11 @@ export default function Prescriptive9368Section({
                     </div>
 
                     {selections.murbSecondHeatingType && <div id="murbSecondHeatingEfficiency" className="space-y-2">
-                        <label className="text-sm font-medium text-green-800">Second Heating System Efficiency <span className="text-red-400">*</span></label>
+                        <label className="text-sm font-medium text-green-800 dark:text-green-300">Second Heating System Efficiency <span className="text-red-400">*</span></label>
                         <Input type="text" placeholder={selections.murbSecondHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.murbSecondHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.murbSecondHeatingEfficiency} onChange={e => setSelections(prev => ({
                             ...prev,
                             murbSecondHeatingEfficiency: e.target.value
-                        }))} className={cn("bg-white border-slate-300 text-slate-900 placeholder:text-slate-500 focus:ring-primary", validationErrors.murbSecondHeatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
+                        }))} className={cn(validationErrors.murbSecondHeatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
                         {selections.murbSecondHeatingEfficiency && selections.murbSecondHeatingType !== 'heat-pump' && (() => {
                             const inputValue = parseFloat(selections.murbSecondHeatingEfficiency);
                             let minValue = 0;
@@ -850,12 +854,12 @@ export default function Prescriptive9368Section({
 
                     {selections.murbSecondHeatingType === 'boiler' && <div className="space-y-4">
                         <div id="murbSecondIndirectTank" className="space-y-2">
-                            <label className="text-sm font-medium text-green-800">Are you installing an indirect tank for the second heating system? <span className="text-red-400">*</span></label>
+                            <label className="text-sm font-medium text-green-800 dark:text-green-300">Are you installing an indirect tank for the second heating system? <span className="text-red-400">*</span></label>
                             <Select value={selections.murbSecondIndirectTank} onValueChange={value => setSelections(prev => ({
                                 ...prev,
                                 murbSecondIndirectTank: value
                             }))}>
-                                <SelectTrigger className={cn("bg-white border-slate-300 text-slate-900 placeholder:text-slate-500 focus:ring-primary", validationErrors.murbSecondIndirectTank && "border-red-500 ring-2 ring-red-500")}>
+                                <SelectTrigger className={cn(validationErrors.murbSecondIndirectTank && "border-red-500 ring-2 ring-red-500")}>
                                     <SelectValue placeholder="Select option" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background border shadow-lg z-50">
@@ -866,12 +870,12 @@ export default function Prescriptive9368Section({
                         </div>
 
                         {selections.murbSecondIndirectTank === 'yes' && <div id="murbSecondIndirectTankSize" className="space-y-2">
-                            <label className="text-sm font-medium text-green-800">Second System Indirect Tank Size <span className="text-red-400">*</span></label>
+                            <label className="text-sm font-medium text-green-800 dark:text-green-300">Second System Indirect Tank Size <span className="text-red-400">*</span></label>
                             <Select value={selections.murbSecondIndirectTankSize} onValueChange={value => setSelections(prev => ({
                                 ...prev,
                                 murbSecondIndirectTankSize: value
                             }))}>
-                                <SelectTrigger className={cn("bg-white border-slate-300 text-slate-900 placeholder:text-slate-500 focus:ring-primary", validationErrors.murbSecondIndirectTankSize && "border-red-500 ring-2 ring-red-500")}>
+                                <SelectTrigger className={cn(validationErrors.murbSecondIndirectTankSize && "border-red-500 ring-2 ring-red-500")}>
                                     <SelectValue placeholder="Select tank size" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background border shadow-lg z-50">
@@ -888,11 +892,11 @@ export default function Prescriptive9368Section({
             </div>}
 
             {/* MURB Multiple Water Heaters - Only show for Multi-Unit buildings */}
-            {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && selections.buildingType === "multi-unit" && <div className="space-y-4 p-4 bg-orange-50 border border-orange-200 rounded-md">
-                <h5 className="font-medium text-orange-800">Multi-Unit Building Water Heating</h5>
+            {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && selections.buildingType === "multi-unit" && <div className="space-y-4 p-4 bg-orange-50 border border-orange-200 rounded-md dark:bg-orange-900/30 dark:border-orange-500/50">
+                <h5 className="font-medium text-orange-800 dark:text-orange-300">Multi-Unit Building Water Heating</h5>
 
                 <div id="hasMurbMultipleWaterHeaters" className={cn("space-y-2", validationErrors.hasMurbMultipleWaterHeaters && "p-2 border-2 border-red-500 rounded-md")}>
-                    <label className="text-sm font-medium text-orange-800">Will there be multiple hot water system types in this building? <span className="text-red-400">*</span></label>
+                    <label className="text-sm font-medium text-orange-800 dark:text-orange-300">Will there be multiple hot water system types in this building? <span className="text-red-400">*</span></label>
                     <div className="flex gap-4">
                         <label className="flex items-center gap-2">
                             <input type="radio" name="hasMurbMultipleWaterHeaters" value="yes" checked={selections.hasMurbMultipleWaterHeaters === "yes"} onChange={e => setSelections(prev => ({
@@ -902,7 +906,7 @@ export default function Prescriptive9368Section({
                                 // Reset when changing
                                 murbSecondWaterHeaterType: ""
                             }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm text-orange-800">Yes</span>
+                            <span className="text-sm text-orange-800 dark:text-orange-300">Yes</span>
                         </label>
                         <label className="flex items-center gap-2">
                             <input type="radio" name="hasMurbMultipleWaterHeaters" value="no" checked={selections.hasMurbMultipleWaterHeaters === "no"} onChange={e => setSelections(prev => ({
@@ -911,14 +915,14 @@ export default function Prescriptive9368Section({
                                 murbSecondWaterHeater: "",
                                 murbSecondWaterHeaterType: ""
                             }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm text-orange-800">No</span>
+                            <span className="text-sm text-orange-800 dark:text-orange-300">No</span>
                         </label>
                     </div>
                 </div>
 
                 {selections.hasMurbMultipleWaterHeaters === "yes" && <div className="space-y-4">
                     <div id="murbSecondWaterHeaterType" className="space-y-2">
-                        <label className="text-sm font-medium text-orange-800">Second Water Heater Type <span className="text-red-400">*</span></label>
+                        <label className="text-sm font-medium text-orange-800 dark:text-orange-300">Second Water Heater Type <span className="text-red-400">*</span></label>
                         <Select value={selections.murbSecondWaterHeaterType} onValueChange={value => {
                             setSelections(prev => ({
                                 ...prev,
@@ -926,7 +930,7 @@ export default function Prescriptive9368Section({
                                 murbSecondWaterHeater: "" // Reset efficiency when type changes
                             }));
                         }}>
-                            <SelectTrigger className={cn("bg-white border-slate-300 text-slate-900 placeholder:text-slate-500 focus:ring-primary", validationErrors.murbSecondWaterHeaterType && "border-red-500 ring-2 ring-red-500")}>
+                            <SelectTrigger className={cn(validationErrors.murbSecondWaterHeaterType && "border-red-500 ring-2 ring-red-500")}>
                                 <SelectValue placeholder="Select water heater type" />
                             </SelectTrigger>
                             <SelectContent className="bg-background border shadow-lg z-50">
@@ -939,7 +943,7 @@ export default function Prescriptive9368Section({
                     </div>
 
                     {selections.murbSecondWaterHeaterType && <div id="murbSecondWaterHeater" className="space-y-2">
-                        <label className="text-sm font-medium text-orange-800">Second Water Heater Efficiency <span className="text-red-400">*</span></label>
+                        <label className="text-sm font-medium text-orange-800 dark:text-orange-300">Second Water Heater Efficiency <span className="text-red-400">*</span></label>
                         <Input type="text" placeholder={(() => {
                             switch (selections.murbSecondWaterHeaterType) {
                                 case "gas-storage":
@@ -958,7 +962,7 @@ export default function Prescriptive9368Section({
                         })()} value={selections.murbSecondWaterHeater} onChange={e => setSelections(prev => ({
                             ...prev,
                             murbSecondWaterHeater: e.target.value
-                        }))} className={cn("bg-white border-slate-300 text-slate-900 placeholder:text-slate-500 focus:ring-primary", validationErrors.murbSecondWaterHeater && "border-red-500 ring-2 ring-red-500")} />
+                        }))} className={cn(validationErrors.murbSecondWaterHeater && "border-red-500 ring-2 ring-red-500")} />
                     </div>}
                 </div>}
             </div>}
