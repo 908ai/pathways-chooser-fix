@@ -54,27 +54,27 @@ const FaqPage = () => {
   const { signOut } = useAuth();
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-slate-900">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Header showSignOut={true} onSignOut={signOut} />
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-slate-800">Frequently Asked Questions</h1>
-          <p className="text-slate-500 mt-1">
+          <h1 className="text-3xl font-bold text-foreground">Frequently Asked Questions</h1>
+          <p className="text-muted-foreground mt-1">
             Common questions about energy compliance and our services
           </p>
         </div>
-        <Card className="bg-white shadow-sm rounded-lg">
+        <Card className="bg-card shadow-sm rounded-lg">
           <CardContent className="p-6">
             {faqData.map((categoryItem) => (
               <div key={categoryItem.category} className="mb-8 last:mb-0">
-                <h3 className="text-xl font-semibold text-slate-800 mb-4">{categoryItem.category}</h3>
+                <h3 className="text-xl font-semibold text-foreground mb-4">{categoryItem.category}</h3>
                 <Accordion type="single" collapsible className="w-full">
                   {categoryItem.items.map((item, index) => (
                     <AccordionItem value={`item-${categoryItem.category}-${index}`} key={index}>
-                      <AccordionTrigger className="text-left font-medium text-slate-700 hover:no-underline">
+                      <AccordionTrigger className="text-left font-medium text-foreground hover:no-underline">
                         {item.question}
                       </AccordionTrigger>
-                      <AccordionContent className="text-slate-600">
+                      <AccordionContent className="text-muted-foreground">
                         {item.answer}
                       </AccordionContent>
                     </AccordionItem>
