@@ -435,7 +435,7 @@ export default function Prescriptive9368Section({
                     airtightness: value
                 }))}>
                     <SelectTrigger className={cn(validationErrors.airtightness && "border-red-500 ring-2 ring-red-500")}>
-                        <SelectValue placeholder="Select airtightness level" />
+                        <SelectValue placeholder="Select air-tightness level" />
                     </SelectTrigger>
                     <SelectContent>
                         {getFilteredAirtightnessOptions().map(option => <SelectItem key={option.value} value={option.value}>
@@ -764,6 +764,7 @@ export default function Prescriptive9368Section({
                 selections={selections}
                 setSelections={setSelections}
                 WarningButton={InfoCollapsible}
+                validationErrors={validationErrors}
             />
 
             {/* MURB Multiple Heating Systems - Only show for Multi-Unit buildings */}
