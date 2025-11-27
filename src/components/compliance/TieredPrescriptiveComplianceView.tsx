@@ -29,24 +29,24 @@ const TieredPrescriptiveComplianceView = ({ project }: TieredPrescriptiveComplia
   const tierInfo = getTierInfo();
 
   return (
-    <Card className="bg-white shadow-sm">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-slate-900 flex items-center gap-2">
+        <CardTitle className="text-card-foreground flex items-center gap-2">
           <FileText className="h-5 w-5 text-orange-500" />
           Points System Breakdown (Tier {tierInfo.tier})
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="text-center mb-6">
-          <p className="text-sm uppercase tracking-wider text-slate-500">Total Points</p>
-          <p className="text-6xl font-bold text-slate-900">{project.total_points?.toFixed(1) || '0.0'}</p>
+          <p className="text-sm uppercase tracking-wider text-muted-foreground">Total Points</p>
+          <p className="text-6xl font-bold text-card-foreground">{project.total_points?.toFixed(1) || '0.0'}</p>
         </div>
         <div className="space-y-4">
           {pointsBreakdown.map(item => (
             <div key={item.label}>
               <div className="flex justify-between items-center mb-1 text-sm">
-                <span className="text-slate-600">{item.label}</span>
-                <span className="font-medium text-slate-900">+{item.points.toFixed(1)} pts</span>
+                <span className="text-muted-foreground">{item.label}</span>
+                <span className="font-medium text-card-foreground">+{item.points.toFixed(1)} pts</span>
               </div>
               <Progress value={(item.points / (project.total_points || 1)) * 100} className="h-2" />
             </div>

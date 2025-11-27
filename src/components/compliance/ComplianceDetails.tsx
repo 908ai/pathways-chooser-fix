@@ -35,12 +35,12 @@ const ComplianceDetails = ({ project, onFixItem }: ComplianceDetailsProps) => {
         return <PrescriptiveComplianceView project={project} />;
       default:
         return (
-          <Card className="bg-slate-800/60 border-slate-700">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-white">Compliance Details</CardTitle>
+              <CardTitle className="text-card-foreground">Compliance Details</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-slate-300">Compliance details for this pathway are not yet available.</p>
+              <p className="text-muted-foreground">Compliance details for this pathway are not yet available.</p>
             </CardContent>
           </Card>
         );
@@ -61,9 +61,9 @@ const ComplianceDetails = ({ project, onFixItem }: ComplianceDetailsProps) => {
     if (recommendations.length === 0) return null;
 
     return (
-      <Card className="bg-yellow-900/30 border-yellow-500/50">
+      <Card className="bg-yellow-50 border-yellow-200 dark:bg-yellow-900/30 dark:border-yellow-500/50">
         <CardHeader>
-          <CardTitle className="text-yellow-300 flex items-center gap-2">
+          <CardTitle className="text-yellow-800 dark:text-yellow-300 flex items-center gap-2">
             <AlertTriangle className="h-5 w-5" />
             Recommendations
           </CardTitle>
@@ -77,15 +77,15 @@ const ComplianceDetails = ({ project, onFixItem }: ComplianceDetailsProps) => {
                   <button
                     key={index}
                     onClick={() => onFixItem(fieldId)}
-                    className="w-full text-left p-3 rounded-md bg-yellow-900/20 hover:bg-yellow-900/40 transition-colors flex items-center justify-between"
+                    className="w-full text-left p-3 rounded-md bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-900/20 dark:hover:bg-yellow-900/40 transition-colors flex items-center justify-between"
                   >
-                    <span className="text-yellow-200 text-sm">{rec}</span>
-                    <ChevronRight className="h-4 w-4 text-yellow-300 flex-shrink-0" />
+                    <span className="text-yellow-800 dark:text-yellow-200 text-sm">{rec}</span>
+                    <ChevronRight className="h-4 w-4 text-yellow-800 dark:text-yellow-300 flex-shrink-0" />
                   </button>
                 );
               }
               return (
-                <div key={index} className="p-3 text-yellow-200 text-sm bg-yellow-900/20 rounded-md flex items-center col-span-2">
+                <div key={index} className="p-3 text-yellow-800 dark:text-yellow-200 text-sm bg-yellow-100 dark:bg-yellow-900/20 rounded-md flex items-center col-span-2">
                   {rec}
                 </div>
               );

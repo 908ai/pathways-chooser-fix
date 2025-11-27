@@ -15,7 +15,7 @@ const ComplianceStatusCard = ({ project }: ComplianceStatusCardProps) => {
           icon: <CheckCircle className="h-12 w-12 text-green-500" />,
           title: 'Project is Compliant',
           description: 'This project meets the required energy efficiency standards for its selected pathway.',
-          badge: <Badge className="bg-green-100 text-green-800">Compliant</Badge>,
+          badge: <Badge className="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">Compliant</Badge>,
         };
       case 'fail':
         return {
@@ -26,17 +26,17 @@ const ComplianceStatusCard = ({ project }: ComplianceStatusCardProps) => {
         };
       case 'needs_revision':
         return {
-          icon: <AlertTriangle className="h-6 w-6 text-yellow-700" />,
+          icon: <AlertTriangle className="h-6 w-6 text-yellow-700 dark:text-yellow-300" />,
           title: 'Needs Revision',
           description: 'The project requires updates. Please review the pending items and resubmit.',
-          badge: <Badge className="bg-yellow-100 text-yellow-800">Needs Revision</Badge>,
+          badge: <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300">Needs Revision</Badge>,
         };
       default:
         return {
           icon: <Clock className="h-12 w-12 text-blue-500" />,
           title: 'Under Review',
           description: 'This project has been submitted and is currently being reviewed by our team.',
-          badge: <Badge className="bg-blue-100 text-blue-800">Under Review</Badge>,
+          badge: <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">Under Review</Badge>,
         };
     }
   };
@@ -45,11 +45,11 @@ const ComplianceStatusCard = ({ project }: ComplianceStatusCardProps) => {
 
   if (project.compliance_status === 'needs_revision') {
     return (
-      <Card className="bg-yellow-50 border-yellow-200">
+      <Card className="bg-yellow-50 border-yellow-200 dark:bg-yellow-900/30 dark:border-yellow-500/50">
         <CardContent className="pt-6">
           <div className="flex items-center gap-4">
             <div className="flex-shrink-0">{icon}</div>
-            <p className="text-yellow-800">{description}</p>
+            <p className="text-yellow-800 dark:text-yellow-200">{description}</p>
           </div>
         </CardContent>
       </Card>
@@ -57,17 +57,17 @@ const ComplianceStatusCard = ({ project }: ComplianceStatusCardProps) => {
   }
 
   return (
-    <Card className="bg-white shadow-sm">
+    <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-slate-900">{title}</CardTitle>
+          <CardTitle className="text-card-foreground">{title}</CardTitle>
           {badge}
         </div>
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-4">
           <div className="flex-shrink-0">{icon}</div>
-          <p className="text-slate-600">{description}</p>
+          <p className="text-muted-foreground">{description}</p>
         </div>
       </CardContent>
     </Card>

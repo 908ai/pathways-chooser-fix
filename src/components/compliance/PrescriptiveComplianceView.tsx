@@ -9,13 +9,13 @@ interface PrescriptiveComplianceViewProps {
 const ChecklistItem = ({ label, value, requirement, isMet }: { label: string; value: any; requirement: string; isMet: boolean }) => {
   if (value === null || value === undefined) return null;
   return (
-    <div className="flex items-center justify-between p-3 bg-slate-50 rounded-md border">
+    <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-md border">
       <div>
-        <p className="text-sm font-medium text-slate-900">{label}</p>
-        <p className="text-xs text-slate-500">Requirement: {requirement}</p>
+        <p className="text-sm font-medium text-card-foreground">{label}</p>
+        <p className="text-xs text-muted-foreground">Requirement: {requirement}</p>
       </div>
       <div className="flex items-center gap-2">
-        <span className={`text-sm font-semibold ${isMet ? 'text-green-700' : 'text-red-700'}`}>{value}</span>
+        <span className={`text-sm font-semibold ${isMet ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>{value}</span>
         {isMet ? <CheckCircle className="h-5 w-5 text-green-500" /> : <XCircle className="h-5 w-5 text-red-500" />}
       </div>
     </div>
@@ -33,9 +33,9 @@ const PrescriptiveComplianceView = ({ project }: PrescriptiveComplianceViewProps
   ];
 
   return (
-    <Card className="bg-white shadow-sm">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-slate-900 flex items-center gap-2">
+        <CardTitle className="text-card-foreground flex items-center gap-2">
           <FileText className="h-5 w-5 text-orange-500" />
           Prescriptive Checklist
         </CardTitle>
