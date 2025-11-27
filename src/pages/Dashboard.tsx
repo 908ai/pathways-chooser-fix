@@ -181,8 +181,7 @@ const Dashboard3 = () => {
       <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Executive Overview</h1>
-            <p className="text-2xl text-foreground mt-2">
+            <p className="text-2xl text-foreground">
               Welcome back{userName ? `, ${userName}` : ''}!
             </p>
             <p className="text-muted-foreground mt-1">
