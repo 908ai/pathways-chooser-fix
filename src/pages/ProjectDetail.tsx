@@ -822,7 +822,7 @@ const ProjectDetail = () => {
         </div>
 
         <Tabs defaultValue="overview" className="animate-fade-in">
-          <TabsList className="grid w-full grid-cols-4 bg-muted p-1 rounded-lg">
+          <TabsList className="grid w-full grid-cols-4 p-1 rounded-lg">
             <TabsTrigger value="overview" className="flex items-center gap-2 rounded-md data-[state=active]:bg-card data-[state=active]:shadow-sm">
               <Building className="h-4 w-4" />
               Overview
