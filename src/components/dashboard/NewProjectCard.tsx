@@ -101,14 +101,14 @@ const NewProjectCard = ({ project, onView, onEdit, onDuplicate, onDelete }: NewP
   };
 
   return (
-    <Card className="w-full overflow-hidden relative transition-all hover:shadow-lg hover:-translate-y-1 rounded-lg border-b bg-card cursor-pointer" onClick={() => onView(project.id)}>
+    <Card className="w-full relative transition-all hover:shadow-lg hover:-translate-y-1 rounded-lg border-b bg-card cursor-pointer" onClick={() => onView(project.id)}>
       <div className={cn("h-2 w-full", statusInfo.color)} />
       
       <Badge className={cn(
-        "absolute top-0 right-0 px-2 py-1 text-xs font-semibold shadow-md rounded-none rounded-bl-[15px] flex items-center gap-1.5",
+        "absolute top-1 right-4 px-2 py-1 text-xs font-semibold shadow-md rounded-l-full rounded-r-none flex items-center gap-1.5",
         isPerformance
-          ? 'bg-blue-500/10 text-blue-700 dark:text-blue-300 hover:bg-blue-500/10' 
-          : 'bg-orange-500/10 text-orange-700 dark:text-orange-300 hover:bg-orange-500/10'
+          ? 'bg-blue-100 text-blue-800 dark:bg-slate-900 dark:text-blue-300' 
+          : 'bg-orange-100 text-orange-800 dark:bg-slate-900 dark:text-orange-300'
       )}>
         {isPerformance ? <Zap className="h-3.5 w-3.5" /> : <FileText className="h-3.5 w-3.5" />}
         {formatPathwayName(project.selected_pathway)}
