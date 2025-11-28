@@ -31,6 +31,13 @@ const fetchAllProjects = async () => {
   return projectsWithCompany;
 };
 
+const pathwayMapping: { [key: string]: string } = {
+  '9362': 'Prescriptive',
+  '9368': 'Tiered Prescriptive',
+  '9365': 'Performance',
+  '9367': 'Tiered Performance',
+};
+
 const MunicipalDashboard = () => {
   const { signOut } = useAuth();
   const { data: projects, isLoading } = useQuery({
@@ -44,6 +51,7 @@ const MunicipalDashboard = () => {
     builder: 'all',
     pathway: 'all',
     status: 'all',
+    buildingType: 'all',
   });
   const [sortBy, setSortBy] = useState({ field: 'updated_at', direction: 'desc' });
 
@@ -61,6 +69,7 @@ const MunicipalDashboard = () => {
       if (filters.builder !== 'all' && p.company_name !== filters.builder) return false;
       if (filters.pathway !== 'all' && p.selected_pathway !== filters.pathway) return false;
       if (filters.status !== 'all' && p.compliance_status !== filters.status) return false;
+      if (filters.buildingType !== 'all' && p.building_type !== filters.buildingType) return false;
       
       return true;
     });
@@ -90,6 +99,20 @@ const MunicipalDashboard = () => {
     return [...new Set(projects.map(p => p.city).filter(Boolean))];
   }, [projects]);
 
+  const uniqueBuildingTypes = useMemo(() => {
+    if (!projects) return [];
+    return [...new Set(projects.map(p => p.building_type).filter(Boolean))];
+  }, [projects]);
+
+  const pathwayStats = useMemo(() => {
+    if (!projects) return {};
+    return projects.reduce((acc, p) => {
+        const pathway = pathwayMapping[p.selected_pathway as keyof typeof pathwayMapping] || 'Unknown';
+        acc[pathway] = (acc[pathway] || 0) + 1;
+        return acc;
+    }, {} as Record<string, number>);
+  }, [projects]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -110,12 +133,13 @@ const MunicipalDashboard = () => {
         </div>
         
         <div className="space-y-6">
-          <MunicipalStats projects={projects || []} />
+          <MunicipalStats projects={projects || []} pathwayStats={pathwayStats} />
           <ProjectFilterBar 
             filters={filters}
             setFilters={setFilters}
             uniqueBuilders={uniqueBuilders}
             uniqueLocations={uniqueLocations}
+            uniqueBuildingTypes={uniqueBuildingTypes}
           />
           <ProjectDataTable 
             projects={filteredAndSortedProjects}

@@ -32,6 +32,11 @@ const pathwayMapping: { [key: string]: string } = {
   '9367': 'Tiered Performance',
 };
 
+const formatBuildingType = (type: string) => {
+  if (!type) return 'N/A';
+  return type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+};
+
 const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
   const navigate = useNavigate();
   const handleSort = (field: string) => {
@@ -59,6 +64,11 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
               <TableHead>
                 <Button variant="ghost" onClick={() => handleSort('company_name')}>
                   Builder {renderSortIcon('company_name')}
+                </Button>
+              </TableHead>
+              <TableHead>
+                <Button variant="ghost" onClick={() => handleSort('building_type')}>
+                  Building Type {renderSortIcon('building_type')}
                 </Button>
               </TableHead>
               <TableHead>Pathway</TableHead>
@@ -111,6 +121,7 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
                     <div className="text-sm text-muted-foreground">{p.location}</div>
                   </TableCell>
                   <TableCell className="text-muted-foreground">{p.company_name}</TableCell>
+                  <TableCell className="text-muted-foreground">{formatBuildingType(p.building_type)}</TableCell>
                   <TableCell className="text-muted-foreground">{pathwayMapping[p.selected_pathway] || 'N/A'}</TableCell>
                   <TableCell><Badge variant="outline" className={statusInfo.className}>{statusInfo.text}</Badge></TableCell>
                   <TableCell className="text-muted-foreground">{new Date(p.updated_at).toLocaleDateString()}</TableCell>
