@@ -28,6 +28,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import MunicipalDashboard from "./pages/MunicipalDashboard";
 import MunicipalRoute from "./components/MunicipalRoute";
 import { FeedbackButton } from "./components/FeedbackButton";
+import MyFeedbackPage from "./pages/MyFeedback";
+import FeedbackDetail from "./pages/FeedbackDetail";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +59,10 @@ const App = () => (
               {/* Service Provider Routes */}
               <Route path="/find-a-provider" element={<ProviderAccessRoute><FindAProvider /></ProviderAccessRoute>} />
               <Route path="/request-provider-access" element={<ProtectedRoute><RequestProviderAccess /></ProtectedRoute>} />
+
+              {/* Feedback Routes */}
+              <Route path="/my-feedback" element={<ProtectedRoute><MyFeedbackPage /></ProtectedRoute>} />
+              <Route path="/feedback/:id" element={<ProtectedRoute><FeedbackDetail /></ProtectedRoute>} />
 
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />

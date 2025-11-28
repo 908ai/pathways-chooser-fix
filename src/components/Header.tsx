@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, UserCircle, Shield, LayoutGrid, PieChart, Calculator } from 'lucide-react';
+import { LogOut, UserCircle, Shield, LayoutGrid, PieChart, Calculator, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import {
@@ -17,6 +17,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { ThemeToggle } from './ThemeToggle';
 import React from 'react';
+import { useUnreadFeedback } from '@/hooks/useUnreadFeedback';
 
 interface HeaderProps {
   showSignOut?: boolean;
@@ -30,6 +31,7 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
   const { user } = useAuth();
   const { isAdmin } = useUserRole();
   const [userName, setUserName] = useState<string | null>(null);
+  const { data: unreadCount } = useUnreadFeedback();
 
   const isLoginVariant = variant === 'login';
   const isLinkActive = (path: string) => location.pathname === path;
@@ -159,6 +161,17 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
                 <DropdownMenuItem onClick={handleAccountClick} className="cursor-pointer">
                   <UserCircle className="mr-2 h-4 w-4" />
                   <span>Account Details</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/my-feedback')} className="cursor-pointer flex justify-between items-center">
+                  <div className="flex items-center">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    <span>My Feedback</span>
+                  </div>
+                  {unreadCount > 0 && (
+                    <span className="h-5 w-5 bg-primary text-primary-foreground text-xs font-bold rounded-full flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
                 </DropdownMenuItem>
                 {isAdmin && (
                   <DropdownMenuItem onClick={() => navigate('/admin')} className="cursor-pointer">
