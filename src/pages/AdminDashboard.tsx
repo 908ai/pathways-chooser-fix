@@ -23,18 +23,14 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="all-projects" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-accent dark:bg-muted">
+          <TabsList className="grid w-full grid-cols-3 bg-accent dark:bg-muted">
             <TabsTrigger value="all-projects" className="flex items-center gap-2">
               <LayoutGrid className="h-4 w-4" />
               All Projects
             </TabsTrigger>
             <TabsTrigger value="providers" className="flex items-center gap-2">
               <Briefcase className="h-4 w-4" />
-              Provider Management
-            </TabsTrigger>
-            <TabsTrigger value="requests" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Access Requests
+              Providers
             </TabsTrigger>
             <TabsTrigger value="feedback" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
@@ -45,10 +41,18 @@ const AdminDashboard = () => {
             <AllProjectsTab />
           </TabsContent>
           <TabsContent value="providers" className="mt-6">
-            <ProviderManager />
-          </TabsContent>
-          <TabsContent value="requests" className="mt-6">
-            <RequestManager />
+            <Tabs defaultValue="provider-management" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="provider-management">Provider Management</TabsTrigger>
+                <TabsTrigger value="access-requests">Access Requests</TabsTrigger>
+              </TabsList>
+              <TabsContent value="provider-management" className="mt-6">
+                <ProviderManager />
+              </TabsContent>
+              <TabsContent value="access-requests" className="mt-6">
+                <RequestManager />
+              </TabsContent>
+            </Tabs>
           </TabsContent>
           <TabsContent value="feedback" className="mt-6">
             <FeedbackManager />
