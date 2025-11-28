@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -5,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { MoreHorizontal, Trash2, CheckCircle, Clock } from 'lucide-react';
+import { MoreHorizontal, Trash2, CheckCircle, Clock, MessageSquare } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,11 +15,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import FeedbackConversation from './FeedbackConversation';
 
 const fetchFeedback = async () => {
-  // Use the secure RPC function to get feedback with user emails
   const { data, error } = await supabase.rpc('get_feedback_with_user_details');
-
   if (error) throw new Error(error.message);
   return data;
 };
@@ -26,6 +32,8 @@ const fetchFeedback = async () => {
 const FeedbackManager = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [selectedFeedback, setSelectedFeedback] = useState<any | null>(null);
+
   const { data: feedback, isLoading, error } = useQuery({
     queryKey: ['all_feedback'],
     queryFn: fetchFeedback,
@@ -82,73 +90,91 @@ const FeedbackManager = () => {
   if (error) return <div className="text-red-500">Error loading feedback: {error.message}</div>;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Feedback Management</CardTitle>
-        <CardDescription>Review and manage user-submitted feedback.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead className="w-[40%]">Feedback</TableHead>
-              <TableHead>Page</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Submitted</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {feedback && feedback.length > 0 ? feedback.map((item: any) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.user_email || 'Anonymous'}</TableCell>
-                <TableCell><Badge variant="outline">{item.category}</Badge></TableCell>
-                <TableCell className="text-sm text-muted-foreground">{item.feedback_text}</TableCell>
-                <TableCell><a href={item.page_url} target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">{item.page_url}</a></TableCell>
-                <TableCell>{getStatusBadge(item.status)}</TableCell>
-                <TableCell>{new Date(item.created_at).toLocaleDateString()}</TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => updateStatusMutation.mutate({ feedbackId: item.id, status: 'In Progress' })}>
-                        <Clock className="mr-2 h-4 w-4" /> Mark as In Progress
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => updateStatusMutation.mutate({ feedbackId: item.id, status: 'Resolved' })}>
-                        <CheckCircle className="mr-2 h-4 w-4" /> Mark as Resolved
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        className="text-red-500"
-                        onClick={() => {
-                          if (confirm('Are you sure you want to delete this feedback?')) {
-                            deleteFeedbackMutation.mutate(item.id);
-                          }
-                        }}
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" /> Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            )) : (
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Feedback Management</CardTitle>
+          <CardDescription>Review and manage user-submitted feedback.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={7} className="text-center">No feedback submitted yet.</TableCell>
+                <TableHead>User</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead className="w-[40%]">Feedback</TableHead>
+                <TableHead>Page</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Submitted</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+            </TableHeader>
+            <TableBody>
+              {feedback && feedback.length > 0 ? feedback.map((item: any) => (
+                <TableRow key={item.id}>
+                  <TableCell>{item.user_email || 'Anonymous'}</TableCell>
+                  <TableCell><Badge variant="outline">{item.category}</Badge></TableCell>
+                  <TableCell className="text-sm text-muted-foreground">{item.feedback_text}</TableCell>
+                  <TableCell><a href={item.page_url} target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">{item.page_url}</a></TableCell>
+                  <TableCell>{getStatusBadge(item.status)}</TableCell>
+                  <TableCell>{new Date(item.created_at).toLocaleDateString()}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button variant="outline" size="sm" onClick={() => setSelectedFeedback(item)}>
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        Reply
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => updateStatusMutation.mutate({ feedbackId: item.id, status: 'In Progress' })}>
+                            <Clock className="mr-2 h-4 w-4" /> Mark as In Progress
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => updateStatusMutation.mutate({ feedbackId: item.id, status: 'Resolved' })}>
+                            <CheckCircle className="mr-2 h-4 w-4" /> Mark as Resolved
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="text-red-500"
+                            onClick={() => {
+                              if (confirm('Are you sure you want to delete this feedback?')) {
+                                deleteFeedbackMutation.mutate(item.id);
+                              }
+                            }}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" /> Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )) : (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center">No feedback submitted yet.</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+      <Dialog open={!!selectedFeedback} onOpenChange={(isOpen) => !isOpen && setSelectedFeedback(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Conversation</DialogTitle>
+          </DialogHeader>
+          {selectedFeedback && (
+            <FeedbackConversation feedbackId={selectedFeedback.id} userEmail={selectedFeedback.user_email || 'Anonymous'} />
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
