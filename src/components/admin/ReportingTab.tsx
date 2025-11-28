@@ -7,7 +7,6 @@ import ProjectStatusChart from '@/components/dashboard3/ProjectStatusChart';
 import TechnicalDataHistograms from './TechnicalDataHistograms';
 import ComplianceHurdlesChart from '@/components/dashboard3/ComplianceHurdlesChart';
 import { useMemo } from 'react';
-import TopBuildersCard from './TopBuildersCard';
 
 const fetchAllProjects = async () => {
   const { data, error } = await supabase
@@ -65,7 +64,6 @@ const ReportingTab = () => {
         </div>
         <div className="space-y-6">
           <CompliancePathwayChart data={projects} />
-          <TopBuildersCard projects={projects} />
         </div>
       </div>
       <ProjectStatusChart data={projects} />
