@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
-import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
+import { Loader2 } from 'lucide-react';
 
 const Index = () => {
   const { user, loading: authLoading } = useAuth();
@@ -26,9 +26,11 @@ const Index = () => {
   }, [user, loading, isAdmin, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
-      <div className="absolute inset-0"></div>
-      <div className="text-lg text-white relative z-10">Loading...</div>
+    <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+      <div className="flex items-center gap-2">
+        <Loader2 className="h-6 w-6 animate-spin" />
+        <span>Loading...</span>
+      </div>
     </div>
   );
 };

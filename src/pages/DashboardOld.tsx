@@ -8,7 +8,6 @@ import { User, Building, FileText, Info, Shield } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
-import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 import CreateProjectCard from '@/components/dashboard/CreateProjectCard';
 import FindProviderCard from '@/components/dashboard/FindProviderCard';
 import ProjectList from '@/components/dashboard/ProjectList';
@@ -82,19 +81,19 @@ const Dashboard = () => {
   const handleViewProject = (projectId: string) => navigate(`/project/${projectId}`);
 
   return (
-    <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Header showSignOut={true} onSignOut={signOut} />
-      <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
+      <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-3 text-white drop-shadow-lg">Project Dashboard</h1>
-          <p className="text-gray-200 text-lg drop-shadow-md">
+          <h1 className="text-4xl font-bold mb-3 text-foreground">Project Dashboard</h1>
+          <p className="text-muted-foreground text-lg">
             Manage your NBC 9.36 compliance projects and account information
           </p>
         </div>
         {canViewAllProjects && (
-          <div className="mb-6 p-4 bg-blue-900/30 border border-blue-400/50 rounded-lg text-center flex items-center justify-center gap-3">
-            <Shield className="h-5 w-5 text-blue-300" />
-            <p className="font-semibold text-blue-300">
+          <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center flex items-center justify-center gap-3">
+            <Shield className="h-5 w-5 text-blue-500" />
+            <p className="font-semibold text-blue-700 dark:text-blue-300">
               Admin View: You are viewing projects from all users.
             </p>
           </div>
@@ -110,8 +109,8 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <CreateProjectCard handleNewProject={handleNewProject} />
               {isAccessLoading ? (
-                <Card className="bg-slate-800/60 border-slate-400/30 backdrop-blur-md flex items-center justify-center min-h-[200px]">
-                  <p className="text-white">Loading...</p>
+                <Card className="flex items-center justify-center min-h-[200px]">
+                  <p className="text-muted-foreground">Loading...</p>
                 </Card>
               ) : providerAccessData?.hasAccess ? (
                 <FindProviderCard />

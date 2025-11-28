@@ -9,7 +9,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import DropboxTestUpload from "@/components/DropboxTestUpload";
 import { Activity, Database, Cloud, AlertCircle, CheckCircle, Clock } from "lucide-react";
-import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 
 export default function TestUpload() {
   const { user } = useAuth();
@@ -167,36 +166,36 @@ export default function TestUpload() {
   };
 
   return (
-    <div className="min-h-screen relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
-      <div className="container mx-auto p-6 space-y-6 relative z-10">
+    <div className="min-h-screen bg-background text-foreground">
+      <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-white drop-shadow-lg">Dropbox Integration Test</h1>
-          <p className="text-gray-200 drop-shadow-md">Test and debug Dropbox integration with real file uploads</p>
+          <h1 className="text-4xl font-bold text-foreground">Dropbox Integration Test</h1>
+          <p className="text-muted-foreground">Test and debug Dropbox integration with real file uploads</p>
         </div>
         <Button onClick={fetchDashboardData}>Refresh Status</Button>
       </div>
 
       {/* Status Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Database Status</CardTitle>
-            <Database className="h-4 w-4 text-gray-200 drop-shadow-sm" />
+            <Database className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{dbStatus.projects}</div>
-            <p className="text-xs text-gray-200 drop-shadow-sm">Projects created</p>
-            <div className="text-sm text-gray-200 drop-shadow-sm mt-1">
+            <p className="text-xs text-muted-foreground">Projects created</p>
+            <div className="text-sm text-muted-foreground mt-1">
               {dbStatus.fileRequests} file requests
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Dropbox API</CardTitle>
-            <Cloud className="h-4 w-4 text-gray-200 drop-shadow-sm" />
+            <Cloud className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-2">
@@ -219,15 +218,15 @@ export default function TestUpload() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Edge Functions</CardTitle>
-            <Activity className="h-4 w-4 text-gray-200 drop-shadow-sm" />
+            <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{edgeFunctionLogs.length}</div>
-            <p className="text-xs text-gray-200 drop-shadow-sm">Recent executions</p>
-            <div className="text-sm text-gray-200 drop-shadow-sm mt-1">
+            <p className="text-xs text-muted-foreground">Recent executions</p>
+            <div className="text-sm text-muted-foreground mt-1">
               Last: {edgeFunctionLogs[0] ? new Date(edgeFunctionLogs[0].created_at).toLocaleTimeString() : 'None'}
             </div>
           </CardContent>
@@ -235,7 +234,7 @@ export default function TestUpload() {
       </div>
 
       {/* Testing Controls */}
-      <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+      <Card>
         <CardHeader>
           <CardTitle>Manual Testing Controls</CardTitle>
           <CardDescription>Create test projects and trigger Dropbox integration manually</CardDescription>
@@ -288,14 +287,14 @@ export default function TestUpload() {
         </TabsContent>
         
         <TabsContent value="logs" className="space-y-4">
-          <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+          <Card>
             <CardHeader>
               <CardTitle>Recent Edge Function Activity</CardTitle>
               <CardDescription>Monitor create-dropbox-folder function executions</CardDescription>
             </CardHeader>
             <CardContent>
               {edgeFunctionLogs.length === 0 ? (
-                <p className="text-gray-200 drop-shadow-sm">No recent executions found</p>
+                <p className="text-muted-foreground">No recent executions found</p>
               ) : (
                 <div className="space-y-2">
                   {edgeFunctionLogs.map((log, index) => (
@@ -303,7 +302,7 @@ export default function TestUpload() {
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="font-medium">{log.folder_name}</p>
-                          <p className="text-sm text-gray-200 drop-shadow-sm">{log.folder_path}</p>
+                          <p className="text-sm text-muted-foreground">{log.folder_path}</p>
                         </div>
                         <Badge variant="outline">
                           {new Date(log.created_at).toLocaleString()}
@@ -318,14 +317,14 @@ export default function TestUpload() {
         </TabsContent>
         
         <TabsContent value="requests" className="space-y-4">
-          <Card className="bg-gradient-to-br from-slate-800/60 to-blue-800/60 backdrop-blur-md border-slate-400/30 shadow-2xl">
+          <Card>
             <CardHeader>
               <CardTitle>File Request Links</CardTitle>
               <CardDescription>View and test generated Dropbox file request URLs</CardDescription>
             </CardHeader>
             <CardContent>
               {edgeFunctionLogs.length === 0 ? (
-                <p className="text-gray-200 drop-shadow-sm">No file requests found</p>
+                <p className="text-muted-foreground">No file requests found</p>
               ) : (
                 <div className="space-y-3">
                   {edgeFunctionLogs.map((request, index) => (
@@ -333,7 +332,7 @@ export default function TestUpload() {
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <p className="font-medium">{request.folder_name}</p>
-                          <p className="text-sm text-gray-200 drop-shadow-sm">{request.folder_path}</p>
+                          <p className="text-sm text-muted-foreground">{request.folder_path}</p>
                         </div>
                         <Badge>Active</Badge>
                       </div>
