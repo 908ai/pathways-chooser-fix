@@ -99,7 +99,7 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
                         "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                         isLinkActive("/admin")
                           ? "bg-primary/10 text-primary"
-                          : "text-slate-500 dark:text-slate-400 hover:bg-accent hover:text-accent-foreground"
+                          : "text-primary dark:text-primary hover:bg-accent hover:text-primary/80"
                       )}
                     >
                       <Shield className="h-4 w-4" />
