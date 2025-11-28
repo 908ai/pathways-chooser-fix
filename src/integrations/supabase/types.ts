@@ -42,6 +42,44 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback: {
+        Row: {
+          category: string
+          created_at: string
+          feedback_text: string
+          id: string
+          page_url: string | null
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          feedback_text: string
+          id?: string
+          page_url?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          feedback_text?: string
+          id?: string
+          page_url?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       file_requests: {
         Row: {
           created_at: string

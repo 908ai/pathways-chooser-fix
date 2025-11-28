@@ -27,6 +27,7 @@ import RequestProviderAccess from "./pages/RequestProviderAccess";
 import AdminDashboard from "./pages/AdminDashboard";
 import MunicipalDashboard from "./pages/MunicipalDashboard";
 import MunicipalRoute from "./components/MunicipalRoute";
+import { FeedbackButton } from "./components/FeedbackButton";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +65,7 @@ const App = () => (
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <FeedbackButton />
           </BrowserRouter>
         </TooltipProvider>
       </ThemeProvider>
