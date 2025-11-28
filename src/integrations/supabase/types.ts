@@ -509,6 +509,19 @@ export type Database = {
           user_email: string | null
         }[]
       }
+      get_all_users_with_details: {
+        Args: Record<string, never>
+        Returns: {
+          user_id: string
+          email: string | null
+          last_sign_in_at: string | null
+          created_at: string | null
+          banned_until: string | null
+          role: Database["public"]["Enums"]["app_role"] | null
+          company_name: string | null
+          project_count: number | null
+        }[]
+      }
       user_can_access_providers: {
         Args: Record<string, never>
         Returns: boolean
