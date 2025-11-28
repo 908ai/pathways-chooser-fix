@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { HelpCircle, X } from "lucide-react";
+import ContactBanner from "@/components/NBCCalculator/sections/ContactBanner";
 
 interface HelpDrawerProps {
   open?: boolean;
@@ -95,6 +96,9 @@ const HelpDrawer = ({ open, onOpenChange }: HelpDrawerProps) => {
                     </div>
                   </div>
               </div>
+            </div>
+            <div className="mt-6">
+              <ContactBanner />
             </div>
           </div>
         </div>
