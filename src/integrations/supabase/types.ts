@@ -244,6 +244,8 @@ export type Database = {
           window_u_value: number | null
           secondary_heating_system_type: string | null
           secondary_heating_efficiency: string | null
+          latitude: number | null
+          longitude: number | null
         }
         Insert: {
           airtightness_al?: number | null
@@ -299,6 +301,8 @@ export type Database = {
           window_u_value?: number | null
           secondary_heating_system_type?: string | null
           secondary_heating_efficiency?: string | null
+          latitude?: number | null
+          longitude?: number | null
         }
         Update: {
           airtightness_al?: number | null
@@ -354,6 +358,8 @@ export type Database = {
           window_u_value?: number | null
           secondary_heating_system_type?: string | null
           secondary_heating_efficiency?: string | null
+          latitude?: number | null
+          longitude?: number | null
         }
         Relationships: []
       }
