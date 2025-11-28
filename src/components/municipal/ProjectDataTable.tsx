@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
-import { ArrowUpDown, AlertTriangle, Info, Zap, FileText } from 'lucide-react';
+import { ArrowUpDown, AlertTriangle, Info, Zap, FileText, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { getPendingItems, mapProjectToSelections } from '@/lib/projectUtils';
@@ -62,6 +62,11 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
                 </Button>
               </TableHead>
               <TableHead>
+                <Button variant="ghost" onClick={() => handleSort('province')}>
+                  Province {renderSortIcon('province')}
+                </Button>
+              </TableHead>
+              <TableHead>
                 <Button variant="ghost" onClick={() => handleSort('building_type')}>
                   Building Type {renderSortIcon('building_type')}
                 </Button>
@@ -75,6 +80,11 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
               <TableHead>
                 <Button variant="ghost" onClick={() => handleSort('created_at')}>
                   Created {renderSortIcon('created_at')}
+                </Button>
+              </TableHead>
+              <TableHead>
+                <Button variant="ghost" onClick={() => handleSort('updated_at')}>
+                  Last Updated {renderSortIcon('updated_at')}
                 </Button>
               </TableHead>
             </TableRow>
@@ -130,7 +140,7 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
                       {isOverdue && (
                         <Tooltip>
                           <TooltipTrigger>
-                            <AlertTriangle className="h-5 w-5 text-red-500" />
+                            <Clock className="h-5 w-5 text-red-500" />
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>Pending review for over 7 days.</p>
@@ -143,6 +153,7 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
                     <div className="font-medium text-foreground">{p.project_name}</div>
                     <div className="text-sm text-muted-foreground">{p.location}</div>
                   </TableCell>
+                  <TableCell className="text-muted-foreground">{p.province}</TableCell>
                   <TableCell className="text-muted-foreground">{formatBuildingType(p.building_type)}</TableCell>
                   <TableCell className="text-muted-foreground">
                     <div className="flex items-center gap-2">
@@ -152,6 +163,7 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
                   </TableCell>
                   <TableCell><Badge variant="outline" className={statusInfo.className}>{statusInfo.text}</Badge></TableCell>
                   <TableCell className="text-muted-foreground">{new Date(p.created_at).toLocaleDateString()}</TableCell>
+                  <TableCell className="text-muted-foreground">{new Date(p.updated_at).toLocaleDateString()}</TableCell>
                 </TableRow>
               );
             })}
