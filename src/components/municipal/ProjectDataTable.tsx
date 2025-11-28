@@ -37,6 +37,14 @@ const formatBuildingType = (type: string) => {
   return type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 };
 
+const formatProvince = (province: string | null): string => {
+  if (!province) return 'N/A';
+  const lowerProvince = province.toLowerCase();
+  if (lowerProvince === 'saskatchewan') return 'SK';
+  if (lowerProvince === 'alberta') return 'AB';
+  return province;
+};
+
 const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
   const navigate = useNavigate();
   const handleSort = (field: string) => {
@@ -153,7 +161,7 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
                     <div className="font-medium text-foreground">{p.project_name}</div>
                     <div className="text-sm text-muted-foreground">{p.location}</div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">{p.province}</TableCell>
+                  <TableCell className="text-muted-foreground">{formatProvince(p.province)}</TableCell>
                   <TableCell className="text-muted-foreground">{formatBuildingType(p.building_type)}</TableCell>
                   <TableCell className="text-muted-foreground">
                     <div className="flex items-center gap-2">
