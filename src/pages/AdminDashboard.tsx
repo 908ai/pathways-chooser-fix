@@ -25,15 +25,15 @@ const AdminDashboard = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="all-projects" className="w-full">
+        <Tabs defaultValue="reporting" className="w-full">
           <TabsList className="grid w-full grid-cols-4 bg-accent dark:bg-muted">
-            <TabsTrigger value="all-projects" className="flex items-center gap-2">
-              <LayoutGrid className="h-4 w-4" />
-              All Projects
-            </TabsTrigger>
             <TabsTrigger value="reporting" className="flex items-center gap-2">
               <BarChart2 className="h-4 w-4" />
               Reporting
+            </TabsTrigger>
+            <TabsTrigger value="all-projects" className="flex items-center gap-2">
+              <LayoutGrid className="h-4 w-4" />
+              All Projects
             </TabsTrigger>
             <TabsTrigger value="providers" className="flex items-center gap-2">
               <Briefcase className="h-4 w-4" />
@@ -49,11 +49,11 @@ const AdminDashboard = () => {
               )}
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="all-projects" className="mt-6">
-            <AllProjectsTab />
-          </TabsContent>
           <TabsContent value="reporting" className="mt-6">
             <ReportingTab />
+          </TabsContent>
+          <TabsContent value="all-projects" className="mt-6">
+            <AllProjectsTab />
           </TabsContent>
           <TabsContent value="providers" className="mt-6">
             <Tabs defaultValue="provider-management" className="w-full">
