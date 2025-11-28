@@ -35,7 +35,7 @@ const AdminDashboard = () => {
             </TabsTrigger>
             <TabsTrigger value="all-projects" className="flex items-center gap-2">
               <LayoutGrid className="h-4 w-4" />
-              All Projects
+              Projects
             </TabsTrigger>
             <TabsTrigger value="map" className="flex items-center gap-2">
               <Map className="h-4 w-4" />
