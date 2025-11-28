@@ -15,9 +15,9 @@ const MunicipalStats = ({ projects }: { projects: any[] }) => {
 
   return (
     <div className="grid gap-6 md:grid-cols-3">
-      <StatCard title="Total Projects" value={stats.totalProjects} icon={<BarChart2 />} />
-      <StatCard title="Pending Review" value={stats.pendingReview} icon={<Clock />} description="Projects awaiting approval" />
-      <StatCard title="Compliance Rate" value={`${stats.complianceRate}%`} icon={<CheckSquare />} description="Of completed projects" />
+      <StatCard title="Total Projects" value={stats.totalProjects} icon={<BarChart2 className="h-4 w-4 text-muted-foreground" />} />
+      <StatCard title="Pending Review" value={stats.pendingReview} icon={<Clock className="h-4 w-4 text-muted-foreground" />} description="Projects awaiting approval" />
+      <StatCard title="Compliance Rate" value={`${stats.complianceRate}%`} icon={<CheckSquare className="h-4 w-4 text-muted-foreground" />} description="Of completed projects" />
     </div>
   );
 };

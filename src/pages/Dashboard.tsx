@@ -208,13 +208,11 @@ const Dashboard3 = () => {
                 title="Projects YTD" 
                 value={analytics.totalProjects} 
                 icon={<TrendingUp className="h-5 w-5 text-orange-600" />}
-                iconBgClassName="bg-orange-100"
               />
               <StatCard 
                 title="Pass Rate" 
                 value={`${analytics.complianceRate}%`} 
                 icon={<CheckCircle className="h-5 w-5 text-green-600" />}
-                iconBgClassName="bg-green-100"
               />
             </div>
             <CompliancePathwayChart data={projects || []} />

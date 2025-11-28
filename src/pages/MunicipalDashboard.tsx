@@ -4,11 +4,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import starryMountainsBg from '@/assets/vibrant-starry-mountains-bg.jpg';
 import { Loader2 } from 'lucide-react';
-import MunicipalStats from '../components/dashboard/MunicipalStats';
-import ProjectFilterBar from '../components/dashboard/ProjectFilterBar';
-import ProjectDataTable from '../components/dashboard/ProjectDataTable';
+import MunicipalStats from '../components/municipal/MunicipalStats';
+import ProjectFilterBar from '../components/municipal/ProjectFilterBar';
+import ProjectDataTable from '../components/municipal/ProjectDataTable';
 
 const fetchAllProjects = async () => {
   const { data: projects, error: projectsError } = await supabase
@@ -93,19 +92,19 @@ const MunicipalDashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundImage: `url(${starryMountainsBg})` }}>
-        <Loader2 className="h-12 w-12 text-white animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-12 w-12 text-muted-foreground animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col relative" style={{ backgroundImage: `url(${starryMountainsBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
+    <div className="min-h-screen flex flex-col bg-background">
       <Header showSignOut={true} onSignOut={signOut} />
-      <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
+      <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-3 text-white drop-shadow-lg">Municipal Dashboard</h1>
-          <p className="text-gray-200 text-lg drop-shadow-md">
+          <h1 className="text-4xl font-bold mb-3 text-foreground">Municipal Dashboard</h1>
+          <p className="text-muted-foreground text-lg">
             Review and track all compliance projects in the system.
           </p>
         </div>

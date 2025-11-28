@@ -5,22 +5,23 @@ import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { getPendingItems } from '@/lib/projectUtils';
 import { useNavigate } from 'react-router-dom';
+import { Card, CardContent } from "@/components/ui/card";
 
 const getStatusInfo = (status: string | null) => {
   switch (status) {
     case 'pass':
     case 'Compliant':
-      return { text: 'Compliant', className: 'bg-green-500/20 text-green-300 border-green-500/30' };
+      return { text: 'Compliant', className: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 border-green-200 dark:border-green-500/30' };
     case 'fail':
-      return { text: 'Non-Compliant', className: 'bg-red-500/20 text-red-300 border-red-500/30' };
+      return { text: 'Non-Compliant', className: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 border-red-200 dark:border-red-500/30' };
     case 'submitted':
-      return { text: 'Submitted', className: 'bg-blue-500/20 text-blue-300 border-blue-500/30' };
+      return { text: 'Submitted', className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 border-blue-200 dark:border-blue-500/30' };
     case 'draft':
-      return { text: 'Draft', className: 'bg-gray-500/20 text-gray-300 border-gray-500/30' };
+      return { text: 'Draft', className: 'bg-gray-100 text-gray-800 dark:bg-gray-700/50 dark:text-gray-300 border-gray-200 dark:border-gray-500/30' };
     case 'needs_revision':
-      return { text: 'Needs Revision', className: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30' };
+      return { text: 'Needs Revision', className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300 border-yellow-200 dark:border-yellow-500/30' };
     default:
-      return { text: 'In Progress', className: 'bg-orange-500/20 text-orange-300 border-orange-500/30' };
+      return { text: 'In Progress', className: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300 border-orange-200 dark:border-orange-500/30' };
   }
 };
 
@@ -44,80 +45,82 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
   };
 
   return (
-    <div className="bg-slate-700/40 border border-slate-400/50 backdrop-blur-[100px] rounded-lg overflow-hidden">
-      <Table>
-        <TableHeader>
-          <TableRow className="border-b border-slate-400/50 hover:bg-transparent">
-            <TableHead className="text-white">Flags</TableHead>
-            <TableHead>
-              <Button variant="ghost" onClick={() => handleSort('project_name')} className="text-white hover:bg-slate-600/50">
-                Project / Location {renderSortIcon('project_name')}
-              </Button>
-            </TableHead>
-            <TableHead>
-              <Button variant="ghost" onClick={() => handleSort('company_name')} className="text-white hover:bg-slate-600/50">
-                Builder {renderSortIcon('company_name')}
-              </Button>
-            </TableHead>
-            <TableHead className="text-white">Pathway</TableHead>
-            <TableHead>
-              <Button variant="ghost" onClick={() => handleSort('compliance_status')} className="text-white hover:bg-slate-600/50">
-                Status {renderSortIcon('compliance_status')}
-              </Button>
-            </TableHead>
-            <TableHead>
-              <Button variant="ghost" onClick={() => handleSort('updated_at')} className="text-white hover:bg-slate-600/50">
-                Last Updated {renderSortIcon('updated_at')}
-              </Button>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {projects.map((p: any) => {
-            const statusInfo = getStatusInfo(p.compliance_status);
-            const { required } = getPendingItems(p, p.uploaded_files || []);
-            const isOverdue = p.compliance_status === 'submitted' && (new Date().getTime() - new Date(p.updated_at).getTime()) > 7 * 24 * 60 * 60 * 1000;
+    <Card>
+      <CardContent className="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Flags</TableHead>
+              <TableHead>
+                <Button variant="ghost" onClick={() => handleSort('project_name')}>
+                  Project / Location {renderSortIcon('project_name')}
+                </Button>
+              </TableHead>
+              <TableHead>
+                <Button variant="ghost" onClick={() => handleSort('company_name')}>
+                  Builder {renderSortIcon('company_name')}
+                </Button>
+              </TableHead>
+              <TableHead>Pathway</TableHead>
+              <TableHead>
+                <Button variant="ghost" onClick={() => handleSort('compliance_status')}>
+                  Status {renderSortIcon('compliance_status')}
+                </Button>
+              </TableHead>
+              <TableHead>
+                <Button variant="ghost" onClick={() => handleSort('updated_at')}>
+                  Last Updated {renderSortIcon('updated_at')}
+                </Button>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {projects.map((p: any) => {
+              const statusInfo = getStatusInfo(p.compliance_status);
+              const { required } = getPendingItems(p, p.uploaded_files || []);
+              const isOverdue = p.compliance_status === 'submitted' && (new Date().getTime() - new Date(p.updated_at).getTime()) > 7 * 24 * 60 * 60 * 1000;
 
-            return (
-              <TableRow key={p.id} onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer border-b border-slate-400/50 hover:bg-slate-600/50">
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    {required.length > 0 && (
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <AlertTriangle className="h-5 w-5 text-yellow-400" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{required.length} required item(s) pending.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    )}
-                    {isOverdue && (
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <AlertTriangle className="h-5 w-5 text-red-500" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Pending review for over 7 days.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="font-medium text-white">{p.project_name}</div>
-                  <div className="text-sm text-slate-300">{p.location}</div>
-                </TableCell>
-                <TableCell className="text-slate-300">{p.company_name}</TableCell>
-                <TableCell className="text-slate-300">{pathwayMapping[p.selected_pathway] || 'N/A'}</TableCell>
-                <TableCell><Badge variant="outline" className={statusInfo.className}>{statusInfo.text}</Badge></TableCell>
-                <TableCell className="text-slate-300">{new Date(p.updated_at).toLocaleDateString()}</TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </div>
+              return (
+                <TableRow key={p.id} onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer">
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {required.length > 0 && (
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <AlertTriangle className="h-5 w-5 text-yellow-400" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{required.length} required item(s) pending.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                      {isOverdue && (
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <AlertTriangle className="h-5 w-5 text-red-500" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Pending review for over 7 days.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="font-medium text-foreground">{p.project_name}</div>
+                    <div className="text-sm text-muted-foreground">{p.location}</div>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">{p.company_name}</TableCell>
+                  <TableCell className="text-muted-foreground">{pathwayMapping[p.selected_pathway] || 'N/A'}</TableCell>
+                  <TableCell><Badge variant="outline" className={statusInfo.className}>{statusInfo.text}</Badge></TableCell>
+                  <TableCell className="text-muted-foreground">{new Date(p.updated_at).toLocaleDateString()}</TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
 };
 
