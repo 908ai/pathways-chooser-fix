@@ -48,7 +48,7 @@ const formatProvince = (province: string | null): string => {
   return province;
 };
 
-const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
+const AllProjectsDataTable = ({ projects, sortBy, setSortBy }: any) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [generatingPdfFor, setGeneratingPdfFor] = useState<string | null>(null);
@@ -272,4 +272,4 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
   );
 };
 
-export default ProjectDataTable;
+export default AllProjectsDataTable;

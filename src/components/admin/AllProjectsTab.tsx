@@ -1,13 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { Loader2 } from 'lucide-react';
-import MunicipalStats from '../components/municipal/MunicipalStats';
-import ProjectFilterBar from '../components/municipal/ProjectFilterBar';
-import ProjectDataTable from '../components/municipal/ProjectDataTable';
+import AllProjectsStats from './AllProjectsStats';
+import AllProjectsFilterBar from './AllProjectsFilterBar';
+import AllProjectsDataTable from './AllProjectsDataTable';
 
 const fetchAllProjects = async () => {
   const { data: projects, error: projectsError } = await supabase
@@ -38,8 +35,7 @@ const pathwayMapping: { [key: string]: string } = {
   '9367': 'Tiered Performance',
 };
 
-const MunicipalDashboard = () => {
-  const { signOut } = useAuth();
+const AllProjectsTab = () => {
   const { data: projects, isLoading } = useQuery({
     queryKey: ['allProjects'],
     queryFn: fetchAllProjects,
@@ -108,42 +104,29 @@ const MunicipalDashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="flex items-center justify-center p-12">
         <Loader2 className="h-12 w-12 text-muted-foreground animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header showSignOut={true} onSignOut={signOut} />
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-3 text-foreground">Municipal Dashboard</h1>
-          <p className="text-muted-foreground text-lg">
-            Review and track all compliance projects in the system.
-          </p>
-        </div>
-        
-        <div className="space-y-6">
-          <MunicipalStats projects={projects || []} pathwayStats={pathwayStats} />
-          <ProjectFilterBar 
-            filters={filters}
-            setFilters={setFilters}
-            uniqueBuilders={[]}
-            uniqueLocations={uniqueLocations}
-            uniqueBuildingTypes={uniqueBuildingTypes}
-          />
-          <ProjectDataTable 
-            projects={filteredAndSortedProjects}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-          />
-        </div>
-      </main>
-      <Footer />
+    <div className="space-y-6">
+      <AllProjectsStats projects={projects || []} pathwayStats={pathwayStats} />
+      <AllProjectsFilterBar 
+        filters={filters}
+        setFilters={setFilters}
+        uniqueBuilders={[]}
+        uniqueLocations={uniqueLocations}
+        uniqueBuildingTypes={uniqueBuildingTypes}
+      />
+      <AllProjectsDataTable 
+        projects={filteredAndSortedProjects}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+      />
     </div>
   );
 };
 
-export default MunicipalDashboard;
+export default AllProjectsTab;

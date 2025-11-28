@@ -25,8 +25,6 @@ import AccountPage from "./pages/Account";
 import FindAProvider from "./pages/FindAProvider";
 import RequestProviderAccess from "./pages/RequestProviderAccess";
 import AdminDashboard from "./pages/AdminDashboard";
-import MunicipalDashboard from "./pages/MunicipalDashboard";
-import MunicipalRoute from "./components/MunicipalRoute";
 import { FeedbackButton } from "./components/FeedbackButton";
 import MyFeedbackPage from "./pages/MyFeedback";
 import FeedbackDetail from "./pages/FeedbackDetail";
@@ -66,7 +64,6 @@ const App = () => (
 
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-              <Route path="/municipal-dashboard" element={<MunicipalRoute><MunicipalDashboard /></MunicipalRoute>} />
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

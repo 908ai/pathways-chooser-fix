@@ -3,7 +3,7 @@ import { BarChart2, CheckSquare, Clock, Zap } from 'lucide-react';
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const MunicipalStats = ({ projects, pathwayStats }: { projects: any[], pathwayStats: Record<string, number> }) => {
+const AllProjectsStats = ({ projects, pathwayStats }: { projects: any[], pathwayStats: Record<string, number> }) => {
   const stats = useMemo(() => {
     const totalProjects = projects.length;
     const pendingReview = projects.filter(p => p.compliance_status === 'submitted').length;
@@ -41,4 +41,4 @@ const MunicipalStats = ({ projects, pathwayStats }: { projects: any[], pathwaySt
   );
 };
 
-export default MunicipalStats;
+export default AllProjectsStats;

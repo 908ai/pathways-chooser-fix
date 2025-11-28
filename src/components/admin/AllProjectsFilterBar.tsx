@@ -23,7 +23,7 @@ const formatBuildingType = (type: string) => {
   return type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 };
 
-const ProjectFilterBar = ({ filters, setFilters, uniqueLocations, uniqueBuildingTypes }: any) => {
+const AllProjectsFilterBar = ({ filters, setFilters, uniqueLocations, uniqueBuildingTypes }: any) => {
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prev: any) => ({ ...prev, [key]: value }));
   };
@@ -75,4 +75,4 @@ const ProjectFilterBar = ({ filters, setFilters, uniqueLocations, uniqueBuilding
   );
 };
 
-export default ProjectFilterBar;
+export default AllProjectsFilterBar;
