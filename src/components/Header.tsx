@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, UserCircle, Shield, LayoutGrid, PieChart, Calculator } from 'lucide-react';
+import { LogOut, UserCircle, Shield, LayoutGrid, PieChart, Calculator, Building } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import {
@@ -28,7 +28,7 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { isAdmin } = useUserRole();
+  const { isAdmin, canViewMunicipalDashboard } = useUserRole();
   const [userName, setUserName] = useState<string | null>(null);
 
   const isLoginVariant = variant === 'login';
@@ -164,6 +164,12 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
                   <DropdownMenuItem onClick={() => navigate('/admin')} className="cursor-pointer">
                     <Shield className="mr-2 h-4 w-4" />
                     <span>Admin Panel</span>
+                  </DropdownMenuItem>
+                )}
+                {canViewMunicipalDashboard && (
+                  <DropdownMenuItem onClick={() => navigate('/municipal-dashboard')} className="cursor-pointer">
+                    <Building className="mr-2 h-4 w-4" />
+                    <span>Municipal Dashboard</span>
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
