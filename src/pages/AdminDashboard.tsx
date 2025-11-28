@@ -6,9 +6,10 @@ import ProviderManager from '@/components/admin/ProviderManager';
 import RequestManager from '@/components/admin/RequestManager';
 import FeedbackManager from '@/components/admin/FeedbackManager';
 import AllProjectsTab from '@/components/admin/AllProjectsTab';
-import { Briefcase, MessageSquare, LayoutGrid, BarChart2 } from 'lucide-react';
+import { Briefcase, MessageSquare, LayoutGrid, BarChart2, Map } from 'lucide-react';
 import { useUnreadAdminFeedback } from '@/hooks/useUnreadAdminFeedback';
 import ReportingTab from '@/components/admin/ReportingTab';
+import ProjectMap from '@/components/admin/ProjectMap';
 
 const AdminDashboard = () => {
   const { signOut } = useAuth();
@@ -26,7 +27,7 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="reporting" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-accent dark:bg-muted">
+          <TabsList className="grid w-full grid-cols-5 bg-accent dark:bg-muted">
             <TabsTrigger value="reporting" className="flex items-center gap-2">
               <BarChart2 className="h-4 w-4" />
               Reporting
@@ -34,6 +35,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="all-projects" className="flex items-center gap-2">
               <LayoutGrid className="h-4 w-4" />
               All Projects
+            </TabsTrigger>
+            <TabsTrigger value="map" className="flex items-center gap-2">
+              <Map className="h-4 w-4" />
+              Map
             </TabsTrigger>
             <TabsTrigger value="providers" className="flex items-center gap-2">
               <Briefcase className="h-4 w-4" />
@@ -54,6 +59,9 @@ const AdminDashboard = () => {
           </TabsContent>
           <TabsContent value="all-projects" className="mt-6">
             <AllProjectsTab />
+          </TabsContent>
+          <TabsContent value="map" className="mt-6">
+            <ProjectMap />
           </TabsContent>
           <TabsContent value="providers" className="mt-6">
             <Tabs defaultValue="provider-management" className="w-full">
