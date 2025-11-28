@@ -20,9 +20,9 @@ const HelpDrawer = ({ open, onOpenChange }: HelpDrawerProps) => {
       <DrawerTrigger asChild>
         <Button
           variant="default"
-          className="fixed bottom-6 right-6 h-12 w-12 rounded-full shadow-lg z-50 transform hover:scale-110 transition-transform duration-200 flex items-center justify-center [&_svg]:size-2"
+          className="fixed bottom-6 right-6 h-12 w-12 rounded-full shadow-lg z-50 transform hover:scale-110 transition-transform duration-200 flex items-center justify-center"
         >
-          <HelpCircle />
+          <HelpCircle className="h-8 w-8" />
         </Button>
       </DrawerTrigger>
       <DrawerContent className="bg-background text-foreground border-t">
