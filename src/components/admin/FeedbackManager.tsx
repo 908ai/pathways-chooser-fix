@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -47,9 +47,16 @@ const FeedbackManager = () => {
         .eq('id', feedbackId);
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['all_feedback'] });
-      toast({ title: 'Success', description: 'Feedback status updated.' });
+      queryClient.invalidateQueries({ queryKey: ['unreadAdminFeedbackCount'] });
+
+      // Suppress toast for automatic "New" -> "In Progress" update on opening a conversation
+      const isAutomaticUpdate = selectedFeedback?.id === variables.feedbackId && variables.status === 'In Progress';
+      
+      if (!isAutomaticUpdate) {
+        toast({ title: 'Success', description: 'Feedback status updated.' });
+      }
     },
     onError: (error: any) => {
       toast({ title: 'Error', description: `Failed to update status: ${error.message}`, variant: 'destructive' });
@@ -72,6 +79,13 @@ const FeedbackManager = () => {
       toast({ title: 'Error', description: `Failed to delete feedback: ${error.message}`, variant: 'destructive' });
     },
   });
+
+  // Automatically update status from "New" to "In Progress" when conversation is opened
+  useEffect(() => {
+    if (selectedFeedback && selectedFeedback.status === 'New') {
+      updateStatusMutation.mutate({ feedbackId: selectedFeedback.id, status: 'In Progress' });
+    }
+  }, [selectedFeedback]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -112,7 +126,14 @@ const FeedbackManager = () => {
             <TableBody>
               {feedback && feedback.length > 0 ? feedback.map((item: any) => (
                 <TableRow key={item.id}>
-                  <TableCell>{item.user_email || 'Anonymous'}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {item.status === 'New' && (
+                        <span className="h-2 w-2 rounded-full bg-primary animate-pulse" title="New Feedback"></span>
+                      )}
+                      {item.user_email || 'Anonymous'}
+                    </div>
+                  </TableCell>
                   <TableCell><Badge variant="outline">{item.category}</Badge></TableCell>
                   <TableCell className="text-sm text-muted-foreground">{item.feedback_text}</TableCell>
                   <TableCell><a href={item.page_url} target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">{item.page_url}</a></TableCell>
