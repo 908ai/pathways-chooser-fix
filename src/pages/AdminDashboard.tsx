@@ -4,7 +4,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProviderManager from '@/components/admin/ProviderManager';
 import RequestManager from '@/components/admin/RequestManager';
-import { Users, Briefcase } from 'lucide-react';
+import FeedbackManager from '@/components/admin/FeedbackManager';
+import { Users, Briefcase, MessageSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const AdminDashboard = () => {
@@ -17,12 +18,12 @@ const AdminDashboard = () => {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-3 text-foreground">Admin Dashboard</h1>
           <p className="text-muted-foreground text-lg">
-            Manage service providers <Link to="/municipal-dashboard" className="text-muted-foreground hover:text-primary">and</Link> user access requests.
+            Manage service providers, user access requests, and user feedback.
           </p>
         </div>
 
         <Tabs defaultValue="providers" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="providers" className="flex items-center gap-2">
               <Briefcase className="h-4 w-4" />
               Provider Management
@@ -31,12 +32,19 @@ const AdminDashboard = () => {
               <Users className="h-4 w-4" />
               Access Requests
             </TabsTrigger>
+            <TabsTrigger value="feedback" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              Feedback
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="providers" className="mt-6">
             <ProviderManager />
           </TabsContent>
           <TabsContent value="requests" className="mt-6">
             <RequestManager />
+          </TabsContent>
+          <TabsContent value="feedback" className="mt-6">
+            <FeedbackManager />
           </TabsContent>
         </Tabs>
       </main>
