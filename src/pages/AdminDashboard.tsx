@@ -23,7 +23,7 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="all-projects" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-4 bg-accent dark:bg-muted">
             <TabsTrigger value="all-projects" className="flex items-center gap-2">
               <LayoutGrid className="h-4 w-4" />
               All Projects
