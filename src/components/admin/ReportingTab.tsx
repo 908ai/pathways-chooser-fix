@@ -7,6 +7,8 @@ import ProjectStatusChart from '@/components/dashboard3/ProjectStatusChart';
 import TechnicalDataHistograms from './TechnicalDataHistograms';
 import ComplianceHurdlesChart from '@/components/dashboard3/ComplianceHurdlesChart';
 import { useMemo } from 'react';
+import AggregatePerformanceStats from './AggregatePerformanceStats';
+import PerformanceComparisonCard from './PerformanceComparisonCard';
 
 const fetchAllProjects = async () => {
   const { data, error } = await supabase
@@ -57,18 +59,39 @@ const ReportingTab = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <MonthlySubmissionsChart data={projects} />
-        </div>
-        <div className="space-y-6">
-          <CompliancePathwayChart data={projects} />
+    <div className="space-y-8">
+      <div>
+        <h2 className="text-2xl font-bold text-foreground mb-4">Aggregated Performance Dashboard</h2>
+        <AggregatePerformanceStats projects={projects} />
+      </div>
+      
+      <div className="pt-6 border-t">
+        <h2 className="text-2xl font-bold text-foreground mb-4">Real-time Comparison Dashboard</h2>
+        <PerformanceComparisonCard projects={projects} />
+      </div>
+
+      <div className="pt-6 border-t">
+        <h2 className="text-2xl font-bold text-foreground mb-4">Project Trends</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <MonthlySubmissionsChart data={projects} />
+          </div>
+          <div className="space-y-6">
+            <CompliancePathwayChart data={projects} />
+          </div>
         </div>
       </div>
-      <ProjectStatusChart data={projects} />
-      <ComplianceHurdlesChart data={complianceHurdlesData} />
-      <TechnicalDataHistograms projects={projects} />
+      
+      <div className="pt-6 border-t">
+        <h2 className="text-2xl font-bold text-foreground mb-4">Compliance & Technical Analysis</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ProjectStatusChart data={projects} />
+          <ComplianceHurdlesChart data={complianceHurdlesData} />
+        </div>
+        <div className="mt-6">
+          <TechnicalDataHistograms projects={projects} />
+        </div>
+      </div>
     </div>
   );
 };
