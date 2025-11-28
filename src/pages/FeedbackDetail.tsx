@@ -61,15 +61,14 @@ const FeedbackDetail = () => {
           .map(r => r.id);
 
         if (unreadResponseIds.length > 0) {
-          const { error: updateError } = await supabase
-            .from('feedback_responses')
-            .update({ is_read: true })
-            .in('id', unreadResponseIds);
+          const { error: rpcError } = await supabase
+            .rpc('mark_feedback_responses_as_read' as any, {
+              p_response_ids: unreadResponseIds
+            });
           
-          if (updateError) {
-            console.error("Failed to mark messages as read:", updateError);
+          if (rpcError) {
+            console.error("Failed to mark messages as read:", rpcError);
           } else {
-            // Invalidate the specific query key to force a refetch
             queryClient.invalidateQueries({ queryKey: ['unreadFeedbackCount', user.id] });
           }
         }
