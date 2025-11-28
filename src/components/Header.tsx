@@ -92,6 +92,20 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
             <>
               <div className="hidden md:flex items-center gap-4">
                 <nav className="flex items-center gap-1">
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className={cn(
+                        "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                        isLinkActive("/admin")
+                          ? "bg-primary/10 text-primary"
+                          : "text-slate-500 dark:text-slate-400 hover:bg-accent hover:text-accent-foreground"
+                      )}
+                    >
+                      <Shield className="h-4 w-4" />
+                      Admin
+                    </Link>
+                  )}
                   {mainNavLinks.map(link => (
                     <Link
                       key={link.path}
@@ -173,12 +187,6 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
                     </span>
                   )}
                 </DropdownMenuItem>
-                {isAdmin && (
-                  <DropdownMenuItem onClick={() => navigate('/admin')} className="cursor-pointer">
-                    <Shield className="mr-2 h-4 w-4" />
-                    <span>Admin Panel</span>
-                  </DropdownMenuItem>
-                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={onSignOut} className="cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />
