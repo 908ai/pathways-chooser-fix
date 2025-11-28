@@ -21,7 +21,7 @@ const HelpDrawer = ({ open, onOpenChange }: HelpDrawerProps) => {
       <DrawerTrigger asChild>
         <Button
           variant="default"
-          className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg z-50 transform hover:scale-110 transition-transform duration-200 flex items-center justify-center"
+          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50 transform hover:scale-110 transition-transform duration-200 flex items-center justify-center"
         >
           <HelpCircle style={{ width: 35, height: 35 }} />
         </Button>
