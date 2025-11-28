@@ -448,6 +448,19 @@ export type Database = {
           phone: string | null
         }[]
       }
+      get_feedback_with_user_details: {
+        Args: Record<string, never>
+        Returns: {
+          id: string
+          created_at: string
+          user_id: string
+          feedback_text: string
+          category: string
+          page_url: string | null
+          status: string
+          user_email: string | null
+        }[]
+      }
       user_can_access_providers: {
         Args: Record<string, never>
         Returns: boolean

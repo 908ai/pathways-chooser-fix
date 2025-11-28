@@ -16,11 +16,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const fetchFeedback = async () => {
-  // The RLS policy ensures only admins can perform this select with user details.
-  const { data, error } = await supabase
-    .from('feedback')
-    .select('*, user:users(email)')
-    .order('created_at', { ascending: false });
+  // Use the secure RPC function to get feedback with user emails
+  const { data, error } = await supabase.rpc('get_feedback_with_user_details');
 
   if (error) throw new Error(error.message);
   return data;
@@ -106,7 +103,7 @@ const FeedbackManager = () => {
           <TableBody>
             {feedback && feedback.length > 0 ? feedback.map((item: any) => (
               <TableRow key={item.id}>
-                <TableCell>{item.user?.email || 'Anonymous'}</TableCell>
+                <TableCell>{item.user_email || 'Anonymous'}</TableCell>
                 <TableCell><Badge variant="outline">{item.category}</Badge></TableCell>
                 <TableCell className="text-sm text-muted-foreground">{item.feedback_text}</TableCell>
                 <TableCell><a href={item.page_url} target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">{item.page_url}</a></TableCell>
