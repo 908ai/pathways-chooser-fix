@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L, { LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Loader2, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -49,6 +49,8 @@ const ProjectMap = () => {
     </Alert>;
   }
 
+  const center: LatLngExpression = [52.9399, -106.4509];
+
   return (
     <Card>
       <CardHeader>
@@ -63,13 +65,13 @@ const ProjectMap = () => {
       <CardContent>
         {projects && projects.length > 0 ? (
           <div className="h-[600px] w-full rounded-md overflow-hidden border">
-            <MapContainer center={[52.9399, -106.4509]} zoom={5} scrollWheelZoom={true} style={{ height: '100%', width: '100%' }}>
+            <MapContainer center={center} zoom={5} scrollWheelZoom={true} style={{ height: '100%', width: '100%' }}>
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
               {projects.map(project => (
-                <Marker key={project.id} position={[project.latitude, project.longitude]}>
+                <Marker key={project.id} position={[project.latitude!, project.longitude!]}>
                   <Popup>
                     <div className="font-semibold">{project.project_name}</div>
                     <div className="text-xs text-muted-foreground">{project.location}</div>
