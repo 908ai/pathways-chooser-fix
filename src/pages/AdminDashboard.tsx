@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProviderManager from '@/components/admin/ProviderManager';
 import RequestManager from '@/components/admin/RequestManager';
 import { Users, Briefcase } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const { signOut } = useAuth();
@@ -16,7 +17,7 @@ const AdminDashboard = () => {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-3 text-foreground">Admin Dashboard</h1>
           <p className="text-muted-foreground text-lg">
-            Manage service providers and user access requests.
+            Manage service providers <Link to="/municipal-dashboard" className="text-muted-foreground hover:text-primary">and</Link> user access requests.
           </p>
         </div>
 
