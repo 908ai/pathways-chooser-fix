@@ -1,3 +1,46 @@
+export const mapProjectToSelections = (project: any) => {
+  if (!project) return {};
+  return {
+    firstName: 'filled', // Assume filled as project exists
+    lastName: 'filled',
+    company: 'filled',
+    phoneNumber: 'filled',
+    streetAddress: project.street_address,
+    city: project.city,
+    province: project.province,
+    postalCode: project.postal_code,
+    buildingType: project.building_type,
+    climateZone: project.climate_zone,
+    occupancyClass: project.occupancy_class,
+    compliancePath: project.selected_pathway,
+    frontDoorOrientation: project.front_door_orientation,
+    energuidePathway: project.energuide_pathway,
+    hasHrv: project.hrv_erv_type && project.hrv_erv_type !== 'None' ? 'with_hrv' : project.hrv_erv_type === 'None' ? 'without_hrv' : '',
+    hrvEfficiency: project.hrv_erv_efficiency,
+    ceilingsAtticRSI: project.attic_rsi,
+    hasCathedralOrFlatRoof: project.has_cathedral_or_flat_roof,
+    cathedralFlatRSIValue: project.cathedral_flat_rsi,
+    wallRSI: project.wall_rsi,
+    belowGradeRSI: project.below_grade_rsi,
+    floorsSlabsSelected: project.floors_slabs_selected || [],
+    inFloorHeatRSI: project.in_floor_heat_rsi,
+    windowUValue: project.window_u_value,
+    hasSkylights: project.has_skylights,
+    skylightUValue: project.skylight_u_value,
+    airtightness: project.airtightness_al,
+    heatingType: project.heating_system_type,
+    heatingEfficiency: project.heating_efficiency,
+    indirectTank: project.indirect_tank,
+    indirectTankSize: project.indirect_tank_size,
+    coolingApplicable: project.cooling_system_type && project.cooling_system_type !== 'None' ? 'yes' : 'no',
+    coolingEfficiency: project.cooling_efficiency,
+    waterHeaterType: project.water_heating_type,
+    waterHeater: project.water_heating_efficiency,
+    hasDWHR: project.has_dwhr,
+    midConstructionBlowerDoorPlanned: project.mid_construction_blower_door_planned,
+  };
+};
+
 export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
   const required: { label: string; fieldId: string }[] = [];
   const optional: { label: string; fieldId: string }[] = [];

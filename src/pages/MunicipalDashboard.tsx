@@ -48,12 +48,11 @@ const MunicipalDashboard = () => {
   const [filters, setFilters] = useState({
     searchTerm: '',
     location: 'all',
-    builder: 'all',
     pathway: 'all',
     status: 'all',
     buildingType: 'all',
   });
-  const [sortBy, setSortBy] = useState({ field: 'updated_at', direction: 'desc' });
+  const [sortBy, setSortBy] = useState({ field: 'created_at', direction: 'desc' });
 
   const filteredAndSortedProjects = useMemo(() => {
     if (!projects) return [];
@@ -66,7 +65,6 @@ const MunicipalDashboard = () => {
 
       if (filters.searchTerm && !nameMatch && !locationMatch && !builderMatch) return false;
       if (filters.location !== 'all' && p.city?.toLowerCase() !== filters.location.toLowerCase()) return false;
-      if (filters.builder !== 'all' && p.company_name !== filters.builder) return false;
       if (filters.pathway !== 'all' && p.selected_pathway !== filters.pathway) return false;
       if (filters.status !== 'all' && p.compliance_status !== filters.status) return false;
       if (filters.buildingType !== 'all' && p.building_type !== filters.buildingType) return false;
@@ -88,11 +86,6 @@ const MunicipalDashboard = () => {
       return sortBy.direction === 'desc' ? comparison * -1 : comparison;
     });
   }, [projects, filters, sortBy]);
-
-  const uniqueBuilders = useMemo(() => {
-    if (!projects) return [];
-    return [...new Set(projects.map(p => p.company_name).filter(Boolean))];
-  }, [projects]);
 
   const uniqueLocations = useMemo(() => {
     if (!projects) return [];
@@ -137,7 +130,7 @@ const MunicipalDashboard = () => {
           <ProjectFilterBar 
             filters={filters}
             setFilters={setFilters}
-            uniqueBuilders={uniqueBuilders}
+            uniqueBuilders={[]}
             uniqueLocations={uniqueLocations}
             uniqueBuildingTypes={uniqueBuildingTypes}
           />

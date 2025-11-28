@@ -1,9 +1,9 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
-import { ArrowUpDown, AlertTriangle } from 'lucide-react';
+import { ArrowUpDown, AlertTriangle, Info, Zap, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { getPendingItems } from '@/lib/projectUtils';
+import { getPendingItems, mapProjectToSelections } from '@/lib/projectUtils';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -62,11 +62,6 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
                 </Button>
               </TableHead>
               <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('company_name')}>
-                  Builder {renderSortIcon('company_name')}
-                </Button>
-              </TableHead>
-              <TableHead>
                 <Button variant="ghost" onClick={() => handleSort('building_type')}>
                   Building Type {renderSortIcon('building_type')}
                 </Button>
@@ -78,8 +73,8 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
                 </Button>
               </TableHead>
               <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('updated_at')}>
-                  Last Updated {renderSortIcon('updated_at')}
+                <Button variant="ghost" onClick={() => handleSort('created_at')}>
+                  Created {renderSortIcon('created_at')}
                 </Button>
               </TableHead>
             </TableRow>
@@ -87,8 +82,10 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
           <TableBody>
             {projects.map((p: any) => {
               const statusInfo = getStatusInfo(p.compliance_status);
-              const { required } = getPendingItems(p, p.uploaded_files || []);
+              const selections = mapProjectToSelections(p);
+              const { required, optional } = getPendingItems(selections, p.uploaded_files || []);
               const isOverdue = p.compliance_status === 'submitted' && (new Date().getTime() - new Date(p.updated_at).getTime()) > 7 * 24 * 60 * 60 * 1000;
+              const isPerformance = p.selected_pathway === '9365' || p.selected_pathway === '9367';
 
               return (
                 <TableRow key={p.id} onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer">
@@ -100,7 +97,33 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
                             <AlertTriangle className="h-5 w-5 text-yellow-400" />
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>{required.length} required item(s) pending.</p>
+                            <div className="p-2">
+                              <p className="font-semibold mb-2">All Required Items:</p>
+                              <ul className="list-disc list-inside space-y-1 text-xs">
+                                {required.slice(0, 5).map(item => <li key={item.fieldId}>{item.label}</li>)}
+                                {required.length > 5 && (
+                                  <li className="font-medium text-muted-foreground">...and {required.length - 5} more</li>
+                                )}
+                              </ul>
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                      {optional.length > 0 && (
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="h-5 w-5 text-blue-400" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <div className="p-2">
+                              <p className="font-semibold mb-2">Recommended Items:</p>
+                              <ul className="list-disc list-inside space-y-1 text-xs">
+                                {optional.slice(0, 5).map(item => <li key={item.fieldId}>{item.label}</li>)}
+                                {optional.length > 5 && (
+                                  <li className="font-medium text-muted-foreground">...and {optional.length - 5} more</li>
+                                )}
+                              </ul>
+                            </div>
                           </TooltipContent>
                         </Tooltip>
                       )}
@@ -120,11 +143,15 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
                     <div className="font-medium text-foreground">{p.project_name}</div>
                     <div className="text-sm text-muted-foreground">{p.location}</div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">{p.company_name}</TableCell>
                   <TableCell className="text-muted-foreground">{formatBuildingType(p.building_type)}</TableCell>
-                  <TableCell className="text-muted-foreground">{pathwayMapping[p.selected_pathway] || 'N/A'}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      {isPerformance ? <Zap className="h-4 w-4 text-blue-500" /> : <FileText className="h-4 w-4 text-orange-500" />}
+                      <span>{pathwayMapping[p.selected_pathway] || 'N/A'}</span>
+                    </div>
+                  </TableCell>
                   <TableCell><Badge variant="outline" className={statusInfo.className}>{statusInfo.text}</Badge></TableCell>
-                  <TableCell className="text-muted-foreground">{new Date(p.updated_at).toLocaleDateString()}</TableCell>
+                  <TableCell className="text-muted-foreground">{new Date(p.created_at).toLocaleDateString()}</TableCell>
                 </TableRow>
               );
             })}

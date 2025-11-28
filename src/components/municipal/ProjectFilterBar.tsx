@@ -23,7 +23,7 @@ const formatBuildingType = (type: string) => {
   return type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 };
 
-const ProjectFilterBar = ({ filters, setFilters, uniqueBuilders, uniqueLocations, uniqueBuildingTypes }: any) => {
+const ProjectFilterBar = ({ filters, setFilters, uniqueLocations, uniqueBuildingTypes }: any) => {
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prev: any) => ({ ...prev, [key]: value }));
   };
@@ -34,25 +34,18 @@ const ProjectFilterBar = ({ filters, setFilters, uniqueBuilders, uniqueLocations
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name, location, builder..."
+            placeholder="Search by name, location..."
             value={filters.searchTerm}
             onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
             className="pl-10"
           />
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Select value={filters.location} onValueChange={(value) => handleFilterChange('location', value)}>
             <SelectTrigger><SelectValue placeholder="Filter by Location" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Locations</SelectItem>
               {uniqueLocations.map((loc: string) => <SelectItem key={loc} value={loc}>{loc}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <Select value={filters.builder} onValueChange={(value) => handleFilterChange('builder', value)}>
-            <SelectTrigger><SelectValue placeholder="Filter by Builder" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Builders</SelectItem>
-              {uniqueBuilders.map((b: string) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
             </SelectContent>
           </Select>
           <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
