@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
-import { ArrowUpDown, AlertTriangle, Info, Zap, FileText, Clock } from 'lucide-react';
+import { ArrowUpDown, AlertTriangle, Info, Zap, FileText, Clock, FileSpreadsheet, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { getPendingItems, mapProjectToSelections } from '@/lib/projectUtils';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const getStatusInfo = (status: string | null) => {
   switch (status) {
@@ -47,9 +50,54 @@ const formatProvince = (province: string | null): string => {
 
 const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [generatingPdfFor, setGeneratingPdfFor] = useState<string | null>(null);
+
   const handleSort = (field: string) => {
     const direction = sortBy.field === field && sortBy.direction === 'asc' ? 'desc' : 'asc';
     setSortBy({ field, direction });
+  };
+
+  const handleGeneratePdf = async (project: any) => {
+    if (!project) return;
+    setGeneratingPdfFor(project.id);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-pdf', {
+        body: { projectId: project.id },
+      });
+
+      if (error) throw error;
+
+      if (!data || !data.pdfData) {
+        throw new Error("PDF generation failed: No data received from server.");
+      }
+
+      const base64Response = await fetch(`data:application/pdf;base64,${data.pdfData}`);
+      const blob = await base64Response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${project.project_name}_Report.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "PDF Generated",
+        description: "Your project report has been downloaded.",
+      });
+    } catch (error: any) {
+      console.error('Error generating PDF:', error);
+      toast({
+        title: "PDF Generation Failed",
+        description: error.message || "There was an error creating the PDF report.",
+        variant: "destructive",
+      });
+    } finally {
+      setGeneratingPdfFor(null);
+    }
   };
 
   const renderSortIcon = (field: string) => {
@@ -95,6 +143,7 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
                   Last Updated {renderSortIcon('updated_at')}
                 </Button>
               </TableHead>
+              <TableHead className="text-right">Export</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -106,8 +155,8 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
               const isPerformance = p.selected_pathway === '9365' || p.selected_pathway === '9367';
 
               return (
-                <TableRow key={p.id} onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer">
-                  <TableCell>
+                <TableRow key={p.id}>
+                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer">
                     <div className="flex items-center gap-2">
                       {required.length > 0 && (
                         <Tooltip>
@@ -157,21 +206,62 @@ const ProjectDataTable = ({ projects, sortBy, setSortBy }: any) => {
                       )}
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer">
                     <div className="font-medium text-foreground">{p.project_name}</div>
                     <div className="text-sm text-muted-foreground">{p.location}</div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">{formatProvince(p.province)}</TableCell>
-                  <TableCell className="text-muted-foreground">{formatBuildingType(p.building_type)}</TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">{formatProvince(p.province)}</TableCell>
+                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">{formatBuildingType(p.building_type)}</TableCell>
+                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">
                     <div className="flex items-center gap-2">
                       {isPerformance ? <Zap className="h-4 w-4 text-blue-500" /> : <FileText className="h-4 w-4 text-orange-500" />}
                       <span>{pathwayMapping[p.selected_pathway] || 'N/A'}</span>
                     </div>
                   </TableCell>
-                  <TableCell><Badge variant="outline" className={statusInfo.className}>{statusInfo.text}</Badge></TableCell>
-                  <TableCell className="text-muted-foreground">{new Date(p.created_at).toLocaleDateString()}</TableCell>
-                  <TableCell className="text-muted-foreground">{new Date(p.updated_at).toLocaleDateString()}</TableCell>
+                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer"><Badge variant="outline" className={statusInfo.className}>{statusInfo.text}</Badge></TableCell>
+                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">{new Date(p.created_at).toLocaleDateString()}</TableCell>
+                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">{new Date(p.updated_at).toLocaleDateString()}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={(e) => { e.stopPropagation(); handleGeneratePdf(p); }}
+                            disabled={generatingPdfFor === p.id}
+                          >
+                            {generatingPdfFor === p.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <FileText className="h-4 w-4 text-red-500" />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Export as PDF</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span tabIndex={0}>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              disabled
+                            >
+                              <FileSpreadsheet className="h-4 w-4 text-green-500" />
+                            </Button>
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Export as CSV (Coming Soon)</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
                 </TableRow>
               );
             })}
