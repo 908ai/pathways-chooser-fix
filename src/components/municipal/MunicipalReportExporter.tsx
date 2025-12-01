@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Download, Image as ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { jsPDF } from "jspdf";
@@ -128,28 +127,20 @@ const MunicipalReportExporter = ({ projects, dashboardRef }: MunicipalReportExpo
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Reporting & Exports</CardTitle>
-        <CardDescription>
-          Download a report of the projects or a snapshot of the dashboard based on your selected filters.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-wrap gap-4">
-        <Button variant="outline" onClick={handleExportCsv} disabled={projects.length === 0}>
-          <Download className="mr-2 h-4 w-4" />
-          Export Projects as CSV
-        </Button>
-        <Button variant="outline" onClick={handleExportPdfSummary} disabled={projects.length === 0}>
-          <Download className="mr-2 h-4 w-4" />
-          Export Projects as PDF
-        </Button>
-        <Button variant="outline" onClick={handleExportDashboard}>
-          <ImageIcon className="mr-2 h-4 w-4" />
-          Download Dashboard Report
-        </Button>
-      </CardContent>
-    </Card>
+    <div className="flex justify-center flex-wrap gap-4">
+      <Button variant="outline" onClick={handleExportCsv} disabled={projects.length === 0}>
+        <Download className="mr-2 h-4 w-4" />
+        Export Projects as CSV
+      </Button>
+      <Button variant="outline" onClick={handleExportPdfSummary} disabled={projects.length === 0}>
+        <Download className="mr-2 h-4 w-4" />
+        Export Projects as PDF
+      </Button>
+      <Button variant="outline" onClick={handleExportDashboard}>
+        <ImageIcon className="mr-2 h-4 w-4" />
+        Download Dashboard Report
+      </Button>
+    </div>
   );
 };
 

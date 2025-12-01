@@ -146,9 +146,11 @@ const MunicipalDashboard = () => {
           </p>
         </div>
         
-        <MunicipalReportExporter projects={filteredProjects} dashboardRef={dashboardRef} />
+        <div className="mb-6">
+          <MunicipalReportExporter projects={filteredProjects} dashboardRef={dashboardRef} />
+        </div>
 
-        <div ref={dashboardRef} className="mt-6 bg-background p-4 rounded-lg">
+        <div ref={dashboardRef} className="bg-background p-4 rounded-lg">
           <MunicipalFilters 
             filters={filters} 
             setFilters={setFilters} 
