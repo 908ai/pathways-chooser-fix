@@ -25,6 +25,7 @@ import IncentivePlanningCard from '@/components/municipal/IncentivePlanningCard'
 import BenchmarkingCard from '@/components/municipal/BenchmarkingCard';
 import MunicipalAlertsCard from '@/components/municipal/MunicipalAlertsCard';
 import ProcessAnalyticsCard from '@/components/municipal/ProcessAnalyticsCard';
+import ProjectMap from '@/components/admin/ProjectMap';
 
 const fetchAllProjects = async () => {
   const { data: projects, error: projectsError } = await supabase
@@ -171,6 +172,12 @@ const MunicipalDashboard = () => {
                 <StatCard title="Performance Path" value={stats.performanceCount} icon={<Zap className="h-4 w-4 text-muted-foreground" />} />
                 <StatCard title="Meet Airtightness Target (≤2.5 ACH)" value={`${stats.airtightnessTargetRate.toFixed(0)}%`} icon={<Wind className="h-4 w-4 text-muted-foreground" />} />
               </div>
+            </div>
+
+            {/* --- GEOGRAPHIC OVERVIEW SECTION --- */}
+            <div className="space-y-6 pt-6 border-t">
+              <h2 className="text-2xl font-bold text-foreground border-b pb-2">Geographic Overview</h2>
+              <ProjectMap />
             </div>
 
             {/* --- MID SECTION: PERFORMANCE ANALYSIS --- */}
