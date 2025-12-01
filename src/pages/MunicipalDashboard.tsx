@@ -141,10 +141,6 @@ const MunicipalDashboard = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <Header showSignOut={true} onSignOut={signOut} />
       <main className="flex-1 container mx-auto px-4 py-8">
-        <Button variant="ghost" onClick={() => navigate('/admin')} className="mb-4">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Admin Dashboard
-        </Button>
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-foreground">Municipal Dashboard</h1>
         </div>
