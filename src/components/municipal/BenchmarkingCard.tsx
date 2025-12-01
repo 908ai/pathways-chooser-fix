@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Award, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { Award, TrendingUp, TrendingDown, Minus, ChevronsDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const BenchmarkingCard = ({ projects }: { projects: any[] }) => {
-  const { topPerformers, trend } = useMemo(() => {
+  const { topPerformers, bottomPerformers, trend } = useMemo(() => {
     if (!projects || projects.length === 0) {
-      return { topPerformers: [], trend: { direction: 'neutral', value: 0 } };
+      return { topPerformers: [], bottomPerformers: [], trend: { direction: 'neutral', value: 0 } };
     }
 
     // Top Performers by Airtightness
@@ -26,6 +26,11 @@ const BenchmarkingCard = ({ projects }: { projects: any[] }) => {
       .sort((a, b) => a.avg - b.avg)
       .slice(0, 3);
 
+    const bottomPerformers = Object.entries(builderStats)
+      .map(([name, data]) => ({ name, avg: data.sum / data.count }))
+      .sort((a, b) => b.avg - a.avg)
+      .slice(0, 3);
+
     // Performance Trend Alert
     const now = new Date();
     const ninetyDaysAgo = new Date(new Date().setDate(now.getDate() - 90));
@@ -43,7 +48,7 @@ const BenchmarkingCard = ({ projects }: { projects: any[] }) => {
     }
     const trendValue = allTimeAvg > 0 ? Math.abs(((recentAvg - allTimeAvg) / allTimeAvg) * 100) : 0;
 
-    return { topPerformers, trend: { direction: trendDirection, value: trendValue } };
+    return { topPerformers, bottomPerformers, trend: { direction: trendDirection, value: trendValue } };
   }, [projects]);
 
   const rankingColors = [
@@ -82,6 +87,24 @@ const BenchmarkingCard = ({ projects }: { projects: any[] }) => {
             <p className="text-sm text-muted-foreground text-center py-4">Not enough data for benchmarking.</p>
           )}
         </div>
+
+        {bottomPerformers.length > 0 && (
+          <div className="pt-4 border-t">
+            <h4 className="text-sm font-semibold mb-3 text-muted-foreground flex items-center gap-2">
+              <ChevronsDown className="h-4 w-4" />
+              Improvement Opportunities
+            </h4>
+            <div className="space-y-3">
+              {bottomPerformers.map((performer, index) => (
+                <div key={index} className="flex items-center justify-between text-sm p-3 bg-muted/50 rounded-lg">
+                  <span className="font-medium">{performer.name}</span>
+                  <span className="font-bold text-red-600 dark:text-red-400">{performer.avg.toFixed(2)} ACH₅₀</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="pt-4 border-t">
           <h4 className="text-sm font-semibold mb-3 text-muted-foreground">Airtightness Trend (Last 90 Days)</h4>
           {trend.direction === 'down' && (
