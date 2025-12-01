@@ -65,6 +65,7 @@ const MunicipalDashboard = () => {
     queryFn: fetchAllProjects,
   });
 
+  const [isMapOpen, setIsMapOpen] = useState(false);
   const [filters, setFilters] = useState({
     dateRange: 'all',
     compliancePath: 'all',
@@ -147,7 +148,7 @@ const MunicipalDashboard = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-4">
             <h1 className="text-4xl font-bold text-foreground">Municipal Dashboard</h1>
-            <Dialog>
+            <Dialog open={isMapOpen} onOpenChange={setIsMapOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="icon" className="h-12 w-12">
                   <MapIcon className="h-6 w-6" />
@@ -207,7 +208,7 @@ const MunicipalDashboard = () => {
             <div className="space-y-6 pt-6 border-t">
               <h2 className="text-2xl font-bold text-foreground border-b pb-2">Technical Deep Dive</h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <DetailedAirtightnessCard data={filteredProjects} />
+                <DetailedAirtightnessCard data={filteredProjects} onOpenMap={() => setIsMapOpen(true)} />
                 <AverageMetricsCard data={filteredProjects} />
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

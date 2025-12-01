@@ -1,8 +1,14 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Wind } from 'lucide-react';
+import { Wind, Map } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-const DetailedAirtightnessCard = ({ data }: { data: any[] }) => {
+interface DetailedAirtightnessCardProps {
+  data: any[];
+  onOpenMap: () => void;
+}
+
+const DetailedAirtightnessCard = ({ data, onOpenMap }: DetailedAirtightnessCardProps) => {
   const stats = useMemo(() => {
     const testedProjects = data.filter(p => typeof p.airtightness_al === 'number' && p.airtightness_al > 0);
     if (testedProjects.length === 0) {
@@ -82,6 +88,12 @@ const DetailedAirtightnessCard = ({ data }: { data: any[] }) => {
             </div>
           </div>
         )}
+        <div className="pt-4 border-t">
+          <Button variant="link" className="p-0 h-auto text-primary" onClick={onOpenMap}>
+            <Map className="h-4 w-4 mr-2" />
+            View Airtightness Map
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
