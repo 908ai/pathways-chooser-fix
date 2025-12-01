@@ -39,7 +39,7 @@ const MunicipalAlertsCard = ({ projects }: { projects: any[] }) => {
     const hurdles = projects
       .filter(p => p.compliance_status === 'fail' || p.compliance_status === 'needs_revision')
       .flatMap(p => p.recommendations || [])
-      .reduce((acc: Record<string, number>, rec) => {
+      .reduce<Record<string, number>>((acc, rec) => {
           const lowerRec = rec.toLowerCase();
           if (lowerRec.includes('wall')) acc['Wall Insulation'] = (acc['Wall Insulation'] || 0) + 1;
           else if (lowerRec.includes('window')) acc['Windows'] = (acc['Windows'] || 0) + 1;
