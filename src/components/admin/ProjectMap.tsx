@@ -16,68 +16,15 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
-const getAirtightnessIcon = (score: number | null) => {
-  let color = '#808080'; // Grey for unknown
-  if (score !== null) {
-    if (score <= 1.5) color = '#22c55e'; // Green
-    else if (score <= 2.5) color = '#f97316'; // Orange
-    else color = '#ef4444'; // Red
-  }
-
-  const iconHtml = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="${color}" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));">
-      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-      <circle cx="12" cy="10" r="3"/>
-    </svg>`;
-
-  return new L.DivIcon({
-    html: iconHtml,
-    className: 'custom-leaflet-icon',
-    iconSize: [28, 28],
-    iconAnchor: [14, 28],
-    popupAnchor: [0, -28],
-  });
-};
-
 const fetchAllProjectsWithCoords = async () => {
   const { data, error } = await supabase
     .from('project_summaries')
-    .select('id, project_name, location, latitude, longitude, compliance_status, airtightness_al, city');
+    .select('id, project_name, location, latitude, longitude, compliance_status, airtightness_al')
+    .not('latitude', 'is', null)
+    .not('longitude', 'is', null);
   
   if (error) throw error;
-
-  // Simulate coordinates for projects that don't have them, for demonstration
-  const projectsWithCoords = data.map(p => {
-    if (p.latitude && p.longitude) {
-      return p;
-    }
-    
-    let latitude = p.latitude;
-    let longitude = p.longitude;
-    switch (p.city?.toLowerCase()) {
-      case 'calgary':
-        latitude = 51.0447 + (Math.random() - 0.5) * 0.2;
-        longitude = -114.0719 + (Math.random() - 0.5) * 0.2;
-        break;
-      case 'edmonton':
-        latitude = 53.5461 + (Math.random() - 0.5) * 0.2;
-        longitude = -113.4938 + (Math.random() - 0.5) * 0.2;
-        break;
-      case 'saskatoon':
-        latitude = 52.1332 + (Math.random() - 0.5) * 0.1;
-        longitude = -106.6700 + (Math.random() - 0.5) * 0.1;
-        break;
-      case 'regina':
-        latitude = 50.4452 + (Math.random() - 0.5) * 0.1;
-        longitude = -104.6189 + (Math.random() - 0.5) * 0.1;
-        break;
-      default:
-        break;
-    }
-    return { ...p, latitude, longitude };
-  }).filter(p => p.latitude && p.longitude);
-
-  return projectsWithCoords;
+  return data;
 };
 
 const ProjectMap = () => {
@@ -102,17 +49,17 @@ const ProjectMap = () => {
     </Alert>;
   }
 
-  const center: LatLngExpression = [52.9399, -106.4509];
+  const center: LatLngExpression = [52.9399, -106.4509]; // Center of Saskatchewan/Alberta
 
   return (
     <Card className="h-full w-full flex flex-col">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MapPin className="h-5 w-5" />
-          Project Airtightness Map
+          Project Map
         </CardTitle>
         <CardDescription>
-          Geographic distribution of project airtightness scores (ACH₅₀). Green is best, red is worst.
+          Geographic distribution of projects.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1">
@@ -124,7 +71,7 @@ const ProjectMap = () => {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
               {projects.map(project => (
-                <Marker key={project.id} position={[project.latitude!, project.longitude!]} icon={getAirtightnessIcon(project.airtightness_al)}>
+                <Marker key={project.id} position={[project.latitude!, project.longitude!]}>
                   <Popup>
                     <div className="font-semibold">{project.project_name}</div>
                     <div className="text-xs text-muted-foreground">{project.location}</div>
