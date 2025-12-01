@@ -10,10 +10,9 @@ import { getStatusInfo, pathwayMapping, formatBuildingType, formatProvince } fro
 interface MunicipalReportExporterProps {
   projects: any[];
   dashboardRef: React.RefObject<HTMLDivElement>;
-  filters: any;
 }
 
-const MunicipalReportExporter = ({ projects, dashboardRef, filters }: MunicipalReportExporterProps) => {
+const MunicipalReportExporter = ({ projects, dashboardRef }: MunicipalReportExporterProps) => {
   const { toast } = useToast();
 
   const handleExportCsv = () => {
@@ -88,8 +87,9 @@ const MunicipalReportExporter = ({ projects, dashboardRef, filters }: MunicipalR
           windowHeight: input.scrollHeight,
         }).then((canvas) => {
           const imgData = canvas.toDataURL('image/png');
-          const headerHeight = 120;
+          const headerHeight = 150;
           const margin = 40;
+          const headerYCenter = headerHeight / 2;
           
           const pdfWidth = canvas.width;
           const pdfHeight = canvas.height + headerHeight;
@@ -101,17 +101,17 @@ const MunicipalReportExporter = ({ projects, dashboardRef, filters }: MunicipalR
           });
 
           // Add Header
-          const logoWidth = 200;
+          const logoWidth = 300;
           const logoHeight = logo.height * (logoWidth / logo.width);
-          pdf.addImage(logo, 'PNG', margin, 20, logoWidth, logoHeight);
+          pdf.addImage(logo, 'PNG', margin, headerYCenter - (logoHeight / 2), logoWidth, logoHeight);
 
           pdf.setFontSize(40);
-          pdf.text('Municipal Dashboard Report', pdfWidth / 2, 60, { align: 'center' });
+          pdf.text('Municipal Dashboard Report', pdfWidth / 2, headerYCenter, { align: 'center', baseline: 'middle' });
 
           pdf.setFontSize(24);
-          pdf.text(new Date().toLocaleDateString(), pdfWidth - margin, 50, { align: 'right' });
+          pdf.text(new Date().toLocaleDateString(), pdfWidth - margin, headerYCenter, { align: 'right', baseline: 'middle' });
           
-          // Add Dashboard Image (which now includes filters)
+          // Add Dashboard Image
           pdf.addImage(imgData, 'PNG', 0, headerHeight, canvas.width, canvas.height);
           
           pdf.save("municipal_dashboard_report.pdf");

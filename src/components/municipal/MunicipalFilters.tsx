@@ -11,7 +11,7 @@ const MunicipalFilters = ({ filters, setFilters }: any) => {
       <CardContent className="pt-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Select value={filters.dateRange} onValueChange={(value) => handleFilterChange('dateRange', value)}>
-            <SelectTrigger><SelectValue placeholder="Filter by Date Range" /></SelectTrigger>
+            <SelectTrigger className="items-center"><SelectValue placeholder="Filter by Date Range" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Time</SelectItem>
               <SelectItem value="90days">Last 90 Days</SelectItem>
@@ -19,7 +19,7 @@ const MunicipalFilters = ({ filters, setFilters }: any) => {
             </SelectContent>
           </Select>
           <Select value={filters.compliancePath} onValueChange={(value) => handleFilterChange('compliancePath', value)}>
-            <SelectTrigger><SelectValue placeholder="Filter by Compliance Path" /></SelectTrigger>
+            <SelectTrigger className="items-center"><SelectValue placeholder="Filter by Compliance Path" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Paths</SelectItem>
               <SelectItem value="prescriptive">Prescriptive</SelectItem>
@@ -27,7 +27,7 @@ const MunicipalFilters = ({ filters, setFilters }: any) => {
             </SelectContent>
           </Select>
           <Select value={filters.mechanicalSystem} onValueChange={(value) => handleFilterChange('mechanicalSystem', value)}>
-            <SelectTrigger><SelectValue placeholder="Filter by Mechanical System" /></SelectTrigger>
+            <SelectTrigger className="items-center"><SelectValue placeholder="Filter by Mechanical System" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Systems</SelectItem>
               <SelectItem value="gas">Natural Gas</SelectItem>

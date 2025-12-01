@@ -29,7 +29,7 @@ const fetchAllProjects = async () => {
 const MunicipalDashboard = () => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
-  const reportContentRef = useRef(null);
+  const dashboardRef = useRef(null);
   const { data: projects, isLoading } = useQuery({
     queryKey: ['allProjectsForMunicipal'],
     queryFn: fetchAllProjects,
@@ -129,10 +129,10 @@ const MunicipalDashboard = () => {
         </div>
         
         <div className="mt-6">
-          <MunicipalReportExporter projects={filteredProjects} dashboardRef={reportContentRef} filters={filters} />
+          <MunicipalReportExporter projects={filteredProjects} dashboardRef={dashboardRef} />
         </div>
 
-        <div ref={reportContentRef} className="mt-6">
+        <div ref={dashboardRef} className="mt-6">
           <MunicipalFilters filters={filters} setFilters={setFilters} />
           <div className="mt-6 space-y-6 bg-background p-4">
             {/* Stat Cards */}
