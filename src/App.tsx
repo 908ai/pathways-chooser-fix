@@ -28,6 +28,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import { FeedbackButton } from "./components/FeedbackButton";
 import MyFeedbackPage from "./pages/MyFeedback";
 import FeedbackDetail from "./pages/FeedbackDetail";
+import MunicipalDashboard from "./pages/MunicipalDashboard";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +65,7 @@ const App = () => (
 
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+              <Route path="/municipal-dashboard" element={<AdminRoute><MunicipalDashboard /></AdminRoute>} />
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
