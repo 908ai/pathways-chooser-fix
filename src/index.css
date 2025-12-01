@@ -120,3 +120,9 @@ html body[data-scroll-locked] {
   position: initial !important;
   overflow: visible !important;
 }
+
+/* Custom Leaflet Icon Styling */
+.custom-leaflet-icon {
+  background: transparent;
+  border: none;
+}

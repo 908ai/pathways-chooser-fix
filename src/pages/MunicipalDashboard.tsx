@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Loader2, FileText, Zap, Wind } from 'lucide-react';
+import { ArrowLeft, Loader2, FileText, Zap, Wind, Map as MapIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import StatCard from '@/components/dashboard3/StatCard';
@@ -26,6 +26,8 @@ import BenchmarkingCard from '@/components/municipal/BenchmarkingCard';
 import MunicipalAlertsCard from '@/components/municipal/MunicipalAlertsCard';
 import ProcessAnalyticsCard from '@/components/municipal/ProcessAnalyticsCard';
 import WwrHistogram from '@/components/municipal/WwrHistogram';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import ProjectMap from '@/components/admin/ProjectMap';
 
 const fetchAllProjects = async () => {
   const { data: projects, error: projectsError } = await supabase
@@ -143,7 +145,21 @@ const MunicipalDashboard = () => {
           Back to Admin Dashboard
         </Button>
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-3 text-foreground">Municipal Dashboard</h1>
+          <div className="flex items-center justify-center gap-4">
+            <h1 className="text-4xl font-bold text-foreground">Municipal Dashboard</h1>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="icon" className="h-12 w-12">
+                  <MapIcon className="h-6 w-6" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-7xl h-[90vh] flex flex-col">
+                <div className="flex-1 min-h-0">
+                  <ProjectMap />
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
         
         <div className="mb-6">
