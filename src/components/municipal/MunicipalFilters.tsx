@@ -9,7 +9,7 @@ const MunicipalFilters = ({ filters, setFilters }: any) => {
   return (
     <Card>
       <CardContent className="pt-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Select value={filters.dateRange} onValueChange={(value) => handleFilterChange('dateRange', value)}>
             <SelectTrigger><SelectValue placeholder="Filter by Date Range" /></SelectTrigger>
             <SelectContent>
@@ -24,6 +24,14 @@ const MunicipalFilters = ({ filters, setFilters }: any) => {
               <SelectItem value="all">All Paths</SelectItem>
               <SelectItem value="prescriptive">Prescriptive</SelectItem>
               <SelectItem value="performance">Performance</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={filters.mechanicalSystem} onValueChange={(value) => handleFilterChange('mechanicalSystem', value)}>
+            <SelectTrigger><SelectValue placeholder="Filter by Mechanical System" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Systems</SelectItem>
+              <SelectItem value="gas">Natural Gas</SelectItem>
+              <SelectItem value="electric">Electric / Heat Pump</SelectItem>
             </SelectContent>
           </Select>
         </div>

@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Loader2, FileText, Zap } from 'lucide-react';
+import { ArrowLeft, Loader2, FileText, Zap, Wind } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import StatCard from '@/components/dashboard3/StatCard';
@@ -13,6 +13,9 @@ import MunicipalFilters from '@/components/municipal/MunicipalFilters';
 import BuildingTypeChart from '@/components/municipal/BuildingTypeChart';
 import TierDistributionChart from '@/components/municipal/TierDistributionChart';
 import AverageMetricsCard from '@/components/municipal/AverageMetricsCard';
+import AggregatePerformanceStats from '@/components/municipal/AggregatePerformanceStats';
+import AirtightnessHistogram from '@/components/municipal/AirtightnessHistogram';
+import MechanicalSystemsChart from '@/components/municipal/MechanicalSystemsChart';
 
 const fetchAllProjects = async () => {
   const { data, error } = await supabase
@@ -33,6 +36,7 @@ const MunicipalDashboard = () => {
   const [filters, setFilters] = useState({
     dateRange: 'all',
     compliancePath: 'all',
+    mechanicalSystem: 'all',
   });
 
   const filteredProjects = useMemo(() => {
@@ -59,6 +63,16 @@ const MunicipalDashboard = () => {
         if (filters.compliancePath === 'performance' && !isPerformance) return false;
         if (filters.compliancePath === 'prescriptive' && !isPrescriptive) return false;
       }
+
+      // Mechanical System Filter
+      if (filters.mechanicalSystem !== 'all') {
+        const heatingType = p.heating_system_type?.toLowerCase() || '';
+        const isGas = heatingType.includes('gas') || heatingType.includes('furnace') || heatingType.includes('boiler');
+        const isElectric = heatingType.includes('electric') || heatingType.includes('heat pump');
+
+        if (filters.mechanicalSystem === 'gas' && !isGas) return false;
+        if (filters.mechanicalSystem === 'electric' && !isElectric) return false;
+      }
       
       return true;
     });
@@ -70,16 +84,22 @@ const MunicipalDashboard = () => {
         totalApplications: 0,
         prescriptiveCount: 0,
         performanceCount: 0,
+        airtightnessTargetRate: 0,
       };
     }
 
     const prescriptiveCount = filteredProjects.filter(p => p.selected_pathway === '9362' || p.selected_pathway === '9368').length;
     const performanceCount = filteredProjects.filter(p => p.selected_pathway === '9365' || p.selected_pathway === '9367').length;
+    
+    const projectsWithAirtightness = filteredProjects.filter(p => typeof p.airtightness_al === 'number' && p.airtightness_al > 0);
+    const meetingTargetCount = projectsWithAirtightness.filter(p => p.airtightness_al <= 2.5).length;
+    const airtightnessTargetRate = projectsWithAirtightness.length > 0 ? (meetingTargetCount / projectsWithAirtightness.length) * 100 : 0;
 
     return {
       totalApplications: filteredProjects.length,
       prescriptiveCount,
       performanceCount,
+      airtightnessTargetRate,
     };
   }, [filteredProjects]);
 
@@ -110,11 +130,14 @@ const MunicipalDashboard = () => {
 
         <div className="mt-6 space-y-6">
           {/* Stat Cards */}
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <StatCard title="Total Applications" value={stats.totalApplications} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
             <StatCard title="Prescriptive Path" value={stats.prescriptiveCount} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
             <StatCard title="Performance Path" value={stats.performanceCount} icon={<Zap className="h-4 w-4 text-muted-foreground" />} />
+            <StatCard title="Meet Airtightness Target (≤2.5 ACH)" value={`${stats.airtightnessTargetRate.toFixed(0)}%`} icon={<Wind className="h-4 w-4 text-muted-foreground" />} />
           </div>
+
+          <AggregatePerformanceStats projects={filteredProjects} />
 
           {/* Charts */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -127,6 +150,11 @@ const MunicipalDashboard = () => {
           <div className="grid gap-6 md:grid-cols-2">
              <TierDistributionChart data={filteredProjects} />
              <AverageMetricsCard data={filteredProjects} />
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <AirtightnessHistogram data={filteredProjects} />
+            <MechanicalSystemsChart data={filteredProjects} />
           </div>
         </div>
       </main>
