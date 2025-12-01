@@ -70,20 +70,35 @@ const MunicipalReportExporter = ({ projects, dashboardRef }: MunicipalReportExpo
   };
 
   const handleExportDashboard = () => {
-    if (dashboardRef.current) {
+    const input = dashboardRef.current;
+    if (input) {
       toast({ title: "Generating Report", description: "Please wait while we create the dashboard report..." });
-      html2canvas(dashboardRef.current, {
+      
+      const scrollWidth = input.scrollWidth;
+      const scrollHeight = input.scrollHeight;
+
+      html2canvas(input, {
         scale: 2,
         useCORS: true,
-        backgroundColor: window.getComputedStyle(document.body).getPropertyValue('background-color')
+        backgroundColor: window.getComputedStyle(document.body).getPropertyValue('background-color'),
+        width: scrollWidth,
+        height: scrollHeight,
+        windowWidth: scrollWidth,
+        windowHeight: scrollHeight,
       }).then((canvas) => {
         const imgData = canvas.toDataURL('image/png');
+        const pdfWidth = canvas.width;
+        const pdfHeight = canvas.height;
+
+        const orientation = pdfWidth > pdfHeight ? 'l' : 'p';
+
         const pdf = new jsPDF({
-          orientation: 'landscape',
+          orientation: orientation,
           unit: 'px',
-          format: [canvas.width, canvas.height]
+          format: [pdfWidth, pdfHeight]
         });
-        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
         pdf.save("municipal_dashboard_report.pdf");
         toast({ title: "Dashboard Report Exported", description: "The dashboard summary has been downloaded as a PDF." });
       }).catch(err => {
