@@ -146,23 +146,17 @@ const MunicipalDashboard = () => {
           Back to Admin Dashboard
         </Button>
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-4">
-            <h1 className="text-4xl font-bold text-foreground">Municipal Dashboard</h1>
-            <Dialog open={isMapOpen} onOpenChange={setIsMapOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="icon" className="h-12 w-12">
-                  <MapIcon className="h-6 w-6" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-7xl h-[90vh] flex flex-col">
-                <div className="flex-1 min-h-0">
-                  <ProjectMap />
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
+          <h1 className="text-4xl font-bold text-foreground">Municipal Dashboard</h1>
         </div>
         
+        <Dialog open={isMapOpen} onOpenChange={setIsMapOpen}>
+          <DialogContent className="max-w-7xl h-[90vh] flex flex-col">
+            <div className="flex-1 min-h-0">
+              <ProjectMap />
+            </div>
+          </DialogContent>
+        </Dialog>
+
         <div className="mb-6">
           <MunicipalReportExporter projects={filteredProjects} dashboardRef={dashboardRef} />
         </div>
