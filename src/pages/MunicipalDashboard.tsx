@@ -29,7 +29,7 @@ const fetchAllProjects = async () => {
 const MunicipalDashboard = () => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
-  const dashboardRef = useRef(null);
+  const reportContentRef = useRef(null);
   const { data: projects, isLoading } = useQuery({
     queryKey: ['allProjectsForMunicipal'],
     queryFn: fetchAllProjects,
@@ -128,39 +128,40 @@ const MunicipalDashboard = () => {
           </p>
         </div>
         
-        <MunicipalFilters filters={filters} setFilters={setFilters} />
-
         <div className="mt-6">
-          <MunicipalReportExporter projects={filteredProjects} dashboardRef={dashboardRef} filters={filters} />
+          <MunicipalReportExporter projects={filteredProjects} dashboardRef={reportContentRef} filters={filters} />
         </div>
 
-        <div ref={dashboardRef} className="mt-6 space-y-6 bg-background p-4">
-          {/* Stat Cards */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <StatCard title="Total Applications" value={stats.totalApplications} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
-            <StatCard title="Prescriptive Path" value={stats.prescriptiveCount} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
-            <StatCard title="Performance Path" value={stats.performanceCount} icon={<Zap className="h-4 w-4 text-muted-foreground" />} />
-            <StatCard title="Meet Airtightness Target (≤2.5 ACH)" value={`${stats.airtightnessTargetRate.toFixed(0)}%`} icon={<Wind className="h-4 w-4 text-muted-foreground" />} />
-          </div>
-
-          <AggregatePerformanceStats projects={filteredProjects} />
-
-          {/* Charts */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-              <MonthlySubmissionsChart data={filteredProjects} />
+        <div ref={reportContentRef} className="mt-6">
+          <MunicipalFilters filters={filters} setFilters={setFilters} />
+          <div className="mt-6 space-y-6 bg-background p-4">
+            {/* Stat Cards */}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              <StatCard title="Total Applications" value={stats.totalApplications} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
+              <StatCard title="Prescriptive Path" value={stats.prescriptiveCount} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
+              <StatCard title="Performance Path" value={stats.performanceCount} icon={<Zap className="h-4 w-4 text-muted-foreground" />} />
+              <StatCard title="Meet Airtightness Target (≤2.5 ACH)" value={`${stats.airtightnessTargetRate.toFixed(0)}%`} icon={<Wind className="h-4 w-4 text-muted-foreground" />} />
             </div>
-            <BuildingTypeChart data={filteredProjects} />
-          </div>
 
-          <div className="grid gap-6 md:grid-cols-2">
-             <TierDistributionChart data={filteredProjects} />
-             <AverageMetricsCard data={filteredProjects} />
-          </div>
+            <AggregatePerformanceStats projects={filteredProjects} />
 
-          <div className="grid gap-6 md:grid-cols-2">
-            <AirtightnessHistogram data={filteredProjects} />
-            <MechanicalSystemsChart data={filteredProjects} />
+            {/* Charts */}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="lg:col-span-2">
+                <MonthlySubmissionsChart data={filteredProjects} />
+              </div>
+              <BuildingTypeChart data={filteredProjects} />
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+               <TierDistributionChart data={filteredProjects} />
+               <AverageMetricsCard data={filteredProjects} />
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <AirtightnessHistogram data={filteredProjects} />
+              <MechanicalSystemsChart data={filteredProjects} />
+            </div>
           </div>
         </div>
       </main>

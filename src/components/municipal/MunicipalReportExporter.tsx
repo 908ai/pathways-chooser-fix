@@ -110,13 +110,8 @@ const MunicipalReportExporter = ({ projects, dashboardRef, filters }: MunicipalR
 
           pdf.setFontSize(24);
           pdf.text(new Date().toLocaleDateString(), pdfWidth - margin, 50, { align: 'right' });
-
-          // Add Filter Summary
-          pdf.setFontSize(18);
-          const filterText = `Filters: Date Range: ${filters.dateRange}, Path: ${filters.compliancePath}, System: ${filters.mechanicalSystem}`;
-          pdf.text(filterText, margin, headerHeight - 20);
-
-          // Add Dashboard Image
+          
+          // Add Dashboard Image (which now includes filters)
           pdf.addImage(imgData, 'PNG', 0, headerHeight, canvas.width, canvas.height);
           
           pdf.save("municipal_dashboard_report.pdf");
