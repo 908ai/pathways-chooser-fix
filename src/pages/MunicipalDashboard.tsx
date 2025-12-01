@@ -27,7 +27,7 @@ import MunicipalAlertsCard from '@/components/municipal/MunicipalAlertsCard';
 import ProcessAnalyticsCard from '@/components/municipal/ProcessAnalyticsCard';
 import WwrHistogram from '@/components/municipal/WwrHistogram';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import ProjectMap from '@/components/admin/ProjectMap';
+import ProjectMap from '@/components/municipal/ProjectMap';
 
 const fetchAllProjects = async () => {
   const { data: projects, error: projectsError } = await supabase
