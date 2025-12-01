@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
-import { ArrowUpDown, AlertTriangle, Info, Zap, FileText, Clock, FileSpreadsheet, Loader2 } from 'lucide-react';
+import { ArrowUpDown, AlertTriangle, Info, Zap, FileText, Clock, FileSpreadsheet, Loader2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { getPendingItems, mapProjectToSelections } from '@/lib/projectUtils';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { jsPDF } from "jspdf";
+import autoTable from 'jspdf-autotable';
 
 const getStatusInfo = (status: string | null) => {
   switch (status) {
@@ -105,168 +107,236 @@ const AllProjectsDataTable = ({ projects, sortBy, setSortBy }: any) => {
     return sortBy.direction === 'asc' ? <ArrowUpDown className="h-4 w-4 ml-2" /> : <ArrowUpDown className="h-4 w-4 ml-2 transform rotate-180" />;
   };
 
+  const handleExportCsv = () => {
+    const headers = [
+      "Project Name", "Location", "Province", "Building Type", "Pathway", "Status", "Created", "Last Updated"
+    ];
+    const rows = projects.map((p: any) => [
+      `"${p.project_name || ''}"`,
+      `"${p.location || ''}"`,
+      `"${formatProvince(p.province) || ''}"`,
+      `"${formatBuildingType(p.building_type) || ''}"`,
+      `"${pathwayMapping[p.selected_pathway] || 'N/A'}"`,
+      `"${getStatusInfo(p.compliance_status).text || ''}"`,
+      `"${new Date(p.created_at).toLocaleDateString()}"`,
+      `"${new Date(p.updated_at).toLocaleDateString()}"`
+    ].join(','));
+
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "projects_export.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast({ title: "CSV Exported", description: "Project data has been downloaded." });
+  };
+
+  const handleExportPdfSummary = () => {
+    const doc = new jsPDF();
+    doc.text("All Projects Summary", 14, 16);
+
+    const tableColumn = ["Project Name", "Location", "Pathway", "Status", "Last Updated"];
+    const tableRows: any[][] = [];
+
+    projects.forEach((p: any) => {
+      const projectData = [
+        p.project_name || 'N/A',
+        p.location || 'N/A',
+        pathwayMapping[p.selected_pathway] || 'N/A',
+        getStatusInfo(p.compliance_status).text || '',
+        new Date(p.updated_at).toLocaleDateString()
+      ];
+      tableRows.push(projectData);
+    });
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+
+    doc.save('projects_summary.pdf');
+    toast({ title: "PDF Summary Exported", description: "Project summary has been downloaded." });
+  };
+
   return (
     <Card>
+      <CardHeader>
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={handleExportCsv}>
+            <Download className="mr-2 h-4 w-4" />
+            Export CSV
+          </Button>
+          <Button variant="outline" onClick={handleExportPdfSummary}>
+            <Download className="mr-2 h-4 w-4" />
+            Export PDF Summary
+          </Button>
+        </div>
+      </CardHeader>
       <CardContent className="p-0">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Flags</TableHead>
-              <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('project_name')}>
-                  Project / Location {renderSortIcon('project_name')}
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('province')}>
-                  Province {renderSortIcon('province')}
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('building_type')}>
-                  Building Type {renderSortIcon('building_type')}
-                </Button>
-              </TableHead>
-              <TableHead>Pathway</TableHead>
-              <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('compliance_status')}>
-                  Status {renderSortIcon('compliance_status')}
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('created_at')}>
-                  Created {renderSortIcon('created_at')}
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button variant="ghost" onClick={() => handleSort('updated_at')}>
-                  Last Updated {renderSortIcon('updated_at')}
-                </Button>
-              </TableHead>
-              <TableHead className="text-right">Export</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {projects.map((p: any) => {
-              const statusInfo = getStatusInfo(p.compliance_status);
-              const selections = mapProjectToSelections(p);
-              const { required, optional } = getPendingItems(selections, p.uploaded_files || []);
-              const isOverdue = p.compliance_status === 'submitted' && (new Date().getTime() - new Date(p.updated_at).getTime()) > 7 * 24 * 60 * 60 * 1000;
-              const isPerformance = p.selected_pathway === '9365' || p.selected_pathway === '9367';
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Flags</TableHead>
+                <TableHead>
+                  <Button variant="ghost" onClick={() => handleSort('project_name')}>
+                    Project / Location {renderSortIcon('project_name')}
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button variant="ghost" onClick={() => handleSort('province')}>
+                    Province {renderSortIcon('province')}
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button variant="ghost" onClick={() => handleSort('building_type')}>
+                    Building Type {renderSortIcon('building_type')}
+                  </Button>
+                </TableHead>
+                <TableHead>Pathway</TableHead>
+                <TableHead>
+                  <Button variant="ghost" onClick={() => handleSort('compliance_status')}>
+                    Status {renderSortIcon('compliance_status')}
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button variant="ghost" onClick={() => handleSort('created_at')}>
+                    Created {renderSortIcon('created_at')}
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button variant="ghost" onClick={() => handleSort('updated_at')}>
+                    Last Updated {renderSortIcon('updated_at')}
+                  </Button>
+                </TableHead>
+                <TableHead className="text-right">Export</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {projects.map((p: any) => {
+                const statusInfo = getStatusInfo(p.compliance_status);
+                const selections = mapProjectToSelections(p);
+                const { required, optional } = getPendingItems(selections, p.uploaded_files || []);
+                const isOverdue = p.compliance_status === 'submitted' && (new Date().getTime() - new Date(p.updated_at).getTime()) > 7 * 24 * 60 * 60 * 1000;
+                const isPerformance = p.selected_pathway === '9365' || p.selected_pathway === '9367';
 
-              return (
-                <TableRow key={p.id}>
-                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      {required.length > 0 && (
+                return (
+                  <TableRow key={p.id}>
+                    <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        {required.length > 0 && (
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <AlertTriangle className="h-5 w-5 text-yellow-400" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <div className="p-2">
+                                <p className="font-semibold mb-2">All Required Items:</p>
+                                <ul className="list-disc list-inside space-y-1 text-xs">
+                                  {required.slice(0, 5).map(item => <li key={item.fieldId}>{item.label}</li>)}
+                                  {required.length > 5 && (
+                                    <li className="font-medium text-muted-foreground">...and {required.length - 5} more</li>
+                                  )}
+                                </ul>
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                        {optional.length > 0 && (
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Info className="h-5 w-5 text-blue-400" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <div className="p-2">
+                                <p className="font-semibold mb-2">Recommended Items:</p>
+                                <ul className="list-disc list-inside space-y-1 text-xs">
+                                  {optional.slice(0, 5).map(item => <li key={item.fieldId}>{item.label}</li>)}
+                                  {optional.length > 5 && (
+                                    <li className="font-medium text-muted-foreground">...and {optional.length - 5} more</li>
+                                  )}
+                                </ul>
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                        {isOverdue && (
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Clock className="h-5 w-5 text-red-500" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Pending review for over 7 days.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer">
+                      <div className="font-medium text-foreground">{p.project_name}</div>
+                      <div className="text-sm text-muted-foreground">{p.location}</div>
+                    </TableCell>
+                    <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">{formatProvince(p.province)}</TableCell>
+                    <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">{formatBuildingType(p.building_type)}</TableCell>
+                    <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        {isPerformance ? <Zap className="h-4 w-4 text-blue-500" /> : <FileText className="h-4 w-4 text-orange-500" />}
+                        <span>{pathwayMapping[p.selected_pathway] || 'N/A'}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer"><Badge variant="outline" className={statusInfo.className}>{statusInfo.text}</Badge></TableCell>
+                    <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">{new Date(p.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">{new Date(p.updated_at).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
                         <Tooltip>
-                          <TooltipTrigger>
-                            <AlertTriangle className="h-5 w-5 text-yellow-400" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <div className="p-2">
-                              <p className="font-semibold mb-2">All Required Items:</p>
-                              <ul className="list-disc list-inside space-y-1 text-xs">
-                                {required.slice(0, 5).map(item => <li key={item.fieldId}>{item.label}</li>)}
-                                {required.length > 5 && (
-                                  <li className="font-medium text-muted-foreground">...and {required.length - 5} more</li>
-                                )}
-                              </ul>
-                            </div>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
-                      {optional.length > 0 && (
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Info className="h-5 w-5 text-blue-400" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <div className="p-2">
-                              <p className="font-semibold mb-2">Recommended Items:</p>
-                              <ul className="list-disc list-inside space-y-1 text-xs">
-                                {optional.slice(0, 5).map(item => <li key={item.fieldId}>{item.label}</li>)}
-                                {optional.length > 5 && (
-                                  <li className="font-medium text-muted-foreground">...and {optional.length - 5} more</li>
-                                )}
-                              </ul>
-                            </div>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
-                      {isOverdue && (
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Clock className="h-5 w-5 text-red-500" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Pending review for over 7 days.</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer">
-                    <div className="font-medium text-foreground">{p.project_name}</div>
-                    <div className="text-sm text-muted-foreground">{p.location}</div>
-                  </TableCell>
-                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">{formatProvince(p.province)}</TableCell>
-                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">{formatBuildingType(p.building_type)}</TableCell>
-                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      {isPerformance ? <Zap className="h-4 w-4 text-blue-500" /> : <FileText className="h-4 w-4 text-orange-500" />}
-                      <span>{pathwayMapping[p.selected_pathway] || 'N/A'}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer"><Badge variant="outline" className={statusInfo.className}>{statusInfo.text}</Badge></TableCell>
-                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">{new Date(p.created_at).toLocaleDateString()}</TableCell>
-                  <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">{new Date(p.updated_at).toLocaleDateString()}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={(e) => { e.stopPropagation(); handleGeneratePdf(p); }}
-                            disabled={generatingPdfFor === p.id}
-                          >
-                            {generatingPdfFor === p.id ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <FileText className="h-4 w-4 text-red-500" />
-                            )}
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Export as PDF</p>
-                        </TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span tabIndex={0}>
+                          <TooltipTrigger asChild>
                             <Button
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8"
-                              disabled
+                              onClick={(e) => { e.stopPropagation(); handleGeneratePdf(p); }}
+                              disabled={generatingPdfFor === p.id}
                             >
-                              <FileSpreadsheet className="h-4 w-4 text-green-500" />
+                              {generatingPdfFor === p.id ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <FileText className="h-4 w-4 text-red-500" />
+                              )}
                             </Button>
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Export as CSV (Coming Soon)</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Export as PDF</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span tabIndex={0}>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                disabled
+                              >
+                                <FileSpreadsheet className="h-4 w-4 text-green-500" />
+                              </Button>
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Export as CSV (Coming Soon)</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );
