@@ -142,9 +142,6 @@ const MunicipalDashboard = () => {
         </Button>
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-3 text-foreground">Municipal Dashboard</h1>
-          <p className="text-muted-foreground text-lg">
-            An overview of project compliance and trends for municipal partners.
-          </p>
         </div>
         
         <div className="mb-6">
