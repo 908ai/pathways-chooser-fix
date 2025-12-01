@@ -24,6 +24,7 @@ import GhgBreakdownChart from '@/components/municipal/GhgBreakdownChart';
 import IncentivePlanningCard from '@/components/municipal/IncentivePlanningCard';
 import BenchmarkingCard from '@/components/municipal/BenchmarkingCard';
 import MunicipalAlertsCard from '@/components/municipal/MunicipalAlertsCard';
+import ProcessAnalyticsCard from '@/components/municipal/ProcessAnalyticsCard';
 
 const fetchAllProjects = async () => {
   const { data: projects, error: projectsError } = await supabase
@@ -159,9 +160,10 @@ const MunicipalDashboard = () => {
             {/* --- TOP SECTION: BIG PICTURE --- */}
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-foreground border-b pb-2">At a Glance</h2>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <KeyInsightsCard />
                 <MunicipalAlertsCard projects={filteredProjects} />
+                <ProcessAnalyticsCard projects={filteredProjects} />
               </div>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <StatCard title="Total Applications" value={stats.totalApplications} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
