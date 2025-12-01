@@ -10,9 +10,10 @@ import { getStatusInfo, pathwayMapping, formatBuildingType, formatProvince } fro
 interface MunicipalReportExporterProps {
   projects: any[];
   dashboardRef: React.RefObject<HTMLDivElement>;
+  filters: any;
 }
 
-const MunicipalReportExporter = ({ projects, dashboardRef }: MunicipalReportExporterProps) => {
+const MunicipalReportExporter = ({ projects, dashboardRef, filters }: MunicipalReportExporterProps) => {
   const { toast } = useToast();
 
   const handleExportCsv = () => {
@@ -73,38 +74,61 @@ const MunicipalReportExporter = ({ projects, dashboardRef }: MunicipalReportExpo
     const input = dashboardRef.current;
     if (input) {
       toast({ title: "Generating Report", description: "Please wait while we create the dashboard report..." });
-      
-      const scrollWidth = input.scrollWidth;
-      const scrollHeight = input.scrollHeight;
 
-      html2canvas(input, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: window.getComputedStyle(document.body).getPropertyValue('background-color'),
-        width: scrollWidth,
-        height: scrollHeight,
-        windowWidth: scrollWidth,
-        windowHeight: scrollHeight,
-      }).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdfWidth = canvas.width;
-        const pdfHeight = canvas.height;
+      const logo = new Image();
+      logo.src = '/assets/energy-navigator-logo.png';
+      logo.onload = () => {
+        html2canvas(input, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: window.getComputedStyle(document.body).getPropertyValue('background-color'),
+          width: input.scrollWidth,
+          height: input.scrollHeight,
+          windowWidth: input.scrollWidth,
+          windowHeight: input.scrollHeight,
+        }).then((canvas) => {
+          const imgData = canvas.toDataURL('image/png');
+          const headerHeight = 120;
+          const margin = 40;
+          
+          const pdfWidth = canvas.width;
+          const pdfHeight = canvas.height + headerHeight;
 
-        const orientation = pdfWidth > pdfHeight ? 'l' : 'p';
+          const pdf = new jsPDF({
+            orientation: 'p',
+            unit: 'px',
+            format: [pdfWidth, pdfHeight]
+          });
 
-        const pdf = new jsPDF({
-          orientation: orientation,
-          unit: 'px',
-          format: [pdfWidth, pdfHeight]
+          // Add Header
+          const logoWidth = 200;
+          const logoHeight = logo.height * (logoWidth / logo.width);
+          pdf.addImage(logo, 'PNG', margin, 20, logoWidth, logoHeight);
+
+          pdf.setFontSize(40);
+          pdf.text('Municipal Dashboard Report', pdfWidth / 2, 60, { align: 'center' });
+
+          pdf.setFontSize(24);
+          pdf.text(new Date().toLocaleDateString(), pdfWidth - margin, 50, { align: 'right' });
+
+          // Add Filter Summary
+          pdf.setFontSize(18);
+          const filterText = `Filters: Date Range: ${filters.dateRange}, Path: ${filters.compliancePath}, System: ${filters.mechanicalSystem}`;
+          pdf.text(filterText, margin, headerHeight - 20);
+
+          // Add Dashboard Image
+          pdf.addImage(imgData, 'PNG', 0, headerHeight, canvas.width, canvas.height);
+          
+          pdf.save("municipal_dashboard_report.pdf");
+          toast({ title: "Dashboard Report Exported", description: "The dashboard summary has been downloaded as a PDF." });
+        }).catch(err => {
+          console.error("Error generating dashboard PDF:", err);
+          toast({ title: "Export Failed", description: "Could not generate the dashboard report.", variant: "destructive" });
         });
-
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save("municipal_dashboard_report.pdf");
-        toast({ title: "Dashboard Report Exported", description: "The dashboard summary has been downloaded as a PDF." });
-      }).catch(err => {
-        console.error("Error generating dashboard PDF:", err);
-        toast({ title: "Export Failed", description: "Could not generate the dashboard report.", variant: "destructive" });
-      });
+      };
+      logo.onerror = () => {
+        toast({ title: "Export Failed", description: "Could not load assets for the report.", variant: "destructive" });
+      };
     }
   };
 
