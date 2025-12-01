@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Download, Image as ImageIcon } from "lucide-react";
+import { Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { jsPDF } from "jspdf";
 import autoTable from 'jspdf-autotable';
@@ -137,8 +137,8 @@ const MunicipalReportExporter = ({ projects, dashboardRef }: MunicipalReportExpo
         Export Projects as PDF
       </Button>
       <Button variant="outline" onClick={handleExportDashboard}>
-        <ImageIcon className="mr-2 h-4 w-4" />
-        Download Dashboard Report
+        <Download className="mr-2 h-4 w-4" />
+        Download Report
       </Button>
     </div>
   );
