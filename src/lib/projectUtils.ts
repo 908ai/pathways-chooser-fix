@@ -241,3 +241,41 @@ export const formatPathwayName = (pathway: string | null): string => {
     default: return pathway;
   }
 };
+
+export const getStatusInfo = (status: string | null) => {
+  switch (status) {
+    case 'pass':
+    case 'Compliant':
+      return { text: 'Compliant', className: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 border-green-200 dark:border-green-500/30' };
+    case 'fail':
+      return { text: 'Non-Compliant', className: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 border-red-200 dark:border-red-500/30' };
+    case 'submitted':
+      return { text: 'Submitted', className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 border-blue-200 dark:border-blue-500/30' };
+    case 'draft':
+      return { text: 'Draft', className: 'bg-gray-100 text-gray-800 dark:bg-gray-700/50 dark:text-gray-300 border-gray-200 dark:border-gray-500/30' };
+    case 'needs_revision':
+      return { text: 'Needs Revision', className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300 border-yellow-200 dark:border-yellow-500/30' };
+    default:
+      return { text: 'In Progress', className: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300 border-orange-200 dark:border-orange-500/30' };
+  }
+};
+
+export const pathwayMapping: { [key: string]: string } = {
+  '9362': 'Prescriptive',
+  '9368': 'Tiered Prescriptive',
+  '9365': 'Performance',
+  '9367': 'Tiered Performance',
+};
+
+export const formatBuildingType = (type: string | null) => {
+  if (!type) return 'N/A';
+  return type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+};
+
+export const formatProvince = (province: string | null): string => {
+  if (!province) return 'N/A';
+  const lowerProvince = province.toLowerCase();
+  if (lowerProvince === 'saskatchewan') return 'SK';
+  if (lowerProvince === 'alberta') return 'AB';
+  return province;
+};

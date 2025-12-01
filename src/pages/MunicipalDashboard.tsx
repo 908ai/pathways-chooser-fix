@@ -16,6 +16,7 @@ import AverageMetricsCard from '@/components/municipal/AverageMetricsCard';
 import AggregatePerformanceStats from '@/components/municipal/AggregatePerformanceStats';
 import AirtightnessHistogram from '@/components/municipal/AirtightnessHistogram';
 import MechanicalSystemsChart from '@/components/municipal/MechanicalSystemsChart';
+import MunicipalReportExporter from '@/components/municipal/MunicipalReportExporter';
 
 const fetchAllProjects = async () => {
   const { data, error } = await supabase
@@ -127,6 +128,10 @@ const MunicipalDashboard = () => {
         </div>
         
         <MunicipalFilters filters={filters} setFilters={setFilters} />
+
+        <div className="mt-6">
+          <MunicipalReportExporter projects={filteredProjects} />
+        </div>
 
         <div className="mt-6 space-y-6">
           {/* Stat Cards */}

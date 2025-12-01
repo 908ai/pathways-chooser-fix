@@ -1,54 +1,14 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
-import { ArrowUpDown, AlertTriangle, Info, Zap, FileText, Clock, FileSpreadsheet, Loader2, Download } from 'lucide-react';
+import { ArrowUpDown, AlertTriangle, Info, Zap, FileText, Clock, FileSpreadsheet, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { getPendingItems, mapProjectToSelections } from '@/lib/projectUtils';
+import { getPendingItems, mapProjectToSelections, getStatusInfo, pathwayMapping, formatBuildingType, formatProvince } from '@/lib/projectUtils';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { jsPDF } from "jspdf";
-import autoTable from 'jspdf-autotable';
-
-const getStatusInfo = (status: string | null) => {
-  switch (status) {
-    case 'pass':
-    case 'Compliant':
-      return { text: 'Compliant', className: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 border-green-200 dark:border-green-500/30' };
-    case 'fail':
-      return { text: 'Non-Compliant', className: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 border-red-200 dark:border-red-500/30' };
-    case 'submitted':
-      return { text: 'Submitted', className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 border-blue-200 dark:border-blue-500/30' };
-    case 'draft':
-      return { text: 'Draft', className: 'bg-gray-100 text-gray-800 dark:bg-gray-700/50 dark:text-gray-300 border-gray-200 dark:border-gray-500/30' };
-    case 'needs_revision':
-      return { text: 'Needs Revision', className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300 border-yellow-200 dark:border-yellow-500/30' };
-    default:
-      return { text: 'In Progress', className: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300 border-orange-200 dark:border-orange-500/30' };
-  }
-};
-
-const pathwayMapping: { [key: string]: string } = {
-  '9362': 'Prescriptive',
-  '9368': 'Tiered Prescriptive',
-  '9365': 'Performance',
-  '9367': 'Tiered Performance',
-};
-
-const formatBuildingType = (type: string) => {
-  if (!type) return 'N/A';
-  return type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-};
-
-const formatProvince = (province: string | null): string => {
-  if (!province) return 'N/A';
-  const lowerProvince = province.toLowerCase();
-  if (lowerProvince === 'saskatchewan') return 'SK';
-  if (lowerProvince === 'alberta') return 'AB';
-  return province;
-};
 
 const AllProjectsDataTable = ({ projects, sortBy, setSortBy }: any) => {
   const navigate = useNavigate();
@@ -107,74 +67,8 @@ const AllProjectsDataTable = ({ projects, sortBy, setSortBy }: any) => {
     return sortBy.direction === 'asc' ? <ArrowUpDown className="h-4 w-4 ml-2" /> : <ArrowUpDown className="h-4 w-4 ml-2 transform rotate-180" />;
   };
 
-  const handleExportCsv = () => {
-    const headers = [
-      "Project Name", "Location", "Province", "Building Type", "Pathway", "Status", "Created", "Last Updated"
-    ];
-    const rows = projects.map((p: any) => [
-      `"${p.project_name || ''}"`,
-      `"${p.location || ''}"`,
-      `"${formatProvince(p.province) || ''}"`,
-      `"${formatBuildingType(p.building_type) || ''}"`,
-      `"${pathwayMapping[p.selected_pathway] || 'N/A'}"`,
-      `"${getStatusInfo(p.compliance_status).text || ''}"`,
-      `"${new Date(p.created_at).toLocaleDateString()}"`,
-      `"${new Date(p.updated_at).toLocaleDateString()}"`
-    ].join(','));
-
-    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows].join('\n');
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "projects_export.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    toast({ title: "CSV Exported", description: "Project data has been downloaded." });
-  };
-
-  const handleExportPdfSummary = () => {
-    const doc = new jsPDF();
-    doc.text("All Projects Summary", 14, 16);
-
-    const tableColumn = ["Project Name", "Location", "Pathway", "Status", "Last Updated"];
-    const tableRows: any[][] = [];
-
-    projects.forEach((p: any) => {
-      const projectData = [
-        p.project_name || 'N/A',
-        p.location || 'N/A',
-        pathwayMapping[p.selected_pathway] || 'N/A',
-        getStatusInfo(p.compliance_status).text || '',
-        new Date(p.updated_at).toLocaleDateString()
-      ];
-      tableRows.push(projectData);
-    });
-
-    autoTable(doc, {
-      head: [tableColumn],
-      body: tableRows,
-      startY: 20,
-    });
-
-    doc.save('projects_summary.pdf');
-    toast({ title: "PDF Summary Exported", description: "Project summary has been downloaded." });
-  };
-
   return (
     <Card>
-      <CardHeader>
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={handleExportCsv}>
-            <Download className="mr-2 h-4 w-4" />
-            Export CSV
-          </Button>
-          <Button variant="outline" onClick={handleExportPdfSummary}>
-            <Download className="mr-2 h-4 w-4" />
-            Export PDF Summary
-          </Button>
-        </div>
-      </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <Table>
