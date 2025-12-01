@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Award, TrendingUp, TrendingDown } from 'lucide-react';
+import { Award, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const BenchmarkingCard = ({ projects }: { projects: any[] }) => {
   const { topPerformers, trend } = useMemo(() => {
@@ -45,6 +46,12 @@ const BenchmarkingCard = ({ projects }: { projects: any[] }) => {
     return { topPerformers, trend: { direction: trendDirection, value: trendValue } };
   }, [projects]);
 
+  const rankingColors = [
+    'text-yellow-500', // Gold
+    'text-slate-400',  // Silver
+    'text-orange-400'  // Bronze
+  ];
+
   return (
     <Card>
       <CardHeader>
@@ -56,36 +63,44 @@ const BenchmarkingCard = ({ projects }: { projects: any[] }) => {
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <h4 className="text-sm font-semibold mb-2">Top Performers (by Avg. Airtightness)</h4>
+          <h4 className="text-sm font-semibold mb-3 text-muted-foreground">Top Performers (by Avg. Airtightness)</h4>
           {topPerformers.length > 0 ? (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {topPerformers.map((performer, index) => (
-                <div key={index} className="flex items-center justify-between text-sm p-2 bg-muted/50 rounded-md">
-                  <span className="font-medium">{index + 1}. {performer.name}</span>
-                  <span className="font-bold text-blue-600">{performer.avg.toFixed(2)} ACH₅₀</span>
+                <div key={index} className="flex items-center justify-between text-sm p-3 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <span className={cn("font-bold text-lg", rankingColors[index] || 'text-muted-foreground')}>
+                      {index + 1}
+                    </span>
+                    <span className="font-medium">{performer.name}</span>
+                  </div>
+                  <span className="font-bold text-blue-600 dark:text-blue-400">{performer.avg.toFixed(2)} ACH₅₀</span>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">Not enough data for benchmarking.</p>
+            <p className="text-sm text-muted-foreground text-center py-4">Not enough data for benchmarking.</p>
           )}
         </div>
         <div className="pt-4 border-t">
-          <h4 className="text-sm font-semibold mb-2">Airtightness Trend (Last 90 Days)</h4>
+          <h4 className="text-sm font-semibold mb-3 text-muted-foreground">Airtightness Trend (Last 90 Days)</h4>
           {trend.direction === 'down' && (
-            <div className="flex items-center gap-2 text-green-600">
-              <TrendingDown className="h-5 w-5" />
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-500/50 text-green-700 dark:text-green-300">
+              <TrendingDown className="h-6 w-6 flex-shrink-0" />
               <p className="font-semibold">Improving! Average airtightness is {trend.value.toFixed(0)}% lower.</p>
             </div>
           )}
           {trend.direction === 'up' && (
-            <div className="flex items-center gap-2 text-red-600">
-              <TrendingUp className="h-5 w-5" />
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-500/50 text-red-700 dark:text-red-300">
+              <TrendingUp className="h-6 w-6 flex-shrink-0" />
               <p className="font-semibold">Worsening. Average airtightness is {trend.value.toFixed(0)}% higher.</p>
             </div>
           )}
           {trend.direction === 'neutral' && (
-            <p className="text-sm text-muted-foreground">No significant trend change in the last 90 days.</p>
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+              <Minus className="h-6 w-6 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">No significant trend change in the last 90 days.</p>
+            </div>
           )}
         </div>
       </CardContent>
