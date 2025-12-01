@@ -25,6 +25,7 @@ import IncentivePlanningCard from '@/components/municipal/IncentivePlanningCard'
 import BenchmarkingCard from '@/components/municipal/BenchmarkingCard';
 import MunicipalAlertsCard from '@/components/municipal/MunicipalAlertsCard';
 import ProcessAnalyticsCard from '@/components/municipal/ProcessAnalyticsCard';
+import WwrHistogram from '@/components/municipal/WwrHistogram';
 
 const fetchAllProjects = async () => {
   const { data: projects, error: projectsError } = await supabase
@@ -191,7 +192,11 @@ const MunicipalDashboard = () => {
               <h2 className="text-2xl font-bold text-foreground border-b pb-2">Technical Deep Dive</h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <DetailedAirtightnessCard data={filteredProjects} />
+                <AverageMetricsCard data={filteredProjects} />
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <AirtightnessHistogram data={filteredProjects} />
+                <WwrHistogram data={filteredProjects} />
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <MechanicalSystemsChart data={filteredProjects} />
