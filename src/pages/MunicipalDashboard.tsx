@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -29,6 +29,7 @@ const fetchAllProjects = async () => {
 const MunicipalDashboard = () => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const dashboardRef = useRef(null);
   const { data: projects, isLoading } = useQuery({
     queryKey: ['allProjectsForMunicipal'],
     queryFn: fetchAllProjects,
@@ -130,10 +131,10 @@ const MunicipalDashboard = () => {
         <MunicipalFilters filters={filters} setFilters={setFilters} />
 
         <div className="mt-6">
-          <MunicipalReportExporter projects={filteredProjects} />
+          <MunicipalReportExporter projects={filteredProjects} dashboardRef={dashboardRef} />
         </div>
 
-        <div className="mt-6 space-y-6">
+        <div ref={dashboardRef} className="mt-6 space-y-6 bg-background p-4">
           {/* Stat Cards */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <StatCard title="Total Applications" value={stats.totalApplications} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
