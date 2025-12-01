@@ -39,14 +39,14 @@ const MunicipalAlertsCard = ({ projects }: { projects: any[] }) => {
     const hurdles = projects
       .filter(p => p.compliance_status === 'fail' || p.compliance_status === 'needs_revision')
       .flatMap(p => p.recommendations || [])
-      .reduce((acc, rec) => {
+      .reduce((acc: Record<string, number>, rec) => {
           const lowerRec = rec.toLowerCase();
           if (lowerRec.includes('wall')) acc['Wall Insulation'] = (acc['Wall Insulation'] || 0) + 1;
           else if (lowerRec.includes('window')) acc['Windows'] = (acc['Windows'] || 0) + 1;
           else if (lowerRec.includes('airtightness')) acc['Airtightness'] = (acc['Airtightness'] || 0) + 1;
           else acc['Other'] = (acc['Other'] || 0) + 1;
           return acc;
-      }, {} as Record<string, number>);
+      }, {});
     
     const topHurdle = Object.entries(hurdles).sort((a, b) => b[1] - a[1])[0];
     if (topHurdle) {
