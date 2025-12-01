@@ -52,7 +52,7 @@ const ProjectMap = () => {
   const center: LatLngExpression = [52.9399, -106.4509]; // Center of Saskatchewan/Alberta
 
   return (
-    <Card className="h-full w-full flex flex-col">
+    <Card className="h-[70vh] w-full flex flex-col">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MapPin className="h-5 w-5" />
