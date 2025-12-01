@@ -17,13 +17,22 @@ import AggregatePerformanceStats from '@/components/municipal/AggregatePerforman
 import AirtightnessHistogram from '@/components/municipal/AirtightnessHistogram';
 import MechanicalSystemsChart from '@/components/municipal/MechanicalSystemsChart';
 import MunicipalReportExporter from '@/components/municipal/MunicipalReportExporter';
+import KeyInsightsCard from '@/components/municipal/KeyInsightsCard';
+import EmbodiedCarbonCard from '@/components/municipal/EmbodiedCarbonCard';
+import DetailedAirtightnessCard from '@/components/municipal/DetailedAirtightnessCard';
+import GhgBreakdownChart from '@/components/municipal/GhgBreakdownChart';
 
 const fetchAllProjects = async () => {
   const { data, error } = await supabase
     .from('project_summaries')
     .select('*');
   if (error) throw error;
-  return data;
+  // Simulate missing data for now
+  return data.map(p => ({
+    ...p,
+    energuide_rating: p.total_points ? 100 - p.total_points : null,
+    window_to_wall_ratio: p.window_u_value ? 0.15 + (p.window_u_value - 1.4) * 0.1 : null,
+  }));
 };
 
 const MunicipalDashboard = () => {
@@ -39,13 +48,17 @@ const MunicipalDashboard = () => {
     dateRange: 'all',
     compliancePath: 'all',
     mechanicalSystem: 'all',
+    buildingType: 'all',
+    location: 'all',
   });
 
-  const filteredProjects = useMemo(() => {
-    if (!projects) return [];
+  const { filteredProjects, uniqueLocations, uniqueBuildingTypes } = useMemo(() => {
+    if (!projects) return { filteredProjects: [], uniqueLocations: [], uniqueBuildingTypes: [] };
     
-    return projects.filter(p => {
-      // Date Range Filter
+    const locations = [...new Set(projects.map(p => p.city).filter(Boolean))] as string[];
+    const buildingTypes = [...new Set(projects.map(p => p.building_type).filter(Boolean))] as string[];
+
+    const filtered = projects.filter(p => {
       if (filters.dateRange !== 'all') {
         const projectDate = new Date(p.created_at);
         const now = new Date();
@@ -58,7 +71,6 @@ const MunicipalDashboard = () => {
         }
       }
 
-      // Compliance Path Filter
       if (filters.compliancePath !== 'all') {
         const isPerformance = p.selected_pathway === '9365' || p.selected_pathway === '9367';
         const isPrescriptive = p.selected_pathway === '9362' || p.selected_pathway === '9368';
@@ -66,43 +78,33 @@ const MunicipalDashboard = () => {
         if (filters.compliancePath === 'prescriptive' && !isPrescriptive) return false;
       }
 
-      // Mechanical System Filter
       if (filters.mechanicalSystem !== 'all') {
         const heatingType = p.heating_system_type?.toLowerCase() || '';
         const isGas = heatingType.includes('gas') || heatingType.includes('furnace') || heatingType.includes('boiler');
         const isElectric = heatingType.includes('electric') || heatingType.includes('heat pump');
-
         if (filters.mechanicalSystem === 'gas' && !isGas) return false;
         if (filters.mechanicalSystem === 'electric' && !isElectric) return false;
       }
+
+      if (filters.buildingType !== 'all' && p.building_type !== filters.buildingType) return false;
+      if (filters.location !== 'all' && p.city !== filters.location) return false;
       
       return true;
     });
+
+    return { filteredProjects: filtered, uniqueLocations: locations, uniqueBuildingTypes: buildingTypes };
   }, [projects, filters]);
 
   const stats = useMemo(() => {
     if (!filteredProjects || filteredProjects.length === 0) {
-      return {
-        totalApplications: 0,
-        prescriptiveCount: 0,
-        performanceCount: 0,
-        airtightnessTargetRate: 0,
-      };
+      return { totalApplications: 0, prescriptiveCount: 0, performanceCount: 0, airtightnessTargetRate: 0 };
     }
-
     const prescriptiveCount = filteredProjects.filter(p => p.selected_pathway === '9362' || p.selected_pathway === '9368').length;
     const performanceCount = filteredProjects.filter(p => p.selected_pathway === '9365' || p.selected_pathway === '9367').length;
-    
     const projectsWithAirtightness = filteredProjects.filter(p => typeof p.airtightness_al === 'number' && p.airtightness_al > 0);
     const meetingTargetCount = projectsWithAirtightness.filter(p => p.airtightness_al <= 2.5).length;
     const airtightnessTargetRate = projectsWithAirtightness.length > 0 ? (meetingTargetCount / projectsWithAirtightness.length) * 100 : 0;
-
-    return {
-      totalApplications: filteredProjects.length,
-      prescriptiveCount,
-      performanceCount,
-      airtightnessTargetRate,
-    };
+    return { totalApplications: filteredProjects.length, prescriptiveCount, performanceCount, airtightnessTargetRate };
   }, [filteredProjects]);
 
   if (isLoading) {
@@ -128,14 +130,17 @@ const MunicipalDashboard = () => {
           </p>
         </div>
         
-        <div className="mt-6">
-          <MunicipalReportExporter projects={filteredProjects} dashboardRef={dashboardRef} />
-        </div>
+        <MunicipalReportExporter projects={filteredProjects} dashboardRef={dashboardRef} />
 
-        <div ref={dashboardRef} className="mt-6">
-          <MunicipalFilters filters={filters} setFilters={setFilters} />
-          <div className="mt-6 space-y-6 bg-background p-4">
-            {/* Stat Cards */}
+        <div ref={dashboardRef} className="mt-6 bg-background p-4 rounded-lg">
+          <MunicipalFilters 
+            filters={filters} 
+            setFilters={setFilters} 
+            uniqueLocations={uniqueLocations}
+            uniqueBuildingTypes={uniqueBuildingTypes}
+          />
+          <div className="mt-6 space-y-6">
+            <KeyInsightsCard />
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               <StatCard title="Total Applications" value={stats.totalApplications} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
               <StatCard title="Prescriptive Path" value={stats.prescriptiveCount} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
@@ -145,7 +150,6 @@ const MunicipalDashboard = () => {
 
             <AggregatePerformanceStats projects={filteredProjects} />
 
-            {/* Charts */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               <div className="lg:col-span-2">
                 <MonthlySubmissionsChart data={filteredProjects} />
@@ -159,9 +163,16 @@ const MunicipalDashboard = () => {
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
+              <DetailedAirtightnessCard data={filteredProjects} />
               <AirtightnessHistogram data={filteredProjects} />
-              <MechanicalSystemsChart data={filteredProjects} />
             </div>
+            
+            <div className="grid gap-6 md:grid-cols-2">
+              <MechanicalSystemsChart data={filteredProjects} />
+              <GhgBreakdownChart data={filteredProjects} />
+            </div>
+
+            <EmbodiedCarbonCard />
           </div>
         </div>
       </main>

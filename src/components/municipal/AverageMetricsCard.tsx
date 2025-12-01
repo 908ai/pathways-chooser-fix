@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Thermometer, Wind, Zap } from 'lucide-react';
+import { Thermometer, Wind, Zap, Square } from 'lucide-react';
 
 const AverageMetricsCard = ({ data }: { data: any[] }) => {
   const metrics = useMemo(() => {
     if (!data || data.length === 0) {
-      return { avgAirtightness: 0, avgEnergyConsumption: 0, avgAtticRsi: 0, avgWallRsi: 0 };
+      return { avgAirtightness: 0, avgEnergyConsumption: 0, avgAtticRsi: 0, avgWallRsi: 0, avgEnerguide: 0, avgWwr: 0 };
     }
 
     const getAverage = (field: keyof typeof data[0]) => {
@@ -24,6 +24,8 @@ const AverageMetricsCard = ({ data }: { data: any[] }) => {
       avgEnergyConsumption,
       avgAtticRsi: getAverage('attic_rsi'),
       avgWallRsi: getAverage('wall_rsi'),
+      avgEnerguide: getAverage('energuide_rating'),
+      avgWwr: getAverage('window_to_wall_ratio'),
     };
   }, [data]);
 
@@ -60,6 +62,20 @@ const AverageMetricsCard = ({ data }: { data: any[] }) => {
             <span className="text-muted-foreground">Wall RSI</span>
           </div>
           <span className="font-bold text-lg">{metrics.avgWallRsi.toFixed(2)}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-green-500" />
+            <span className="text-muted-foreground">EnerGuide Rating</span>
+          </div>
+          <span className="font-bold text-lg">{metrics.avgEnerguide > 0 ? metrics.avgEnerguide.toFixed(0) : 'N/A'}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Square className="h-5 w-5 text-purple-500" />
+            <span className="text-muted-foreground">Window-to-Wall Ratio</span>
+          </div>
+          <span className="font-bold text-lg">{metrics.avgWwr > 0 ? `${(metrics.avgWwr * 100).toFixed(1)}%` : 'N/A'}</span>
         </div>
       </CardContent>
     </Card>

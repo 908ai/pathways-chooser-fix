@@ -246,6 +246,8 @@ export type Database = {
           secondary_heating_efficiency: string | null
           latitude: number | null
           longitude: number | null
+          energuide_rating: number | null
+          window_to_wall_ratio: number | null
         }
         Insert: {
           airtightness_al?: number | null
@@ -303,6 +305,8 @@ export type Database = {
           secondary_heating_efficiency?: string | null
           latitude?: number | null
           longitude?: number | null
+          energuide_rating?: number | null
+          window_to_wall_ratio?: number | null
         }
         Update: {
           airtightness_al?: number | null
@@ -360,6 +364,8 @@ export type Database = {
           secondary_heating_efficiency?: string | null
           latitude?: number | null
           longitude?: number | null
+          energuide_rating?: number | null
+          window_to_wall_ratio?: number | null
         }
         Relationships: []
       }
