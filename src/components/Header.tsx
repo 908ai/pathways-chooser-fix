@@ -11,6 +11,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
@@ -93,18 +101,47 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
               <div className="hidden md:flex items-center gap-4">
                 <nav className="flex items-center gap-1">
                   {isAdmin && (
-                    <Link
-                      to="/admin"
-                      className={cn(
-                        "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                        isLinkActive("/admin")
-                          ? "bg-primary/10 text-primary"
-                          : "text-primary dark:text-primary hover:bg-accent hover:text-primary/80"
-                      )}
-                    >
-                      <Shield className="h-4 w-4" />
-                      Admin
-                    </Link>
+                    <NavigationMenu>
+                      <NavigationMenuList>
+                        <NavigationMenuItem>
+                          <NavigationMenuTrigger
+                            className={cn(
+                              "group inline-flex h-auto w-max items-center justify-center rounded-md bg-transparent px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50",
+                              isLinkActive("/admin") || isLinkActive("/municipal-dashboard")
+                                ? "bg-primary/10 text-primary"
+                                : "text-primary dark:text-primary hover:bg-accent hover:text-primary/80"
+                            )}
+                          >
+                            <Shield className="h-4 w-4 mr-2" />
+                            Admin
+                          </NavigationMenuTrigger>
+                          <NavigationMenuContent>
+                            <ul className="grid w-[200px] gap-1 p-2">
+                              <li>
+                                <NavigationMenuLink asChild>
+                                  <Link
+                                    to="/admin"
+                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                  >
+                                    <div className="text-sm font-medium leading-none">Admin Dashboard</div>
+                                  </Link>
+                                </NavigationMenuLink>
+                              </li>
+                              <li>
+                                <NavigationMenuLink asChild>
+                                  <Link
+                                    to="/municipal-dashboard"
+                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                  >
+                                    <div className="text-sm font-medium leading-none">Municipal Dashboard</div>
+                                  </Link>
+                                </NavigationMenuLink>
+                              </li>
+                            </ul>
+                          </NavigationMenuContent>
+                        </NavigationMenuItem>
+                      </NavigationMenuList>
+                    </NavigationMenu>
                   )}
                   {mainNavLinks.map(link => (
                     <Link
