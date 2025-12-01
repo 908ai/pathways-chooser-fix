@@ -21,15 +21,31 @@ import KeyInsightsCard from '@/components/municipal/KeyInsightsCard';
 import EmbodiedCarbonCard from '@/components/municipal/EmbodiedCarbonCard';
 import DetailedAirtightnessCard from '@/components/municipal/DetailedAirtightnessCard';
 import GhgBreakdownChart from '@/components/municipal/GhgBreakdownChart';
+import IncentivePlanningCard from '@/components/municipal/IncentivePlanningCard';
+import BenchmarkingCard from '@/components/municipal/BenchmarkingCard';
 
 const fetchAllProjects = async () => {
-  const { data, error } = await supabase
+  const { data: projects, error: projectsError } = await supabase
     .from('project_summaries')
     .select('*');
-  if (error) throw error;
-  // Simulate missing data for now
-  return data.map(p => ({
+  if (projectsError) throw projectsError;
+
+  const userIds = [...new Set(projects.map(p => p.user_id).filter(Boolean))];
+  
+  const { data: companies, error: companiesError } = await supabase
+    .from('companies')
+    .select('user_id, company_name');
+  
+  if (companiesError) {
+    console.error("Error fetching companies for municipal dashboard:", companiesError);
+  }
+
+  const companyMap = new Map(companies?.map(c => [c.user_id, c.company_name]));
+
+  // Simulate missing data and add company names
+  return projects.map(p => ({
     ...p,
+    company_name: companyMap.get(p.user_id) || 'Individual Builder',
     energuide_rating: p.total_points ? 100 - p.total_points : null,
     window_to_wall_ratio: p.window_u_value ? 0.15 + (p.window_u_value - 1.4) * 0.1 : null,
   }));
@@ -140,7 +156,11 @@ const MunicipalDashboard = () => {
             uniqueBuildingTypes={uniqueBuildingTypes}
           />
           <div className="mt-6 space-y-6">
-            <KeyInsightsCard />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <KeyInsightsCard />
+              <BenchmarkingCard projects={filteredProjects} />
+            </div>
+
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               <StatCard title="Total Applications" value={stats.totalApplications} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
               <StatCard title="Prescriptive Path" value={stats.prescriptiveCount} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
@@ -149,6 +169,8 @@ const MunicipalDashboard = () => {
             </div>
 
             <AggregatePerformanceStats projects={filteredProjects} />
+            
+            <IncentivePlanningCard projects={filteredProjects} />
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               <div className="lg:col-span-2">
