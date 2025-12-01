@@ -1,6 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
 import { Layers } from 'lucide-react';
+import { useMemo } from 'react';
 
 const getTier = (project: any) => {
   if (project.selected_pathway === '9368' && typeof project.total_points === 'number') {
@@ -37,6 +38,15 @@ const TierDistributionChart = ({ data }: { data: any[] }) => {
     count: tierCounts[tier] || 0,
   }));
 
+  const summary = useMemo(() => {
+    if (!chartData || chartData.length === 0) {
+      return "No tier data available.";
+    }
+    const mostCommonTier = [...chartData].filter(d => d.count > 0).sort((a, b) => b.count - a.count)[0];
+    if (!mostCommonTier) return "No projects with tier data found.";
+    return `The most common compliance level is ${mostCommonTier.name}.`;
+  }, [chartData]);
+
   return (
     <Card>
       <CardHeader>
@@ -44,6 +54,7 @@ const TierDistributionChart = ({ data }: { data: any[] }) => {
           <Layers className="h-5 w-5 text-muted-foreground" />
           Tier Distribution
         </CardTitle>
+        <CardDescription>{summary}</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>

@@ -23,6 +23,7 @@ import DetailedAirtightnessCard from '@/components/municipal/DetailedAirtightnes
 import GhgBreakdownChart from '@/components/municipal/GhgBreakdownChart';
 import IncentivePlanningCard from '@/components/municipal/IncentivePlanningCard';
 import BenchmarkingCard from '@/components/municipal/BenchmarkingCard';
+import MunicipalAlertsCard from '@/components/municipal/MunicipalAlertsCard';
 
 const fetchAllProjects = async () => {
   const { data: projects, error: projectsError } = await supabase
@@ -157,46 +158,48 @@ const MunicipalDashboard = () => {
             uniqueLocations={uniqueLocations}
             uniqueBuildingTypes={uniqueBuildingTypes}
           />
-          <div className="mt-6 space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <KeyInsightsCard />
-              <BenchmarkingCard projects={filteredProjects} />
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <StatCard title="Total Applications" value={stats.totalApplications} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
-              <StatCard title="Prescriptive Path" value={stats.prescriptiveCount} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
-              <StatCard title="Performance Path" value={stats.performanceCount} icon={<Zap className="h-4 w-4 text-muted-foreground" />} />
-              <StatCard title="Meet Airtightness Target (≤2.5 ACH)" value={`${stats.airtightnessTargetRate.toFixed(0)}%`} icon={<Wind className="h-4 w-4 text-muted-foreground" />} />
-            </div>
-
-            <AggregatePerformanceStats projects={filteredProjects} />
-            
-            <IncentivePlanningCard projects={filteredProjects} />
-
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <div className="lg:col-span-2">
-                <MonthlySubmissionsChart data={filteredProjects} />
+          <div className="mt-6 space-y-8">
+            {/* --- TOP SECTION: BIG PICTURE --- */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-foreground border-b pb-2">At a Glance</h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <KeyInsightsCard />
+                <MunicipalAlertsCard projects={filteredProjects} />
               </div>
-              <BuildingTypeChart data={filteredProjects} />
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <StatCard title="Total Applications" value={stats.totalApplications} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
+                <StatCard title="Prescriptive Path" value={stats.prescriptiveCount} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
+                <StatCard title="Performance Path" value={stats.performanceCount} icon={<Zap className="h-4 w-4 text-muted-foreground" />} />
+                <StatCard title="Meet Airtightness Target (≤2.5 ACH)" value={`${stats.airtightnessTargetRate.toFixed(0)}%`} icon={<Wind className="h-4 w-4 text-muted-foreground" />} />
+              </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
-               <TierDistributionChart data={filteredProjects} />
-               <AverageMetricsCard data={filteredProjects} />
+            {/* --- MID SECTION: PERFORMANCE ANALYSIS --- */}
+            <div className="space-y-6 pt-6 border-t">
+              <h2 className="text-2xl font-bold text-foreground border-b pb-2">Performance Analysis</h2>
+              <AggregatePerformanceStats projects={filteredProjects} />
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                  <GhgBreakdownChart data={filteredProjects} />
+                </div>
+                <TierDistributionChart data={filteredProjects} />
+              </div>
+              <IncentivePlanningCard projects={filteredProjects} />
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
-              <DetailedAirtightnessCard data={filteredProjects} />
-              <AirtightnessHistogram data={filteredProjects} />
+            {/* --- BOTTOM SECTION: TECHNICAL DEEP DIVE --- */}
+            <div className="space-y-6 pt-6 border-t">
+              <h2 className="text-2xl font-bold text-foreground border-b pb-2">Technical Deep Dive</h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <DetailedAirtightnessCard data={filteredProjects} />
+                <AirtightnessHistogram data={filteredProjects} />
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <MechanicalSystemsChart data={filteredProjects} />
+                <BenchmarkingCard projects={filteredProjects} />
+              </div>
+              <EmbodiedCarbonCard />
             </div>
-            
-            <div className="grid gap-6 md:grid-cols-2">
-              <MechanicalSystemsChart data={filteredProjects} />
-              <GhgBreakdownChart data={filteredProjects} />
-            </div>
-
-            <EmbodiedCarbonCard />
           </div>
         </div>
       </main>

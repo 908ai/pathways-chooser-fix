@@ -1,6 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { SlidersHorizontal } from 'lucide-react';
+import { useMemo } from 'react';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
 
@@ -38,6 +39,17 @@ const MechanicalSystemsChart = ({ data }: { data: any[] }) => {
     value: systemCounts[name],
   }));
 
+  const summary = useMemo(() => {
+    if (!chartData || chartData.length === 0) {
+      return "No mechanical system data available.";
+    }
+    const dominantSystem = [...chartData].sort((a, b) => b.value - a.value)[0];
+    const total = data.length;
+    if (total === 0) return "No projects to analyze.";
+    const percentage = (dominantSystem.value / total) * 100;
+    return `${dominantSystem.name} is the dominant heating source, used in ${percentage.toFixed(0)}% of projects.`;
+  }, [chartData, data]);
+
   return (
     <Card>
       <CardHeader>
@@ -45,6 +57,7 @@ const MechanicalSystemsChart = ({ data }: { data: any[] }) => {
           <SlidersHorizontal className="h-5 w-5 text-muted-foreground" />
           Mechanical Systems
         </CardTitle>
+        <CardDescription>{summary}</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>

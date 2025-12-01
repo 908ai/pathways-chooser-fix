@@ -17,16 +17,16 @@ const EmbodiedCarbonCard = () => {
         <div className="flex items-center justify-between">
           <CardTitle className="text-card-foreground flex items-center gap-2">
             <Recycle className="h-5 w-5 text-green-500" />
-            Embodied Carbon
+            Future Focus: Embodied Carbon
           </CardTitle>
-          <Badge variant="outline">Coming Soon</Badge>
+          <Badge variant="outline">In Development</Badge>
         </div>
-        <CardDescription>Average embodied carbon per m² by assembly.</CardDescription>
+        <CardDescription>Tracking the carbon footprint of building materials to support sustainable construction goals.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="text-center mb-4">
           <p className="text-3xl font-bold">125 kgCO₂e/m²</p>
-          <p className="text-xs text-muted-foreground">Average Embodied Carbon</p>
+          <p className="text-xs text-muted-foreground">Average Embodied Carbon (Sample Data)</p>
         </div>
         <ResponsiveContainer width="100%" height={200}>
           <BarChart data={sampleData} layout="vertical" margin={{ left: 20 }}>
