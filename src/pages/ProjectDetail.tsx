@@ -24,7 +24,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ComplianceDetails from '@/components/compliance/ComplianceDetails';
 
 const DetailItem = ({ label, value, unit = '' }: { label: string; value: any; unit?: string }) => {
@@ -663,9 +663,10 @@ const ProjectDetail = () => {
   };
 
   const isSubmitted = project.compliance_status === 'submitted';
-  const isCompleted = project.compliance_status === 'pass' || project.compliance_status === 'fail' || project.compliance_status === 'Compliant';
+  const isCompleted = project.compliance_status === 'pass' || project.compliance_status === 'fail' || project.compliance_status === 'Compliant' || project.compliance_status === 'complete';
   const isEditable = !isSubmitted && !isCompleted;
   const isDeletable = canDeleteProjects || (!isSubmitted && !isCompleted);
+  const isFileUploadDisabled = isSubmitted || isCompleted;
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
@@ -748,47 +749,51 @@ const ProjectDetail = () => {
               )}
 
               <div className="flex items-center gap-2">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="inline-block">
-                      <Button 
-                        onClick={() => navigate(`/calculator?edit=${project.id}`)} 
-                        variant="outline"
-                        className="animate-fade-in"
-                        disabled={!isEditable}
-                      >
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
-                      </Button>
-                    </div>
-                  </TooltipTrigger>
-                  {!isEditable && (
-                    <TooltipContent>
-                      <p>Cannot edit a project that is under review or completed.</p>
-                    </TooltipContent>
-                  )}
-                </Tooltip>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="inline-block">
+                        <Button 
+                          onClick={() => navigate(`/calculator?edit=${project.id}`)} 
+                          variant="outline"
+                          className="animate-fade-in"
+                          disabled={!isEditable}
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit
+                        </Button>
+                      </div>
+                    </TooltipTrigger>
+                    {!isEditable && (
+                      <TooltipContent>
+                        <p>Cannot edit a project that is under review or completed.</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
 
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span tabIndex={0}>
-                      <Button
-                        onClick={handleDelete} 
-                        disabled={!isDeletable || deleting}
-                        variant="destructive"
-                        className="animate-fade-in"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        {deleting ? 'Deleting...' : 'Delete'}
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  {!isDeletable && (
-                    <TooltipContent>
-                      <p>Cannot delete a project that is under review or completed.</p>
-                    </TooltipContent>
-                  )}
-                </Tooltip>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span tabIndex={0}>
+                        <Button
+                          onClick={handleDelete} 
+                          disabled={!isDeletable || deleting}
+                          variant="destructive"
+                          className="animate-fade-in"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          {deleting ? 'Deleting...' : 'Delete'}
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    {!isDeletable && (
+                      <TooltipContent>
+                        <p>Cannot delete a project that is under review or completed.</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
                 
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -1042,26 +1047,41 @@ const ProjectDetail = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
-                  <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-4" />
+                <div className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${isFileUploadDisabled ? 'bg-muted/50 cursor-not-allowed' : 'hover:border-primary/50'}`}>
+                  <Upload className={`h-8 w-8 mx-auto mb-4 ${isFileUploadDisabled ? 'text-muted-foreground/50' : 'text-muted-foreground'}`} />
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-foreground">Upload project documents</p>
+                    <p className={`text-sm font-medium ${isFileUploadDisabled ? 'text-muted-foreground/80' : 'text-foreground'}`}>
+                      {isFileUploadDisabled ? 'File uploads are disabled' : 'Upload project documents'}
+                    </p>
                     <p className="text-xs text-muted-foreground">
-                      Supported formats: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG (Max 10MB per file)
+                      {isFileUploadDisabled ? 'This project is submitted or completed.' : 'Supported formats: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG (Max 10MB per file)'}
                     </p>
                   </div>
                   <label htmlFor="file-upload" className="mt-4 inline-block">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      disabled={uploading}
-                      className="cursor-pointer"
-                      asChild
-                    >
-                      <span>
-                        {uploading ? 'Uploading...' : 'Choose Files'}
-                      </span>
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span tabIndex={isFileUploadDisabled ? 0 : -1}>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              disabled={uploading || isFileUploadDisabled}
+                              className="cursor-pointer"
+                              asChild={!isFileUploadDisabled}
+                            >
+                              <span>
+                                {uploading ? 'Uploading...' : 'Choose Files'}
+                              </span>
+                            </Button>
+                          </span>
+                        </TooltipTrigger>
+                        {isFileUploadDisabled && (
+                          <TooltipContent>
+                            <p>Cannot upload files to a submitted or completed project.</p>
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
+                    </TooltipProvider>
                   </label>
                   <input
                     id="file-upload"
@@ -1070,6 +1090,7 @@ const ProjectDetail = () => {
                     accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif"
                     onChange={handleFileUpload}
                     className="hidden"
+                    disabled={isFileUploadDisabled}
                   />
                 </div>
 
@@ -1112,45 +1133,51 @@ const ProjectDetail = () => {
                                 </div>
                                 <div className="flex items-center gap-1">
                                   {isPreviewable(file.name) && (
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-900/50" onClick={(e) => { e.stopPropagation(); handleFilePreview(file); }}>
+                                            <Eye className="h-4 w-4" />
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <p>Preview File</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  )}
+                                  <TooltipProvider>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-900/50" onClick={(e) => { e.stopPropagation(); handleFilePreview(file); }}>
-                                          <Eye className="h-4 w-4" />
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600 hover:bg-green-100 dark:text-green-400 dark:hover:bg-green-900/50" onClick={(e) => { e.stopPropagation(); handleFileDownload(file); }}>
+                                          <Download className="h-4 w-4" />
                                         </Button>
                                       </TooltipTrigger>
                                       <TooltipContent>
-                                        <p>Preview File</p>
+                                        <p>Download File</p>
                                       </TooltipContent>
                                     </Tooltip>
-                                  )}
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600 hover:bg-green-100 dark:text-green-400 dark:hover:bg-green-900/50" onClick={(e) => { e.stopPropagation(); handleFileDownload(file); }}>
-                                        <Download className="h-4 w-4" />
-                                      </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p>Download File</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <span tabIndex={0}>
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="h-8 w-8 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
-                                          onClick={(e) => { e.stopPropagation(); handleFileDelete(file); }}
-                                          disabled={project.compliance_status === 'submitted'}
-                                        >
-                                          <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                      </span>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      {project.compliance_status === 'submitted' ? <p>Cannot delete files from a submitted project.</p> : <p>Delete File</p>}
-                                    </TooltipContent>
-                                  </Tooltip>
+                                  </TooltipProvider>
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <span tabIndex={0}>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
+                                            onClick={(e) => { e.stopPropagation(); handleFileDelete(file); }}
+                                            disabled={project.compliance_status === 'submitted' || isCompleted}
+                                          >
+                                            <Trash2 className="h-4 w-4" />
+                                          </Button>
+                                        </span>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        {(project.compliance_status === 'submitted' || isCompleted) ? <p>Cannot delete files from a submitted/completed project.</p> : <p>Delete File</p>}
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
                                 </div>
                               </div>
                             ))}
