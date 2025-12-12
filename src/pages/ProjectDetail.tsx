@@ -289,7 +289,7 @@ const ProjectDetail = () => {
       console.error('Error deleting project:', error);
       toast({
         title: "Delete Failed",
-        description: "There was an error deleting your project.",
+        description: "There was an error deleting the project.",
         variant: "destructive"
       });
     } finally {
@@ -405,9 +405,16 @@ const ProjectDetail = () => {
 
   const handleFileDownload = async (file: any) => {
     try {
+      if (!file.path) {
+        throw new Error("File path is missing.");
+      }
+      
+      // Decode the path before passing it to download, in case it contains encoded characters
+      const decodedPath = decodeURIComponent(file.path);
+
       const { data, error } = await supabase.storage
         .from('project-files')
-        .download(file.path);
+        .download(decodedPath);
 
       if (error) throw error;
 
@@ -419,11 +426,11 @@ const ProjectDetail = () => {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error downloading file:', error);
       toast({
         title: "Download Failed",
-        description: "There was an error downloading the file.",
+        description: error.message || "There was an error downloading the file.",
         variant: "destructive"
       });
     }
@@ -437,9 +444,10 @@ const ProjectDetail = () => {
     try {
       let url = file.url;
       if (!url) {
+        const decodedPath = decodeURIComponent(file.path);
         const { data, error } = await supabase.storage
           .from('project-files')
-          .download(file.path);
+          .download(decodedPath);
         if (error) throw error;
         url = URL.createObjectURL(data);
       }
@@ -759,8 +767,8 @@ const ProjectDetail = () => {
 
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="inline-block">
-                      <Button 
+                    <span tabIndex={0}>
+                      <Button
                         onClick={handleDelete} 
                         disabled={!isDeletable || deleting}
                         variant="destructive"
@@ -769,7 +777,7 @@ const ProjectDetail = () => {
                         <Trash2 className="h-4 w-4 mr-2" />
                         {deleting ? 'Deleting...' : 'Delete'}
                       </Button>
-                    </div>
+                    </span>
                   </TooltipTrigger>
                   {!isDeletable && (
                     <TooltipContent>
