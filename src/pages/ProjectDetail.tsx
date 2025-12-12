@@ -445,11 +445,22 @@ const ProjectDetail = () => {
       let url = file.url;
       if (!url) {
         const decodedPath = decodeURIComponent(file.path);
-        const { data, error } = await supabase.storage
+        const { data: publicUrlData } = supabase.storage
           .from('project-files')
-          .download(decodedPath);
-        if (error) throw error;
-        url = URL.createObjectURL(data);
+          .getPublicUrl(decodedPath);
+
+        if (publicUrlData?.publicUrl) {
+          url = publicUrlData.publicUrl;
+        } else {
+          // Fallback to download if public URL is not available (e.g. private bucket)
+          const { data: downloadData, error: downloadError } = await supabase.storage
+            .from('project-files')
+            .download(decodedPath);
+          
+          if (downloadError) throw downloadError;
+
+          url = URL.createObjectURL(downloadData);
+        }
       }
       window.open(url, '_blank', 'noopener,noreferrer');
     } catch (error: any) {
