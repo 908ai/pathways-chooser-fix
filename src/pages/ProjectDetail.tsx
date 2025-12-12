@@ -437,26 +437,27 @@ const ProjectDetail = () => {
   };
 
   const handleFilePreview = async (file: any) => {
-    if (!file.path && !file.url) {
-      toast({ title: "Preview Error", description: "File path or URL is missing.", variant: "destructive" });
+    if (!file.path) {
+      toast({ title: "Preview Error", description: "File path is missing.", variant: "destructive" });
       return;
     }
     try {
-      let url = file.url;
-      if (!url) {
-        const decodedPath = decodeURIComponent(file.path);
-        const { data, error } = await supabase.storage
-          .from('project-files')
-          .download(decodedPath);
-        if (error) throw error;
-        url = URL.createObjectURL(data);
+      // Use getPublicUrl for previewing, which is more robust for public files
+      const { data: urlData } = supabase.storage
+        .from('project-files')
+        .getPublicUrl(file.path);
+
+      if (!urlData.publicUrl) {
+        throw new Error("Could not generate public URL.");
       }
-      window.open(url, '_blank', 'noopener,noreferrer');
+      
+      // The public URL should be correctly encoded by Supabase's getPublicUrl
+      window.open(urlData.publicUrl, '_blank', 'noopener,noreferrer');
     } catch (error: any) {
       console.error('Error previewing file:', error);
       toast({
         title: "Preview Failed",
-        description: error.message || "Could not generate a preview for this file.",
+        description: error.message || "Could not generate a preview for this file. Check if the file exists and the bucket is public.",
         variant: "destructive",
       });
     }
