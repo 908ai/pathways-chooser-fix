@@ -437,34 +437,27 @@ const ProjectDetail = () => {
   };
 
   const handleFilePreview = async (file: any) => {
-    if (!file.path && !file.url) {
-      toast({ title: "Preview Error", description: "File path or URL is missing.", variant: "destructive" });
+    if (!file.path) {
+      toast({ title: "Preview Error", description: "File path is missing.", variant: "destructive" });
       return;
     }
     try {
-      let url = file.url;
-      if (!url) {
-        const decodedPath = decodeURIComponent(file.path);
-        const { data: publicUrlData } = supabase.storage
-          .from('project-files')
-          .getPublicUrl(decodedPath);
+      const decodedPath = decodeURIComponent(file.path);
+      const { data, error } = await supabase.storage
+        .from('project-files')
+        .createSignedUrl(decodedPath, 900); // 900 seconds = 15 minutes
 
-        if (publicUrlData?.publicUrl) {
-          url = publicUrlData.publicUrl;
-        } else {
-          // Fallback to download if public URL is not available (e.g. private bucket)
-          const { data: downloadData, error: downloadError } = await supabase.storage
-            .from('project-files')
-            .download(decodedPath);
-          
-          if (downloadError) throw downloadError;
-
-          url = URL.createObjectURL(downloadData);
-        }
+      if (error) {
+        throw error;
       }
-      window.open(url, '_blank', 'noopener,noreferrer');
+
+      if (data?.signedUrl) {
+        window.open(data.signedUrl, '_blank', 'noopener,noreferrer');
+      } else {
+        throw new Error("Could not generate a preview URL.");
+      }
     } catch (error: any) {
-      console.error('Error previewing file:', error);
+      console.error('Error creating signed URL for preview:', error);
       toast({
         title: "Preview Failed",
         description: error.message || "Could not generate a preview for this file.",
