@@ -85,6 +85,10 @@ export function FeedbackButton() {
     }
   }
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
