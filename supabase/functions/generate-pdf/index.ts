@@ -68,12 +68,12 @@ const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
   const logoImage = logoBytes && logoBytes.length > 0 ? await pdfDoc.embedPng(logoBytes) : null;
 
   const drawHeader = () => {
-    // Draw logo if available (fixed max height)
     let headerLeftX = margin;
-    let headerTopY = pageHeight - margin;
+    const headerTopY = pageHeight - margin;
     let logoWidthUsed = 0;
     let logoHeightUsed = 0;
 
+    // Draw logo top-aligned to headerTopY
     if (logoImage) {
       const logoMaxHeight = 40; // px
       const { width: lw, height: lh } = logoImage.scale(1);
@@ -83,37 +83,42 @@ const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
 
       page.drawImage(logoImage, {
         x: headerLeftX,
-        y: headerTopY - logoHeightUsed,
+        y: headerTopY - logoHeightUsed, // top of image aligns with headerTopY
         width: logoWidthUsed,
         height: logoHeightUsed,
       });
 
-      headerLeftX += logoWidthUsed + 12; // space after logo
+      headerLeftX += logoWidthUsed + 12; // spacing after logo
     }
 
-    // Removed the title text "Project Compliance Report" here
-
+    // Project name: place baseline so the TOP of text aligns with headerTopY (same as logo top)
+    const nameFontSize = 10;
     const projectNameText = sanitize(project.project_name || 'Unnamed Project');
-    const projectNameWidth = boldFont.widthOfTextAtSize(projectNameText, 10);
+    const projectNameWidth = boldFont.widthOfTextAtSize(projectNameText, nameFontSize);
+    const projectNameTextHeight = boldFont.heightAtSize(nameFontSize); // approximate text box height
+
+    const projectNameBaselineY = headerTopY - projectNameTextHeight;
     page.drawText(projectNameText, {
       x: pageWidth - margin - projectNameWidth,
-      y: headerTopY,
+      y: projectNameBaselineY,
       font: boldFont,
-      size: 10,
+      size: nameFontSize,
     });
 
+    // Date below project name with consistent spacing
     const dateText = sanitize(new Date().toLocaleDateString());
     const dateWidth = font.widthOfTextAtSize(dateText, 8);
+    const dateBaselineY = projectNameBaselineY - 12; // 12px below project name
     page.drawText(dateText, {
       x: pageWidth - margin - dateWidth,
-      y: headerTopY - 15,
+      y: dateBaselineY,
       font,
       size: 8,
     });
 
-    // Start content below header (below the tallest element)
-    const headerBlockHeight = Math.max(40, logoHeightUsed);
-    state.y = headerTopY - headerBlockHeight - 10;
+    // Content starts below the tallest header element (logo or project name/text block)
+    const headerBlockHeight = Math.max(logoHeightUsed, projectNameTextHeight + 12); // +12 accounts for date spacing
+    state.y = headerTopY - headerBlockHeight - 12;
   };
 
   const checkPageBreak = (spaceNeeded: number) => {
@@ -161,7 +166,7 @@ const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
   // Header
   drawHeader();
 
-  // Overview (section titles kept, only header title removed)
+  // Overview
   addSectionTitle('Project Overview');
   addDetailItem('Project Name', project.project_name);
   addDetailItem('Status', project.compliance_status);
