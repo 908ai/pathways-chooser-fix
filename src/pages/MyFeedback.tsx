@@ -11,39 +11,7 @@ import { useEffect } from 'react';
 
 const fetchUserFeedback = async (userId: string | undefined) => {
   if (!userId) return [];
-  
-  // First, get the user IDs of all admins
-  const { data: adminRoles, error: adminError } = await supabase
-    .from('user_roles')
-    .select('user_id')
-    .eq('role', 'admin');
 
-  if (adminError) {
-    console.error("Error fetching admin roles:", adminError);
-    throw new Error(adminError.message);
-  }
-  const adminUserIds = adminRoles.map(role => role.user_id);
-
-  // Now, fetch the feedback
-  const { data, error } = await supabase
-    .from('feedback')
-    .select(`
-      *,
-      feedback_responses(count),
-      unread_admin_responses:feedback_responses!inner(count)
-    `)
-    .eq('user_id', userId)
-    .eq('unread_admin_responses.is_read', false)
-    .in('unread_admin_responses.user_id', adminUserIds)
-    .order('created_at', { ascending: false });
-
-  if (error && error.code !== 'PGRST204') { // PGRST204: No Content, not an error for us
-    console.error("Error fetching feedback:", error);
-    throw new Error(error.message);
-  }
-
-  // The above query only returns feedback WITH unread admin messages.
-  // We need all feedback, so we do a second query for the rest.
   const { data: allFeedback, error: allFeedbackError } = await supabase
     .from('feedback')
     .select(`
@@ -58,18 +26,26 @@ const fetchUserFeedback = async (userId: string | undefined) => {
     throw new Error(allFeedbackError.message);
   }
 
-  // Combine the results
-  const feedbackWithUnread = data || [];
-  const unreadIds = new Set(feedbackWithUnread.map(f => f.id));
+  // For each feedback, check for unread admin responses
+  const feedbackWithUnreadCounts = await Promise.all(
+    allFeedback.map(async (fb) => {
+      const { count, error: countError } = await supabase
+        .from('feedback_responses')
+        .select('*', { count: 'exact', head: true })
+        .eq('feedback_id', fb.id)
+        .eq('is_read', false)
+        .not('user_id', 'eq', userId); // Count messages not from the current user
 
-  const combined = allFeedback.map(fb => {
-    if (unreadIds.has(fb.id)) {
-      return feedbackWithUnread.find(f => f.id === fb.id);
-    }
-    return { ...fb, unread_admin_responses: [{ count: 0 }] };
-  });
+      if (countError) {
+        console.error(`Error fetching unread count for feedback ${fb.id}:`, countError);
+        return { ...fb, unread_admin_responses: [{ count: 0 }] };
+      }
+      
+      return { ...fb, unread_admin_responses: [{ count: count || 0 }] };
+    })
+  );
 
-  return combined.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  return feedbackWithUnreadCounts;
 };
 
 const MyFeedbackPage = () => {
