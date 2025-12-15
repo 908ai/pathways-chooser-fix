@@ -1,9 +1,8 @@
-import { Button } from './ui/button';
-import { LogOut, User, LayoutDashboard, PieChart, LayoutGrid, Calculator } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { LogOut, UserCircle, Shield, LayoutGrid, PieChart, Calculator, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
-import { NotificationBell } from './NotificationBell';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,9 +23,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { ThemeToggle } from './ThemeToggle';
 import React from 'react';
 import { useUnreadFeedback } from '@/hooks/useUnreadFeedback';
-import { ThemeToggle } from './ThemeToggle';
 
 interface HeaderProps {
   showSignOut?: boolean;
@@ -87,37 +86,151 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
-        <div className="mr-4 hidden md:flex">
-          <a className="mr-6 flex items-center space-x-2" href="/">
-            <img src="/sol-invictus-logo.svg" alt="Sol Invictus" className="h-8 w-8" />
-            <span className="hidden font-bold sm:inline-block">
-              Energy Navigator
-            </span>
-          </a>
+    <header className="bg-white dark:bg-slate-800 border-b dark:border-slate-700 sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div className="flex items-center">
+          <Link to={isLoginVariant ? "/login" : "/dashboard"}>
+            <img src="/assets/energy-navigator-logo.png" alt="Energy Navigator 9.36 Logo" className="h-[75px] dark:hidden" />
+            <img src="/assets/energy-navigator-logo-w.png" alt="Energy Navigator 9.36 Logo" className="h-[75px] hidden dark:block" />
+          </Link>
         </div>
-        
-        <div className="flex flex-1 items-center justify-end space-x-2">
-          {showSignOut && (
+
+        <div className="flex items-center gap-4">
+          {!isLoginVariant && (
             <>
-              {isAdmin && (
-                <Button variant="ghost" onClick={() => navigate('/admin')}>
-                  <LayoutDashboard className="h-4 w-4 mr-2" />
-                  Admin
-                </Button>
-              )}
-              <Button variant="ghost" onClick={() => navigate('/account')}>
-                <User className="h-4 w-4 mr-2" />
-                Account
-              </Button>
-              <NotificationBell />
-              <ThemeToggle />
-              <Button variant="ghost" onClick={onSignOut}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </Button>
+              <div className="hidden md:flex items-center gap-4">
+                <nav className="flex items-center gap-1">
+                  {isAdmin && (
+                    <NavigationMenu>
+                      <NavigationMenuList>
+                        <NavigationMenuItem>
+                          <NavigationMenuTrigger
+                            className={cn(
+                              "group inline-flex h-auto w-max items-center justify-center rounded-md bg-transparent px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50",
+                              isLinkActive("/admin") || isLinkActive("/municipal-dashboard")
+                                ? "bg-primary/10 text-primary"
+                                : "text-primary dark:text-primary hover:bg-accent hover:text-primary/80"
+                            )}
+                          >
+                            <Shield className="h-4 w-4 mr-2" />
+                            Admin
+                          </NavigationMenuTrigger>
+                          <NavigationMenuContent>
+                            <ul className="grid w-[200px] gap-1 p-2">
+                              <li>
+                                <NavigationMenuLink asChild>
+                                  <Link
+                                    to="/admin"
+                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                  >
+                                    <div className="text-sm font-medium leading-none">Admin Dashboard</div>
+                                  </Link>
+                                </NavigationMenuLink>
+                              </li>
+                              <li>
+                                <NavigationMenuLink asChild>
+                                  <Link
+                                    to="/municipal-dashboard"
+                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                  >
+                                    <div className="text-sm font-medium leading-none">Municipal Dashboard</div>
+                                  </Link>
+                                </NavigationMenuLink>
+                              </li>
+                            </ul>
+                          </NavigationMenuContent>
+                        </NavigationMenuItem>
+                      </NavigationMenuList>
+                    </NavigationMenu>
+                  )}
+                  {mainNavLinks.map(link => (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      className={cn(
+                        "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                        isLinkActive(link.path.split('?')[0])
+                          ? "bg-primary/10 text-primary"
+                          : "text-slate-500 dark:text-slate-400 hover:bg-accent hover:text-accent-foreground"
+                      )}
+                    >
+                      {link.icon}
+                      {link.label}
+                    </Link>
+                  ))}
+                </nav>
+
+                <span className="h-4 w-px bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span>
+
+                <nav className="flex items-center gap-4 text-xs font-medium">
+                  {secondaryNavLinks.map((link, index) => (
+                    <React.Fragment key={link.path}>
+                      <Link
+                        to={link.path}
+                        className={cn(
+                          "transition-colors",
+                          isLinkActive(link.path)
+                            ? "text-primary"
+                            : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-50"
+                        )}
+                      >
+                        {link.label}
+                      </Link>
+                      {index < secondaryNavLinks.length - 1 && (
+                        <span className="h-4 w-px bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </nav>
+              </div>
             </>
+          )}
+
+          <ThemeToggle />
+
+          {!isLoginVariant && showSignOut && user && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full bg-white border-2 border-[#d8dee3] p-0 hover:bg-slate-100">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-transparent text-slate-900">{getInitials(user.email || '')}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {userName ? `Welcome, ${userName}!` : 'Welcome!'}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleAccountClick} className="cursor-pointer">
+                  <UserCircle className="mr-2 h-4 w-4" />
+                  <span>Account Details</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/my-feedback')} className="cursor-pointer flex justify-between items-center">
+                  <div className="flex items-center">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    <span>My Feedback</span>
+                  </div>
+                  {unreadCount > 0 && (
+                    <span className="h-5 w-5 bg-primary text-primary-foreground text-xs font-bold rounded-full flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={onSignOut} className="cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </div>
