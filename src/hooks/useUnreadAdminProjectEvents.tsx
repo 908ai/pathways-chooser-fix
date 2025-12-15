@@ -3,37 +3,39 @@ import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from './useAuth'
 import { useUserRole } from './useUserRole'
 
-const fetchUnreadAdminFeedbackCount = async (userId: string | undefined) => {
+const fetchUnreadAdminProjectEvents = async (userId: string) => {
   if (!userId) return 0
 
+  // Admins can see all projects, so we count unread events
+  // that were not created by the admin themselves.
   const { count, error } = await supabase
-    .from('feedback_responses')
+    .from('project_events')
     .select('*', { count: 'exact', head: true })
     .eq('is_read', false)
-    .neq('user_id', userId)
+    .neq('user_id', userId) // Don't count admin's own unread messages
 
   if (error) {
-    console.error('Error fetching unread admin responses count:', error)
+    console.error('Error fetching unread admin project events count:', error)
     return 0
   }
 
   return count || 0
 }
 
-export const useUnreadAdminFeedback = () => {
+export const useUnreadAdminProjectEvents = () => {
   const { user } = useAuth()
   const { isAdmin } = useUserRole()
   const queryClient = useQueryClient()
 
   const { data: unreadCount, ...queryInfo } = useQuery({
-    queryKey: ['unreadAdminFeedback', user?.id],
-    queryFn: () => fetchUnreadAdminFeedbackCount(user?.id),
+    queryKey: ['unreadAdminProjectEvents', user?.id],
+    queryFn: () => fetchUnreadAdminProjectEvents(user?.id || ''),
     enabled: !!user && isAdmin,
-    refetchInterval: 60000,
+    refetchInterval: 60000, // Refetch every 60 seconds
   })
 
   const invalidate = () => {
-    queryClient.invalidateQueries({ queryKey: ['unreadAdminFeedback', user?.id] })
+    queryClient.invalidateQueries({ queryKey: ['unreadAdminProjectEvents', user?.id] })
   }
 
   return { unreadCount: unreadCount ?? 0, ...queryInfo, invalidate }

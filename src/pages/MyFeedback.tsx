@@ -2,117 +2,104 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Link, useNavigate } from 'react-router-dom';
-import Header from '@/components/Header';
+import { Header } from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge, BadgeProps } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Loader2, MessageSquare, Inbox, ChevronRight } from 'lucide-react';
+import { Loader2, PlusCircle } from 'lucide-react';
+import { format } from 'date-fns';
 
-const fetchUserFeedback = async (userId: string | undefined) => {
-  if (!userId) return [];
+const fetchMyFeedback = async (userId: string) => {
   const { data, error } = await supabase
     .from('feedback')
-    .select('*, feedback_responses(count)')
+    .select('*')
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
-
   if (error) throw new Error(error.message);
   return data;
 };
 
-const MyFeedbackPage = () => {
-  const { user, signOut } = useAuth();
+const MyFeedback = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { data: feedbackList, isLoading, error } = useQuery({
-    queryKey: ['userFeedback', user?.id],
-    queryFn: () => fetchUserFeedback(user?.id),
+    queryKey: ['myFeedback', user?.id],
+    queryFn: () => fetchMyFeedback(user!.id),
     enabled: !!user,
   });
 
-  const getStatusBadge = (status: string) => {
+  const getStatusVariant = (status: string): BadgeProps['variant'] => {
     switch (status) {
-      case 'New':
-        return <Badge variant="secondary">{status}</Badge>;
-      case 'In Progress':
-        return <Badge className="bg-blue-100 text-blue-800">{status}</Badge>;
-      case 'Resolved':
-        return <Badge className="bg-green-100 text-green-800">{status}</Badge>;
-      default:
-        return <Badge>{status}</Badge>;
+      case 'New': return 'default';
+      case 'In Progress': return 'secondary';
+      case 'Resolved': return 'success';
+      default: return 'outline';
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header showSignOut={true} onSignOut={signOut} />
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-3 text-foreground">My Feedback</h1>
-          <p className="text-muted-foreground text-lg">
-            Track the status of your feedback and view responses from our team.
-          </p>
-        </div>
-
-        <Card className="max-w-4xl mx-auto">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Inbox className="h-5 w-5" />
-              Your Submissions
-            </CardTitle>
-            <CardDescription>
-              Click on an item to view the full conversation.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoading && <div className="flex justify-center items-center p-8"><Loader2 className="h-8 w-8 animate-spin" /></div>}
-            {error && <p className="text-red-500">Error loading feedback: {error.message}</p>}
-            
-            {!isLoading && feedbackList && feedbackList.length > 0 ? (
-              <div className="space-y-3">
-                {feedbackList.map((item) => (
-                  <Link to={`/feedback/${item.id}`} key={item.id} className="block">
-                    <div className="border rounded-lg p-4 hover:bg-accent transition-colors">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <div className="flex items-center gap-3 mb-2">
-                            {getStatusBadge(item.status)}
-                            <Badge variant="outline">{item.category}</Badge>
-                          </div>
-                          <p className="font-medium text-foreground line-clamp-2">{item.feedback_text}</p>
-                        </div>
-                        <ChevronRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                      </div>
-                      <div className="flex justify-between items-center mt-3 text-xs text-muted-foreground">
-                        <span>Submitted on {new Date(item.created_at).toLocaleDateString()}</span>
-                        {item.feedback_responses[0].count > 0 && (
-                          <span className="flex items-center gap-1">
-                            <MessageSquare className="h-3 w-3" />
-                            {item.feedback_responses[0].count} {item.feedback_responses[0].count === 1 ? 'Reply' : 'Replies'}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              !isLoading && (
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex-grow bg-gray-50 dark:bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold">My Feedback</h1>
+            <Button onClick={() => navigate('/#feedback')}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Submit New Feedback
+            </Button>
+          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Submitted Feedback</CardTitle>
+              <CardDescription>Here is a list of all the feedback you have submitted.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoading && <div className="flex justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}
+              {error && <p className="text-red-500">Error loading feedback: {error.message}</p>}
+              {!isLoading && !error && (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Summary</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {feedbackList?.map(feedback => (
+                      <TableRow key={feedback.id}>
+                        <TableCell>{format(new Date(feedback.created_at!), 'PPP')}</TableCell>
+                        <TableCell>{feedback.category}</TableCell>
+                        <TableCell className="max-w-sm truncate">{feedback.feedback_text}</TableCell>
+                        <TableCell><Badge variant={getStatusVariant(feedback.status)}>{feedback.status}</Badge></TableCell>
+                        <TableCell>
+                          <Button asChild variant="outline" size="sm">
+                            <Link to={`/feedback/${feedback.id}`}>View Details</Link>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+              {!isLoading && feedbackList?.length === 0 && (
                 <div className="text-center py-12">
-                  <Inbox className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-semibold text-foreground">No Feedback Submitted</h3>
-                  <p className="text-muted-foreground mt-2">
-                    You haven't submitted any feedback yet.
-                  </p>
+                  <p className="text-lg font-semibold">No feedback submitted yet.</p>
+                  <p className="text-muted-foreground">Click the button above to share your thoughts.</p>
                 </div>
-              )
-            )}
-          </CardContent>
-        </Card>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </main>
       <Footer />
     </div>
   );
 };
 
-export default MyFeedbackPage;
+export default MyFeedback;

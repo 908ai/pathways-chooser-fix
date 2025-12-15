@@ -1,25 +1,16 @@
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { useParams } from "react-router-dom";
 import NBCCalculator from "@/components/NBCCalculator";
-import Header from '@/components/Header';
+import { Header } from '@/components/Header';
 import Footer from '@/components/Footer';
 
 const Calculator = () => {
-  const { signOut } = useAuth();
-  const navigate = useNavigate();
-
-  const handleBackToDashboard = () => {
-    navigate('/dashboard');
-  };
+  const { id } = useParams();
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <Header 
-        showSignOut={true} 
-        onSignOut={signOut} 
-      />
-      <main className="flex-1 px-4 py-8 relative z-10">
-        <NBCCalculator />
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex-grow">
+        <NBCCalculator projectId={id} />
       </main>
       <Footer />
     </div>

@@ -1,8 +1,11 @@
-import { Button } from '@/components/ui/button';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, UserCircle, Shield, LayoutGrid, PieChart, Calculator, MessageSquare } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { useUserRole } from '@/hooks/useUserRole';
+"use client"
+
+import { Link, NavLink, useNavigate } from "react-router-dom"
+import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/ThemeToggle"
+import { useAuth } from "@/hooks/useAuth"
+import { supabase } from "@/integrations/supabase/client"
+import { useUserRole } from "@/hooks/useUserRole"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,232 +13,164 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { cn } from '@/lib/utils';
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { ThemeToggle } from './ThemeToggle';
-import React from 'react';
-import { useUnreadFeedback } from '@/hooks/useUnreadFeedback';
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { LifeBuoy, LogOut, User, HardHat, Shield, LayoutDashboard, Mail, MessageSquare, Users } from "lucide-react"
+import { useUnreadFeedback } from "@/hooks/useUnreadFeedback"
+import { useUnreadAdminFeedback } from "@/hooks/useUnreadAdminFeedback"
+import { useUnreadProjectEvents } from "@/hooks/useUnreadProjectEvents"
+import { useUnreadAdminProjectEvents } from "@/hooks/useUnreadAdminProjectEvents"
+import { Badge } from "@/components/ui/badge"
 
-interface HeaderProps {
-  showSignOut?: boolean;
-  onSignOut?: () => void;
-  variant?: 'default' | 'login';
-}
+export function Header() {
+  const { user, session } = useAuth()
+  const { isAdmin, isBuilder, isBuildingOfficial, isEnergyAdvisor } = useUserRole()
+  const navigate = useNavigate()
+  const { unreadCount: unreadFeedbackCount } = useUnreadFeedback()
+  const { unreadCount: unreadAdminFeedbackCount } = useUnreadAdminFeedback()
+  const { unreadCount: unreadProjectEventsCount } = useUnreadProjectEvents()
+  const { unreadCount: unreadAdminProjectEventsCount } = useUnreadAdminProjectEvents()
 
-const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderProps) => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const { isAdmin } = useUserRole();
-  const [userName, setUserName] = useState<string | null>(null);
-  const { data: unreadCount } = useUnreadFeedback();
-
-  const isLoginVariant = variant === 'login';
-  const isLinkActive = (path: string) => location.pathname === path;
-
-  useEffect(() => {
-    const fetchUserName = async () => {
-      if (user) {
-        const { data: companyData, error: companyError } = await supabase
-          .from('companies')
-          .select('company_name')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        if (companyData && companyData.company_name) {
-          setUserName(companyData.company_name);
-        } else if (companyError && companyError.code !== 'PGRST116') {
-          console.error("Error fetching company name:", companyError);
-        }
-      }
-    };
-
-    fetchUserName();
-  }, [user]);
-
-  const handleAccountClick = () => {
-    navigate('/account');
-  };
-
-  const getInitials = (email: string) => {
-    if (!email) return 'U';
-    return email.substring(0, 2).toUpperCase();
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    navigate("/")
   }
 
-  const mainNavLinks = [
-    { path: '/dashboard', label: 'Dashboard', icon: <PieChart className="h-4 w-4" /> },
-    { path: '/projects', label: 'Projects', icon: <LayoutGrid className="h-4 w-4" /> },
-    { path: '/calculator?showHelp=true', label: 'Calculator', icon: <Calculator className="h-4 w-4" /> },
-  ];
+  const getInitials = (email: string | undefined) => {
+    if (!email) return "U"
+    return email.substring(0, 2).toUpperCase()
+  }
 
-  const secondaryNavLinks = [
-    { path: '/building-officials', label: 'Building Officials' },
-    { path: '/resources', label: 'Resources' },
-    { path: '/faq', label: 'FAQ' },
-  ];
+  const totalAdminUnread = unreadAdminFeedbackCount + unreadAdminProjectEventsCount
+  const totalUserUnread = unreadFeedbackCount + unreadProjectEventsCount
 
   return (
-    <header className="bg-white dark:bg-slate-800 border-b dark:border-slate-700 sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <div className="flex items-center">
-          <Link to={isLoginVariant ? "/login" : "/dashboard"}>
-            <img src="/assets/energy-navigator-logo.png" alt="Energy Navigator 9.36 Logo" className="h-[75px] dark:hidden" />
-            <img src="/assets/energy-navigator-logo-w.png" alt="Energy Navigator 9.36 Logo" className="h-[75px] hidden dark:block" />
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 items-center">
+        <div className="mr-4 hidden md:flex">
+          <Link to="/" className="mr-6 flex items-center space-x-2">
+            <img src="/sol-invictus-logo.svg" alt="Sol Invictus" className="h-6 w-6" />
+            <span className="hidden font-bold sm:inline-block">Energy Navigator</span>
           </Link>
+          <nav className="flex items-center space-x-6 text-sm font-medium">
+            {session && (
+              <>
+                <NavLink
+                  to="/projects"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 transition-colors hover:text-foreground/80 ${
+                      isActive ? "text-foreground" : "text-foreground/60"
+                    }`
+                  }
+                >
+                  Projects
+                  {isAdmin && totalAdminUnread > 0 && (
+                    <Badge variant="destructive" className="h-5 w-5 flex items-center justify-center p-0">{totalAdminUnread}</Badge>
+                  )}
+                  {!isAdmin && totalUserUnread > 0 && (
+                    <Badge variant="destructive" className="h-5 w-5 flex items-center justify-center p-0">{totalUserUnread}</Badge>
+                  )}
+                </NavLink>
+              </>
+            )}
+            {isAdmin && (
+              <NavLink
+                to="/admin"
+                className={({ isActive }) =>
+                  `transition-colors hover:text-foreground/80 ${
+                    isActive ? "text-foreground" : "text-foreground/60"
+                  }`
+                }
+              >
+                Admin
+              </NavLink>
+            )}
+             {(isBuilder || isEnergyAdvisor) && (
+              <NavLink
+                to="/find-a-provider"
+                className={({ isActive }) =>
+                  `transition-colors hover:text-foreground/80 ${
+                    isActive ? "text-foreground" : "text-foreground/60"
+                  }`
+                }
+              >
+                Find a Provider
+              </NavLink>
+            )}
+            {(isBuildingOfficial) && (
+              <NavLink
+                to="/municipal-dashboard"
+                className={({ isActive }) =>
+                  `transition-colors hover:text-foreground/80 ${
+                    isActive ? "text-foreground" : "text-foreground/60"
+                  }`
+                }
+              >
+                Municipal Dashboard
+              </NavLink>
+            )}
+          </nav>
         </div>
 
-        <div className="flex items-center gap-4">
-          {!isLoginVariant && (
-            <>
-              <div className="hidden md:flex items-center gap-4">
-                <nav className="flex items-center gap-1">
-                  {isAdmin && (
-                    <NavigationMenu>
-                      <NavigationMenuList>
-                        <NavigationMenuItem>
-                          <NavigationMenuTrigger
-                            className={cn(
-                              "group inline-flex h-auto w-max items-center justify-center rounded-md bg-transparent px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50",
-                              isLinkActive("/admin") || isLinkActive("/municipal-dashboard")
-                                ? "bg-primary/10 text-primary"
-                                : "text-primary dark:text-primary hover:bg-accent hover:text-primary/80"
-                            )}
-                          >
-                            <Shield className="h-4 w-4 mr-2" />
-                            Admin
-                          </NavigationMenuTrigger>
-                          <NavigationMenuContent>
-                            <ul className="grid w-[200px] gap-1 p-2">
-                              <li>
-                                <NavigationMenuLink asChild>
-                                  <Link
-                                    to="/admin"
-                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                                  >
-                                    <div className="text-sm font-medium leading-none">Admin Dashboard</div>
-                                  </Link>
-                                </NavigationMenuLink>
-                              </li>
-                              <li>
-                                <NavigationMenuLink asChild>
-                                  <Link
-                                    to="/municipal-dashboard"
-                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                                  >
-                                    <div className="text-sm font-medium leading-none">Municipal Dashboard</div>
-                                  </Link>
-                                </NavigationMenuLink>
-                              </li>
-                            </ul>
-                          </NavigationMenuContent>
-                        </NavigationMenuItem>
-                      </NavigationMenuList>
-                    </NavigationMenu>
+        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+          <nav className="flex items-center">
+            {session ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={undefined} alt={user?.email} />
+                      <AvatarFallback>{getInitials(user?.email)}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">My Account</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/account")}>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  {isBuilder && (
+                    <DropdownMenuItem onClick={() => navigate("/my-feedback")}>
+                      <MessageSquare className="mr-2 h-4 w-4" />
+                      <span>My Feedback</span>
+                      {unreadFeedbackCount > 0 && <Badge variant="destructive" className="ml-auto">{unreadFeedbackCount}</Badge>}
+                    </DropdownMenuItem>
                   )}
-                  {mainNavLinks.map(link => (
-                    <Link
-                      key={link.path}
-                      to={link.path}
-                      className={cn(
-                        "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                        isLinkActive(link.path.split('?')[0])
-                          ? "bg-primary/10 text-primary"
-                          : "text-slate-500 dark:text-slate-400 hover:bg-accent hover:text-accent-foreground"
-                      )}
-                    >
-                      {link.icon}
-                      {link.label}
-                    </Link>
-                  ))}
-                </nav>
-
-                <span className="h-4 w-px bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span>
-
-                <nav className="flex items-center gap-4 text-xs font-medium">
-                  {secondaryNavLinks.map((link, index) => (
-                    <React.Fragment key={link.path}>
-                      <Link
-                        to={link.path}
-                        className={cn(
-                          "transition-colors",
-                          isLinkActive(link.path)
-                            ? "text-primary"
-                            : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-50"
-                        )}
-                      >
-                        {link.label}
-                      </Link>
-                      {index < secondaryNavLinks.length - 1 && (
-                        <span className="h-4 w-px bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </nav>
-              </div>
-            </>
-          )}
-
-          <ThemeToggle />
-
-          {!isLoginVariant && showSignOut && user && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full bg-white border-2 border-[#d8dee3] p-0 hover:bg-slate-100">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-transparent text-slate-900">{getInitials(user.email || '')}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {userName ? `Welcome, ${userName}!` : 'Welcome!'}
-                    </p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {user.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleAccountClick} className="cursor-pointer">
-                  <UserCircle className="mr-2 h-4 w-4" />
-                  <span>Account Details</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/my-feedback')} className="cursor-pointer flex justify-between items-center">
-                  <div className="flex items-center">
-                    <MessageSquare className="mr-2 h-4 w-4" />
-                    <span>My Feedback</span>
-                  </div>
-                  {unreadCount > 0 && (
-                    <span className="h-5 w-5 bg-primary text-primary-foreground text-xs font-bold rounded-full flex items-center justify-center">
-                      {unreadCount}
-                    </span>
-                  )}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onSignOut} className="cursor-pointer">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Support</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => navigate("/resources")}>
+                    <LifeBuoy className="mr-2 h-4 w-4" />
+                    <span>Resources</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/faq")}>
+                    <LifeBuoy className="mr-2 h-4 w-4" />
+                    <span>FAQ</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/building-officials")}>
+                    <HardHat className="mr-2 h-4 w-4" />
+                    <span>Building Officials</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button onClick={() => navigate("/login")}>Login</Button>
+            )}
+            <ThemeToggle />
+          </nav>
         </div>
       </div>
     </header>
-  );
-};
-
-export default Header;
+  )
+}

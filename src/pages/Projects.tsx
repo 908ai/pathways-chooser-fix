@@ -1,186 +1,86 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
-import { useToast } from '@/components/ui/use-toast';
+import { Link } from 'react-router-dom';
 import { Shield, Building } from 'lucide-react';
-import Header from '@/components/Header';
+import { Header } from '@/components/Header';
 import Footer from '@/components/Footer';
-import { supabase } from '@/integrations/supabase/client';
-import ProjectToolbar from '@/components/dashboard/ProjectToolbar';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import ProjectKanbanView from '@/components/dashboard/ProjectKanbanView';
-import ProjectTableView from '@/components/dashboard/ProjectTableView';
+import ProjectList from '@/components/dashboard/ProjectList';
+import AllProjectsTab from '@/components/admin/AllProjectsTab';
+import MunicipalStats from '@/components/dashboard/MunicipalStats';
+import BuildingOfficialsTab from '@/components/dashboard/BuildingOfficialsTab';
+import ResourcesTab from '@/components/dashboard/ResourcesTab';
+import FaqTab from '@/components/dashboard/FaqTab';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-const Dashboard2 = () => {
-  const { user, signOut } = useAuth();
-  const { canViewAllProjects, loading: roleLoading } = useUserRole();
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  
-  const [allProjects, setAllProjects] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  
-  // View, filtering and sorting state
-  const [view, setView] = useState<'kanban' | 'table'>('kanban');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('updated_at'); // 'updated_at' or 'project_name'
-  const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    const loadProjects = async () => {
-      if (!user || roleLoading) return;
-      setLoading(true);
-      try {
-        let query = supabase.from('project_summaries').select('*');
-        if (!canViewAllProjects) {
-          query = query.eq('user_id', user.id);
-        }
-        const { data, error } = await query.order('updated_at', { ascending: false });
-        if (error) throw error;
-        setAllProjects(data || []);
-      } catch (error) {
-        console.error('Error loading projects:', error);
-        toast({ title: "Error", description: "Failed to load projects.", variant: "destructive" });
-      } finally {
-        setLoading(false);
+const Projects = () => {
+  const { user } = useAuth();
+  const { userRole, isBuildingOfficial, isAdmin, isAccountManager } = useUserRole();
+
+  const { data: projects, isLoading, error } = useQuery({
+    queryKey: ['projects', user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      let query = supabase.from('project_summaries').select('*');
+      if (!isAdmin && !isAccountManager) {
+        query = query.eq('user_id', user.id);
       }
-    };
-    loadProjects();
-  }, [user, canViewAllProjects, roleLoading, toast]);
-
-  const filteredAndSortedProjects = useMemo(() => {
-    return allProjects
-      .filter(p => {
-        // Search filter
-        const lowerSearch = searchTerm.toLowerCase();
-        const nameMatch = p.project_name?.toLowerCase().includes(lowerSearch);
-        const locationMatch = p.location?.toLowerCase().includes(lowerSearch);
-        if (searchTerm && !nameMatch && !locationMatch) {
-          return false;
-        }
-
-        // Status filter
-        if (statusFilter === 'all') return true;
-        const status = p.compliance_status;
-        if (statusFilter === 'draft') return status === 'draft';
-        if (statusFilter === 'submitted') return status === 'submitted';
-        if (statusFilter === 'needs-revision') return status === 'needs_revision';
-        if (statusFilter === 'compliant') return status === 'pass' || status === 'Compliant';
-        if (statusFilter === 'non-compliant') return status === 'fail';
-        return false;
-      })
-      .sort((a, b) => {
-        if (sortBy === 'project_name') {
-          return a.project_name.localeCompare(b.project_name);
-        }
-        // Default sort by updated_at (descending)
-        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-      });
-  }, [allProjects, searchTerm, statusFilter, sortBy]);
-
-  const handleNewProject = () => navigate('/calculator?showHelp=true');
-  const handleViewProject = (projectId: string) => navigate(`/project/${projectId}`);
-  const handleEditProject = (projectId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate(`/calculator?edit=${projectId}`);
-  };
-  const handleDuplicateProject = async (projectId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    toast({ title: "Coming Soon!", description: "Project duplication will be available shortly." });
-  };
-  const handleDeleteProject = async (projectId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!confirm('Are you sure you want to delete this project? This cannot be undone.')) return;
-    
-    try {
-      const { error } = await supabase.from('project_summaries').delete().eq('id', projectId);
-      if (error) throw error;
-      setAllProjects(prev => prev.filter(p => p.id !== projectId));
-      toast({ title: "Project Deleted", description: "The project has been successfully deleted." });
-    } catch (error: any) {
-      toast({ title: "Error", description: `Failed to delete project: ${error.message}`, variant: "destructive" });
-    }
-  };
+      const { data, error } = await query.order('created_at', { ascending: false });
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    enabled: !!user,
+  });
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <Header showSignOut={true} onSignOut={signOut} />
-      <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
-        <div className="mb-8">
-          {canViewAllProjects ? (
-            <>
-              <h1 className="text-3xl font-bold text-foreground">All Projects</h1>
-              <p className="text-muted-foreground mt-1">
-                Review and manage all compliance projects from all users.
-              </p>
-            </>
-          ) : (
-            <>
-              <h1 className="text-3xl font-bold text-foreground">My Projects</h1>
-              <p className="text-muted-foreground mt-1">
-                View, manage, and track all your NBC 9.36 compliance projects.
-              </p>
-            </>
-          )}
-        </div>
-        
-        {canViewAllProjects && (
-          <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center flex items-center justify-center gap-3">
-            <Shield className="h-5 w-5 text-blue-500" />
-            <p className="font-semibold text-blue-700 dark:text-blue-300">
-              Admin View: You are viewing projects from all users.
-            </p>
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex-1 bg-gray-50 dark:bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold">Projects Dashboard</h1>
           </div>
-        )}
 
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <ProjectToolbar
-                statusFilter={statusFilter}
-                onStatusFilterChange={setStatusFilter}
-                sortBy={sortBy}
-                onSortByChange={setSortBy}
-                searchTerm={searchTerm}
-                onSearchTermChange={setSearchTerm}
-                view={view}
-                onViewChange={setView}
-                onNewProjectClick={handleNewProject}
-              />
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="text-center py-12 text-muted-foreground">Loading projects...</div>
-              ) : filteredAndSortedProjects.length > 0 ? (
-                view === 'kanban' ? (
-                  <ProjectKanbanView 
-                    projects={filteredAndSortedProjects}
-                    onViewProject={handleViewProject}
-                    onEditProject={handleEditProject}
-                    onDuplicateProject={handleDuplicateProject}
-                    onDeleteProject={handleDeleteProject}
-                  />
-                ) : (
-                  <ProjectTableView 
-                    projects={filteredAndSortedProjects}
-                    onViewProject={handleViewProject}
-                    onEditProject={handleEditProject}
-                    onDuplicateProject={handleDuplicateProject}
-                    onDeleteProject={handleDeleteProject}
-                  />
-                )
-              ) : (
-                <div className="text-center py-12">
-                  <Building className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-xl font-semibold text-foreground">No Projects Found</h3>
-                  <p className="text-muted-foreground mt-2">
-                    {searchTerm || statusFilter !== 'all' ? 'Try adjusting your filters.' : 'Get started by creating a new project.'}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <Tabs defaultValue="my-projects">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 mb-4">
+              <TabsTrigger value="my-projects">My Projects</TabsTrigger>
+              {(isAdmin || isAccountManager) && <TabsTrigger value="all-projects">All Projects</TabsTrigger>}
+              {isBuildingOfficial && <TabsTrigger value="municipal-stats">Municipal Stats</TabsTrigger>}
+              <TabsTrigger value="building-officials">Building Officials</TabsTrigger>
+              <TabsTrigger value="resources">Resources</TabsTrigger>
+              <TabsTrigger value="faq">FAQ</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="my-projects">
+              <ProjectList projects={projects} isLoading={isLoading} error={error as Error} />
+            </TabsContent>
+            
+            {(isAdmin || isAccountManager) && (
+              <TabsContent value="all-projects">
+                <AllProjectsTab />
+              </TabsContent>
+            )}
+
+            {isBuildingOfficial && (
+              <TabsContent value="municipal-stats">
+                <MunicipalStats />
+              </TabsContent>
+            )}
+
+            <TabsContent value="building-officials">
+              <BuildingOfficialsTab />
+            </TabsContent>
+
+            <TabsContent value="resources">
+              <ResourcesTab />
+            </TabsContent>
+
+            <TabsContent value="faq">
+              <FaqTab />
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
       <Footer />
@@ -188,4 +88,4 @@ const Dashboard2 = () => {
   );
 };
 
-export default Dashboard2;
+export default Projects;
