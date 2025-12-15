@@ -3,7 +3,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 import { PDFDocument, StandardFonts } from 'https://esm.sh/pdf-lib@1.17.1';
-import { encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
+import { encode, decode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -52,7 +52,7 @@ const asList = (val: any): string | null => {
   return String(val);
 };
 
-const buildPdf = async (project: any, company: any) => {
+const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
   const pdfDoc = await PDFDocument.create();
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
@@ -65,11 +65,36 @@ const buildPdf = async (project: any, company: any) => {
 
   const state = { y: pageHeight - margin };
 
+  const logoImage = logoBytes && logoBytes.length > 0 ? await pdfDoc.embedPng(logoBytes) : null;
+
   const drawHeader = () => {
+    // Draw logo if available (fixed max height)
+    let headerLeftX = margin;
+    let headerTopY = pageHeight - margin;
+    let logoWidthUsed = 0;
+    let logoHeightUsed = 0;
+
+    if (logoImage) {
+      const logoMaxHeight = 40; // px
+      const { width: lw, height: lh } = logoImage.scale(1);
+      const scale = logoMaxHeight / lh;
+      logoWidthUsed = lw * scale;
+      logoHeightUsed = lh * scale;
+
+      page.drawImage(logoImage, {
+        x: headerLeftX,
+        y: headerTopY - logoHeightUsed,
+        width: logoWidthUsed,
+        height: logoHeightUsed,
+      });
+
+      headerLeftX += logoWidthUsed + 12; // space after logo
+    }
+
     const titleText = sanitize('Project Compliance Report');
     page.drawText(titleText, {
-      x: margin,
-      y: pageHeight - margin,
+      x: headerLeftX,
+      y: headerTopY,
       font: boldFont,
       size: 20,
     });
@@ -78,7 +103,7 @@ const buildPdf = async (project: any, company: any) => {
     const projectNameWidth = boldFont.widthOfTextAtSize(projectNameText, 10);
     page.drawText(projectNameText, {
       x: pageWidth - margin - projectNameWidth,
-      y: pageHeight - margin,
+      y: headerTopY,
       font: boldFont,
       size: 10,
     });
@@ -87,13 +112,14 @@ const buildPdf = async (project: any, company: any) => {
     const dateWidth = font.widthOfTextAtSize(dateText, 8);
     page.drawText(dateText, {
       x: pageWidth - margin - dateWidth,
-      y: pageHeight - margin - 15,
+      y: headerTopY - 15,
       font,
       size: 8,
     });
 
-    // Start content below header
-    state.y = pageHeight - margin - 40;
+    // Start content below header (below the tallest element)
+    const headerBlockHeight = Math.max(40, logoHeightUsed);
+    state.y = headerTopY - headerBlockHeight - 10;
   };
 
   const checkPageBreak = (spaceNeeded: number) => {
@@ -113,12 +139,10 @@ const buildPdf = async (project: any, company: any) => {
 
   const addSectionTitle = (title: string) => {
     const safeTitle = sanitize(title);
-    // Space before section
     addSpacer(12);
     checkPageBreak(sectionTitleSize + 10);
     page.drawText(safeTitle, { x: margin, y: state.y, font: boldFont, size: sectionTitleSize });
     state.y -= sectionTitleSize + 6;
-    // Draw a thin separator line
     page.drawLine({
       start: { x: margin, y: state.y },
       end: { x: pageWidth - margin, y: state.y },
@@ -321,7 +345,7 @@ serve(async (req) => {
   }
 
   try {
-    const { projectId } = await req.json();
+    const { projectId, logoBase64 } = await req.json();
     if (!projectId) {
       throw new Error("Project ID is required.");
     }
@@ -349,7 +373,9 @@ serve(async (req) => {
       console.error("Error fetching company info:", companyError.message);
     }
 
-    const pdfBytes = await buildPdf(project, company);
+    const logoBytes = logoBase64 ? decode(logoBase64) : undefined;
+
+    const pdfBytes = await buildPdf(project, company, logoBytes);
     const pdfBase64 = encode(pdfBytes);
 
     return new Response(JSON.stringify({ pdfData: pdfBase64 }), { 
