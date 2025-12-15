@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 import { Edit, Save, X, KeyRound } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -13,6 +13,7 @@ import Footer from '@/components/Footer';
 
 const AccountPage = () => {
   const { user, signOut } = useAuth();
+  const { toast } = useToast();
   const [companyInfo, setCompanyInfo] = useState<any>(null);
   const [loadingCompany, setLoadingCompany] = useState(true);
   const [isEditingCompany, setIsEditingCompany] = useState(false);
@@ -21,7 +22,7 @@ const AccountPage = () => {
   // State for password change
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [isUpdatingPassword, setUpdatingPassword] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -59,12 +60,25 @@ const AccountPage = () => {
   const handleSaveCompany = async () => {
     if (!user) return;
     try {
-      await saveCompanyInfo(companyInfo);
+      if (companyInfo) {
+        const { error } = await supabase
+          .from('companies')
+          .update(editedCompanyInfo)
+          .eq('user_id', user.id);
+        if (error) throw error;
+        setCompanyInfo({ ...companyInfo, ...editedCompanyInfo });
+      } else {
+        const { error } = await supabase
+          .from('companies')
+          .insert({ ...editedCompanyInfo, user_id: user.id });
+        if (error) throw error;
+        setCompanyInfo({ ...editedCompanyInfo, user_id: user.id });
+      }
       setIsEditingCompany(false);
-      toast.success("Success", { description: "Company information updated successfully" });
+      toast({ title: "Success", description: "Company information updated successfully" });
     } catch (error) {
       console.error('Error saving company info:', error);
-      toast.error("Error", { description: "Failed to save company information" });
+      toast({ title: "Error", description: "Failed to save company information", variant: "destructive" });
     }
   };
 
@@ -73,24 +87,25 @@ const AccountPage = () => {
     setEditedCompanyInfo({});
   };
 
-  const handlePasswordUpdate = async () => {
+  const handlePasswordUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (password !== confirmPassword) {
-      toast.error("Error", { description: "Passwords do not match." });
+      toast({ title: "Error", description: "Passwords do not match.", variant: "destructive" });
       return;
     }
     if (password.length < 6) {
-      toast.error("Error", { description: "Password must be at least 6 characters long." });
+      toast({ title: "Error", description: "Password must be at least 6 characters long.", variant: "destructive" });
       return;
     }
 
-    setUpdatingPassword(true);
+    setIsUpdatingPassword(true);
     const { error } = await supabase.auth.updateUser({ password });
-    setUpdatingPassword(false);
+    setIsUpdatingPassword(false);
 
     if (error) {
-      toast.error("Error", { description: error.message });
+      toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
-      toast.success("Success", { description: "Password updated successfully." });
+      toast({ title: "Success", description: "Password updated successfully." });
       setPassword('');
       setConfirmPassword('');
       setIsPasswordDialogOpen(false);
@@ -165,8 +180,8 @@ const AccountPage = () => {
                         required
                       />
                     </div>
-                    <Button type="submit" disabled={updatingPassword} className="w-full">
-                      {updatingPassword ? 'Updating...' : 'Update Password'}
+                    <Button type="submit" disabled={isUpdatingPassword} className="w-full">
+                      {isUpdatingPassword ? 'Updating...' : 'Update Password'}
                     </Button>
                   </form>
                 </DialogContent>

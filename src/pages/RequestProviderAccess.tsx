@@ -3,7 +3,7 @@ import { useProviderAccess } from '@/hooks/useProviderAccess';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -13,6 +13,7 @@ import { useState, useEffect } from 'react';
 const RequestProviderAccess = () => {
   const { user, signOut } = useAuth();
   const { data, refetch, isLoading: isAccessLoading } = useProviderAccess();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [isRequesting, setIsRequesting] = useState(false);
 
@@ -25,20 +26,31 @@ const RequestProviderAccess = () => {
       });
       navigate('/find-a-provider');
     }
-  }, [data, isAccessLoading, navigate]);
+  }, [data, isAccessLoading, navigate, toast]);
 
   const handleRequestAccess = async () => {
     if (!user) return;
     setIsRequesting(true);
     try {
-      await requestAccessMutation.mutateAsync();
-      toast.success('Request Sent!', {
+      const { error } = await supabase
+        .from('provider_access_requests')
+        .insert({ user_id: user.id, status: 'pending' });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Request Sent!',
         description: 'Your request for access has been submitted for approval.',
       });
+      refetch();
     } catch (error: any) {
-      toast.error('Error', {
+      toast({
+        title: 'Error',
         description: error.message || 'Failed to submit request.',
+        variant: 'destructive',
       });
+    } finally {
+      setIsRequesting(false);
     }
   };
 

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast";
 import { User } from "@supabase/supabase-js";
 
 export type UploadedFile = File & { url?: string; path?: string };
 
-export const useFileUploads = (user: User | null, projectId: string | null) => {
+export const useFileUploads = (user: User | null) => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 

@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
-import { toast } from 'sonner';
+import { useToast } from '@/components/ui/use-toast';
 import { Shield, Building } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -16,6 +16,7 @@ const Dashboard2 = () => {
   const { user, signOut } = useAuth();
   const { canViewAllProjects, loading: roleLoading } = useUserRole();
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   const [allProjects, setAllProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +47,7 @@ const Dashboard2 = () => {
       }
     };
     loadProjects();
-  }, [user, canViewAllProjects, roleLoading]);
+  }, [user, canViewAllProjects, roleLoading, toast]);
 
   const filteredAndSortedProjects = useMemo(() => {
     return allProjects

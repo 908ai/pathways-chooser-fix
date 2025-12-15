@@ -120,13 +120,11 @@ const AllProjectsTab = () => {
         uniqueLocations={uniqueLocations}
         uniqueBuildingTypes={uniqueBuildingTypes}
       />
-      <div className="mt-4">
-        <AllProjectsDataTable 
-          projects={filteredAndSortedProjects}
-          onStatusChange={() => { /* Implement if needed */ }}
-          onProjectSelect={(project) => navigate(`/project/${project.id}`)}
-        />
-      </div>
+      <AllProjectsDataTable 
+        projects={filteredAndSortedProjects}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+      />
     </div>
   );
 };
