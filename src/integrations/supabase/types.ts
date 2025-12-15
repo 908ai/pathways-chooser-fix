@@ -744,6 +744,10 @@ export type Database = {
           unread_feedback: number
         }[]
       }
+      get_unread_notifications_with_details: {
+        Args: Record<string, never>
+        Returns: Json
+      }
       get_user_role: {
         Args: {
           _user_id: string

@@ -3,11 +3,18 @@
 import { Bell, MessageSquare, Mail } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { useUnreadNotifications } from '@/hooks/useUnreadNotifications';
+import { useUnreadNotificationsWithDetails, UnreadRevisionDetail } from '@/hooks/useUnreadNotificationsWithDetails';
 import { Link } from 'react-router-dom';
 
 export const NotificationBell = () => {
-  const { unreadRevisions, unreadFeedback, totalUnread, isLoading } = useUnreadNotifications();
+  const { unreadRevisions, unreadFeedback, revisionDetails, totalUnread, isLoading } = useUnreadNotificationsWithDetails();
+
+  const uniqueRevisionDetails = revisionDetails.reduce((acc: UnreadRevisionDetail[], current) => {
+    if (!acc.find((item) => item.project_id === current.project_id)) {
+      acc.push(current);
+    }
+    return acc;
+  }, []);
 
   return (
     <Popover>
@@ -29,28 +36,40 @@ export const NotificationBell = () => {
               You have {totalUnread} unread messages.
             </p>
           </div>
-          <div className="grid gap-2">
+          <div className="grid gap-2 max-h-96 overflow-y-auto">
             {unreadRevisions > 0 && (
-              <Link to="/dashboard" className="flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent">
-                <MessageSquare className="mt-px h-5 w-5" />
-                <div className="space-y-1">
-                  <p className="text-sm font-medium leading-none">Project Revisions</p>
-                  <p className="text-sm text-muted-foreground">
-                    You have {unreadRevisions} unread revision comments.
-                  </p>
-                </div>
-              </Link>
+              <div>
+                <p className="text-sm font-medium leading-none px-2 pt-2">Project Revisions ({unreadRevisions})</p>
+                {uniqueRevisionDetails.map((detail) => (
+                  <Link 
+                    key={detail.project_id}
+                    to={`/project/${detail.project_id}?tab=timeline`} 
+                    className="flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent"
+                  >
+                    <MessageSquare className="mt-px h-5 w-5 flex-shrink-0" />
+                    <div className="space-y-1 overflow-hidden">
+                      <p className="text-sm font-medium leading-none truncate">{detail.project_name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        New comment(s) await your review.
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             )}
             {unreadFeedback > 0 && (
-              <Link to="/my-feedback" className="flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent">
-                <Mail className="mt-px h-5 w-5" />
-                <div className="space-y-1">
-                  <p className="text-sm font-medium leading-none">Feedback Messages</p>
-                  <p className="text-sm text-muted-foreground">
-                    You have {unreadFeedback} unread feedback messages.
-                  </p>
-                </div>
-              </Link>
+              <div>
+                <p className="text-sm font-medium leading-none px-2 pt-2">Feedback</p>
+                <Link to="/my-feedback" className="flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent">
+                  <Mail className="mt-px h-5 w-5" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none">Feedback Messages</p>
+                    <p className="text-sm text-muted-foreground">
+                      You have {unreadFeedback} unread feedback messages.
+                    </p>
+                  </div>
+                </Link>
+              </div>
             )}
             {totalUnread === 0 && (
               <p className="text-sm text-muted-foreground text-center py-4">No new notifications.</p>
