@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User, AlertTriangle, Eye, MessageSquare, History } from 'lucide-react';
+import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User, AlertTriangle, Eye, MessageSquare, History, FileSpreadsheet } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
@@ -795,11 +795,14 @@ const ProjectDetail = () => {
                 <span>Last Updated: {new Date(project.updated_at).toLocaleDateString()}</span>
               </div>
             </div>
+            
+            {/* Action Buttons Group */}
             <div className="flex flex-col items-end gap-2">
               <div className="flex items-center gap-4">
                 {getComplianceStatusBadge()}
               </div>
 
+              {/* Row 1: Admin Actions (Approve/Reject/Revision) */}
               {isAdmin && project.compliance_status === 'submitted' && (
                 <div className="flex items-center gap-2">
                   <ActionCommentModal
@@ -847,6 +850,7 @@ const ProjectDetail = () => {
                 </div>
               )}
 
+              {/* Row 2: General Actions (Edit/Delete/Duplicate) */}
               <div className="flex items-center gap-2">
                 <TooltipProvider>
                   <Tooltip>
@@ -871,32 +875,9 @@ const ProjectDetail = () => {
                   </Tooltip>
                 </TooltipProvider>
 
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span tabIndex={0}>
-                        <Button
-                          onClick={handleDelete} 
-                          disabled={!isDeletable || deleting}
-                          variant="destructive"
-                          className="animate-fade-in"
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          {deleting ? 'Deleting...' : 'Delete'}
-                        </Button>
-                      </span>
-                    </TooltipTrigger>
-                    {!isDeletable && (
-                      <TooltipContent>
-                        <p>Cannot delete a project that is under review or completed.</p>
-                      </TooltipContent>
-                    )}
-                  </Tooltip>
-                </TooltipProvider>
-                
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button disabled={duplicating} className="animate-fade-in">
+                    <Button disabled={duplicating} className="animate-fade-in" variant="outline">
                       <Copy className="h-4 w-4 mr-2" />
                       {duplicating ? 'Duplicating...' : 'Duplicate'}
                     </Button>
@@ -925,10 +906,34 @@ const ProjectDetail = () => {
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span tabIndex={0}>
+                        <Button
+                          onClick={handleDelete} 
+                          disabled={!isDeletable || deleting}
+                          variant="destructive"
+                          className="animate-fade-in"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          {deleting ? 'Deleting...' : 'Delete'}
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    {!isDeletable && (
+                      <TooltipContent>
+                        <p>Cannot delete a project that is under review or completed.</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
               </div>
 
+              {/* Row 3: Export Actions (PDF/CSV/JSON) */}
               {isAdmin && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 pt-2 border-t w-full justify-end">
                   <span className="text-sm font-medium text-muted-foreground">Export:</span>
                   <Button onClick={handleGeneratePdf} disabled={generatingPdf} variant="outline" className="animate-fade-in">
                     <FileText className="h-4 w-4 mr-2" />
@@ -938,6 +943,7 @@ const ProjectDetail = () => {
                     <Tooltip>
                       <TooltipTrigger>
                         <Button disabled variant="outline" className="animate-fade-in">
+                          <FileSpreadsheet className="h-4 w-4 mr-2" />
                           CSV
                         </Button>
                       </TooltipTrigger>
