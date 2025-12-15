@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -21,9 +21,9 @@ import {
 } from "@/components/ui/dialog";
 import FeedbackConversation from './FeedbackConversation';
 import { useToast } from '@/hooks/use-toast';
-import { Tables } from '@/integrations/supabase/types';
+import { Database } from '@/integrations/supabase/types';
 
-type Feedback = Tables<'feedback'> & { user_email: string };
+type Feedback = Database['public']['Functions']['get_feedback_with_user_details']['Returns'][number];
 
 export const FeedbackManager = () => {
   const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
@@ -47,12 +47,14 @@ export const FeedbackManager = () => {
       updateStatusMutation.mutate({ id: feedbackItem.id, status: 'In Progress', isAutomaticUpdate: true });
     }
     
-    const { error } = await supabase.rpc('mark_feedback_responses_as_read', { p_feedback_id: feedbackItem.id });
-    if (error) {
-      console.error('Error marking feedback as read:', error);
-    } else {
-      queryClient.invalidateQueries({ queryKey: ['unread_notifications_with_details'] });
-      queryClient.invalidateQueries({ queryKey: ['all_feedback'] });
+    if (feedbackItem.unread_user_responses_count > 0) {
+      const { error } = await supabase.rpc('mark_feedback_responses_as_read', { p_feedback_id: feedbackItem.id });
+      if (error) {
+        console.error('Error marking feedback as read:', error);
+      } else {
+        queryClient.invalidateQueries({ queryKey: ['unread_notifications_with_details'] });
+        queryClient.invalidateQueries({ queryKey: ['all_feedback'] });
+      }
     }
   };
 
@@ -118,7 +120,14 @@ export const FeedbackManager = () => {
           {feedback?.map((item) => (
             <TableRow key={item.id}>
               <TableCell>{new Date(item.created_at).toLocaleDateString()}</TableCell>
-              <TableCell>{item.user_email}</TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  {(item.unread_user_responses_count > 0 || item.status === 'New') && (
+                    <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />
+                  )}
+                  <span>{item.user_email}</span>
+                </div>
+              </TableCell>
               <TableCell>{item.category}</TableCell>
               <TableCell className="max-w-xs truncate">{item.feedback_text}</TableCell>
               <TableCell>

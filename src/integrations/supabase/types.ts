@@ -721,6 +721,7 @@ export type Database = {
           page_url: string
           status: string
           user_email: string
+          unread_user_responses_count: number
         }[]
       }
       get_project_events_with_details: {
