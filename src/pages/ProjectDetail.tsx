@@ -766,7 +766,7 @@ const ProjectDetail = () => {
             </div>
           )}
           
-          <div className="flex items-center justify-between">
+          <div className="flex items-start justify-between">
             <div>
               <h1 className="text-4xl font-bold mb-3 text-foreground">{project.project_name}</h1>
               
@@ -795,9 +795,11 @@ const ProjectDetail = () => {
                 <span>Last Updated: {new Date(project.updated_at).toLocaleDateString()}</span>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              {getComplianceStatusBadge()}
-              
+            <div className="flex flex-col items-end gap-2">
+              <div className="flex items-center gap-4">
+                {getComplianceStatusBadge()}
+              </div>
+
               {isAdmin && project.compliance_status === 'submitted' && (
                 <div className="flex items-center gap-2">
                   <ActionCommentModal
@@ -843,10 +845,6 @@ const ProjectDetail = () => {
                     </Button>
                   </ActionCommentModal>
                 </div>
-              )}
-              
-              {isAdmin && project.compliance_status === 'submitted' && (
-                <div className="h-6 w-px bg-border mx-2"></div>
               )}
 
               <div className="flex items-center gap-2">
@@ -927,14 +925,41 @@ const ProjectDetail = () => {
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
+              </div>
 
-                {isAdmin && (
+              {isAdmin && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-muted-foreground">Export:</span>
                   <Button onClick={handleGeneratePdf} disabled={generatingPdf} variant="outline" className="animate-fade-in">
                     <FileText className="h-4 w-4 mr-2" />
                     {generatingPdf ? 'Generating...' : 'PDF'}
                   </Button>
-                )}
-              </div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Button disabled variant="outline" className="animate-fade-in">
+                          CSV
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>CSV export coming soon!</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Button disabled variant="outline" className="animate-fade-in">
+                          JSON
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>JSON export coming soon!</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              )}
             </div>
           </div>
         </div>
