@@ -10,10 +10,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AlertTriangle, MessageSquare, Send, User, Shield } from 'lucide-react';
 import { format } from 'date-fns';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ProjectTimelineProps {
   projectId: string;
   projectOwnerId: string;
+  complianceStatus: string;
 }
 
 interface ProjectEvent {
@@ -30,7 +32,7 @@ interface ProjectEvent {
   user_role: 'admin' | 'user';
 }
 
-const ProjectTimeline = ({ projectId, projectOwnerId }: ProjectTimelineProps) => {
+const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus }: ProjectTimelineProps) => {
   const { user } = useAuth();
   const { isAdmin } = useUserRole();
   const [events, setEvents] = useState<ProjectEvent[]>([]);
@@ -141,6 +143,8 @@ const ProjectTimeline = ({ projectId, projectOwnerId }: ProjectTimelineProps) =>
     return <p>Loading timeline...</p>;
   }
 
+  const canComment = complianceStatus === 'needs_revision' || isAdmin;
+
   return (
     <Card>
       <CardHeader>
@@ -160,13 +164,26 @@ const ProjectTimeline = ({ projectId, projectOwnerId }: ProjectTimelineProps) =>
         <div className="mt-8 pt-6 border-t">
           <h4 className="font-medium mb-2">Add a comment</h4>
           <div className="grid gap-2">
-            <Textarea
-              placeholder="Type your message here..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              disabled={isSubmitting}
-            />
-            <Button onClick={handleAddComment} disabled={isSubmitting || !newComment.trim()} className="self-end">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="relative">
+                    <Textarea
+                      placeholder={canComment ? "Type your message here..." : "Commenting is disabled for this project's current status."}
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      disabled={isSubmitting || !canComment}
+                    />
+                  </div>
+                </TooltipTrigger>
+                {!canComment && (
+                  <TooltipContent>
+                    <p>You can only comment when the project status is "Needs Revision".</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
+            <Button onClick={handleAddComment} disabled={isSubmitting || !newComment.trim() || !canComment} className="self-end">
               <Send className="h-4 w-4 mr-2" />
               {isSubmitting ? 'Sending...' : 'Send'}
             </Button>

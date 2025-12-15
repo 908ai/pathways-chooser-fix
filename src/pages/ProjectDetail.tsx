@@ -1247,7 +1247,7 @@ const ProjectDetail = () => {
           </TabsContent>
 
           <TabsContent value="timeline" className="mt-6">
-            <ProjectTimeline projectId={project.id} projectOwnerId={project.user_id} />
+            <ProjectTimeline projectId={project.id} projectOwnerId={project.user_id} complianceStatus={project.compliance_status} />
           </TabsContent>
         </Tabs>
       </main>
