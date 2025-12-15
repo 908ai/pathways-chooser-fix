@@ -146,7 +146,7 @@ const ProjectTimeline = ({ projectId, projectOwnerId }: ProjectTimelineProps) =>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MessageSquare className="h-5 w-5" />
-          Project Timeline & Revisions
+          Project Revisions
         </CardTitle>
       </CardHeader>
       <CardContent>

@@ -903,7 +903,7 @@ const ProjectDetail = () => {
             </TabsTrigger>
             <TabsTrigger value="timeline" className="flex items-center gap-2 rounded-md data-[state=active]:bg-card data-[state=active]:shadow-sm">
               <MessageSquare className="h-4 w-4" />
-              Timeline
+              Revision
             </TabsTrigger>
           </TabsList>
 
