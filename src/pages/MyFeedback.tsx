@@ -11,22 +11,65 @@ import { useEffect } from 'react';
 
 const fetchUserFeedback = async (userId: string | undefined) => {
   if (!userId) return [];
+  
+  // First, get the user IDs of all admins
+  const { data: adminRoles, error: adminError } = await supabase
+    .from('user_roles')
+    .select('user_id')
+    .eq('role', 'admin');
+
+  if (adminError) {
+    console.error("Error fetching admin roles:", adminError);
+    throw new Error(adminError.message);
+  }
+  const adminUserIds = adminRoles.map(role => role.user_id);
+
+  // Now, fetch the feedback
   const { data, error } = await supabase
     .from('feedback')
     .select(`
       *,
       feedback_responses(count),
-      unread_admin_responses:feedback_responses(count)
+      unread_admin_responses:feedback_responses!inner(count)
     `)
     .eq('user_id', userId)
     .eq('unread_admin_responses.is_read', false)
+    .in('unread_admin_responses.user_id', adminUserIds)
     .order('created_at', { ascending: false });
 
-  if (error) {
+  if (error && error.code !== 'PGRST204') { // PGRST204: No Content, not an error for us
     console.error("Error fetching feedback:", error);
     throw new Error(error.message);
   }
-  return data;
+
+  // The above query only returns feedback WITH unread admin messages.
+  // We need all feedback, so we do a second query for the rest.
+  const { data: allFeedback, error: allFeedbackError } = await supabase
+    .from('feedback')
+    .select(`
+      *,
+      feedback_responses(count)
+    `)
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (allFeedbackError) {
+    console.error("Error fetching all feedback:", allFeedbackError);
+    throw new Error(allFeedbackError.message);
+  }
+
+  // Combine the results
+  const feedbackWithUnread = data || [];
+  const unreadIds = new Set(feedbackWithUnread.map(f => f.id));
+
+  const combined = allFeedback.map(fb => {
+    if (unreadIds.has(fb.id)) {
+      return feedbackWithUnread.find(f => f.id === fb.id);
+    }
+    return { ...fb, unread_admin_responses: [{ count: 0 }] };
+  });
+
+  return combined.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 };
 
 const MyFeedbackPage = () => {
@@ -86,8 +129,9 @@ const MyFeedbackPage = () => {
             {!isLoading && feedbackList && feedbackList.length > 0 ? (
               <div className="space-y-3">
                 {feedbackList.map((item) => {
+                  if (!item) return null;
                   const totalReplies = item.feedback_responses[0]?.count || 0;
-                  const hasUnread = (item.unread_admin_responses[0]?.count || 0) > 0;
+                  const hasUnread = (item.unread_admin_responses?.[0]?.count || 0) > 0;
 
                   return (
                     <Link to={`/feedback/${item.id}`} key={item.id} className="block">
