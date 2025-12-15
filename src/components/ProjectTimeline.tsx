@@ -41,6 +41,21 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus }: Projec
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
+    const markEventsAsRead = async () => {
+        if (!user || !projectId) return;
+
+        const { error } = await supabase
+            .from('project_events')
+            .update({ is_read: true })
+            .eq('project_id', projectId)
+            .eq('is_read', false)
+            .neq('user_id', user.id);
+
+        if (error) {
+            console.error('Error marking events as read:', error);
+        }
+    };
+
     const fetchEvents = async () => {
       if (!projectId) return;
       setLoading(true);
@@ -60,6 +75,7 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus }: Projec
         setEvents(formattedEvents);
       }
       setLoading(false);
+      markEventsAsRead();
     };
 
     fetchEvents();
