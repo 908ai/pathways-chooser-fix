@@ -13,12 +13,6 @@ import { format } from 'date-fns';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useQueryClient } from '@tanstack/react-query';
 
-interface ProjectTimelineProps {
-  projectId: string;
-  projectOwnerId: string;
-  complianceStatus: string;
-}
-
 interface ProjectEvent {
   id: string;
   created_at: string;
@@ -29,40 +23,26 @@ interface ProjectEvent {
     old_status?: string;
   };
   user_id: string;
-  user_email: string; // We'll need to join to get this
+  user_email: string;
   user_role: 'admin' | 'user';
 }
 
-const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus }: ProjectTimelineProps) => {
+interface ProjectTimelineProps {
+  projectId: string;
+  projectOwnerId: string;
+  complianceStatus: string;
+  events: ProjectEvent[];
+  onCommentAdded: () => void;
+}
+
+const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus, events, onCommentAdded }: ProjectTimelineProps) => {
   const { user } = useAuth();
   const { isAdmin } = useUserRole();
-  const [events, setEvents] = useState<ProjectEvent[]>([]);
-  const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      if (!projectId) return;
-      setLoading(true);
-
-      const { data, error } = await supabase
-        .rpc('get_project_events_with_details', { p_project_id: projectId });
-
-      if (error) {
-        console.error('Error fetching project events:', error);
-      } else {
-        const formattedEvents = Array.isArray(data) ? data.map((event: any) => ({
-          ...event,
-          user_email: event.user_email,
-          user_role: event.user_role,
-        })) : [];
-        setEvents(formattedEvents);
-      }
-      setLoading(false);
-    };
-
     const markAsRead = async () => {
       if (!projectId) return;
       const { error } = await supabase.rpc('mark_project_events_as_read', { p_project_id: projectId });
@@ -74,20 +54,19 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus }: Projec
       }
     };
 
-    fetchEvents();
     markAsRead();
 
     const subscription = supabase
       .channel(`project_events:${projectId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'project_events', filter: `project_id=eq.${projectId}` }, (payload) => {
-        fetchEvents();
+        onCommentAdded();
       })
       .subscribe();
 
     return () => {
       supabase.removeChannel(subscription);
     };
-  }, [projectId, queryClient]);
+  }, [projectId, queryClient, onCommentAdded]);
 
   const handleAddComment = async () => {
     if (!newComment.trim() || !user) return;
@@ -104,6 +83,7 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus }: Projec
       console.error('Error adding comment:', error);
     } else {
       setNewComment('');
+      onCommentAdded();
     }
     setIsSubmitting(false);
   };
@@ -151,10 +131,6 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus }: Projec
     );
   };
 
-  if (loading) {
-    return <p>Loading timeline...</p>;
-  }
-
   const canComment = complianceStatus === 'needs_revision' || isAdmin;
 
   return (
@@ -167,7 +143,7 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus }: Projec
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {events.length > 0 ? (
+          {events && events.length > 0 ? (
             events.map(event => <EventItem key={event.id} event={event} />)
           ) : (
             <p className="text-muted-foreground text-center py-8">No comments or revisions yet.</p>

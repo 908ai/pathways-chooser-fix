@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -80,6 +80,19 @@ const ProjectDetail = () => {
     };
   };
 
+  const fetchProjectEvents = useCallback(async () => {
+    if (!id) return;
+    const { data, error } = await supabase
+      .rpc('get_project_events_with_details', { p_project_id: id });
+
+    if (error) {
+      console.error('Error fetching project events:', error);
+      setProjectEvents([]);
+    } else {
+      setProjectEvents(Array.isArray(data) ? data : []);
+    }
+  }, [id]);
+
   useEffect(() => {
     const loadProject = async () => {
       if (!user || !id) return;
@@ -141,8 +154,9 @@ const ProjectDetail = () => {
     // Wait for role to be loaded before fetching
     if (!roleLoading) {
       loadProject();
+      fetchProjectEvents();
     }
-  }, [user, id, canViewAllProjects, roleLoading, navigate, toast]);
+  }, [user, id, canViewAllProjects, roleLoading, navigate, toast, fetchProjectEvents]);
 
   const handleSave = async () => {
     if (!editedProject || !user) return;
@@ -318,6 +332,9 @@ const ProjectDetail = () => {
 
       // 2. Update the project status
       await handleUpdateStatus('needs_revision');
+      
+      // 3. Refetch events
+      fetchProjectEvents();
 
     } catch (error) {
       console.error('Error requesting revision:', error);
@@ -1247,7 +1264,13 @@ const ProjectDetail = () => {
           </TabsContent>
 
           <TabsContent value="timeline" className="mt-6">
-            <ProjectTimeline projectId={project.id} projectOwnerId={project.user_id} complianceStatus={project.compliance_status} />
+            <ProjectTimeline 
+              projectId={project.id} 
+              projectOwnerId={project.user_id} 
+              complianceStatus={project.compliance_status}
+              events={projectEvents}
+              onCommentAdded={fetchProjectEvents}
+            />
           </TabsContent>
         </Tabs>
       </main>
