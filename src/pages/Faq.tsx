@@ -67,7 +67,7 @@ const FaqPage = () => {
           <CardContent className="p-6">
             {faqData.map((categoryItem) => (
               <div key={categoryItem.category} className="mb-8 last:mb-0">
-                <h3 className="text-xl font-semibold text-foreground mb-4">{categoryItem.category}</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4 px-4 py-2 rounded-md bg-muted/40 border border-border">{categoryItem.category}</h3>
                 <Accordion type="single" collapsible className="w-full">
                   {categoryItem.items.map((item, index) => (
                     <AccordionItem value={`item-${categoryItem.category}-${index}`} key={index}>
