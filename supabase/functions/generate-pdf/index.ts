@@ -146,14 +146,11 @@ const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
   };
 
   // Section spacing adjustments:
-  // - Increase top space before section titles
-  // - Keep tight gap between title and separator line
-  // - Increase space after line to create more room before content
   const addSectionTitle = (title: string) => {
     const safeTitle = sanitize(title);
     const topSpaceBeforeTitle = 18; // padding before section title
     const gapBetweenTitleAndLine = 3; // tight gap
-    const spaceAfterLine = 16; // increased space before content (was 6)
+    const spaceAfterLine = 16; // increased space before content
 
     addSpacer(topSpaceBeforeTitle);
     checkPageBreak(sectionTitleSize + gapBetweenTitleAndLine + spaceAfterLine);
@@ -337,16 +334,29 @@ const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
     }
   }
 
-  // Page numbers
+  // Footer: copyright on left, pagination on right
   const pages = pdfDoc.getPages();
+  const footerFontSize = 9;
+  const footerText = sanitize('© 2025 Energy Navigator 9.36. All rights reserved.');
   for (let i = 0; i < pages.length; i++) {
     const p = pages[i];
     const size = p.getSize();
-    const text = sanitize(`Page ${i + 1} of ${pages.length}`);
-    p.drawText(text, {
-      x: size.width / 2 - 25,
-      y: 30,
-      size: 8,
+
+    // Left-side copyright
+    p.drawText(footerText, {
+      x: margin,
+      y: 24, // near bottom
+      size: footerFontSize,
+      font,
+    });
+
+    // Right-side pagination
+    const pageText = sanitize(`Page ${i + 1} of ${pages.length}`);
+    const pageTextWidth = font.widthOfTextAtSize(pageText, footerFontSize);
+    p.drawText(pageText, {
+      x: size.width - margin - pageTextWidth,
+      y: 24,
+      size: footerFontSize,
       font,
     });
   }
