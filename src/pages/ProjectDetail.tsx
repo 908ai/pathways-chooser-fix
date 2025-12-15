@@ -791,8 +791,8 @@ const ProjectDetail = () => {
           )}
           
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold mb-3 text-foreground">{project.project_name}</h1>
+            <div className="w-4/12 pr-4">
+              <h1 className="text-3xl font-bold mb-3 text-foreground">{project.project_name}</h1>
               
               {(() => {
                 const pathwayInfo = getPathwayDisplay(project.selected_pathway);
@@ -801,7 +801,7 @@ const ProjectDetail = () => {
                 return (
                   <Badge 
                     variant="outline" 
-                    className={`text-sm font-medium border px-3 py-1 flex items-center gap-1.5 w-fit mb-3 ${
+                    className={`text-xs font-medium border px-3 py-1 flex items-center gap-1.5 w-fit mb-3 ${
                       pathwayInfo.isPerformance 
                         ? 'border-blue-200 text-blue-800 bg-blue-100 dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-500/50' 
                         : 'border-orange-200 text-orange-800 bg-orange-100 dark:bg-orange-900/50 dark:text-orange-300 dark:border-orange-500/50'
@@ -812,20 +812,21 @@ const ProjectDetail = () => {
                   </Badge>
                 );
               })()}
+            </div>
 
+            <div className="w-4/12 flex flex-col items-center gap-2">
+              <div className="flex items-center gap-4">
+                {getComplianceStatusBadge()}
+              </div>
               <div className="flex items-center gap-4 text-muted-foreground text-sm">
                 <span>Created: {new Date(project.created_at).toLocaleDateString()}</span>
                 <span className="text-border">|</span>
                 <span>Last Updated: {new Date(project.updated_at).toLocaleDateString()}</span>
-              </div>
-            </div>
+              </div>              
+            </div>            
             
             {/* Right-side status + general actions */}
-            <div className="flex flex-col items-end gap-2">
-              <div className="flex items-center gap-4">
-                {getComplianceStatusBadge()}
-              </div>
-
+            <div className="w-4/12 flex flex-col items-end gap-2">
               {/* General Actions (icon-only Edit/Duplicate/Delete + Export menu) */}
               <div className="flex items-center gap-2">
                 {/* Edit (icon-only) */}
@@ -957,7 +958,7 @@ const ProjectDetail = () => {
 
           {/* Centered Admin Actions (Approve / Request Revision / Reject) */}
           {isAdmin && project.compliance_status === 'submitted' && (
-            <div className="mt-6 flex justify-center">
+            <div className="mb-8 flex justify-center">
               <div className="bg-card rounded-lg p-[15px]">
                 <div className="flex items-center gap-3">
                   <ActionCommentModal
