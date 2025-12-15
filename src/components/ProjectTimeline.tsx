@@ -70,6 +70,7 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus }: Projec
         console.error('Error marking project events as read:', error);
       } else {
         queryClient.invalidateQueries({ queryKey: ['unread_notifications'] });
+        queryClient.invalidateQueries({ queryKey: ['unread_notifications_with_details'] });
       }
     };
 
