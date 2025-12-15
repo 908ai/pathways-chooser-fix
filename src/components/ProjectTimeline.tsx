@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -41,6 +41,15 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus, events, 
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const queryClient = useQueryClient();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [events]);
 
   useEffect(() => {
     const markAsRead = async () => {
@@ -154,6 +163,7 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus, events, 
           ) : (
             <p className="text-muted-foreground text-center py-8">No comments or revisions yet.</p>
           )}
+          <div ref={messagesEndRef} />
         </div>
         <div className="mt-8 pt-6 border-t">
           <h4 className="font-medium mb-2">Add a comment</h4>
