@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User, AlertTriangle, Eye } from 'lucide-react';
+import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User, AlertTriangle, Eye, MessageSquare } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ComplianceDetails from '@/components/compliance/ComplianceDetails';
+import { RevisionRequestModal } from '@/components/admin/RevisionRequestModal';
+import ProjectTimeline from '@/components/ProjectTimeline';
 
 const DetailItem = ({ label, value, unit = '' }: { label: string; value: any; unit?: string }) => {
   if (value === null || value === undefined || value === '') return null;
@@ -54,6 +56,7 @@ const ProjectDetail = () => {
   const [deleting, setDeleting] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [generatingPdf, setGeneratingPdf] = useState(false);
+  const [projectEvents, setProjectEvents] = useState<any[]>([]);
 
   const getPathwayDisplay = (pathway: string | null) => {
     if (!pathway) return null;
@@ -294,6 +297,35 @@ const ProjectDetail = () => {
       });
     } finally {
       setDeleting(false);
+    }
+  };
+
+  const handleRequestRevision = async (comment: string) => {
+    if (!project || !user || !isAdmin || !comment.trim()) return;
+
+    try {
+      // 1. Create the revision event
+      const { error: eventError } = await supabase
+        .from('project_events')
+        .insert({
+          project_id: project.id,
+          user_id: user.id,
+          event_type: 'revision_request',
+          payload: { comment: comment.trim() },
+        });
+
+      if (eventError) throw eventError;
+
+      // 2. Update the project status
+      await handleUpdateStatus('needs_revision');
+
+    } catch (error) {
+      console.error('Error requesting revision:', error);
+      toast({
+        title: "Revision Request Failed",
+        description: "There was an error sending the revision request.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -682,6 +714,18 @@ const ProjectDetail = () => {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
+
+          {project.compliance_status === 'needs_revision' && (
+            <div className="mb-6 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-500/50 rounded-lg p-4 flex items-start gap-3 animate-fade-in">
+              <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-yellow-800 dark:text-yellow-200">Revision Requested</h3>
+                <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                  An administrator has requested changes on this project. Please review the comments in the "Timeline" tab and resubmit once the required updates are made.
+                </p>
+              </div>
+            </div>
+          )}
           
           <div className="flex items-center justify-between">
             <div>
@@ -725,14 +769,15 @@ const ProjectDetail = () => {
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Approve
                   </Button>
-                  <Button 
-                    onClick={() => handleUpdateStatus('needs_revision')} 
-                    variant="outline"
-                    className="animate-fade-in border-yellow-500 text-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400"
-                  >
-                    <AlertTriangle className="h-4 w-4 mr-2" />
-                    Request Revision
-                  </Button>
+                  <RevisionRequestModal onConfirm={handleRequestRevision}>
+                    <Button 
+                      variant="outline"
+                      className="animate-fade-in border-yellow-500 text-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400"
+                    >
+                      <AlertTriangle className="h-4 w-4 mr-2" />
+                      Request Revision
+                    </Button>
+                  </RevisionRequestModal>
                   <Button 
                     onClick={() => handleUpdateStatus('fail')} 
                     variant="destructive"
@@ -839,7 +884,7 @@ const ProjectDetail = () => {
         </div>
 
         <Tabs defaultValue="overview" className="animate-fade-in">
-          <TabsList className="grid w-full grid-cols-4 p-1 rounded-lg bg-accent dark:bg-muted">
+          <TabsList className="grid w-full grid-cols-5 p-1 rounded-lg bg-accent dark:bg-muted">
             <TabsTrigger value="overview" className="flex items-center gap-2 rounded-md data-[state=active]:bg-card data-[state=active]:shadow-sm">
               <Building className="h-4 w-4" />
               Overview
@@ -855,6 +900,10 @@ const ProjectDetail = () => {
             <TabsTrigger value="documents" className="flex items-center gap-2 rounded-md data-[state=active]:bg-card data-[state=active]:shadow-sm">
               <FolderOpen className="h-4 w-4" />
               Documents ({(project.uploaded_files || []).length})
+            </TabsTrigger>
+            <TabsTrigger value="timeline" className="flex items-center gap-2 rounded-md data-[state=active]:bg-card data-[state=active]:shadow-sm">
+              <MessageSquare className="h-4 w-4" />
+              Timeline
             </TabsTrigger>
           </TabsList>
 
@@ -1195,6 +1244,10 @@ const ProjectDetail = () => {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="timeline" className="mt-6">
+            <ProjectTimeline projectId={project.id} projectOwnerId={project.user_id} />
           </TabsContent>
         </Tabs>
       </main>
