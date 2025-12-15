@@ -25,6 +25,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import ComplianceDetails from '@/components/compliance/ComplianceDetails';
 import { RevisionRequestModal } from '@/components/admin/RevisionRequestModal';
 import ProjectTimeline from '@/components/ProjectTimeline';
@@ -796,61 +797,13 @@ const ProjectDetail = () => {
               </div>
             </div>
             
-            {/* Action Buttons Group */}
+            {/* Right-side status + general actions */}
             <div className="flex flex-col items-end gap-2">
               <div className="flex items-center gap-4">
                 {getComplianceStatusBadge()}
               </div>
 
-              {/* Row 1: Admin Actions (Approve/Reject/Revision) */}
-              {isAdmin && project.compliance_status === 'submitted' && (
-                <div className="flex items-center gap-2">
-                  <ActionCommentModal
-                    onConfirm={handleApprove}
-                    title="Approve Project"
-                    description="Add an optional comment to your approval. This will be visible to the user."
-                    actionName="Approve"
-                  >
-                    <Button 
-                      variant="default"
-                      className="bg-green-600 hover:bg-green-700 text-white animate-fade-in"
-                    >
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Approve
-                    </Button>
-                  </ActionCommentModal>
-
-                  <RevisionRequestModal onConfirm={handleRequestRevision}>
-                    <Button 
-                      variant="outline"
-                      className="animate-fade-in border-yellow-500 text-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400"
-                    >
-                      <AlertTriangle className="h-4 w-4 mr-2" />
-                      Request Revision
-                    </Button>
-                  </RevisionRequestModal>
-
-                  <ActionCommentModal
-                    onConfirm={handleReject}
-                    title="Reject Project"
-                    description="Please provide a reason for rejecting this project. This will be visible to the user."
-                    actionName="Reject"
-                    actionButtonVariant="destructive"
-                    commentLabel="Reason for Rejection (Required)"
-                    commentPlaceholder="e.g., 'The provided building plans do not match the specifications entered.'"
-                  >
-                    <Button 
-                      variant="destructive"
-                      className="animate-fade-in"
-                    >
-                      <XCircle className="h-4 w-4 mr-2" />
-                      Reject
-                    </Button>
-                  </ActionCommentModal>
-                </div>
-              )}
-
-              {/* Row 2: General Actions (Edit/Delete/Duplicate) */}
+              {/* General Actions (Edit/Duplicate/Delete + Export menu) */}
               <div className="flex items-center gap-2">
                 <TooltipProvider>
                   <Tooltip>
@@ -929,45 +882,98 @@ const ProjectDetail = () => {
                     )}
                   </Tooltip>
                 </TooltipProvider>
-              </div>
 
-              {/* Row 3: Export Actions (PDF/CSV/JSON) */}
-              {isAdmin && (
-                <div className="flex items-center gap-2 pt-2 border-t w-full justify-end">
-                  <span className="text-sm font-medium text-muted-foreground">Export:</span>
-                  <Button onClick={handleGeneratePdf} disabled={generatingPdf} variant="outline" className="animate-fade-in">
-                    <FileText className="h-4 w-4 mr-2" />
-                    {generatingPdf ? 'Generating...' : 'PDF'}
-                  </Button>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Button disabled variant="outline" className="animate-fade-in">
-                          <FileSpreadsheet className="h-4 w-4 mr-2" />
-                          CSV
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>CSV export coming soon!</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Button disabled variant="outline" className="animate-fade-in">
-                          JSON
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>JSON export coming soon!</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              )}
+                {/* Export dropdown menu */}
+                {isAdmin && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="animate-fade-in">
+                        <Download className="h-4 w-4 mr-2" />
+                        Export
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={handleGeneratePdf}>
+                        <FileText className="h-4 w-4 mr-2" />
+                        PDF
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() =>
+                          toast({
+                            title: "CSV Export",
+                            description: "CSV export is coming soon.",
+                          })
+                        }
+                      >
+                        <FileSpreadsheet className="h-4 w-4 mr-2" />
+                        CSV
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() =>
+                          toast({
+                            title: "JSON Export",
+                            description: "JSON export is coming soon.",
+                          })
+                        }
+                      >
+                        JSON
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </div>
             </div>
           </div>
+
+          {/* Centered Admin Actions (Approve / Request Revision / Reject) */}
+          {isAdmin && project.compliance_status === 'submitted' && (
+            <div className="mt-6 flex justify-center">
+              <div className="flex items-center gap-3">
+                <ActionCommentModal
+                  onConfirm={handleApprove}
+                  title="Approve Project"
+                  description="Add an optional comment to your approval. This will be visible to the user."
+                  actionName="Approve"
+                >
+                  <Button 
+                    variant="default"
+                    className="bg-green-600 hover:bg-green-700 text-white animate-fade-in"
+                  >
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Approve
+                  </Button>
+                </ActionCommentModal>
+
+                <RevisionRequestModal onConfirm={handleRequestRevision}>
+                  <Button 
+                    variant="outline"
+                    className="animate-fade-in border-yellow-500 text-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400"
+                  >
+                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    Request Revision
+                  </Button>
+                </RevisionRequestModal>
+
+                <ActionCommentModal
+                  onConfirm={handleReject}
+                  title="Reject Project"
+                  description="Please provide a reason for rejecting this project. This will be visible to the user."
+                  actionName="Reject"
+                  actionButtonVariant="destructive"
+                  commentLabel="Reason for Rejection (Required)"
+                  commentPlaceholder="e.g., 'The provided building plans do not match the specifications entered.'"
+                >
+                  <Button 
+                    variant="destructive"
+                    className="animate-fade-in"
+                  >
+                    <XCircle className="h-4 w-4 mr-2" />
+                    Reject
+                  </Button>
+                </ActionCommentModal>
+              </div>
+            </div>
+          )}
         </div>
 
         <Tabs defaultValue="overview" className="animate-fade-in">
