@@ -1,131 +1,122 @@
-"use client";
+import { File, MessageSquare, AlertTriangle, CheckCircle, XCircle, Edit, PlusCircle, Trash2 } from 'lucide-react';
 
-import { useAuth } from '@/hooks/useAuth';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { format } from 'date-fns';
-import {
-  AlertTriangle,
-  CheckCircle,
-  FilePlus,
-  FileText,
-  History,
-  MessageSquare,
-  Send,
-  Shield,
-  XCircle,
-  RefreshCw,
-} from 'lucide-react';
+const getEventIcon = (eventType: string) => {
+  const commonClasses = "h-5 w-5";
+  switch (eventType) {
+    case 'project_created':
+      return <PlusCircle className={`${commonClasses} text-blue-500`} />;
+    case 'project_submitted':
+      return <File className={`${commonClasses} text-blue-500`} />;
+    case 'revision_request':
+      return <AlertTriangle className={`${commonClasses} text-yellow-500`} />;
+    case 'user_comment':
+      return <MessageSquare className={`${commonClasses} text-gray-500`} />;
+    case 'project_approved':
+      return <CheckCircle className={`${commonClasses} text-green-500`} />;
+    case 'project_rejected':
+      return <XCircle className={`${commonClasses} text-red-500`} />;
+    case 'project_edited':
+      return <Edit className={`${commonClasses} text-purple-500`} />;
+    case 'file_uploaded':
+      return <File className={`${commonClasses} text-indigo-500`} />;
+    case 'file_deleted':
+      return <Trash2 className={`${commonClasses} text-red-500`} />;
+    default:
+      return <File className={`${commonClasses} text-gray-400`} />;
+  }
+};
 
-interface ProjectEvent {
-  id: string;
-  created_at: string;
-  event_type: string;
-  payload: {
-    comment?: string;
-    status?: string;
-    old_status?: string;
-    decision?: 'pass' | 'fail';
-  } | null;
-  user_id: string;
-  user_email: string;
-  user_role: 'admin' | 'user';
-}
+const getEventContent = (event: any) => {
+  const { event_type, payload, user_email, user_role } = event;
+  const userIdentifier = user_role === 'admin' ? 'Admin' : user_email;
 
-interface ProjectHistoryProps {
-  events: ProjectEvent[];
-}
-
-const ProjectHistory = ({ events }: ProjectHistoryProps) => {
-  const { user } = useAuth();
-
-  const getInitials = (email: string) => {
-    return email ? email.substring(0, 2).toUpperCase() : 'U';
-  };
-
-  const getEventIcon = (eventType: string, payload: any) => {
-    switch (eventType) {
-      case 'project_created':
-        return <FilePlus className="h-5 w-5 text-blue-500" />;
-      case 'project_submitted':
-        return <Send className="h-5 w-5 text-purple-500" />;
-      case 'project_resubmitted':
-        return <RefreshCw className="h-5 w-5 text-blue-500" />;
-      case 'user_comment':
-        return <MessageSquare className="h-5 w-5 text-gray-500" />;
-      case 'revision_request':
-        return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
-      case 'decision_made':
-        if (payload?.decision === 'pass') {
-          return <CheckCircle className="h-5 w-5 text-green-500" />;
-        }
-        return <XCircle className="h-5 w-5 text-red-500" />;
-      default:
-        return <FileText className="h-5 w-5 text-gray-500" />;
-    }
-  };
-
-  const getEventDescription = (event: ProjectEvent) => {
-    const userName = event.user_role === 'admin' ? 'Admin' : 'User';
-    switch (event.event_type) {
-      case 'project_created':
-        return `Project was created by ${event.user_email}.`;
-      case 'project_submitted':
-        return `Project was submitted for review by ${event.user_email}.`;
-      case 'project_resubmitted':
-        return `Project was re-submitted for review by ${event.user_email}.`;
-      case 'user_comment':
-        return `${userName} commented: "${event.payload?.comment}"`;
-      case 'revision_request':
-        return `Admin requested a revision: "${event.payload?.comment}"`;
-      case 'decision_made':
-        if (event.payload?.decision === 'pass') {
-          return `Admin approved the project.`;
-        }
-        return `Admin rejected the project.`;
-      default:
-        return `An event of type ${event.event_type} occurred.`;
-    }
-  };
-
-  const EventItem = ({ event }: { event: ProjectEvent }) => {
-    const isAuthor = user?.id === event.user_id;
-
-    return (
-      <div className="flex items-start gap-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-          {getEventIcon(event.event_type, event.payload)}
-        </div>
-        <div className="flex-1">
-          <p className="text-sm font-medium">{getEventDescription(event)}</p>
-          <p className="text-xs text-muted-foreground">
-            {format(new Date(event.created_at), "MMM d, yyyy 'at' h:mm a")}
-          </p>
-        </div>
-      </div>
-    );
-  };
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <History className="h-5 w-5" />
-          Project History
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
-          {events && events.length > 0 ? (
-            [...events]
-              .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-              .map(event => <EventItem key={event.id} event={event} />)
-          ) : (
-            <p className="text-muted-foreground text-center py-8">No history recorded for this project yet.</p>
+  switch (event_type) {
+    case 'project_created':
+      return <><span className="font-semibold">{userIdentifier}</span> created the project.</>;
+    case 'project_submitted':
+      return <><span className="font-semibold">{userIdentifier}</span> submitted the project for review.</>;
+    case 'revision_request':
+      return (
+        <div>
+          <p><span className="font-semibold">{userIdentifier}</span> requested a revision.</p>
+          {payload?.comment && (
+            <p className="mt-2 text-sm text-muted-foreground pl-4 border-l-2 border-slate-200 dark:border-slate-700">
+              "{payload.comment}"
+            </p>
           )}
         </div>
-      </CardContent>
-    </Card>
+      );
+    case 'user_comment':
+      return (
+        <div>
+          <p><span className="font-semibold">{userIdentifier}</span> left a comment.</p>
+          {payload?.comment && (
+            <p className="mt-2 text-sm text-muted-foreground pl-4 border-l-2 border-slate-200 dark:border-slate-700">
+              "{payload.comment}"
+            </p>
+          )}
+        </div>
+      );
+    case 'project_approved':
+      return (
+        <div>
+          <p><span className="font-semibold">{userIdentifier}</span> approved the project.</p>
+          {payload?.comment && payload.comment.trim() !== '' && (
+            <p className="mt-2 text-sm text-muted-foreground pl-4 border-l-2 border-slate-200 dark:border-slate-700">
+              "{payload.comment}"
+            </p>
+          )}
+        </div>
+      );
+    case 'project_rejected':
+      return (
+        <div>
+          <p><span className="font-semibold">{userIdentifier}</span> rejected the project.</p>
+          {payload?.comment && payload.comment.trim() !== '' && (
+            <p className="mt-2 text-sm text-muted-foreground pl-4 border-l-2 border-slate-200 dark:border-slate-700">
+              "{payload.comment}"
+            </p>
+          )}
+        </div>
+      );
+    case 'project_edited':
+      return <><span className="font-semibold">{userIdentifier}</span> edited the project details.</>;
+    case 'file_uploaded':
+      return <><span className="font-semibold">{userIdentifier}</span> uploaded a file: <span className="font-medium">{payload?.fileName}</span>.</>;
+    case 'file_deleted':
+      return <><span className="font-semibold">{userIdentifier}</span> deleted a file: <span className="font-medium">{payload?.fileName}</span>.</>;
+    default:
+      return `Event: ${event_type}`;
+  }
+};
+
+const ProjectHistory = ({ events }: { events: any[] }) => {
+  if (!events || events.length === 0) {
+    return (
+      <div className="text-center py-12 text-muted-foreground">
+        <p>No history recorded for this project yet.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      {events.map((event) => (
+        <div key={event.id} className="flex items-start gap-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+            {getEventIcon(event.event_type)}
+          </div>
+          <div className="flex-1 pt-1">
+            <div className="text-sm text-foreground">
+              {getEventContent(event)}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {new Date(event.created_at).toLocaleString()}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 };
 

@@ -29,6 +29,7 @@ import ComplianceDetails from '@/components/compliance/ComplianceDetails';
 import { RevisionRequestModal } from '@/components/admin/RevisionRequestModal';
 import ProjectTimeline from '@/components/ProjectTimeline';
 import ProjectHistory from '@/components/ProjectHistory';
+import { ActionCommentModal } from '@/components/admin/ActionCommentModal';
 
 const DetailItem = ({ label, value, unit = '' }: { label: string; value: any; unit?: string }) => {
   if (value === null || value === undefined || value === '') return null;
@@ -347,7 +348,15 @@ const ProjectDetail = () => {
     }
   };
 
-  const handleUpdateStatus = async (newStatus: 'pass' | 'fail' | 'needs_revision') => {
+  const handleApprove = (comment: string) => {
+    handleUpdateStatus('pass', comment);
+  };
+
+  const handleReject = (comment: string) => {
+    handleUpdateStatus('fail', comment);
+  };
+
+  const handleUpdateStatus = async (newStatus: 'pass' | 'fail' | 'needs_revision', comment?: string) => {
     if (!project || !user || !isAdmin) return;
 
     try {
@@ -365,11 +374,12 @@ const ProjectDetail = () => {
 
       // Log decision event for pass or fail
       if (newStatus === 'pass' || newStatus === 'fail') {
+        const event_type = newStatus === 'pass' ? 'project_approved' : 'project_rejected';
         await supabase.from('project_events').insert({
           project_id: project.id,
           user_id: user.id,
-          event_type: 'decision_made',
-          payload: { decision: newStatus },
+          event_type: event_type,
+          payload: { comment: comment || '' },
         });
       }
 
@@ -790,14 +800,21 @@ const ProjectDetail = () => {
               
               {isAdmin && project.compliance_status === 'submitted' && (
                 <div className="flex items-center gap-2">
-                  <Button 
-                    onClick={() => handleUpdateStatus('pass')} 
-                    variant="default"
-                    className="bg-green-600 hover:bg-green-700 text-white animate-fade-in"
+                  <ActionCommentModal
+                    onConfirm={handleApprove}
+                    title="Approve Project"
+                    description="Add an optional comment to your approval. This will be visible to the user."
+                    actionName="Approve"
                   >
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Approve
-                  </Button>
+                    <Button 
+                      variant="default"
+                      className="bg-green-600 hover:bg-green-700 text-white animate-fade-in"
+                    >
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Approve
+                    </Button>
+                  </ActionCommentModal>
+
                   <RevisionRequestModal onConfirm={handleRequestRevision}>
                     <Button 
                       variant="outline"
@@ -807,14 +824,24 @@ const ProjectDetail = () => {
                       Request Revision
                     </Button>
                   </RevisionRequestModal>
-                  <Button 
-                    onClick={() => handleUpdateStatus('fail')} 
-                    variant="destructive"
-                    className="animate-fade-in"
+
+                  <ActionCommentModal
+                    onConfirm={handleReject}
+                    title="Reject Project"
+                    description="Please provide a reason for rejecting this project. This will be visible to the user."
+                    actionName="Reject"
+                    actionButtonVariant="destructive"
+                    commentLabel="Reason for Rejection (Required)"
+                    commentPlaceholder="e.g., 'The provided building plans do not match the specifications entered.'"
                   >
-                    <XCircle className="h-4 w-4 mr-2" />
-                    Reject
-                  </Button>
+                    <Button 
+                      variant="destructive"
+                      className="animate-fade-in"
+                    >
+                      <XCircle className="h-4 w-4 mr-2" />
+                      Reject
+                    </Button>
+                  </ActionCommentModal>
                 </div>
               )}
               
