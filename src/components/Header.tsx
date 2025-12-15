@@ -96,11 +96,143 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
           </Link>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
+          {!isLoginVariant && (
+            <>
+              <div className="hidden md:flex items-center gap-4">
+                <nav className="flex items-center gap-1">
+                  {isAdmin && (
+                    <NavigationMenu>
+                      <NavigationMenuList>
+                        <NavigationMenuItem>
+                          <NavigationMenuTrigger
+                            className={cn(
+                              "group inline-flex h-auto w-max items-center justify-center rounded-md bg-transparent px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50",
+                              isLinkActive("/admin") || isLinkActive("/municipal-dashboard")
+                                ? "bg-primary/10 text-primary"
+                                : "text-primary dark:text-primary hover:bg-accent hover:text-primary/80"
+                            )}
+                          >
+                            <Shield className="h-4 w-4 mr-2" />
+                            Admin
+                          </NavigationMenuTrigger>
+                          <NavigationMenuContent>
+                            <ul className="grid w-[200px] gap-1 p-2">
+                              <li>
+                                <NavigationMenuLink asChild>
+                                  <Link
+                                    to="/admin"
+                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                  >
+                                    <div className="text-sm font-medium leading-none">Admin Dashboard</div>
+                                  </Link>
+                                </NavigationMenuLink>
+                              </li>
+                              <li>
+                                <NavigationMenuLink asChild>
+                                  <Link
+                                    to="/municipal-dashboard"
+                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                  >
+                                    <div className="text-sm font-medium leading-none">Municipal Dashboard</div>
+                                  </Link>
+                                </NavigationMenuLink>
+                              </li>
+                            </ul>
+                          </NavigationMenuContent>
+                        </NavigationMenuItem>
+                      </NavigationMenuList>
+                    </NavigationMenu>
+                  )}
+                  {mainNavLinks.map(link => (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      className={cn(
+                        "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                        isLinkActive(link.path.split('?')[0])
+                          ? "bg-primary/10 text-primary"
+                          : "text-slate-500 dark:text-slate-400 hover:bg-accent hover:text-accent-foreground"
+                      )}
+                    >
+                      {link.icon}
+                      {link.label}
+                    </Link>
+                  ))}
+                </nav>
+
+                <span className="h-4 w-px bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span>
+
+                <nav className="flex items-center gap-4 text-xs font-medium">
+                  {secondaryNavLinks.map((link, index) => (
+                    <React.Fragment key={link.path}>
+                      <Link
+                        to={link.path}
+                        className={cn(
+                          "transition-colors",
+                          isLinkActive(link.path)
+                            ? "text-primary"
+                            : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-50"
+                        )}
+                      >
+                        {link.label}
+                      </Link>
+                      {index < secondaryNavLinks.length - 1 && (
+                        <span className="h-4 w-px bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </nav>
+              </div>
+            </>
+          )}
+
           <NotificationBell />
           <ThemeToggle />
-          {showSignOut && (
-            <Button variant="outline" onClick={onSignOut}>Sign Out</Button>
+
+          {!isLoginVariant && showSignOut && user && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full bg-white border-2 border-[#d8dee3] p-0 hover:bg-slate-100">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-transparent text-slate-900">{getInitials(user.email || '')}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {userName ? `Welcome, ${userName}!` : 'Welcome!'}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleAccountClick} className="cursor-pointer">
+                  <UserCircle className="mr-2 h-4 w-4" />
+                  <span>Account Details</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/my-feedback')} className="cursor-pointer flex justify-between items-center">
+                  <div className="flex items-center">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    <span>My Feedback</span>
+                  </div>
+                  {unreadCount > 0 && (
+                    <span className="h-5 w-5 bg-primary text-primary-foreground text-xs font-bold rounded-full flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={onSignOut} className="cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </div>
