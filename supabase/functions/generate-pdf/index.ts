@@ -85,9 +85,8 @@ const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
 
     // Compute text block height (project name + date + spacing)
     const nameHeight = boldFont.heightAtSize(nameFontSize);
-    const dateHeight = font.heightAtSize(dateFontSize);
     const textSpacing = 12; // space between name and date
-    const textBlockHeight = nameHeight + textSpacing; // date sits below; we account spacing only
+    const textBlockHeight = nameHeight + textSpacing;
 
     // Header row height and center
     const headerRowHeight = Math.max(logoHeightUsed || 0, textBlockHeight);
@@ -102,10 +101,10 @@ const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
         width: logoWidthUsed,
         height: logoHeightUsed,
       });
-      headerLeftX += logoWidthUsed + 12; // spacing after logo
+      headerLeftX += logoWidthUsed + 12;
     }
 
-    // Draw project name centered vertically (using text baseline at center - half text height)
+    // Project name centered vertically
     const projectNameText = sanitize(project.project_name || 'Unnamed Project');
     const projectNameWidth = boldFont.widthOfTextAtSize(projectNameText, nameFontSize);
     const projectNameBaselineY = headerCenterY - (nameHeight / 2);
@@ -116,7 +115,7 @@ const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
       size: nameFontSize,
     });
 
-    // Draw date below the project name with consistent spacing
+    // Date below the project name
     const dateText = sanitize(new Date().toLocaleDateString());
     const dateWidth = font.widthOfTextAtSize(dateText, dateFontSize);
     const dateBaselineY = projectNameBaselineY - textSpacing;
@@ -148,13 +147,13 @@ const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
 
   // Section spacing adjustments:
   // - Increase top space before section titles
-  // - Reduce gap between title and separator line
-  // - Reduce space after the separator line
+  // - Keep tight gap between title and separator line
+  // - Increase space after line to create more room before content
   const addSectionTitle = (title: string) => {
     const safeTitle = sanitize(title);
-    const topSpaceBeforeTitle = 18; // increased top padding before section title
-    const gapBetweenTitleAndLine = 3; // tighter gap between title and line
-    const spaceAfterLine = 6; // smaller space after line before content
+    const topSpaceBeforeTitle = 18; // padding before section title
+    const gapBetweenTitleAndLine = 3; // tight gap
+    const spaceAfterLine = 16; // increased space before content (was 6)
 
     addSpacer(topSpaceBeforeTitle);
     checkPageBreak(sectionTitleSize + gapBetweenTitleAndLine + spaceAfterLine);
