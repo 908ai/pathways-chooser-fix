@@ -1,4 +1,6 @@
-import { File, MessageSquare, AlertTriangle, CheckCircle, XCircle, Edit, PlusCircle, Trash2 } from 'lucide-react';
+import { File, MessageSquare, AlertTriangle, CheckCircle, XCircle, Edit, PlusCircle, Trash2, Send } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { History } from 'lucide-react';
 
 const getEventIcon = (eventType: string) => {
   const commonClasses = "h-5 w-5";
@@ -6,7 +8,9 @@ const getEventIcon = (eventType: string) => {
     case 'project_created':
       return <PlusCircle className={`${commonClasses} text-blue-500`} />;
     case 'project_submitted':
-      return <File className={`${commonClasses} text-blue-500`} />;
+      return <Send className={`${commonClasses} text-blue-500`} />;
+    case 'project_resubmitted':
+      return <Send className={`${commonClasses} text-blue-500`} />;
     case 'revision_request':
       return <AlertTriangle className={`${commonClasses} text-yellow-500`} />;
     case 'user_comment':
@@ -35,6 +39,8 @@ const getEventContent = (event: any) => {
       return <><span className="font-semibold">{userIdentifier}</span> created the project.</>;
     case 'project_submitted':
       return <><span className="font-semibold">{userIdentifier}</span> submitted the project for review.</>;
+    case 'project_resubmitted':
+      return <><span className="font-semibold">{userIdentifier}</span> re-submitted the project for review.</>;
     case 'revision_request':
       return (
         <div>
@@ -93,30 +99,50 @@ const getEventContent = (event: any) => {
 const ProjectHistory = ({ events }: { events: any[] }) => {
   if (!events || events.length === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
-        <p>No history recorded for this project yet.</p>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <History className="h-5 w-5" />
+            Project History
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-12 text-muted-foreground">
+            <p>No history recorded for this project yet.</p>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-8">
-      {events.map((event) => (
-        <div key={event.id} className="flex items-start gap-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-            {getEventIcon(event.event_type)}
-          </div>
-          <div className="flex-1 pt-1">
-            <div className="text-sm text-foreground">
-              {getEventContent(event)}
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <History className="h-5 w-5" />
+          Project History
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-8">
+          {events.map((event) => (
+            <div key={event.id} className="flex items-start gap-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+                {getEventIcon(event.event_type)}
+              </div>
+              <div className="flex-1 pt-1">
+                <div className="text-sm text-foreground">
+                  {getEventContent(event)}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {new Date(event.created_at).toLocaleString()}
+                </p>
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {new Date(event.created_at).toLocaleString()}
-            </p>
-          </div>
+          ))}
         </div>
-      ))}
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
