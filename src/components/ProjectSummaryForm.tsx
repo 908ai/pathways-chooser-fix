@@ -219,14 +219,41 @@ const ProjectSummaryForm = ({
       };
 
       let savedProject;
+      let eventType: 'project_submitted' | 'project_resubmitted' | null = null;
+
       if (editingProjectId) {
+        // Fetch current status to determine event type
+        const { data: currentProject, error: fetchError } = await supabase
+          .from('project_summaries')
+          .select('compliance_status')
+          .eq('id', editingProjectId)
+          .single();
+
+        if (fetchError) throw fetchError;
+
+        if (currentProject.compliance_status === 'needs_revision') {
+          eventType = 'project_resubmitted';
+        } else {
+          eventType = 'project_submitted';
+        }
+
         const { data, error } = await supabase.from('project_summaries').update(projectData).eq('id', editingProjectId).select().single();
         if (error) throw error;
         savedProject = data;
       } else {
+        eventType = 'project_submitted';
         const { data, error } = await supabase.from('project_summaries').insert({ ...projectData, user_id: user.id }).select().single();
         if (error) throw error;
         savedProject = data;
+      }
+
+      // Log the event
+      if (eventType) {
+        await supabase.from('project_events').insert({
+          project_id: savedProject.id,
+          user_id: user.id,
+          event_type: eventType,
+        });
       }
 
       toast({ title: "Project Submitted", description: "Your project has been successfully submitted for review." });

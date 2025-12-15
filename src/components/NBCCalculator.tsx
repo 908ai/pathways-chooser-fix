@@ -268,6 +268,19 @@ const NBCCalculator = () => {
 
       const newId = data.id;
       setProjectId(newId);
+
+      // Log the project creation event
+      const { error: eventError } = await supabase.from('project_events').insert({
+        project_id: newId,
+        user_id: user.id,
+        event_type: 'project_created',
+      });
+
+      if (eventError) {
+        console.error('Error logging project creation event:', eventError);
+        // Non-critical, so we don't throw. The user can still proceed.
+      }
+
       toast({ title: "Draft Project Created", description: "You can now upload files." });
       return newId;
     } catch (error: any) {

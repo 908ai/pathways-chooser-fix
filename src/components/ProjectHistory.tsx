@@ -14,6 +14,7 @@ import {
   Send,
   Shield,
   XCircle,
+  RefreshCw,
 } from 'lucide-react';
 
 interface ProjectEvent {
@@ -24,6 +25,7 @@ interface ProjectEvent {
     comment?: string;
     status?: string;
     old_status?: string;
+    decision?: 'pass' | 'fail';
   };
   user_id: string;
   user_email: string;
@@ -41,21 +43,22 @@ const ProjectHistory = ({ events }: ProjectHistoryProps) => {
     return email ? email.substring(0, 2).toUpperCase() : 'U';
   };
 
-  const getEventIcon = (eventType: string) => {
+  const getEventIcon = (eventType: string, payload: any) => {
     switch (eventType) {
       case 'project_created':
         return <FilePlus className="h-5 w-5 text-blue-500" />;
       case 'project_submitted':
         return <Send className="h-5 w-5 text-purple-500" />;
+      case 'project_resubmitted':
+        return <RefreshCw className="h-5 w-5 text-blue-500" />;
       case 'user_comment':
         return <MessageSquare className="h-5 w-5 text-gray-500" />;
       case 'revision_request':
         return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
-      case 'status_change':
-        return <History className="h-5 w-5 text-gray-500" />;
-      case 'pass':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'fail':
+      case 'decision_made':
+        if (payload.decision === 'pass') {
+          return <CheckCircle className="h-5 w-5 text-green-500" />;
+        }
         return <XCircle className="h-5 w-5 text-red-500" />;
       default:
         return <FileText className="h-5 w-5 text-gray-500" />;
@@ -66,18 +69,19 @@ const ProjectHistory = ({ events }: ProjectHistoryProps) => {
     const userName = event.user_role === 'admin' ? 'Admin' : 'User';
     switch (event.event_type) {
       case 'project_created':
-        return `${userName} created the project.`;
+        return `Project was created by ${event.user_email}.`;
       case 'project_submitted':
-        return `${userName} submitted the project for review.`;
+        return `Project was submitted for review by ${event.user_email}.`;
+      case 'project_resubmitted':
+        return `Project was re-submitted for review by ${event.user_email}.`;
       case 'user_comment':
         return `${userName} commented: "${event.payload.comment}"`;
       case 'revision_request':
         return `Admin requested a revision: "${event.payload.comment}"`;
-      case 'status_change':
-        return `Admin changed status from ${event.payload.old_status} to ${event.payload.status}.`;
-       case 'pass':
-        return `Admin approved the project.`;
-      case 'fail':
+      case 'decision_made':
+        if (event.payload.decision === 'pass') {
+          return `Admin approved the project.`;
+        }
         return `Admin rejected the project.`;
       default:
         return `An event of type ${event.event_type} occurred.`;
@@ -90,12 +94,12 @@ const ProjectHistory = ({ events }: ProjectHistoryProps) => {
     return (
       <div className="flex items-start gap-4">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-          {getEventIcon(event.event_type)}
+          {getEventIcon(event.event_type, event.payload)}
         </div>
         <div className="flex-1">
           <p className="text-sm font-medium">{getEventDescription(event)}</p>
           <p className="text-xs text-muted-foreground">
-            {format(new Date(event.created_at), "MMM d, yyyy 'at' h:mm a")} by {event.user_email}
+            {format(new Date(event.created_at), "MMM d, yyyy 'at' h:mm a")}
           </p>
         </div>
       </div>

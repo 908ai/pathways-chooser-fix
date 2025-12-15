@@ -363,8 +363,19 @@ const ProjectDetail = () => {
 
       if (error) throw error;
 
+      // Log decision event for pass or fail
+      if (newStatus === 'pass' || newStatus === 'fail') {
+        await supabase.from('project_events').insert({
+          project_id: project.id,
+          user_id: user.id,
+          event_type: 'decision_made',
+          payload: { decision: newStatus },
+        });
+      }
+
       setProject(data);
       setEditedProject({ ...data });
+      fetchProjectEvents(); // Refetch events to show the new status change
       
       let toastTitle = "Project Status Updated";
       let toastDescription = `Project has been marked as ${newStatus.replace('_', ' ')}.`;
