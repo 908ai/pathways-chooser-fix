@@ -737,6 +737,13 @@ export type Database = {
           user_role: Database["public"]["Enums"]["app_role"]
         }[]
       }
+      get_unread_notifications: {
+        Args: Record<string, never>
+        Returns: {
+          unread_revisions: number
+          unread_feedback: number
+        }[]
+      }
       get_user_role: {
         Args: {
           _user_id: string
