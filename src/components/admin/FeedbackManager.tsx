@@ -22,6 +22,7 @@ import {
 import FeedbackConversation from './FeedbackConversation';
 import { useToast } from '@/hooks/use-toast';
 import { Database } from '@/integrations/supabase/types';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 type Feedback = Database['public']['Functions']['get_feedback_with_user_details']['Returns'][number];
 
@@ -103,60 +104,65 @@ export const FeedbackManager = () => {
   if (error) return <div>Error: {error.message}</div>;
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Feedback Management</h2>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Date</TableHead>
-            <TableHead>User</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Feedback</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {feedback?.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell>{new Date(item.created_at).toLocaleDateString()}</TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  {(item.unread_user_responses_count > 0 || item.status === 'New') && (
-                    <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />
-                  )}
-                  <span>{item.user_email}</span>
-                </div>
-              </TableCell>
-              <TableCell>{item.category}</TableCell>
-              <TableCell className="max-w-xs truncate">{item.feedback_text}</TableCell>
-              <TableCell>
-                <Select value={item.status} onValueChange={(value) => handleStatusChange(item.id, value)}>
-                  <SelectTrigger className="w-[120px]">
-                    <SelectValue>
-                      <Badge variant={
-                        item.status === 'New' ? 'default' :
-                        item.status === 'In Progress' ? 'secondary' :
-                        item.status === 'Resolved' ? 'outline' : 'destructive'
-                      }>{item.status}</Badge>
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="New">New</SelectItem>
-                    <SelectItem value="In Progress">In Progress</SelectItem>
-                    <SelectItem value="Resolved">Resolved</SelectItem>
-                    <SelectItem value="Archived">Archived</SelectItem>
-                  </SelectContent>
-                </Select>
-              </TableCell>
-              <TableCell>
-                <Button variant="outline" size="sm" onClick={() => handleViewConversation(item)}>View</Button>
-                <Button variant="destructive" size="sm" className="ml-2" onClick={() => handleDelete(item.id)}>Delete</Button>
-              </TableCell>
+    <Card>
+      <CardHeader>
+        <CardTitle>Feedback Management</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Date</TableHead>
+              <TableHead>User</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Feedback</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {feedback?.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>{new Date(item.created_at).toLocaleDateString()}</TableCell>
+                <TableCell>{item.user_email}</TableCell>
+                <TableCell>{item.category}</TableCell>
+                <TableCell className="max-w-xs truncate">{item.feedback_text}</TableCell>
+                <TableCell>
+                  <Select value={item.status} onValueChange={(value) => handleStatusChange(item.id, value)}>
+                    <SelectTrigger className="w-[120px]">
+                      <SelectValue>
+                        <Badge variant={
+                          item.status === 'New' ? 'default' :
+                          item.status === 'In Progress' ? 'secondary' :
+                          item.status === 'Resolved' ? 'outline' : 'destructive'
+                        }>{item.status}</Badge>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="New">New</SelectItem>
+                      <SelectItem value="In Progress">In Progress</SelectItem>
+                      <SelectItem value="Resolved">Resolved</SelectItem>
+                      <SelectItem value="Archived">Archived</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="relative inline-block">
+                    <Button variant="outline" size="sm" onClick={() => handleViewConversation(item)}>View</Button>
+                    {(item.unread_user_responses_count > 0 || item.status === 'New') && (
+                      <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                      </span>
+                    )}
+                  </div>
+                  <Button variant="destructive" size="sm" className="ml-2" onClick={() => handleDelete(item.id)}>Delete</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-3xl h-[80vh] flex flex-col">
@@ -172,7 +178,7 @@ export const FeedbackManager = () => {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </Card>
   );
 };
 
