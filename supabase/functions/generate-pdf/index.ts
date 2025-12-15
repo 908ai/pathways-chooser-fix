@@ -68,36 +68,47 @@ const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
   const logoImage = logoBytes && logoBytes.length > 0 ? await pdfDoc.embedPng(logoBytes) : null;
 
   const drawHeader = () => {
-    let headerLeftX = margin;
     const headerTopY = pageHeight - margin;
+    const nameFontSize = 10;
+    const dateFontSize = 8;
+
+    // Compute logo dimensions (if present)
     let logoWidthUsed = 0;
     let logoHeightUsed = 0;
-
-    // Draw logo top-aligned to headerTopY
     if (logoImage) {
-      const logoMaxHeight = 40; // px
+      const logoMaxHeight = 40; // target max height
       const { width: lw, height: lh } = logoImage.scale(1);
       const scale = logoMaxHeight / lh;
       logoWidthUsed = lw * scale;
       logoHeightUsed = lh * scale;
+    }
 
+    // Compute text block height (project name + date + spacing)
+    const nameHeight = boldFont.heightAtSize(nameFontSize);
+    const dateHeight = font.heightAtSize(dateFontSize);
+    const textSpacing = 12; // space between name and date
+    const textBlockHeight = nameHeight + textSpacing; // date sits below; we account spacing only
+
+    // Header row height and center
+    const headerRowHeight = Math.max(logoHeightUsed || 0, textBlockHeight);
+    const headerCenterY = headerTopY - headerRowHeight / 2;
+
+    // Draw logo centered vertically on header row
+    let headerLeftX = margin;
+    if (logoImage) {
       page.drawImage(logoImage, {
         x: headerLeftX,
-        y: headerTopY - logoHeightUsed, // top of image aligns with headerTopY
+        y: headerCenterY - (logoHeightUsed / 2),
         width: logoWidthUsed,
         height: logoHeightUsed,
       });
-
       headerLeftX += logoWidthUsed + 12; // spacing after logo
     }
 
-    // Project name: place baseline so the TOP of text aligns with headerTopY (same as logo top)
-    const nameFontSize = 10;
+    // Draw project name centered vertically (using text baseline at center - half text height)
     const projectNameText = sanitize(project.project_name || 'Unnamed Project');
     const projectNameWidth = boldFont.widthOfTextAtSize(projectNameText, nameFontSize);
-    const projectNameTextHeight = boldFont.heightAtSize(nameFontSize); // approximate text box height
-
-    const projectNameBaselineY = headerTopY - projectNameTextHeight;
+    const projectNameBaselineY = headerCenterY - (nameHeight / 2);
     page.drawText(projectNameText, {
       x: pageWidth - margin - projectNameWidth,
       y: projectNameBaselineY,
@@ -105,20 +116,19 @@ const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
       size: nameFontSize,
     });
 
-    // Date below project name with consistent spacing
+    // Draw date below the project name with consistent spacing
     const dateText = sanitize(new Date().toLocaleDateString());
-    const dateWidth = font.widthOfTextAtSize(dateText, 8);
-    const dateBaselineY = projectNameBaselineY - 12; // 12px below project name
+    const dateWidth = font.widthOfTextAtSize(dateText, dateFontSize);
+    const dateBaselineY = projectNameBaselineY - textSpacing;
     page.drawText(dateText, {
       x: pageWidth - margin - dateWidth,
       y: dateBaselineY,
       font,
-      size: 8,
+      size: dateFontSize,
     });
 
-    // Content starts below the tallest header element (logo or project name/text block)
-    const headerBlockHeight = Math.max(logoHeightUsed, projectNameTextHeight + 12); // +12 accounts for date spacing
-    state.y = headerTopY - headerBlockHeight - 12;
+    // Start content below header row
+    state.y = headerTopY - headerRowHeight - 12;
   };
 
   const checkPageBreak = (spaceNeeded: number) => {
@@ -136,18 +146,26 @@ const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
     state.y -= space;
   };
 
+  // Section spacing adjustments:
+  // - Increase top space before section titles
+  // - Reduce gap between title and separator line
+  // - Reduce space after the separator line
   const addSectionTitle = (title: string) => {
     const safeTitle = sanitize(title);
-    addSpacer(12);
-    checkPageBreak(sectionTitleSize + 10);
+    const topSpaceBeforeTitle = 18; // increased top padding before section title
+    const gapBetweenTitleAndLine = 3; // tighter gap between title and line
+    const spaceAfterLine = 6; // smaller space after line before content
+
+    addSpacer(topSpaceBeforeTitle);
+    checkPageBreak(sectionTitleSize + gapBetweenTitleAndLine + spaceAfterLine);
     page.drawText(safeTitle, { x: margin, y: state.y, font: boldFont, size: sectionTitleSize });
-    state.y -= sectionTitleSize + 6;
+    state.y -= (sectionTitleSize + gapBetweenTitleAndLine);
     page.drawLine({
       start: { x: margin, y: state.y },
       end: { x: pageWidth - margin, y: state.y },
       thickness: 0.75,
     });
-    state.y -= 10;
+    state.y -= spaceAfterLine;
   };
 
   const addDetailItem = (label: string, value: any, unit = '') => {
