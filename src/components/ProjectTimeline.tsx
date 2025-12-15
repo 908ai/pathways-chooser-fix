@@ -64,9 +64,28 @@ const ProjectTimeline = ({ projectId, projectOwnerId }: ProjectTimelineProps) =>
 
     const subscription = supabase
       .channel(`project_events:${projectId}`)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'project_events', filter: `project_id=eq.${projectId}` }, (payload) => {
-        // This is a bit tricky as we need user details. Refetching is simplest.
-        fetchEvents();
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'project_events', filter: `project_id=eq.${projectId}` }, async (payload) => {
+        const newEvent = payload.new as ProjectEvent;
+
+        // Fetch user details for the new event
+        const { data: userDetails, error: userError } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', newEvent.user_id)
+          .single();
+        
+        const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(newEvent.user_id);
+
+        if (userError && userError.code !== 'PGRST116') console.error("Error fetching user role for new event", userError);
+        if (authError) console.error("Error fetching user for new event", authError);
+
+        const fullNewEvent: ProjectEvent = {
+          ...newEvent,
+          user_email: authUser?.user?.email || '',
+          user_role: userDetails?.role as 'admin' | 'user' || 'user',
+        };
+        
+        setEvents((prevEvents) => [...prevEvents, fullNewEvent]);
       })
       .subscribe();
 
