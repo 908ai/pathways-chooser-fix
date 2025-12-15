@@ -14,46 +14,38 @@ export type Database = {
           address: string | null
           company_name: string
           contact_email: string | null
-          created_at: string | null
+          created_at: string
           id: string
           phone: string | null
-          updated_at: string | null
-          user_id: string | null
+          updated_at: string
+          user_id: string
         }
         Insert: {
           address?: string | null
           company_name: string
           contact_email?: string | null
-          created_at?: string | null
+          created_at?: string
           id?: string
           phone?: string | null
-          updated_at?: string | null
-          user_id?: string | null
+          updated_at?: string
+          user_id: string
         }
         Update: {
           address?: string | null
           company_name?: string
           contact_email?: string | null
-          created_at?: string | null
+          created_at?: string
           id?: string
           phone?: string | null
-          updated_at?: string | null
-          user_id?: string | null
+          updated_at?: string
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "companies_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       feedback: {
         Row: {
           category: string
-          created_at: string | null
+          created_at: string
           feedback_text: string
           id: string
           page_url: string | null
@@ -62,16 +54,16 @@ export type Database = {
         }
         Insert: {
           category: string
-          created_at?: string | null
+          created_at?: string
           feedback_text: string
           id?: string
           page_url?: string | null
           status?: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           category?: string
-          created_at?: string | null
+          created_at?: string
           feedback_text?: string
           id?: string
           page_url?: string | null
@@ -90,26 +82,26 @@ export type Database = {
       }
       feedback_responses: {
         Row: {
-          created_at: string | null
+          created_at: string
           feedback_id: string
           id: string
-          is_read: boolean | null
+          is_read: boolean
           response_text: string
           user_id: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           feedback_id: string
           id?: string
-          is_read?: boolean | null
+          is_read?: boolean
           response_text: string
           user_id: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           feedback_id?: string
           id?: string
-          is_read?: boolean | null
+          is_read?: boolean
           response_text?: string
           user_id?: string
         }
@@ -132,31 +124,31 @@ export type Database = {
       }
       file_requests: {
         Row: {
-          created_at: string | null
+          created_at: string
           file_request_url: string
           folder_name: string
           folder_path: string
           id: string
-          project_id: string | null
-          updated_at: string | null
+          project_id: string
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           file_request_url: string
           folder_name: string
           folder_path: string
           id?: string
-          project_id?: string | null
-          updated_at?: string | null
+          project_id: string
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           file_request_url?: string
           folder_name?: string
           folder_path?: string
           id?: string
-          project_id?: string | null
-          updated_at?: string | null
+          project_id?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -168,49 +160,33 @@ export type Database = {
           },
         ]
       }
-      project_events: {
+      profiles: {
         Row: {
-          created_at: string | null
-          event_type: string
           id: string
-          is_read: boolean | null
-          payload: Json | null
-          project_id: string
-          user_id: string
+          profile_type: string | null
+          updated_at: string | null
+          can_access_providers: boolean
         }
         Insert: {
-          created_at?: string | null
-          event_type: string
-          id?: string
-          is_read?: boolean | null
-          payload?: Json | null
-          project_id: string
-          user_id: string
+          id: string
+          profile_type?: string | null
+          updated_at?: string | null
+          can_access_providers?: boolean
         }
         Update: {
-          created_at?: string | null
-          event_type?: string
           id?: string
-          is_read?: boolean | null
-          payload?: Json | null
-          project_id?: string
-          user_id?: string
+          profile_type?: string | null
+          updated_at?: string | null
+          can_access_providers?: boolean
         }
         Relationships: [
           {
-            foreignKeyName: "project_events_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "project_summaries"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "project_events_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       project_summaries: {
@@ -224,104 +200,54 @@ export type Database = {
           below_grade_rsi: number | null
           building_type: string | null
           building_volume: number | null
-          cathedral_flat_other_type: string | null
-          cathedral_flat_rsi: string | null
-          ceilings_attic_other_type: string | null
           city: string | null
           climate_zone: string | null
-          comments: string | null
           compliance_status: string | null
           cooling_efficiency: number | null
-          cooling_make_model: string | null
           cooling_points: number | null
-          cooling_seer: string | null
           cooling_system_type: string | null
-          created_at: string | null
-          energuide_pathway: string | null
+          created_at: string
           energy_insights: Json | null
           floor_area: number | null
           floor_points: number | null
           floor_rsi: number | null
-          floors_garage_rsi: number | null
-          floors_slabs_selected: string[] | null
-          front_door_orientation: string | null
-          has_cathedral_or_flat_roof: string | null
-          has_dwhr: string | null
-          has_f280_calculation: string | null
-          has_in_floor_heat: string | null
-          has_murb_multiple_heating: boolean | null
-          has_murb_multiple_water_heaters: boolean | null
-          has_secondary_heating: string | null
-          has_secondary_hrv: string | null
-          has_secondary_water_heater: string | null
-          has_skylights: string | null
-          heated_floors_rsi: number | null
           heating_efficiency: string | null
-          heating_make_model: string | null
           heating_points: number | null
           heating_system_type: string | null
           hrv_erv_efficiency: number | null
           hrv_erv_points: number | null
           hrv_erv_type: string | null
-          hrv_make_model: string | null
           id: string
-          in_floor_heat_rsi: number | null
-          indirect_tank: string | null
-          indirect_tank_size: string | null
-          interested_certifications: string[] | null
-          latitude: number | null
           location: string | null
-          longitude: number | null
           mid_construction_blower_door_planned: boolean | null
-          murb_second_heating_efficiency: string | null
-          murb_second_heating_type: string | null
-          murb_second_indirect_tank: string | null
-          murb_second_indirect_tank_size: string | null
-          murb_second_water_heater: string | null
-          murb_second_water_heater_type: string | null
           occupancy_class: string | null
-          other_heating_efficiency: string | null
-          other_heating_make_model: string | null
-          other_secondary_heating_efficiency: string | null
-          other_water_heater_type: string | null
           performance_compliance_result: string | null
           postal_code: string | null
           project_name: string
           province: string | null
           recommendations: string[] | null
-          secondary_heating_efficiency: string | null
-          secondary_heating_make_model: string | null
-          secondary_heating_system_type: string | null
-          secondary_hrv_efficiency: string | null
-          secondary_indirect_tank: string | null
-          secondary_indirect_tank_size: string | null
-          secondary_water_heater: string | null
-          secondary_water_heater_same_as_main: string | null
-          secondary_water_heater_type: string | null
           selected_pathway: string | null
-          skylight_u_value: string | null
-          slab_insulation_type: string | null
-          slab_insulation_value: number | null
-          slab_on_grade_integral_footing_rsi: number | null
-          slab_on_grade_rsi: number | null
           street_address: string | null
           total_points: number | null
-          unheated_floor_above_frost_rsi: number | null
-          unheated_floor_below_frost_rsi: string | null
           unit_number: string | null
-          updated_at: string | null
+          updated_at: string
           upgrade_costs: number | null
           uploaded_files: Json | null
-          user_id: string | null
+          user_id: string
           volume_points: number | null
           wall_points: number | null
           wall_rsi: number | null
-          water_heater_make_model: string | null
           water_heating_efficiency: number | null
           water_heating_points: number | null
           water_heating_type: string | null
           window_points: number | null
           window_u_value: number | null
+          secondary_heating_system_type: string | null
+          secondary_heating_efficiency: string | null
+          latitude: number | null
+          longitude: number | null
+          energuide_rating: number | null
+          window_to_wall_ratio: number | null
         }
         Insert: {
           airtightness_al?: number | null
@@ -333,104 +259,54 @@ export type Database = {
           below_grade_rsi?: number | null
           building_type?: string | null
           building_volume?: number | null
-          cathedral_flat_other_type?: string | null
-          cathedral_flat_rsi?: string | null
-          ceilings_attic_other_type?: string | null
           city?: string | null
           climate_zone?: string | null
-          comments?: string | null
           compliance_status?: string | null
           cooling_efficiency?: number | null
-          cooling_make_model?: string | null
           cooling_points?: number | null
-          cooling_seer?: string | null
           cooling_system_type?: string | null
-          created_at?: string | null
-          energuide_pathway?: string | null
+          created_at?: string
           energy_insights?: Json | null
           floor_area?: number | null
           floor_points?: number | null
           floor_rsi?: number | null
-          floors_garage_rsi?: number | null
-          floors_slabs_selected?: string[] | null
-          front_door_orientation?: string | null
-          has_cathedral_or_flat_roof?: string | null
-          has_dwhr?: string | null
-          has_f280_calculation?: string | null
-          has_in_floor_heat?: string | null
-          has_murb_multiple_heating?: boolean | null
-          has_murb_multiple_water_heaters?: boolean | null
-          has_secondary_heating?: string | null
-          has_secondary_hrv?: string | null
-          has_secondary_water_heater?: string | null
-          has_skylights?: string | null
-          heated_floors_rsi?: number | null
           heating_efficiency?: string | null
-          heating_make_model?: string | null
           heating_points?: number | null
           heating_system_type?: string | null
           hrv_erv_efficiency?: number | null
           hrv_erv_points?: number | null
           hrv_erv_type?: string | null
-          hrv_make_model?: string | null
           id?: string
-          in_floor_heat_rsi?: number | null
-          indirect_tank?: string | null
-          indirect_tank_size?: string | null
-          interested_certifications?: string[] | null
-          latitude?: number | null
           location?: string | null
-          longitude?: number | null
           mid_construction_blower_door_planned?: boolean | null
-          murb_second_heating_efficiency?: string | null
-          murb_second_heating_type?: string | null
-          murb_second_indirect_tank?: string | null
-          murb_second_indirect_tank_size?: string | null
-          murb_second_water_heater?: string | null
-          murb_second_water_heater_type?: string | null
           occupancy_class?: string | null
-          other_heating_efficiency?: string | null
-          other_heating_make_model?: string | null
-          other_secondary_heating_efficiency?: string | null
-          other_water_heater_type?: string | null
           performance_compliance_result?: string | null
           postal_code?: string | null
           project_name: string
           province?: string | null
           recommendations?: string[] | null
-          secondary_heating_efficiency?: string | null
-          secondary_heating_make_model?: string | null
-          secondary_heating_system_type?: string | null
-          secondary_hrv_efficiency?: string | null
-          secondary_indirect_tank?: string | null
-          secondary_indirect_tank_size?: string | null
-          secondary_water_heater?: string | null
-          secondary_water_heater_same_as_main?: string | null
-          secondary_water_heater_type?: string | null
           selected_pathway?: string | null
-          skylight_u_value?: string | null
-          slab_insulation_type?: string | null
-          slab_insulation_value?: number | null
-          slab_on_grade_integral_footing_rsi?: number | null
-          slab_on_grade_rsi?: number | null
           street_address?: string | null
           total_points?: number | null
-          unheated_floor_above_frost_rsi?: number | null
-          unheated_floor_below_frost_rsi?: string | null
           unit_number?: string | null
-          updated_at?: string | null
+          updated_at?: string
           upgrade_costs?: number | null
           uploaded_files?: Json | null
-          user_id?: string | null
+          user_id: string
           volume_points?: number | null
           wall_points?: number | null
           wall_rsi?: number | null
-          water_heater_make_model?: string | null
           water_heating_efficiency?: number | null
           water_heating_points?: number | null
           water_heating_type?: string | null
           window_points?: number | null
           window_u_value?: number | null
+          secondary_heating_system_type?: string | null
+          secondary_heating_efficiency?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          energuide_rating?: number | null
+          window_to_wall_ratio?: number | null
         }
         Update: {
           airtightness_al?: number | null
@@ -442,177 +318,83 @@ export type Database = {
           below_grade_rsi?: number | null
           building_type?: string | null
           building_volume?: number | null
-          cathedral_flat_other_type?: string | null
-          cathedral_flat_rsi?: string | null
-          ceilings_attic_other_type?: string | null
           city?: string | null
           climate_zone?: string | null
-          comments?: string | null
           compliance_status?: string | null
           cooling_efficiency?: number | null
-          cooling_make_model?: string | null
           cooling_points?: number | null
-          cooling_seer?: string | null
           cooling_system_type?: string | null
-          created_at?: string | null
-          energuide_pathway?: string | null
+          created_at?: string
           energy_insights?: Json | null
           floor_area?: number | null
           floor_points?: number | null
           floor_rsi?: number | null
-          floors_garage_rsi?: number | null
-          floors_slabs_selected?: string[] | null
-          front_door_orientation?: string | null
-          has_cathedral_or_flat_roof?: string | null
-          has_dwhr?: string | null
-          has_f280_calculation?: string | null
-          has_in_floor_heat?: string | null
-          has_murb_multiple_heating?: boolean | null
-          has_murb_multiple_water_heaters?: boolean | null
-          has_secondary_heating?: string | null
-          has_secondary_hrv?: string | null
-          has_secondary_water_heater?: string | null
-          has_skylights?: string | null
-          heated_floors_rsi?: number | null
           heating_efficiency?: string | null
-          heating_make_model?: string | null
           heating_points?: number | null
           heating_system_type?: string | null
           hrv_erv_efficiency?: number | null
           hrv_erv_points?: number | null
           hrv_erv_type?: string | null
-          hrv_make_model?: string | null
           id?: string
-          in_floor_heat_rsi?: number | null
-          indirect_tank?: string | null
-          indirect_tank_size?: string | null
-          interested_certifications?: string[] | null
-          latitude?: number | null
           location?: string | null
-          longitude?: number | null
           mid_construction_blower_door_planned?: boolean | null
-          murb_second_heating_efficiency?: string | null
-          murb_second_heating_type?: string | null
-          murb_second_indirect_tank?: string | null
-          murb_second_indirect_tank_size?: string | null
-          murb_second_water_heater?: string | null
-          murb_second_water_heater_type?: string | null
           occupancy_class?: string | null
-          other_heating_efficiency?: string | null
-          other_heating_make_model?: string | null
-          other_secondary_heating_efficiency?: string | null
-          other_water_heater_type?: string | null
           performance_compliance_result?: string | null
           postal_code?: string | null
           project_name?: string
           province?: string | null
           recommendations?: string[] | null
-          secondary_heating_efficiency?: string | null
-          secondary_heating_make_model?: string | null
-          secondary_heating_system_type?: string | null
-          secondary_hrv_efficiency?: string | null
-          secondary_indirect_tank?: string | null
-          secondary_indirect_tank_size?: string | null
-          secondary_water_heater?: string | null
-          secondary_water_heater_same_as_main?: string | null
-          secondary_water_heater_type?: string | null
           selected_pathway?: string | null
-          skylight_u_value?: string | null
-          slab_insulation_type?: string | null
-          slab_insulation_value?: number | null
-          slab_on_grade_integral_footing_rsi?: number | null
-          slab_on_grade_rsi?: number | null
           street_address?: string | null
           total_points?: number | null
-          unheated_floor_above_frost_rsi?: number | null
-          unheated_floor_below_frost_rsi?: string | null
           unit_number?: string | null
-          updated_at?: string | null
+          updated_at?: string
           upgrade_costs?: number | null
           uploaded_files?: Json | null
-          user_id?: string | null
+          user_id?: string
           volume_points?: number | null
           wall_points?: number | null
           wall_rsi?: number | null
-          water_heater_make_model?: string | null
           water_heating_efficiency?: number | null
           water_heating_points?: number | null
           water_heating_type?: string | null
           window_points?: number | null
           window_u_value?: number | null
+          secondary_heating_system_type?: string | null
+          secondary_heating_efficiency?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          energuide_rating?: number | null
+          window_to_wall_ratio?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "project_summaries_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      profiles: {
-        Row: {
-          can_access_providers: boolean
-          id: string
-          profile_type: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          can_access_providers?: boolean
-          id: string
-          profile_type?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          can_access_providers?: boolean
-          id?: string
-          profile_type?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       provider_access_requests: {
         Row: {
           id: string
-          requested_at: string | null
-          reviewed_at: string | null
-          reviewed_by: string | null
-          status: string
           user_id: string
+          status: string
+          requested_at: string
+          reviewed_by: string | null
+          reviewed_at: string | null
         }
         Insert: {
           id?: string
-          requested_at?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string
           user_id: string
+          status?: string
+          requested_at?: string
+          reviewed_by?: string | null
+          reviewed_at?: string | null
         }
         Update: {
           id?: string
-          requested_at?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string
           user_id?: string
+          status?: string
+          requested_at?: string
+          reviewed_by?: string | null
+          reviewed_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "provider_access_requests_reviewed_by_fkey"
-            columns: ["reviewed_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "provider_access_requests_user_id_fkey"
             columns: ["user_id"]
@@ -620,166 +402,139 @@ export type Database = {
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "provider_access_requests_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
         ]
       }
       service_providers: {
         Row: {
-          contact_email: string | null
-          created_at: string | null
-          description: string | null
           id: string
-          is_approved: boolean
+          created_at: string
+          name: string
+          service_category: string
           location_city: string | null
           location_province: string | null
-          logo_url: string | null
-          name: string
+          contact_email: string | null
           phone_number: string | null
-          service_category: string
           website: string | null
+          description: string | null
+          logo_url: string | null
+          is_approved: boolean
         }
         Insert: {
-          contact_email?: string | null
-          created_at?: string | null
-          description?: string | null
           id?: string
-          is_approved?: boolean
+          created_at?: string
+          name: string
+          service_category: string
           location_city?: string | null
           location_province?: string | null
-          logo_url?: string | null
-          name: string
+          contact_email?: string | null
           phone_number?: string | null
-          service_category: string
           website?: string | null
+          description?: string | null
+          logo_url?: string | null
+          is_approved?: boolean
         }
         Update: {
-          contact_email?: string | null
-          created_at?: string | null
-          description?: string | null
           id?: string
-          is_approved?: boolean
+          created_at?: string
+          name?: string
+          service_category?: string
           location_city?: string | null
           location_province?: string | null
-          logo_url?: string | null
-          name?: string
+          contact_email?: string | null
           phone_number?: string | null
-          service_category?: string
           website?: string | null
+          description?: string | null
+          logo_url?: string | null
+          is_approved?: boolean
         }
         Relationships: []
       }
       user_roles: {
         Row: {
-          created_at: string | null
+          created_at: string
           id: string
-          role: string
-          updated_at: string | null
-          user_id: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at: string
+          user_id: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           id?: string
-          role: string
-          updated_at?: string | null
-          user_id?: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+          user_id: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           id?: string
-          role?: string
-          updated_at?: string | null
-          user_id?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_roles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      get_access_requests_with_user_details: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          id: string
-          user_id: string
-          requested_at: string
-          status: string
-          email: string
-          phone: string
-        }[]
-      }
-      get_all_users_with_details: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          user_id: string
-          email: string
-          last_sign_in_at: string
-          created_at: string
-          banned_until: string
-          role: Database["public"]["Enums"]["app_role"]
-          company_name: string
-          project_count: number
-        }[]
-      }
-      get_feedback_details: {
-        Args: {
-          p_feedback_id: string
-        }
-        Returns: Json
-      }
-      get_feedback_with_user_details: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          id: string
-          created_at: string
-          user_id: string
-          feedback_text: string
-          category: string
-          page_url: string
-          status: string
-          user_email: string
-        }[]
-      }
-      get_project_events_with_details: {
-        Args: {
-          p_project_id: string
-        }
-        Returns: {
-          id: string
-          created_at: string
-          event_type: string
-          payload: Json
-          user_id: string
-          user_email: string
-          user_role: Database["public"]["Enums"]["app_role"]
-        }[]
-      }
       get_user_role: {
         Args: {
           _user_id: string
         }
         Returns: Database["public"]["Enums"]["app_role"]
       }
-      mark_feedback_responses_as_read: {
-        Args: {
-          p_response_ids: string[]
-        }
-        Returns: undefined
+      get_access_requests_with_user_details: {
+        Args: Record<string, never>
+        Returns: {
+          id: string
+          user_id: string
+          requested_at: string
+          status: string
+          email: string | null
+          phone: string | null
+        }[]
+      }
+      get_feedback_with_user_details: {
+        Args: Record<string, never>
+        Returns: {
+          id: string
+          created_at: string
+          user_id: string
+          feedback_text: string
+          category: string
+          page_url: string | null
+          status: string
+          user_email: string | null
+        }[]
+      }
+      get_all_users_with_details: {
+        Args: Record<string, never>
+        Returns: {
+          user_id: string
+          email: string | null
+          last_sign_in_at: string | null
+          created_at: string | null
+          banned_until: string | null
+          role: Database["public"]["Enums"]["app_role"] | null
+          company_name: string | null
+          project_count: number | null
+        }[]
       }
       user_can_access_providers: {
-        Args: Record<PropertyKey, never>
+        Args: Record<string, never>
         Returns: boolean
       }
     }
     Enums: {
-      app_role: "user" | "admin" | "account_manager"
+      app_role: "admin" | "account_manager" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -868,5 +623,3 @@ export type Enums<
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
     : never
-
-export type ProjectSummary = Tables<'project_summaries'>

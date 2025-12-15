@@ -1,40 +1,31 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '@/integrations/supabase/client'
-import { useAuth } from './useAuth'
-import { useUserRole } from './useUserRole'
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from './useAuth';
 
 const fetchUnreadAdminFeedbackCount = async (userId: string | undefined) => {
-  if (!userId) return 0
+  if (!userId) return 0;
 
+  // For admins, "unread" means feedback with the status 'New'.
   const { count, error } = await supabase
-    .from('feedback_responses')
+    .from('feedback')
     .select('*', { count: 'exact', head: true })
-    .eq('is_read', false)
-    .neq('user_id', userId)
+    .eq('status', 'New');
 
   if (error) {
-    console.error('Error fetching unread admin responses count:', error)
-    return 0
+    console.error("Error fetching unread admin feedback count:", error);
+    throw error;
   }
 
-  return count || 0
-}
+  return count || 0;
+};
 
 export const useUnreadAdminFeedback = () => {
-  const { user } = useAuth()
-  const { isAdmin } = useUserRole()
-  const queryClient = useQueryClient()
+  const { user } = useAuth();
 
-  const { data: unreadCount, ...queryInfo } = useQuery({
-    queryKey: ['unreadAdminFeedback', user?.id],
+  return useQuery({
+    queryKey: ['unreadAdminFeedbackCount', user?.id],
     queryFn: () => fetchUnreadAdminFeedbackCount(user?.id),
-    enabled: !!user && isAdmin,
-    refetchInterval: 60000,
-  })
-
-  const invalidate = () => {
-    queryClient.invalidateQueries({ queryKey: ['unreadAdminFeedback', user?.id] })
-  }
-
-  return { unreadCount: unreadCount ?? 0, ...queryInfo, invalidate }
-}
+    enabled: !!user,
+    refetchInterval: 30000, // Refetch every 30 seconds to keep the count fresh
+  });
+};

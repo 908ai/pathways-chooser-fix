@@ -1,60 +1,79 @@
+"use client";
+
 import { useState } from 'react';
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { AlertTriangle } from 'lucide-react';
 
 interface RevisionRequestModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSubmit: (comment: string) => void;
+  onConfirm: (comment: string) => void;
+  children: React.ReactNode;
 }
 
-const RevisionRequestModal = ({ open, onOpenChange, onSubmit }: RevisionRequestModalProps) => {
+export function RevisionRequestModal({ onConfirm, children }: RevisionRequestModalProps) {
+  const [open, setOpen] = useState(false);
   const [comment, setComment] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = () => {
-    if (comment.trim()) {
-      onSubmit(comment);
-      setComment('');
+  const handleConfirm = () => {
+    if (!comment.trim()) {
+      setError('A comment is required to request a revision.');
+      return;
     }
+    onConfirm(comment);
+    setOpen(false);
+    setComment('');
+    setError('');
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      setComment('');
+      setError('');
+    }
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
+        {children}
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Request Revision</DialogTitle>
           <DialogDescription>
-            Please provide comments for the user on what needs to be revised. This will be added to the project timeline.
+            Provide comments for the user on what needs to be revised. This will be saved in the project history.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="comment">Revision Comments</Label>
+          <div className="grid w-full gap-1.5">
+            <Label htmlFor="comment">Revision Notes</Label>
             <Textarea
               id="comment"
+              placeholder="e.g., 'Please upload the revised architectural drawings and update the window U-values.'"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="e.g., 'Please upload the correct mechanical drawings for the HVAC system.'"
-              rows={4}
+              className="min-h-[100px]"
             />
+            {error && <p className="text-sm text-red-500">{error}</p>}
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={handleSubmit} disabled={!comment.trim()}>Submit Request</Button>
+          <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button onClick={handleConfirm}>Submit Request</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-};
-
-export default RevisionRequestModal;
+}
