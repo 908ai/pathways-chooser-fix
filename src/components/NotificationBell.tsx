@@ -5,9 +5,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button';
 import { useUnreadNotificationsWithDetails, UnreadRevisionDetail } from '@/hooks/useUnreadNotificationsWithDetails';
 import { Link } from 'react-router-dom';
+import { useUserRole } from '@/hooks/useUserRole';
 
 export const NotificationBell = () => {
   const { unreadRevisions, unreadFeedback, revisionDetails, totalUnread, isLoading } = useUnreadNotificationsWithDetails();
+  const { isAdmin } = useUserRole();
 
   const uniqueRevisionDetails = revisionDetails.reduce((acc: UnreadRevisionDetail[], current) => {
     if (!acc.find((item) => item.project_id === current.project_id)) {
@@ -60,7 +62,7 @@ export const NotificationBell = () => {
             {unreadFeedback > 0 && (
               <div>
                 <p className="text-sm font-medium leading-none px-2 pt-2">Feedback</p>
-                <Link to="/my-feedback" className="flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent">
+                <Link to={isAdmin ? "/admin?tab=feedback" : "/my-feedback"} className="flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent">
                   <Mail className="mt-px h-5 w-5" />
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">Feedback Messages</p>
