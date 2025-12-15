@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User, AlertTriangle, Eye, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User, AlertTriangle, Eye, MessageSquare, History } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
@@ -28,6 +28,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import ComplianceDetails from '@/components/compliance/ComplianceDetails';
 import { RevisionRequestModal } from '@/components/admin/RevisionRequestModal';
 import ProjectTimeline from '@/components/ProjectTimeline';
+import ProjectHistory from '@/components/ProjectHistory';
 
 const DetailItem = ({ label, value, unit = '' }: { label: string; value: any; unit?: string }) => {
   if (value === null || value === undefined || value === '') return null;
@@ -901,10 +902,14 @@ const ProjectDetail = () => {
         </div>
 
         <Tabs defaultValue="overview" className="animate-fade-in">
-          <TabsList className="grid w-full grid-cols-5 p-1 rounded-lg bg-accent dark:bg-muted">
+          <TabsList className="grid w-full grid-cols-6 p-1 rounded-lg bg-accent dark:bg-muted">
             <TabsTrigger value="overview" className="flex items-center gap-2 rounded-md data-[state=active]:bg-card data-[state=active]:shadow-sm">
               <Building className="h-4 w-4" />
               Overview
+            </TabsTrigger>
+            <TabsTrigger value="history" className="flex items-center gap-2 rounded-md data-[state=active]:bg-card data-[state=active]:shadow-sm">
+              <History className="h-4 w-4" />
+              History
             </TabsTrigger>
             <TabsTrigger value="technical" className="flex items-center gap-2 rounded-md data-[state=active]:bg-card data-[state=active]:shadow-sm">
               <Thermometer className="h-4 w-4" />
@@ -1012,6 +1017,10 @@ const ProjectDetail = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="history" className="mt-6">
+            <ProjectHistory events={projectEvents} />
           </TabsContent>
 
           <TabsContent value="technical" className="mt-6 space-y-6">
