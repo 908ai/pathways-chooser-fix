@@ -803,8 +803,9 @@ const ProjectDetail = () => {
                 {getComplianceStatusBadge()}
               </div>
 
-              {/* General Actions (Edit/Duplicate/Delete + Export menu) */}
+              {/* General Actions (icon-only Edit/Duplicate/Delete + Export menu) */}
               <div className="flex items-center gap-2">
+                {/* Edit (icon-only) */}
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -812,54 +813,62 @@ const ProjectDetail = () => {
                         <Button 
                           onClick={() => navigate(`/calculator?edit=${project.id}`)} 
                           variant="outline"
-                          className="animate-fade-in"
+                          size="icon"
+                          className="animate-fade-in h-10 w-10"
                           disabled={!isEditable}
                         >
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit
+                          <Edit className="h-4 w-4" />
                         </Button>
                       </div>
                     </TooltipTrigger>
-                    {!isEditable && (
-                      <TooltipContent>
-                        <p>Cannot edit a project that is under review or completed.</p>
-                      </TooltipContent>
-                    )}
+                    <TooltipContent>
+                      <p>{isEditable ? 'Edit' : 'Cannot edit a project that is under review or completed.'}</p>
+                    </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
 
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button disabled={duplicating} className="animate-fade-in" variant="outline">
-                      <Copy className="h-4 w-4 mr-2" />
-                      {duplicating ? 'Duplicating...' : 'Duplicate'}
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Duplicate This Project</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Create a copy of this project with all specifications intact. The duplicate will be placed in your "In Progress" section with a reset compliance status, allowing you to modify it as needed for new projects.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-500/50 rounded-md p-4">
-                      <div className="flex items-start gap-3">
-                        <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-sm font-medium text-red-700 dark:text-red-300 mb-1">Important Notice</p>
-                          <p className="text-sm text-red-700 dark:text-red-300">
-                            <span className="font-semibold">New building plans and window schedule must be uploaded</span> to accompany the duplicated project. The existing project files will not be carried over and fresh documentation is required for compliance review.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleDuplicate}>Duplicate</AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                {/* Duplicate (icon-only with alert dialog) */}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button disabled={duplicating} className="animate-fade-in h-10 w-10" variant="outline" size="icon">
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Duplicate This Project</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Create a copy of this project with all specifications intact. The duplicate will be placed in your "In Progress" section with a reset compliance status, allowing you to modify it as needed for new projects.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-500/50 rounded-md p-4">
+                            <div className="flex items-start gap-3">
+                              <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+                              <div>
+                                <p className="text-sm font-medium text-red-700 dark:text-red-300 mb-1">Important Notice</p>
+                                <p className="text-sm text-red-700 dark:text-red-300">
+                                  <span className="font-semibold">New building plans and window schedule must be uploaded</span> to accompany the duplicated project. The existing project files will not be carried over and fresh documentation is required for compliance review.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleDuplicate}>Duplicate</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{duplicating ? 'Duplicating…' : 'Duplicate'}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
 
+                {/* Delete (icon-only) */}
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -868,18 +877,16 @@ const ProjectDetail = () => {
                           onClick={handleDelete} 
                           disabled={!isDeletable || deleting}
                           variant="destructive"
-                          className="animate-fade-in"
+                          size="icon"
+                          className="animate-fade-in h-10 w-10"
                         >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          {deleting ? 'Deleting...' : 'Delete'}
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </span>
                     </TooltipTrigger>
-                    {!isDeletable && (
-                      <TooltipContent>
-                        <p>Cannot delete a project that is under review or completed.</p>
-                      </TooltipContent>
-                    )}
+                    <TooltipContent>
+                      <p>{isDeletable ? (deleting ? 'Deleting…' : 'Delete') : 'Cannot delete a project that is under review or completed.'}</p>
+                    </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
 
@@ -887,7 +894,7 @@ const ProjectDetail = () => {
                 {isAdmin && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="animate-fade-in">
+                      <Button variant="outline" className="animate-fade-in" >
                         <Download className="h-4 w-4 mr-2" />
                         Export
                       </Button>
