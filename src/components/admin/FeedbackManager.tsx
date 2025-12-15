@@ -1,20 +1,18 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import { MoreHorizontal, Trash2, CheckCircle, Clock, MessageSquare } from 'lucide-react';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -22,38 +20,50 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import FeedbackConversation from './FeedbackConversation';
+import { useToast } from '@/hooks/use-toast';
+import { Tables } from '@/integrations/supabase/types';
 
-const fetchFeedback = async () => {
-  const { data, error } = await supabase.rpc('get_feedback_with_user_details');
-  if (error) throw new Error(error.message);
-  return data;
-};
+type Feedback = Tables<'feedback'> & { user_email: string };
 
-const FeedbackManager = () => {
+export const FeedbackManager = () => {
+  const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [selectedFeedback, setSelectedFeedback] = useState<any | null>(null);
 
-  const { data: feedback, isLoading, error } = useQuery({
+  const { data: feedback, isLoading, error } = useQuery<Feedback[]>({
     queryKey: ['all_feedback'],
-    queryFn: fetchFeedback,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_feedback_with_user_details');
+      if (error) throw new Error(error.message);
+      return data || [];
+    }
   });
 
-  const updateStatusMutation = useMutation({
-    mutationFn: async ({ feedbackId, status }: { feedbackId: string; status: string }) => {
-      const { error } = await supabase
-        .from('feedback')
-        .update({ status })
-        .eq('id', feedbackId);
-      if (error) throw error;
-    },
-    onSuccess: (data, variables) => {
+  const handleViewConversation = async (feedbackItem: Feedback) => {
+    setSelectedFeedback(feedbackItem);
+    setIsModalOpen(true);
+    if (feedbackItem.status === 'New') {
+      updateStatusMutation.mutate({ id: feedbackItem.id, status: 'In Progress', isAutomaticUpdate: true });
+    }
+    
+    const { error } = await supabase.rpc('mark_feedback_responses_as_read', { p_feedback_id: feedbackItem.id });
+    if (error) {
+      console.error('Error marking feedback as read:', error);
+    } else {
+      queryClient.invalidateQueries({ queryKey: ['unread_notifications_with_details'] });
       queryClient.invalidateQueries({ queryKey: ['all_feedback'] });
-      queryClient.invalidateQueries({ queryKey: ['unread_notifications'] });
+    }
+  };
 
-      // Suppress toast for automatic "New" -> "In Progress" update on opening a conversation
-      const isAutomaticUpdate = selectedFeedback?.id === variables.feedbackId && variables.status === 'In Progress';
-      
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ id, status, isAutomaticUpdate }: { id: string, status: string, isAutomaticUpdate?: boolean }) => {
+      const { error } = await supabase.from('feedback').update({ status }).eq('id', id);
+      if (error) throw error;
+      return { isAutomaticUpdate };
+    },
+    onSuccess: ({ isAutomaticUpdate }) => {
+      queryClient.invalidateQueries({ queryKey: ['all_feedback'] });
       if (!isAutomaticUpdate) {
         toast({ title: 'Success', description: 'Feedback status updated.' });
       }
@@ -64,11 +74,8 @@ const FeedbackManager = () => {
   });
 
   const deleteFeedbackMutation = useMutation({
-    mutationFn: async (feedbackId: string) => {
-      const { error } = await supabase
-        .from('feedback')
-        .delete()
-        .eq('id', feedbackId);
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('feedback').delete().eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -80,122 +87,83 @@ const FeedbackManager = () => {
     },
   });
 
-  // Automatically update status from "New" to "In Progress" when conversation is opened
-  useEffect(() => {
-    if (selectedFeedback && selectedFeedback.status === 'New') {
-      updateStatusMutation.mutate({ feedbackId: selectedFeedback.id, status: 'In Progress' });
-    }
-  }, [selectedFeedback]);
+  const handleStatusChange = (id: string, status: string) => {
+    updateStatusMutation.mutate({ id, status });
+  };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'New':
-        return <Badge variant="secondary">{status}</Badge>;
-      case 'In Progress':
-        return <Badge className="bg-blue-100 text-blue-800">{status}</Badge>;
-      case 'Resolved':
-        return <Badge className="bg-green-100 text-green-800">{status}</Badge>;
-      default:
-        return <Badge>{status}</Badge>;
+  const handleDelete = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this feedback? This action cannot be undone.')) {
+      deleteFeedbackMutation.mutate(id);
     }
   };
 
   if (isLoading) return <div>Loading feedback...</div>;
-  if (error) return <div className="text-red-500">Error loading feedback: {error.message}</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
-    <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Feedback Management</CardTitle>
-          <CardDescription>Review and manage user-submitted feedback.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead className="w-[40%]">Feedback</TableHead>
-                <TableHead>Page</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Submitted</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {feedback && feedback.length > 0 ? feedback.map((item: any) => (
-                <TableRow key={item.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {item.status === 'New' && (
-                        <span className="h-2 w-2 rounded-full bg-primary animate-pulse" title="New Feedback"></span>
-                      )}
-                      {item.user_email || 'Anonymous'}
-                    </div>
-                  </TableCell>
-                  <TableCell><Badge variant="outline">{item.category}</Badge></TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{item.feedback_text}</TableCell>
-                  <TableCell><a href={item.page_url} target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">{item.page_url}</a></TableCell>
-                  <TableCell>{getStatusBadge(item.status)}</TableCell>
-                  <TableCell>{new Date(item.created_at).toLocaleDateString()}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button variant="outline" size="sm" onClick={() => setSelectedFeedback(item)}>
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                        Reply
-                      </Button>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => updateStatusMutation.mutate({ feedbackId: item.id, status: 'In Progress' })}>
-                            <Clock className="mr-2 h-4 w-4" /> Mark as In Progress
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => updateStatusMutation.mutate({ feedbackId: item.id, status: 'Resolved' })}>
-                            <CheckCircle className="mr-2 h-4 w-4" /> Mark as Resolved
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="text-red-500"
-                            onClick={() => {
-                              if (confirm('Are you sure you want to delete this feedback?')) {
-                                deleteFeedbackMutation.mutate(item.id);
-                              }
-                            }}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" /> Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )) : (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center">No feedback submitted yet.</TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-      <Dialog open={!!selectedFeedback} onOpenChange={(isOpen) => !isOpen && setSelectedFeedback(null)}>
-        <DialogContent className="max-w-2xl">
+    <div className="p-4">
+      <h2 className="text-2xl font-bold mb-4">Feedback Management</h2>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Date</TableHead>
+            <TableHead>User</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Feedback</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {feedback?.map((item) => (
+            <TableRow key={item.id}>
+              <TableCell>{new Date(item.created_at).toLocaleDateString()}</TableCell>
+              <TableCell>{item.user_email}</TableCell>
+              <TableCell>{item.category}</TableCell>
+              <TableCell className="max-w-xs truncate">{item.feedback_text}</TableCell>
+              <TableCell>
+                <Select value={item.status} onValueChange={(value) => handleStatusChange(item.id, value)}>
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue>
+                      <Badge variant={
+                        item.status === 'New' ? 'default' :
+                        item.status === 'In Progress' ? 'secondary' :
+                        item.status === 'Resolved' ? 'outline' : 'destructive'
+                      }>{item.status}</Badge>
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="New">New</SelectItem>
+                    <SelectItem value="In Progress">In Progress</SelectItem>
+                    <SelectItem value="Resolved">Resolved</SelectItem>
+                    <SelectItem value="Archived">Archived</SelectItem>
+                  </SelectContent>
+                </Select>
+              </TableCell>
+              <TableCell>
+                <Button variant="outline" size="sm" onClick={() => handleViewConversation(item)}>View</Button>
+                <Button variant="destructive" size="sm" className="ml-2" onClick={() => handleDelete(item.id)}>Delete</Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-3xl h-[80vh] flex flex-col">
           <DialogHeader>
-            <DialogTitle>Conversation</DialogTitle>
+            <DialogTitle>Feedback Conversation</DialogTitle>
           </DialogHeader>
           {selectedFeedback && (
-            <FeedbackConversation feedbackId={selectedFeedback.id} userEmail={selectedFeedback.user_email || 'Anonymous'} />
+            <FeedbackConversation
+              feedbackId={selectedFeedback.id}
+              userEmail={selectedFeedback.user_email}
+              onClose={() => setIsModalOpen(false)}
+            />
           )}
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 };
 

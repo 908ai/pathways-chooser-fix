@@ -11,11 +11,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Loader2, Send } from 'lucide-react';
+import { Loader2, Send, X } from 'lucide-react';
 
 interface FeedbackConversationProps {
   feedbackId: string;
   userEmail: string;
+  onClose: () => void;
 }
 
 const fetchConversation = async (feedbackId: string) => {
@@ -42,7 +43,7 @@ const responseSchema = z.object({
   response_text: z.string().min(1, "Response cannot be empty."),
 });
 
-const FeedbackConversation = ({ feedbackId, userEmail }: FeedbackConversationProps) => {
+const FeedbackConversation = ({ feedbackId, userEmail, onClose }: FeedbackConversationProps) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { data, isLoading, error } = useQuery({
@@ -85,18 +86,25 @@ const FeedbackConversation = ({ feedbackId, userEmail }: FeedbackConversationPro
   const { feedback, responses } = data;
 
   return (
-    <div className="space-y-4">
-      <Card>
+    <div className="flex flex-col h-full">
+      <Card className="flex-shrink-0">
         <CardHeader>
-          <CardTitle>Original Feedback</CardTitle>
-          <CardDescription>From: {userEmail} on {new Date(feedback.created_at).toLocaleString()}</CardDescription>
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle>Original Feedback</CardTitle>
+              <CardDescription>From: {userEmail} on {new Date(feedback.created_at).toLocaleString()}</CardDescription>
+            </div>
+            <Button variant="ghost" size="icon" onClick={onClose} className="ml-auto">
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">{feedback.feedback_text}</p>
         </CardContent>
       </Card>
 
-      <div className="space-y-4 max-h-[40vh] overflow-y-auto p-2">
+      <div className="flex-grow space-y-4 overflow-y-auto p-2 my-4">
         {responses.map((response) => {
           const isAdminReply = response.user_id === user?.id;
           return (
@@ -123,7 +131,7 @@ const FeedbackConversation = ({ feedbackId, userEmail }: FeedbackConversationPro
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-2 pt-4 border-t">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex-shrink-0 flex items-start gap-2 pt-4 border-t">
           <FormField
             control={form.control}
             name="response_text"
