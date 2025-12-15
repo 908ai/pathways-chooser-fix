@@ -91,7 +91,7 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
       <div className="container flex h-16 items-center">
         <div className="mr-4 hidden md:flex">
           <a className="mr-6 flex items-center space-x-2" href="/">
-            <img src="/sol-invictus-logo.svg" alt="Sol Invictus" className="h-8 w-8" />
+            <img src="/assets/energy-navigator-logo.png" alt="Energy Navigator" className="h-8 w-8" />
             <span className="hidden font-bold sm:inline-block">
               Energy Navigator
             </span>
