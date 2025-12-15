@@ -91,13 +91,7 @@ const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
       headerLeftX += logoWidthUsed + 12; // space after logo
     }
 
-    const titleText = sanitize('Project Compliance Report');
-    page.drawText(titleText, {
-      x: headerLeftX,
-      y: headerTopY,
-      font: boldFont,
-      size: 20,
-    });
+    // Removed the title text "Project Compliance Report" here
 
     const projectNameText = sanitize(project.project_name || 'Unnamed Project');
     const projectNameWidth = boldFont.widthOfTextAtSize(projectNameText, 10);
@@ -167,7 +161,7 @@ const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
   // Header
   drawHeader();
 
-  // Overview
+  // Overview (section titles kept, only header title removed)
   addSectionTitle('Project Overview');
   addDetailItem('Project Name', project.project_name);
   addDetailItem('Status', project.compliance_status);
