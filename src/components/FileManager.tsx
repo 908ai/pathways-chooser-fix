@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 import { 
   Download, 
   Trash2, 
@@ -14,6 +12,14 @@ import {
 } from 'lucide-react';
 import FileUpload from '@/components/FileUpload';
 import { useAuth } from '@/hooks/useAuth';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface FileItem {
   name: string;
@@ -26,7 +32,7 @@ interface FileItem {
 interface FileManagerProps {
   files: FileItem[];
   onFilesChange: (files: FileItem[]) => void;
-  projectId: string | null;
+  projectId: string;
   readOnly?: boolean;
   showUpload?: boolean;
 }

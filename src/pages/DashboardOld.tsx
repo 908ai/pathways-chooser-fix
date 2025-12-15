@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { User, Building, FileText, Info, Shield } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -16,13 +17,11 @@ import ResourcesTab from '@/components/dashboard/ResourcesTab';
 import FaqTab from '@/components/dashboard/FaqTab';
 import { useProviderAccess } from '@/hooks/useProviderAccess';
 import RequestProviderAccessCard from '@/components/dashboard/RequestProviderAccessCard';
-import { Card } from '@/components/ui/card';
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
   const { canViewAllProjects, userRole, loading: roleLoading } = useUserRole();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: providerAccessData, isLoading: isAccessLoading } = useProviderAccess();
   const [projects, setProjects] = useState<{

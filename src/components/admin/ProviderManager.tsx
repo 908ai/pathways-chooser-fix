@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { PlusCircle, Edit, Trash2, Check, X } from 'lucide-react';
 
 const fetchProviders = async () => {
@@ -19,28 +19,28 @@ const fetchProviders = async () => {
 
 const ProviderManager = () => {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
   const { data: providers, isLoading, error } = useQuery({
     queryKey: ['all_service_providers'],
     queryFn: fetchProviders,
   });
 
   const updateProviderStatusMutation = useMutation({
-    mutationFn: async ({ providerId, is_approved }: { providerId: string; is_approved: boolean }) => {
-      const { error } = await supabase
-        .from('service_providers')
-        .update({ is_approved })
-        .eq('id', providerId);
+    mutationFn: async ({ id, is_approved }: { id: string, is_approved: boolean }) => {
+      const { error } = await supabase.from('service_providers').update({ is_approved }).eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['all_service_providers'] });
-      toast({ title: 'Success', description: 'Provider status updated.' });
+      toast.success('Success', { description: 'Provider status updated.' });
     },
     onError: (error: any) => {
-      toast({ title: 'Error', description: `Failed to update provider: ${error.message}`, variant: 'destructive' });
+      toast.error('Error', { description: `Failed to update provider: ${error.message}` });
     },
   });
+
+  const handleToggleApprove = (id: string, currentStatus: boolean) => {
+    updateProviderStatusMutation.mutate({ id, is_approved: !currentStatus });
+  };
 
   if (isLoading) return <div>Loading providers...</div>;
   if (error) return <div className="text-red-500">Error loading providers: {error.message}</div>;
@@ -86,7 +86,7 @@ const ProviderManager = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => updateProviderStatusMutation.mutate({ providerId: provider.id, is_approved: false })}
+                      onClick={() => handleToggleApprove(provider.id, provider.is_approved)}
                       disabled={updateProviderStatusMutation.isPending}
                     >
                       <X className="h-4 w-4 mr-2" />
@@ -96,7 +96,7 @@ const ProviderManager = () => {
                     <Button
                       variant="default"
                       size="sm"
-                      onClick={() => updateProviderStatusMutation.mutate({ providerId: provider.id, is_approved: true })}
+                      onClick={() => handleToggleApprove(provider.id, provider.is_approved)}
                       disabled={updateProviderStatusMutation.isPending}
                     >
                       <Check className="h-4 w-4 mr-2" />

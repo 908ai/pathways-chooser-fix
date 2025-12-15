@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { jsPDF } from "jspdf";
-import autoTable from 'jspdf-autotable';
+import autoTable from "jspdf-autotable";
 import html2canvas from 'html2canvas';
 import { getStatusInfo, pathwayMapping, formatBuildingType, formatProvince } from '@/lib/projectUtils';
 

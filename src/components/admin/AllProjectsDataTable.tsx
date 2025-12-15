@@ -7,22 +7,27 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { getPendingItems, mapProjectToSelections, getStatusInfo, pathwayMapping, formatBuildingType, formatProvince } from '@/lib/projectUtils';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
-const AllProjectsDataTable = ({ projects, sortBy, setSortBy }: any) => {
+const AllProjectsDataTable = ({ projects, onStatusChange, onProjectSelect }) => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [generatingPdfFor, setGeneratingPdfFor] = useState<string | null>(null);
+  const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'descending' });
 
   const handleSort = (field: string) => {
-    const direction = sortBy.field === field && sortBy.direction === 'asc' ? 'desc' : 'asc';
-    setSortBy({ field, direction });
+    const direction = sortConfig.key === field && sortConfig.direction === 'ascending' ? 'descending' : 'ascending';
+    setSortConfig({ key: field, direction });
   };
 
   const handleGeneratePdf = async (project: any) => {
     if (!project) return;
-    setGeneratingPdfFor(project.id);
     try {
       const { data, error } = await supabase.functions.invoke('generate-pdf', {
         body: { projectId: project.id },
@@ -46,25 +51,22 @@ const AllProjectsDataTable = ({ projects, sortBy, setSortBy }: any) => {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
 
-      toast({
-        title: "PDF Generated",
+      toast.success("PDF Generated", {
         description: "Your project report has been downloaded.",
       });
     } catch (error: any) {
       console.error('Error generating PDF:', error);
-      toast({
-        title: "PDF Generation Failed",
+      toast.error("PDF Generation Failed", {
         description: error.message || "There was an error creating the PDF report.",
-        variant: "destructive",
       });
     } finally {
-      setGeneratingPdfFor(null);
+      setGeneratingPdfs(prev => prev.filter(id => id !== projectId));
     }
   };
 
   const renderSortIcon = (field: string) => {
-    if (sortBy.field !== field) return <ArrowUpDown className="h-4 w-4 ml-2 opacity-30" />;
-    return sortBy.direction === 'asc' ? <ArrowUpDown className="h-4 w-4 ml-2" /> : <ArrowUpDown className="h-4 w-4 ml-2 transform rotate-180" />;
+    if (sortConfig.key !== field) return <ArrowUpDown className="h-4 w-4 ml-2 opacity-30" />;
+    return sortConfig.direction === 'ascending' ? <ArrowUpDown className="h-4 w-4 ml-2" /> : <ArrowUpDown className="h-4 w-4 ml-2 transform rotate-180" />;
   };
 
   return (
@@ -193,13 +195,8 @@ const AllProjectsDataTable = ({ projects, sortBy, setSortBy }: any) => {
                               size="icon"
                               className="h-8 w-8"
                               onClick={(e) => { e.stopPropagation(); handleGeneratePdf(p); }}
-                              disabled={generatingPdfFor === p.id}
                             >
-                              {generatingPdfFor === p.id ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : (
-                                <FileText className="h-4 w-4 text-red-500" />
-                              )}
+                              <FileText className="h-4 w-4 text-red-500" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>

@@ -20,7 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import FeedbackConversation from './FeedbackConversation';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Tables } from '@/integrations/supabase/types';
 
 type Feedback = Tables<'feedback'> & { user_email: string };
@@ -29,7 +29,6 @@ export const FeedbackManager = () => {
   const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const queryClient = useQueryClient();
-  const { toast } = useToast();
 
   const { data: feedback, isLoading, error } = useQuery<Feedback[]>({
     queryKey: ['all_feedback'],
@@ -65,11 +64,11 @@ export const FeedbackManager = () => {
     onSuccess: ({ isAutomaticUpdate }) => {
       queryClient.invalidateQueries({ queryKey: ['all_feedback'] });
       if (!isAutomaticUpdate) {
-        toast({ title: 'Success', description: 'Feedback status updated.' });
+        toast.success('Feedback status updated.');
       }
     },
     onError: (error: any) => {
-      toast({ title: 'Error', description: `Failed to update status: ${error.message}`, variant: 'destructive' });
+      toast.error('Failed to update status', { description: error.message });
     },
   });
 
@@ -80,10 +79,10 @@ export const FeedbackManager = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['all_feedback'] });
-      toast({ title: 'Success', description: 'Feedback entry deleted.' });
+      toast.success('Feedback entry deleted.');
     },
     onError: (error: any) => {
-      toast({ title: 'Error', description: `Failed to delete feedback: ${error.message}`, variant: 'destructive' });
+      toast.error('Failed to delete feedback', { description: error.message });
     },
   });
 

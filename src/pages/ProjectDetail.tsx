@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { ArrowLeft, Copy, FileText, Building, Thermometer, Zap, Edit, Save, X, Trash2, CheckCircle, XCircle, Upload, Download, FolderOpen, Calendar, User, AlertTriangle, Eye, MessageSquare } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -45,7 +45,6 @@ const ProjectDetail = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const { canDeleteProjects, canViewAllProjects, isAdmin, loading: roleLoading } = useUserRole();
-  const { toast } = useToast();
   const [project, setProject] = useState<any>(null);
   const [companyInfo, setCompanyInfo] = useState<any>(null);
   const [editedProject, setEditedProject] = useState<any>(null);
@@ -119,19 +118,15 @@ const ProjectDetail = () => {
           setCompanyInfo(companyData);
 
         } else {
-          toast({
-            title: "Project Not Found",
+          toast.error("Project Not Found", {
             description: "The project you're looking for doesn't exist or you don't have access to it.",
-            variant: "destructive"
           });
           navigate('/dashboard');
         }
       } catch (error) {
         console.error('Error loading project:', error);
-        toast({
-          title: "Error",
+        toast.error("Error", {
           description: "Failed to load project details.",
-          variant: "destructive"
         });
       } finally {
         setLoading(false);
@@ -142,7 +137,7 @@ const ProjectDetail = () => {
     if (!roleLoading) {
       loadProject();
     }
-  }, [user, id, canViewAllProjects, roleLoading, navigate, toast]);
+  }, [user, id, canViewAllProjects, roleLoading, navigate]);
 
   const handleSave = async () => {
     if (!editedProject || !user) return;
@@ -191,18 +186,15 @@ const ProjectDetail = () => {
       setProject(data);
       setEditedProject({ ...data });
       setIsEditing(false);
-      toast({
-        title: "Project Updated",
+      toast.success("Project Updated", {
         description: "Your project has been saved successfully.",
       });
       navigate('/dashboard');
 
     } catch (error) {
       console.error('Error saving project:', error);
-      toast({
-        title: "Save Failed",
+      toast.error("Save Failed", {
         description: "There was an error saving your project.",
-        variant: "destructive"
       });
     } finally {
       setSaving(false);
@@ -241,18 +233,15 @@ const ProjectDetail = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Project Duplicated",
+      toast.success("Project Duplicated", {
         description: "A copy of this project has been created and moved to 'Draft'.",
       });
       navigate('/dashboard');
 
     } catch (error) {
       console.error('Error duplicating project:', error);
-      toast({
-        title: "Duplication Failed",
+      toast.error("Duplication Failed", {
         description: "There was an error duplicating your project.",
-        variant: "destructive"
       });
     } finally {
       setDuplicating(false);
@@ -282,18 +271,15 @@ const ProjectDetail = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Project Deleted",
+      toast.success("Project Deleted", {
         description: "The project has been permanently deleted.",
       });
       navigate('/dashboard');
 
     } catch (error) {
       console.error('Error deleting project:', error);
-      toast({
-        title: "Delete Failed",
+      toast.error("Delete Failed", {
         description: "There was an error deleting the project.",
-        variant: "destructive"
       });
     } finally {
       setDeleting(false);
@@ -321,10 +307,8 @@ const ProjectDetail = () => {
 
     } catch (error) {
       console.error('Error requesting revision:', error);
-      toast({
-        title: "Revision Request Failed",
+      toast.error("Revision Request Failed", {
         description: "There was an error sending the revision request.",
-        variant: "destructive"
       });
     }
   };
@@ -354,17 +338,14 @@ const ProjectDetail = () => {
       if (newStatus === 'fail') toastDescription = `Project has been marked as non-compliant.`;
       if (newStatus === 'needs_revision') toastDescription = `Project has been sent back for revision.`;
 
-      toast({
-        title: toastTitle,
+      toast.success(toastTitle, {
         description: toastDescription,
       });
 
     } catch (error) {
       console.error('Error updating project status:', error);
-      toast({
-        title: "Status Update Failed",
+      toast.error("Status Update Failed", {
         description: "There was an error updating the project status.",
-        variant: "destructive"
       });
     }
   };
@@ -417,17 +398,14 @@ const ProjectDetail = () => {
       setProject(data);
       setEditedProject({ ...data });
       
-      toast({
-        title: "Files Uploaded",
+      toast.success("Files Uploaded", {
         description: `${uploadedFileData.length} file(s) uploaded successfully.`,
       });
 
     } catch (error) {
       console.error('Error uploading files:', error);
-      toast({
-        title: "Upload Failed",
+      toast.error("Upload Failed", {
         description: "There was an error uploading your files.",
-        variant: "destructive"
       });
     } finally {
       setUploading(false);
@@ -460,17 +438,15 @@ const ProjectDetail = () => {
       URL.revokeObjectURL(url);
     } catch (error: any) {
       console.error('Error downloading file:', error);
-      toast({
-        title: "Download Failed",
+      toast.error("Download Failed", {
         description: error.message || "There was an error downloading the file.",
-        variant: "destructive"
       });
     }
   };
 
   const handleFilePreview = async (file: any) => {
     if (!file.path) {
-      toast({ title: "Preview Error", description: "File path is missing.", variant: "destructive" });
+      toast.error("Preview Error", { description: "File path is missing." });
       return;
     }
     try {
@@ -490,10 +466,8 @@ const ProjectDetail = () => {
       }
     } catch (error: any) {
       console.error('Error creating signed URL for preview:', error);
-      toast({
-        title: "Preview Failed",
+      toast.error("Preview Failed", {
         description: error.message || "Could not generate a preview for this file.",
-        variant: "destructive",
       });
     }
   };
@@ -537,17 +511,14 @@ const ProjectDetail = () => {
       setProject(data);
       setEditedProject({ ...data });
       
-      toast({
-        title: "File Deleted",
+      toast.success("File Deleted", {
         description: "The file has been permanently removed.",
       });
 
     } catch (error) {
       console.error('Error deleting file:', error);
-      toast({
-        title: "Delete Failed",
+      toast.error("Delete Failed", {
         description: "There was an error deleting the file.",
-        variant: "destructive"
       });
     }
   };
@@ -632,16 +603,13 @@ const ProjectDetail = () => {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
 
-      toast({
-        title: "PDF Generated",
+      toast.success("PDF Generated", {
         description: "Your project report has been downloaded.",
       });
     } catch (error: any) {
       console.error('Error generating PDF:', error);
-      toast({
-        title: "PDF Generation Failed",
+      toast.error("PDF Generation Failed", {
         description: error.message || "There was an error creating the PDF report.",
-        variant: "destructive",
       });
     } finally {
       setGeneratingPdf(false);

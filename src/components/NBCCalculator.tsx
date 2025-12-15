@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Calculator, AlertTriangle, Edit, Save, FileText, Zap, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import ProjectSummaryForm from "@/components/ProjectSummaryForm";
 import FloatingPointsSummary from "./NBCCalculator/components/FloatingPointsSummary";
 import Stepper from "./NBCCalculator/components/Stepper";
@@ -62,9 +62,6 @@ const NBCCalculator = () => {
   const {
     user
   } = useAuth();
-  const {
-    toast
-  } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [projectId, setProjectId] = useState<string | null>(null);
@@ -497,6 +494,7 @@ const NBCCalculator = () => {
       setIsLoading(false);
     }
   };
+
   const [expandedWarnings, setExpandedWarnings] = useState<{
     [key: string]: boolean;
   }>({});
@@ -510,8 +508,8 @@ const NBCCalculator = () => {
 
   const handleSubmitApplication = async (pathType: "performance" | "prescriptive") => {
     if (!user?.email) {
-      toast({
-        title: "Error",
+      console.error("User email not found");
+      toast.error("Error", {
         description: "User email not found. Please sign in again.",
         variant: "destructive",
       });
@@ -558,7 +556,7 @@ const NBCCalculator = () => {
   const handleSaveDraft = async (isIncrementalSave = false) => {
     if (!user) {
       if (!isIncrementalSave) {
-        toast({ title: "Authentication Error", description: "You must be logged in to save a draft.", variant: "destructive" });
+        toast.error("Authentication Error", { description: "You must be logged in to save a draft." });
       }
       return;
     }
@@ -610,16 +608,18 @@ const NBCCalculator = () => {
       if (error) throw error;
 
       if (isIncrementalSave) {
-        toast({ title: "Progress Saved", description: "Your changes have been saved." });
+        toast.success("Progress Saved", { description: "Your changes have been saved." });
       } else {
-        toast({ title: "Draft Saved", description: "Your progress has been saved successfully." });
+        toast.success("Draft Saved", { description: "Your progress has been saved successfully." });
       }
-
+      
+      return data;
     } catch (error: any) {
-      console.error("Error saving draft:", error);
       if (!isIncrementalSave) {
-        toast({ title: "Save Failed", description: error.message, variant: "destructive" });
+        toast.error("Save Failed", { description: error.message });
       }
+      console.error("Incremental save failed:", error.message);
+      return null;
     } finally {
       setIsSavingDraft(false);
     }
