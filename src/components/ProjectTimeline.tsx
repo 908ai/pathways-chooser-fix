@@ -21,7 +21,7 @@ interface ProjectEvent {
     comment?: string;
     status?: string;
     old_status?: string;
-  };
+  } | null;
   user_id: string;
   user_email: string;
   user_role: 'admin' | 'user';
@@ -96,6 +96,11 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus, events, 
     const isAuthor = user?.id === event.user_id;
     const isRevisionRequest = event.event_type === 'revision_request';
 
+    // Filter out non-comment events from this view
+    if (event.event_type !== 'user_comment' && event.event_type !== 'revision_request') {
+      return null;
+    }
+
     return (
       <div className={`flex items-start gap-4 ${isAuthor ? 'justify-end' : ''}`}>
         {!isAuthor && (
@@ -117,7 +122,7 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus, events, 
               {isRevisionRequest ? ' requested a revision' : ' commented'}
             </p>
           </div>
-          <p className="text-sm">{event.payload.comment}</p>
+          <p className="text-sm">{event.payload?.comment}</p>
           <p className={`text-xs mt-2 opacity-70 ${isAuthor ? 'text-right' : ''}`}>
             {format(new Date(event.created_at), "MMM d, yyyy 'at' h:mm a")}
           </p>
@@ -132,6 +137,7 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus, events, 
   };
 
   const canComment = complianceStatus === 'needs_revision' || isAdmin;
+  const commentEvents = events.filter(e => e.event_type === 'user_comment' || e.event_type === 'revision_request');
 
   return (
     <Card>
@@ -143,8 +149,8 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus, events, 
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {events && events.length > 0 ? (
-            events.map(event => <EventItem key={event.id} event={event} />)
+          {commentEvents && commentEvents.length > 0 ? (
+            commentEvents.map(event => <EventItem key={event.id} event={event} />)
           ) : (
             <p className="text-muted-foreground text-center py-8">No comments or revisions yet.</p>
           )}

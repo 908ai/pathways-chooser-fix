@@ -26,7 +26,7 @@ interface ProjectEvent {
     status?: string;
     old_status?: string;
     decision?: 'pass' | 'fail';
-  };
+  } | null;
   user_id: string;
   user_email: string;
   user_role: 'admin' | 'user';
@@ -56,7 +56,7 @@ const ProjectHistory = ({ events }: ProjectHistoryProps) => {
       case 'revision_request':
         return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
       case 'decision_made':
-        if (payload.decision === 'pass') {
+        if (payload?.decision === 'pass') {
           return <CheckCircle className="h-5 w-5 text-green-500" />;
         }
         return <XCircle className="h-5 w-5 text-red-500" />;
@@ -75,11 +75,11 @@ const ProjectHistory = ({ events }: ProjectHistoryProps) => {
       case 'project_resubmitted':
         return `Project was re-submitted for review by ${event.user_email}.`;
       case 'user_comment':
-        return `${userName} commented: "${event.payload.comment}"`;
+        return `${userName} commented: "${event.payload?.comment}"`;
       case 'revision_request':
-        return `Admin requested a revision: "${event.payload.comment}"`;
+        return `Admin requested a revision: "${event.payload?.comment}"`;
       case 'decision_made':
-        if (event.payload.decision === 'pass') {
+        if (event.payload?.decision === 'pass') {
           return `Admin approved the project.`;
         }
         return `Admin rejected the project.`;
