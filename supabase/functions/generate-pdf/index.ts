@@ -10,6 +10,36 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Map for characters WinAnsi cannot encode → ASCII-safe equivalents
+const sanitize = (input: any): string => {
+  if (input === null || input === undefined) return '';
+  let s = String(input);
+
+  // Replace subscript digits U+2080..U+2089
+  const subscripts: Record<string, string> = {
+    '\u2080': '0',
+    '\u2081': '1',
+    '\u2082': '2',
+    '\u2083': '3',
+    '\u2084': '4',
+    '\u2085': '5',
+    '\u2086': '6',
+    '\u2087': '7',
+    '\u2088': '8',
+    '\u2089': '9',
+  };
+  for (const [k, v] of Object.entries(subscripts)) {
+    s = s.split(k).join(v);
+  }
+
+  // Replace bullet • (U+2022) with hyphen
+  s = s.replace(/\u2022/g, '-');
+
+  // You can add more replacements here if needed
+
+  return s;
+};
+
 const pathwayMap: Record<string, string> = {
   '9365': 'NBC 9.36.5 Performance',
   '9362': 'NBC 9.36.2 Prescriptive',
@@ -28,24 +58,41 @@ const asList = (val: any): string | null => {
   return String(val);
 };
 
-const addDetailItemFactory = (page: any, font: any, boldFont: any, state: { y: number }, width: number, margin: number, checkPageBreak: (space: number) => void) => {
+const addDetailItemFactory = (
+  page: any,
+  font: any,
+  boldFont: any,
+  state: { y: number },
+  width: number,
+  margin: number,
+  checkPageBreak: (space: number) => void
+) => {
   return (label: string, value: any, unit = '') => {
     if (value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0)) return;
     checkPageBreak(15);
     const displayValue = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : Array.isArray(value) ? value.join(', ') : String(value);
-    page.drawText(`${label}:`, { x: margin, y: state.y, font: boldFont, size: 10 });
-    const labelWidth = boldFont.widthOfTextAtSize(`${label}:`, 10);
-    page.drawText(` ${displayValue}${unit ? ` ${unit}` : ''}`, { x: margin + labelWidth, y: state.y, font, size: 10 });
+    const labelText = sanitize(`${label}:`);
+    const valueText = sanitize(` ${displayValue}${unit ? ` ${unit}` : ''}`);
+
+    page.drawText(labelText, { x: margin, y: state.y, font: boldFont, size: 10 });
+    const labelWidth = boldFont.widthOfTextAtSize(labelText, 10);
+    page.drawText(valueText, { x: margin + labelWidth, y: state.y, font, size: 10 });
     state.y -= 15;
   };
 };
 
-const addSectionTitleFactory = (page: any, boldFont: any, state: { y: number }, margin: number, checkPageBreak: (space: number) => void) => {
+const addSectionTitleFactory = (
+  page: any,
+  boldFont: any,
+  state: { y: number },
+  margin: number,
+  checkPageBreak: (space: number) => void
+) => {
   return (title: string) => {
     checkPageBreak(30);
-    page.drawText(title, { x: margin, y: state.y, font: boldFont, size: 16 });
-    // simple underline
-    const lineWidth = boldFont.widthOfTextAtSize(title, 16);
+    const safeTitle = sanitize(title);
+    page.drawText(safeTitle, { x: margin, y: state.y, font: boldFont, size: 16 });
+    const lineWidth = boldFont.widthOfTextAtSize(safeTitle, 16);
     page.drawText(''.padEnd(Math.max(5, Math.floor(lineWidth / 10)), '_'), { x: margin, y: state.y - 6, font: boldFont, size: 10 });
     state.y -= 24;
   };
@@ -62,7 +109,7 @@ const buildPdf = async (project: any, company: any) => {
   const state = { y: height - margin };
 
   const drawHeader = () => {
-    const titleText = 'Project Compliance Report';
+    const titleText = sanitize('Project Compliance Report');
     const titleSize = 18;
     const titleWidth = boldFont.widthOfTextAtSize(titleText, titleSize);
     page.drawText(titleText, {
@@ -72,7 +119,7 @@ const buildPdf = async (project: any, company: any) => {
       size: titleSize,
     });
 
-    const projectNameText = project.project_name || 'Unnamed Project';
+    const projectNameText = sanitize(project.project_name || 'Unnamed Project');
     const projectNameWidth = boldFont.widthOfTextAtSize(projectNameText, 10);
     page.drawText(projectNameText, {
       x: width - margin - projectNameWidth,
@@ -81,7 +128,7 @@ const buildPdf = async (project: any, company: any) => {
       size: 10,
     });
 
-    const dateText = new Date().toLocaleDateString();
+    const dateText = sanitize(new Date().toLocaleDateString());
     const dateWidth = font.widthOfTextAtSize(dateText, 8);
     page.drawText(dateText, {
       x: width - margin - dateWidth,
@@ -144,7 +191,7 @@ const buildPdf = async (project: any, company: any) => {
   addSectionTitle('Technical Specifications');
 
   // Building Envelope
-  page.drawText('Building Envelope', { x: margin, y: state.y, font: boldFont, size: 12 });
+  page.drawText(sanitize('Building Envelope'), { x: margin, y: state.y, font: boldFont, size: 12 });
   state.y -= 18;
   addDetailItem('Ceilings/Attic RSI', project.attic_rsi, 'RSI');
   addDetailItem('Other Attic Type', project.ceilings_attic_other_type);
@@ -171,7 +218,7 @@ const buildPdf = async (project: any, company: any) => {
 
   // Mechanical Systems
   checkPageBreak(20);
-  page.drawText('Mechanical Systems', { x: margin, y: state.y, font: boldFont, size: 12 });
+  page.drawText(sanitize('Mechanical Systems'), { x: margin, y: state.y, font: boldFont, size: 12 });
   state.y -= 18;
   addDetailItem('F280 Calculation Completed', project.has_f280_calculation);
   addDetailItem('Primary Heating System', project.heating_system_type);
@@ -217,9 +264,10 @@ const buildPdf = async (project: any, company: any) => {
 
   // Performance Metrics
   checkPageBreak(20);
-  page.drawText('Performance Metrics', { x: margin, y: state.y, font: boldFont, size: 12 });
+  page.drawText(sanitize('Performance Metrics'), { x: margin, y: state.y, font: boldFont, size: 12 });
   state.y -= 18;
-  addDetailItem('Airtightness Level', project.airtightness_al, 'ACH₅₀');
+  // Replace ACH₅₀ with ACH50 via sanitize or unit text
+  addDetailItem('Airtightness Level', project.airtightness_al, 'ACH50');
   addDetailItem('Building Volume', project.building_volume, 'm³');
   addDetailItem('Annual Energy Consumption', project.annual_energy_consumption, 'GJ/year');
 
@@ -260,7 +308,8 @@ const buildPdf = async (project: any, company: any) => {
       const size = file?.size ? ` (${(Number(file.size) / 1024 / 1024).toFixed(2)} MB)` : '';
       const uploadedAt = file?.uploadedAt ? ` - ${new Date(file.uploadedAt).toLocaleDateString()}` : '';
       const by = file?.uploadedBy ? ` by ${file.uploadedBy}` : '';
-      page.drawText(`• ${name}${size}${uploadedAt}${by}`, { x: margin, y: state.y, font, size: 10 });
+      const line = sanitize(`• ${name}${size}${uploadedAt}${by}`);
+      page.drawText(line, { x: margin, y: state.y, font, size: 10 });
       state.y -= 15;
     }
   }
@@ -269,7 +318,8 @@ const buildPdf = async (project: any, company: any) => {
   const pages = pdfDoc.getPages();
   for (let i = 0; i < pages.length; i++) {
     const p = pages[i];
-    p.drawText(`Page ${i + 1} of ${pages.length}`, {
+    const text = sanitize(`Page ${i + 1} of ${pages.length}`);
+    p.drawText(text, {
       x: width / 2 - 25,
       y: 30,
       size: 8,
