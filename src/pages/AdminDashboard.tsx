@@ -7,7 +7,7 @@ import RequestManager from '@/components/admin/RequestManager';
 import FeedbackManager from '@/components/admin/FeedbackManager';
 import AllProjectsTab from '@/components/admin/AllProjectsTab';
 import { Briefcase, MessageSquare, LayoutGrid, BarChart2, Map, Users } from 'lucide-react';
-import { useUnreadAdminFeedback } from '@/hooks/useUnreadAdminFeedback';
+import { useUnreadNotifications } from '@/hooks/useUnreadNotifications';
 import ReportingTab from '@/components/admin/ReportingTab';
 import ProjectMap from '@/components/admin/ProjectMap';
 import UserManager from '@/components/admin/UserManager';
@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const { signOut } = useAuth();
-  const { data: unreadCount } = useUnreadAdminFeedback();
+  const { unreadFeedback } = useUnreadNotifications();
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -57,9 +57,9 @@ const AdminDashboard = () => {
             <TabsTrigger value="feedback" className="flex items-center gap-2 relative">
               <MessageSquare className="h-4 w-4" />
               Feedback
-              {unreadCount > 0 && (
+              {unreadFeedback > 0 && (
                 <span className="absolute -top-1 -right-1 h-5 w-5 bg-primary text-primary-foreground text-xs font-bold rounded-full flex items-center justify-center">
-                  {unreadCount}
+                  {unreadFeedback}
                 </span>
               )}
             </TabsTrigger>

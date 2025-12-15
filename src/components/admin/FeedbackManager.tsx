@@ -49,7 +49,7 @@ const FeedbackManager = () => {
     },
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['all_feedback'] });
-      queryClient.invalidateQueries({ queryKey: ['unreadAdminFeedbackCount'] });
+      queryClient.invalidateQueries({ queryKey: ['unread_notifications'] });
 
       // Suppress toast for automatic "New" -> "In Progress" update on opening a conversation
       const isAutomaticUpdate = selectedFeedback?.id === variables.feedbackId && variables.status === 'In Progress';
