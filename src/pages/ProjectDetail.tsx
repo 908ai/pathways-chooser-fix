@@ -767,7 +767,7 @@ const ProjectDetail = () => {
             </div>
           )}
           
-          <div className="flex items-start justify-between">
+          <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold mb-3 text-foreground">{project.project_name}</h1>
               
@@ -928,50 +928,52 @@ const ProjectDetail = () => {
           {/* Centered Admin Actions (Approve / Request Revision / Reject) */}
           {isAdmin && project.compliance_status === 'submitted' && (
             <div className="mt-6 flex justify-center">
-              <div className="flex items-center gap-3">
-                <ActionCommentModal
-                  onConfirm={handleApprove}
-                  title="Approve Project"
-                  description="Add an optional comment to your approval. This will be visible to the user."
-                  actionName="Approve"
-                >
-                  <Button 
-                    variant="default"
-                    className="bg-green-600 hover:bg-green-700 text-white animate-fade-in"
+              <div className="bg-card rounded-lg p-[15px]">
+                <div className="flex items-center gap-3">
+                  <ActionCommentModal
+                    onConfirm={handleApprove}
+                    title="Approve Project"
+                    description="Add an optional comment to your approval. This will be visible to the user."
+                    actionName="Approve"
                   >
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Approve
-                  </Button>
-                </ActionCommentModal>
+                    <Button 
+                      variant="default"
+                      className="bg-green-600 hover:bg-green-700 text-white animate-fade-in"
+                    >
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Approve
+                    </Button>
+                  </ActionCommentModal>
 
-                <RevisionRequestModal onConfirm={handleRequestRevision}>
-                  <Button 
-                    variant="outline"
-                    className="animate-fade-in border-yellow-500 text-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400"
-                  >
-                    <AlertTriangle className="h-4 w-4 mr-2" />
-                    Request Revision
-                  </Button>
-                </RevisionRequestModal>
+                  <RevisionRequestModal onConfirm={handleRequestRevision}>
+                    <Button 
+                      variant="outline"
+                      className="animate-fade-in border-yellow-500 text-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400"
+                    >
+                      <AlertTriangle className="h-4 w-4 mr-2" />
+                      Request Revision
+                    </Button>
+                  </RevisionRequestModal>
 
-                <ActionCommentModal
-                  onConfirm={handleReject}
-                  title="Reject Project"
-                  description="Please provide a reason for rejecting this project. This will be visible to the user."
-                  actionName="Reject"
-                  actionButtonVariant="destructive"
-                  commentLabel="Reason for Rejection (Required)"
-                  commentPlaceholder="e.g., 'The provided building plans do not match the specifications entered.'"
-                >
-                  <Button 
-                    variant="destructive"
-                    className="animate-fade-in"
+                  <ActionCommentModal
+                    onConfirm={handleReject}
+                    title="Reject Project"
+                    description="Please provide a reason for rejecting this project. This will be visible to the user."
+                    actionName="Reject"
+                    actionButtonVariant="destructive"
+                    commentLabel="Reason for Rejection (Required)"
+                    commentPlaceholder="e.g., 'The provided building plans do not match the specifications entered.'"
                   >
-                    <XCircle className="h-4 w-4 mr-2" />
-                    Reject
-                  </Button>
-                </ActionCommentModal>
-              </div>
+                    <Button 
+                      variant="destructive"
+                      className="animate-fade-in"
+                    >
+                      <XCircle className="h-4 w-4 mr-2" />
+                      Reject
+                    </Button>
+                  </ActionCommentModal>
+                </div>
+              </div>  
             </div>
           )}
         </div>
