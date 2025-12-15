@@ -24,11 +24,7 @@ const AdminDashboard = () => {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-3 text-foreground">Admin Dashboard</h1>
           <p className="text-muted-foreground text-lg">
-            Manage projects, providers, user access,{" "}
-            <Link to="/municipal-dashboard" className="text-primary underline hover:text-primary/80">
-              and
-            </Link>{" "}
-            feedback.
+            Manage projects, providers, user access, and feedback.
           </p>
         </div>
 
