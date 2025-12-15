@@ -752,7 +752,13 @@ export type Database = {
       }
       mark_feedback_responses_as_read: {
         Args: {
-          p_response_ids: string[]
+          p_feedback_id: string
+        }
+        Returns: undefined
+      }
+      mark_project_events_as_read: {
+        Args: {
+          p_project_id: string
         }
         Returns: undefined
       }

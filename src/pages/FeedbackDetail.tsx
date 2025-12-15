@@ -16,27 +16,36 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Loader2, Send, ArrowLeft } from 'lucide-react';
+import { Json } from '@/integrations/supabase/types';
 
-const fetchConversation = async (feedbackId: string | undefined) => {
+interface FeedbackResponse {
+  id: string;
+  created_at: string;
+  response_text: string;
+  is_read: boolean;
+  user_id: string;
+  user_email: string;
+}
+
+interface Conversation {
+  id: string;
+  created_at: string;
+  user_id: string;
+  feedback_text: string;
+  category: string;
+  page_url: string;
+  status: string;
+  feedback_responses: FeedbackResponse[];
+}
+
+const fetchConversation = async (feedbackId: string | undefined): Promise<Conversation | null> => {
   if (!feedbackId) throw new Error("Feedback ID is required");
 
-  const { data: feedback, error: feedbackError } = await supabase
-    .from('feedback')
-    .select('*')
-    .eq('id', feedbackId)
-    .single();
+  const { data, error } = await supabase.rpc('get_feedback_details', { p_feedback_id: feedbackId });
 
-  if (feedbackError) throw feedbackError;
+  if (error) throw error;
 
-  const { data: responses, error: responsesError } = await supabase
-    .from('feedback_responses')
-    .select('*')
-    .eq('feedback_id', feedbackId)
-    .order('created_at', { ascending: true });
-
-  if (responsesError) throw responsesError;
-
-  return { feedback, responses };
+  return data as unknown as Conversation | null;
 };
 
 const responseSchema = z.object({
@@ -48,34 +57,27 @@ const FeedbackDetail = () => {
   const { user, signOut } = useAuth();
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery({
+  const { data: conversation, isLoading, error } = useQuery({
     queryKey: ['feedbackConversation', id],
     queryFn: () => fetchConversation(id),
+    enabled: !!id,
   });
 
   useEffect(() => {
     const markAsRead = async () => {
-      if (data && user) {
-        const unreadResponseIds = data.responses
-          .filter(r => !r.is_read && r.user_id !== user.id)
-          .map(r => r.id);
-
-        if (unreadResponseIds.length > 0) {
-          const { error: rpcError } = await supabase
-            .rpc('mark_feedback_responses_as_read' as any, {
-              p_response_ids: unreadResponseIds
-            });
-          
-          if (rpcError) {
-            console.error("Failed to mark messages as read:", rpcError);
-          } else {
-            queryClient.invalidateQueries({ queryKey: ['unreadFeedbackCount', user.id] });
-          }
+      if (id) {
+        const { error: rpcError } = await supabase
+          .rpc('mark_feedback_responses_as_read', { p_feedback_id: id });
+        
+        if (rpcError) {
+          console.error("Failed to mark messages as read:", rpcError);
+        } else {
+          queryClient.invalidateQueries({ queryKey: ['unread_notifications'] });
         }
       }
     };
     markAsRead();
-  }, [data, user, queryClient]);
+  }, [id, queryClient]);
 
   const form = useForm<z.infer<typeof responseSchema>>({
     resolver: zodResolver(responseSchema),
@@ -118,13 +120,13 @@ const FeedbackDetail = () => {
         </Button>
 
         {isLoading && <div className="flex justify-center items-center p-8"><Loader2 className="h-8 w-8 animate-spin" /></div>}
-        {error && <p className="text-red-500">Error loading conversation: {error.message}</p>}
+        {error && <p className="text-red-500">Error loading conversation: {(error as Error).message}</p>}
 
-        {data && (
+        {conversation && (
           <Card className="max-w-3xl mx-auto">
             <CardHeader>
               <CardTitle>Conversation</CardTitle>
-              <CardDescription>Category: {data.feedback.category}</CardDescription>
+              <CardDescription>Category: {conversation.category}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
@@ -136,24 +138,24 @@ const FeedbackDetail = () => {
                     </Avatar>
                     <div className="max-w-[75%] rounded-lg p-3 bg-muted">
                       <p className="text-sm font-semibold">You</p>
-                      <p className="text-sm">{data.feedback.feedback_text}</p>
+                      <p className="text-sm">{conversation.feedback_text}</p>
                       <p className="text-xs mt-1 text-right text-muted-foreground">
-                        {new Date(data.feedback.created_at).toLocaleString()}
+                        {new Date(conversation.created_at).toLocaleString()}
                       </p>
                     </div>
                   </div>
                   {/* Responses */}
-                  {data.responses.map((response) => {
+                  {conversation.feedback_responses.map((response: any) => {
                     const isUserReply = response.user_id === user?.id;
                     return (
                       <div key={response.id} className={`flex items-start gap-3 ${isUserReply ? 'justify-end' : ''}`}>
                         {!isUserReply && (
                           <Avatar className="h-8 w-8">
-                            <AvatarFallback>A</AvatarFallback>
+                            <AvatarFallback>{response.user_email?.substring(0, 1).toUpperCase() || 'A'}</AvatarFallback>
                           </Avatar>
                         )}
                         <div className={`max-w-[75%] rounded-lg p-3 ${isUserReply ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                          <p className="text-sm font-semibold">{isUserReply ? 'You' : 'Admin'}</p>
+                          <p className="text-sm font-semibold">{isUserReply ? 'You' : response.user_email}</p>
                           <p className="text-sm">{response.response_text}</p>
                           <p className={`text-xs mt-1 text-right ${isUserReply ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
                             {new Date(response.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

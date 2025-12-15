@@ -7,10 +7,11 @@ import { useUserRole } from '@/hooks/useUserRole';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { AlertTriangle, MessageSquare, Send, User, Shield } from 'lucide-react';
 import { format } from 'date-fns';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useQueryClient } from '@tanstack/react-query';
 
 interface ProjectTimelineProps {
   projectId: string;
@@ -39,6 +40,7 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus }: Projec
   const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -51,7 +53,6 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus }: Projec
       if (error) {
         console.error('Error fetching project events:', error);
       } else {
-        // Assuming the RPC returns user details
         const formattedEvents = Array.isArray(data) ? data.map((event: any) => ({
           ...event,
           user_email: event.user_email,
@@ -62,12 +63,22 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus }: Projec
       setLoading(false);
     };
 
+    const markAsRead = async () => {
+      if (!projectId) return;
+      const { error } = await supabase.rpc('mark_project_events_as_read', { p_project_id: projectId });
+      if (error) {
+        console.error('Error marking project events as read:', error);
+      } else {
+        queryClient.invalidateQueries({ queryKey: ['unread_notifications'] });
+      }
+    };
+
     fetchEvents();
+    markAsRead();
 
     const subscription = supabase
       .channel(`project_events:${projectId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'project_events', filter: `project_id=eq.${projectId}` }, (payload) => {
-        // Refetch events to get the latest data with user details securely.
         fetchEvents();
       })
       .subscribe();
@@ -75,7 +86,7 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus }: Projec
     return () => {
       supabase.removeChannel(subscription);
     };
-  }, [projectId]);
+  }, [projectId, queryClient]);
 
   const handleAddComment = async () => {
     if (!newComment.trim() || !user) return;
