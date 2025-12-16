@@ -18,7 +18,7 @@ const Calculator = () => {
         showSignOut={true} 
         onSignOut={signOut} 
       />
-      <main className="flex-1 px-4 py-8 relative z-10">
+      <main className="flex-1 px-4 py-8 relative">
         <NBCCalculator />
       </main>
       <Footer />

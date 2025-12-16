@@ -178,7 +178,7 @@ const Dashboard3 = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Header showSignOut={true} onSignOut={signOut} />
-      <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
+      <main className="flex-1 container mx-auto px-4 py-8 relative">
         <div className="flex justify-between items-center mb-8">
           <div>
             <p className="text-2xl text-foreground">
