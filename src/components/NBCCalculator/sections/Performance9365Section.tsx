@@ -35,7 +35,7 @@ export default function Performance9365Section({
         [key: string]: boolean;
     }>({});
 
-    const [openSections, setOpenSections] = useState<string[]>(["envelope"]);
+    const [openSections, setOpenSections] = useState<string[]>([]);
 
     const toggleWarning = (warningId: string) => {
         setExpandedWarnings((prev) => ({
