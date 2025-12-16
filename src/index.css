@@ -111,10 +111,6 @@ All colors MUST be HSL.
   background: hsl(215 14% 44%); /* slate-500 */
 }
 
-html {
-  overflow-y: scroll;
-}
-
 /* Custom Leaflet Icon Styling */
 .custom-leaflet-icon {
   background: transparent;
