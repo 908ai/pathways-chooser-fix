@@ -242,10 +242,10 @@ export default function Prescriptive9362Section({
     return (
         <div className="space-y-3">
             <div className="flex justify-center gap-2">
-                <Button variant="outline" size="xs" className="text-sm px-2" onClick={() => setOpenSections(["envelope", "mechanical"])}>
+                <Button variant="outline" size="sm" className="text-sm px-2" onClick={() => setOpenSections(["envelope", "mechanical"])}>
                     Expand All
                 </Button>
-                <Button variant="outline" size="xs" className="text-sm px-2" onClick={() => setOpenSections([])}>
+                <Button variant="outline" size="sm" className="text-sm px-2" onClick={() => setOpenSections([])}>
                     Collapse All
                 </Button>
             </div>

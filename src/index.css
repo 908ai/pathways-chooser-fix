@@ -115,10 +115,9 @@ html {
   overflow-y: scroll;
 }
 
+/* Keep layout from shifting when scroll is locked, but don't override Radix's lock behavior */
 html body[data-scroll-locked] {
   margin-right: 0 !important;
-  position: initial !important;
-  overflow: visible !important;
 }
 
 /* Custom Leaflet Icon Styling */
