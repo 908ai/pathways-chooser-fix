@@ -175,6 +175,7 @@ const NBCCalculator = () => {
     hasF280Calculation: "",
     comments: "",
     interestedCertifications: [] as string[],
+    wantsCertifications: "",
     midConstructionBlowerDoorPlanned: false,
     energuidePathway: ""
   });
@@ -456,6 +457,7 @@ const NBCCalculator = () => {
           hasF280Calculation: p.has_f280_calculation || "",
           comments: p.comments || "",
           interestedCertifications: p.interested_certifications || [],
+          wantsCertifications: p.wants_certifications || "",
           midConstructionBlowerDoorPlanned: p.mid_construction_blower_door_planned || false,
           energuidePathway: p.energuide_pathway || ""
         };
@@ -612,6 +614,8 @@ const NBCCalculator = () => {
         building_volume: parseFloat(selections.buildingVolume) || null,
         compliance_status: editingProjectStatus === 'needs_revision' ? 'needs_revision' : 'draft',
         total_points: totalPoints,
+        interested_certifications: selections.interestedCertifications,
+        wants_certifications: selections.wantsCertifications,
         mid_construction_blower_door_planned: selections.midConstructionBlowerDoorPlanned,
       };
 

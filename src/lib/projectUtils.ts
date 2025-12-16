@@ -37,6 +37,7 @@ export const mapProjectToSelections = (project: any) => {
     waterHeaterType: project.water_heating_type,
     waterHeater: project.water_heating_efficiency,
     hasDWHR: project.has_dwhr,
+    wantsCertifications: project.wants_certifications,
     midConstructionBlowerDoorPlanned: project.mid_construction_blower_door_planned,
   };
 };
@@ -144,7 +145,7 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
         addIfMissing(optional, 'coolingApplicable', 'Cooling/AC');
         addIfMissing(optional, 'waterHeaterType', 'Water Heater Type');
         addIfMissing(optional, 'hasDWHR', 'Drain Water Heat Recovery');
-        addIfMissing(optional, 'interestedCertifications', 'Certification interests');
+        addIfMissing(optional, 'wantsCertifications', 'Interested in Certifications');
         addIfMissing(optional, 'midConstructionBlowerDoorPlanned', 'Mid-Construction Blower Door Test');
         addIfMissing(optional, 'occupancyClass', 'Occupancy Class');
 
@@ -203,6 +204,10 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
         }
         if (selections.floorsSlabsSelected?.includes("slabOnGradeIntegralFooting")) {
           addIfMissing(optional, 'slabOnGradeIntegralFootingRSI', 'Slab on Grade');
+        }
+        
+        if (selections.wantsCertifications === 'yes') {
+          addIfMissing(optional, 'interestedCertifications', 'Selected Certifications');
         }
         break;
 

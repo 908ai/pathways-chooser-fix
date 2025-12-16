@@ -87,8 +87,6 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
         }
     ];
 
-    const [wantsCertifications, setWantsCertifications] = useState<string | null>(null);
-
     return (
         <>
             {
@@ -249,16 +247,13 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                         </label>
 
                         <Select
-                            value={wantsCertifications ?? undefined}
+                            value={selections.wantsCertifications ?? undefined}
                             onValueChange={(value) => {
-                            setWantsCertifications(value);
-
-                            if (value === "no") {
                                 setSelections(prev => ({
-                                ...prev,
-                                interestedCertifications: [],
+                                    ...prev,
+                                    wantsCertifications: value,
+                                    interestedCertifications: value === "no" ? [] : prev.interestedCertifications
                                 }));
-                            }
                             }}
                         >
                             <SelectTrigger className="w-[160px]">
@@ -271,7 +266,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                         </Select>
                     </div>
 
-                    {wantsCertifications === "yes" && (
+                    {selections.wantsCertifications === "yes" && (
                         <>
                             <div id="interestedCertifications" className="space-y-4">
                                 <div className="flex items-center gap-2">
