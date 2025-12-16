@@ -728,7 +728,7 @@ export default function Performance9365Section({
                                                 midConstructionBlowerDoorPlanned: checked === true, // `checked` pode ser true | false | "indeterminate"
                                             }));
                                         }}
-                                        className="h-4 w-4 text-primary"
+                                        className="h-4 w-4 text-primary border-2 border-slate-400"
                                     />
                                     <label
                                         htmlFor="midConstructionBlowerDoor-9367-3"
