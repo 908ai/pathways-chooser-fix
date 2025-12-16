@@ -241,10 +241,199 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                     )}
 
                     {/* Certification Interests */}
-                    <div className="flex items-center justify-between gap-4">
-                        <label className="text-sm font-medium text-foreground">
-                            Are you interested in pursuing any certifications or programs?
-                        </label>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <label className="text-sm font-medium text-foreground">
+                                Are you interested in pursuing any certifications or programs?
+                            </label>
+
+                            <InfoButton title="Certification Information">
+                                <div className="space-y-6 text-base">
+                                    {/* Summary Table */}
+                                    <div className="bg-muted/30 p-4 rounded-lg">
+                                        <h3 className="font-semibold text-lg mb-4">Summary Table: Benefits at a Glance</h3>
+                                        <div className="overflow-x-auto">
+                                            <table className="w-full text-base">
+                                                <thead>
+                                                    <tr className="border-b">
+                                                        <th className="text-left py-2 pr-4 font-medium">Program / Feature</th>
+                                                        <th className="text-left py-2 pr-4 font-medium">Homeowner Benefit</th>
+                                                        <th className="text-left py-2 font-medium">Builder Benefit</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="space-y-2">
+                                                    <tr className="border-b border-muted">
+                                                        <td className="py-2 pr-4 font-medium">EnerGuide (GJ/year)</td>
+                                                        <td className="py-2 pr-4">Understand energy use, access rebates, improve efficiency</td>
+                                                        <td className="py-2">Required for performance path, supports other certifications</td>
+                                                    </tr>
+                                                    <tr className="border-b border-muted">
+                                                        <td className="py-2 pr-4 font-medium">Net Zero / NZ Ready</td>
+                                                        <td className="py-2 pr-4">Energy independence, comfort, resale value</td>
+                                                        <td className="py-2">Market leadership, premium product, support clean energy goals</td>
+                                                    </tr>
+                                                    <tr className="border-b border-muted">
+                                                        <td className="py-2 pr-4 font-medium">Built Green</td>
+                                                        <td className="py-2 pr-4">Healthier, more durable, environmentally friendly home</td>
+                                                        <td className="py-2">Flexible tiers, environmental branding</td>
+                                                    </tr>
+                                                    <tr className="border-b border-muted">
+                                                        <td className="py-2 pr-4 font-medium">ENERGY STAR</td>
+                                                        <td className="py-2 pr-4">Lower bills, trusted label, better comfort</td>
+                                                        <td className="py-2">Simple compliance path, public recognition</td>
+                                                    </tr>
+                                                    <tr className="border-b border-muted">
+                                                        <td className="py-2 pr-4 font-medium">SaskEnergy Rebates</td>
+                                                        <td className="py-2 pr-4">Reduces upfront upgrade costs</td>
+                                                        <td className="py-2">Easier upsell of efficiency features</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className="py-2 pr-4 font-medium">Solar-Ready Design</td>
+                                                        <td className="py-2 pr-4">Prepares for low-cost solar install, supports $40K loan</td>
+                                                        <td className="py-2">Low-cost upgrade, future-proofs builds</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h3 className="font-semibold text-lg mb-3">1. EnerGuide Certification (Natural Resources Canada)</h3>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <h4 className="font-medium">Homeowner Benefits:</h4>
+                                                <ul className="list-disc pl-5 space-y-1">
+                                                    <li>Provides an energy rating in gigajoules per year (GJ/year)—the lower the number, the better.</li>
+                                                    <li>Helps identify areas for improvement, lower utility costs, and enhance comfort.</li>
+                                                    <li>A rating of 0 GJ/year indicates a Net Zero home that offsets 100% of its energy with renewables.</li>
+                                                    <li>Required for many rebate programs and certifications like Net Zero and ENERGY STAR.</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <h4 className="font-medium">Builder Benefits:</h4>
+                                                <ul className="list-disc pl-5 space-y-1">
+                                                    <li>A pathway for compliance under the performance path of the tiered energy code.</li>
+                                                    <li>Establishes credibility and trust with homebuyers.</li>
+                                                    <li>Provides the baseline to pursue ENERGY STAR, Net Zero, and Built Green certifications.</li>
+                                                    <li>Supports marketing efforts and helps communicate the value of energy-efficient construction.</li>
+                                                    <li>Third party certification provides validation of the performance of the home and how it was constructed with a final blower door test included.</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="border-t pt-4">
+                                        <h3 className="font-semibold text-lg mb-3">2. Net Zero and Net Zero Ready (CHBA)</h3>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <h4 className="font-medium">Homeowner Benefits:</h4>
+                                                <ul className="list-disc pl-5 space-y-1">
+                                                    <li>Best-in-class energy efficiency: Net Zero homes produce as much energy as they use annually; Net Zero Ready homes are designed for future solar install.</li>
+                                                    <li>Significantly lower utility bills and improved comfort, air quality, and noise reduction.</li>
+                                                    <li>Highly durable and future-proof, with potential for higher resale value.</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <h4 className="font-medium">Builder Benefits:</h4>
+                                                <ul className="list-disc pl-5 space-y-1">
+                                                    <li>Positions the builder as a leader in high-performance, sustainable design.</li>
+                                                    <li>Access to CHBA's Net Zero labeling and marketing resources.</li>
+                                                    <li>Attracts forward-thinking buyers and increases profit margins through differentiated product offerings.</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="border-t pt-4">
+                                        <h3 className="font-semibold text-lg mb-3">3. Built Green Certification</h3>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <h4 className="font-medium">Homeowner Benefits:</h4>
+                                                <ul className="list-disc pl-5 space-y-1">
+                                                    <li>Covers a broader spectrum than energy alone: materials, indoor air quality, water conservation, durability, and waste management.</li>
+                                                    <li>Results in healthier, more comfortable homes with long-term durability and reduced environmental impact.</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <h4 className="font-medium">Builder Benefits:</h4>
+                                                <ul className="list-disc pl-5 space-y-1">
+                                                    <li>Flexible, tiered system (Bronze to Platinum) allows phased adoption of sustainability goals.</li>
+                                                    <li>Offers a recognized label for environmentally responsible building.</li>
+                                                    <li>Aligns with evolving buyer values and regulatory trends.</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="border-t pt-4">
+                                        <h3 className="font-semibold text-lg mb-3">4. ENERGY STAR for New Homes</h3>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <h4 className="font-medium">Homeowner Benefits:</h4>
+                                                <ul className="list-disc pl-5 space-y-1">
+                                                    <li>Homes are at least 20% more efficient than code-built homes.</li>
+                                                    <li>Trusted government-backed label offering assurance of energy savings, comfort, and quieter operation.</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <h4 className="font-medium">Builder Benefits:</h4>
+                                                <ul className="list-disc pl-5 space-y-1">
+                                                    <li>Clear, prescriptive path to code-exceeding performance.</li>
+                                                    <li>Helps qualify for rebates and incentives.</li>
+                                                    <li>Widely recognized by buyers and lenders.</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="border-t pt-4">
+                                        <h3 className="font-semibold text-lg mb-3">5. SaskEnergy Residential Rebates</h3>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <h4 className="font-medium">Homeowner Benefits:</h4>
+                                                <ul className="list-disc pl-5 space-y-1">
+                                                    <li>Helps lower the cost of upgrading to more efficient equipment, insulation, windows, and more (up to $9,000 in rebates).</li>
+                                                    <li>Incentivizes high-performance construction and energy-saving retrofits.</li>
+                                                    <li>May be stackable with federal programs (e.g., Canada Greener Homes).</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <h4 className="font-medium">Builder Benefits:</h4>
+                                                <ul className="list-disc pl-5 space-y-1">
+                                                    <li>Helps close the affordability gap for clients.</li>
+                                                    <li>Makes upselling energy-efficient features more accessible and appealing.</li>
+                                                    <li>Adds value without increasing construction costs significantly when planned early.</li>
+                                                    <li>Up to $800 in rebates for builders</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="border-t pt-4">
+                                        <h3 className="font-semibold text-lg mb-3">6. Building a Solar-Ready Home</h3>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <h4 className="font-medium">Homeowner Benefits:</h4>
+                                                <ul className="list-disc pl-5 space-y-1">
+                                                    <li>Avoids costly retrofits later by pre-installing conduit, roof reinforcement, panel space, and breaker capacity.</li>
+                                                    <li>Enables faster and more affordable future solar installations.</li>
+                                                    <li>Adds resale value and aligns with Canada's Net Zero goals.</li>
+                                                    <li>Canada Greener Homes Loan offers up to $40,000 interest-free for solar if the homeowner has occupied the home for at least 6 months: <a href="https://natural-resources.canada.ca/energy-efficiency/home-energy-efficiency/canada-greener-homes-initiative/canada-greener-homes-loan" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">Learn more and apply</a></li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <h4 className="font-medium">Builder Benefits:</h4>
+                                                <ul className="list-disc pl-5 space-y-1">
+                                                    <li>Inexpensive to incorporate during construction—highly valued by buyers and differentiates your home from the competition.</li>
+                                                    <li>Supports Net Zero Ready certification and prepares homes for future incentives.</li>
+                                                    <li>Enhances builder reputation in sustainability and long-term value creation.</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </InfoButton>
+                        </div>
 
                         <Select
                             value={selections.wantsCertifications ?? undefined}
@@ -256,12 +445,12 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                 }));
                             }}
                         >
-                            <SelectTrigger className="w-[160px]">
-                            <SelectValue placeholder="Select" />
+                            <SelectTrigger className="w-[90px]">
+                                <SelectValue placeholder="Select" />
                             </SelectTrigger>
                             <SelectContent>
-                            <SelectItem value="yes">Yes</SelectItem>
-                            <SelectItem value="no">No</SelectItem>
+                                <SelectItem value="yes">Yes</SelectItem>
+                                <SelectItem value="no">No</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -270,193 +459,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                         <>
                             <div id="interestedCertifications" className="space-y-4">
                                 <div className="flex items-center gap-2">
-                                    <label className="text-sm font-medium text-foreground">Are you interested in any of the following certifications or programs?</label>
-                                    <InfoButton title="Certification Information">
-                                        <div className="space-y-6 text-base">
-                                            {/* Summary Table */}
-                                            <div className="bg-muted/30 p-4 rounded-lg">
-                                                <h3 className="font-semibold text-lg mb-4">Summary Table: Benefits at a Glance</h3>
-                                                <div className="overflow-x-auto">
-                                                    <table className="w-full text-base">
-                                                        <thead>
-                                                            <tr className="border-b">
-                                                                <th className="text-left py-2 pr-4 font-medium">Program / Feature</th>
-                                                                <th className="text-left py-2 pr-4 font-medium">Homeowner Benefit</th>
-                                                                <th className="text-left py-2 font-medium">Builder Benefit</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody className="space-y-2">
-                                                            <tr className="border-b border-muted">
-                                                                <td className="py-2 pr-4 font-medium">EnerGuide (GJ/year)</td>
-                                                                <td className="py-2 pr-4">Understand energy use, access rebates, improve efficiency</td>
-                                                                <td className="py-2">Required for performance path, supports other certifications</td>
-                                                            </tr>
-                                                            <tr className="border-b border-muted">
-                                                                <td className="py-2 pr-4 font-medium">Net Zero / NZ Ready</td>
-                                                                <td className="py-2 pr-4">Energy independence, comfort, resale value</td>
-                                                                <td className="py-2">Market leadership, premium product, support clean energy goals</td>
-                                                            </tr>
-                                                            <tr className="border-b border-muted">
-                                                                <td className="py-2 pr-4 font-medium">Built Green</td>
-                                                                <td className="py-2 pr-4">Healthier, more durable, environmentally friendly home</td>
-                                                                <td className="py-2">Flexible tiers, environmental branding</td>
-                                                            </tr>
-                                                            <tr className="border-b border-muted">
-                                                                <td className="py-2 pr-4 font-medium">ENERGY STAR</td>
-                                                                <td className="py-2 pr-4">Lower bills, trusted label, better comfort</td>
-                                                                <td className="py-2">Simple compliance path, public recognition</td>
-                                                            </tr>
-                                                            <tr className="border-b border-muted">
-                                                                <td className="py-2 pr-4 font-medium">SaskEnergy Rebates</td>
-                                                                <td className="py-2 pr-4">Reduces upfront upgrade costs</td>
-                                                                <td className="py-2">Easier upsell of efficiency features</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td className="py-2 pr-4 font-medium">Solar-Ready Design</td>
-                                                                <td className="py-2 pr-4">Prepares for low-cost solar install, supports $40K loan</td>
-                                                                <td className="py-2">Low-cost upgrade, future-proofs builds</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-
-                                            <div>
-                                                <h3 className="font-semibold text-lg mb-3">1. EnerGuide Certification (Natural Resources Canada)</h3>
-                                                <div className="space-y-3">
-                                                    <div>
-                                                        <h4 className="font-medium">Homeowner Benefits:</h4>
-                                                        <ul className="list-disc pl-5 space-y-1">
-                                                            <li>Provides an energy rating in gigajoules per year (GJ/year)—the lower the number, the better.</li>
-                                                            <li>Helps identify areas for improvement, lower utility costs, and enhance comfort.</li>
-                                                            <li>A rating of 0 GJ/year indicates a Net Zero home that offsets 100% of its energy with renewables.</li>
-                                                            <li>Required for many rebate programs and certifications like Net Zero and ENERGY STAR.</li>
-                                                        </ul>
-                                                    </div>
-                                                    <div>
-                                                        <h4 className="font-medium">Builder Benefits:</h4>
-                                                        <ul className="list-disc pl-5 space-y-1">
-                                                            <li>A pathway for compliance under the performance path of the tiered energy code.</li>
-                                                            <li>Establishes credibility and trust with homebuyers.</li>
-                                                            <li>Provides the baseline to pursue ENERGY STAR, Net Zero, and Built Green certifications.</li>
-                                                            <li>Supports marketing efforts and helps communicate the value of energy-efficient construction.</li>
-                                                            <li>Third party certification provides validation of the performance of the home and how it was constructed with a final blower door test included.</li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="border-t pt-4">
-                                                <h3 className="font-semibold text-lg mb-3">2. Net Zero and Net Zero Ready (CHBA)</h3>
-                                                <div className="space-y-3">
-                                                    <div>
-                                                        <h4 className="font-medium">Homeowner Benefits:</h4>
-                                                        <ul className="list-disc pl-5 space-y-1">
-                                                            <li>Best-in-class energy efficiency: Net Zero homes produce as much energy as they use annually; Net Zero Ready homes are designed for future solar install.</li>
-                                                            <li>Significantly lower utility bills and improved comfort, air quality, and noise reduction.</li>
-                                                            <li>Highly durable and future-proof, with potential for higher resale value.</li>
-                                                        </ul>
-                                                    </div>
-                                                    <div>
-                                                        <h4 className="font-medium">Builder Benefits:</h4>
-                                                        <ul className="list-disc pl-5 space-y-1">
-                                                            <li>Positions the builder as a leader in high-performance, sustainable design.</li>
-                                                            <li>Access to CHBA's Net Zero labeling and marketing resources.</li>
-                                                            <li>Attracts forward-thinking buyers and increases profit margins through differentiated product offerings.</li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="border-t pt-4">
-                                                <h3 className="font-semibold text-lg mb-3">3. Built Green Certification</h3>
-                                                <div className="space-y-3">
-                                                    <div>
-                                                        <h4 className="font-medium">Homeowner Benefits:</h4>
-                                                        <ul className="list-disc pl-5 space-y-1">
-                                                            <li>Covers a broader spectrum than energy alone: materials, indoor air quality, water conservation, durability, and waste management.</li>
-                                                            <li>Results in healthier, more comfortable homes with long-term durability and reduced environmental impact.</li>
-                                                        </ul>
-                                                    </div>
-                                                    <div>
-                                                        <h4 className="font-medium">Builder Benefits:</h4>
-                                                        <ul className="list-disc pl-5 space-y-1">
-                                                            <li>Flexible, tiered system (Bronze to Platinum) allows phased adoption of sustainability goals.</li>
-                                                            <li>Offers a recognized label for environmentally responsible building.</li>
-                                                            <li>Aligns with evolving buyer values and regulatory trends.</li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="border-t pt-4">
-                                                <h3 className="font-semibold text-lg mb-3">4. ENERGY STAR for New Homes</h3>
-                                                <div className="space-y-3">
-                                                    <div>
-                                                        <h4 className="font-medium">Homeowner Benefits:</h4>
-                                                        <ul className="list-disc pl-5 space-y-1">
-                                                            <li>Homes are at least 20% more efficient than code-built homes.</li>
-                                                            <li>Trusted government-backed label offering assurance of energy savings, comfort, and quieter operation.</li>
-                                                        </ul>
-                                                    </div>
-                                                    <div>
-                                                        <h4 className="font-medium">Builder Benefits:</h4>
-                                                        <ul className="list-disc pl-5 space-y-1">
-                                                            <li>Clear, prescriptive path to code-exceeding performance.</li>
-                                                            <li>Helps qualify for rebates and incentives.</li>
-                                                            <li>Widely recognized by buyers and lenders.</li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="border-t pt-4">
-                                                <h3 className="font-semibold text-lg mb-3">5. SaskEnergy Residential Rebates</h3>
-                                                <div className="space-y-3">
-                                                    <div>
-                                                        <h4 className="font-medium">Homeowner Benefits:</h4>
-                                                        <ul className="list-disc pl-5 space-y-1">
-                                                            <li>Helps lower the cost of upgrading to more efficient equipment, insulation, windows, and more (up to $9,000 in rebates).</li>
-                                                            <li>Incentivizes high-performance construction and energy-saving retrofits.</li>
-                                                            <li>May be stackable with federal programs (e.g., Canada Greener Homes).</li>
-                                                        </ul>
-                                                    </div>
-                                                    <div>
-                                                        <h4 className="font-medium">Builder Benefits:</h4>
-                                                        <ul className="list-disc pl-5 space-y-1">
-                                                            <li>Helps close the affordability gap for clients.</li>
-                                                            <li>Makes upselling energy-efficient features more accessible and appealing.</li>
-                                                            <li>Adds value without increasing construction costs significantly when planned early.</li>
-                                                            <li>Up to $800 in rebates for builders</li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="border-t pt-4">
-                                                <h3 className="font-semibold text-lg mb-3">6. Building a Solar-Ready Home</h3>
-                                                <div className="space-y-3">
-                                                    <div>
-                                                        <h4 className="font-medium">Homeowner Benefits:</h4>
-                                                        <ul className="list-disc pl-5 space-y-1">
-                                                            <li>Avoids costly retrofits later by pre-installing conduit, roof reinforcement, panel space, and breaker capacity.</li>
-                                                            <li>Enables faster and more affordable future solar installations.</li>
-                                                            <li>Adds resale value and aligns with Canada's Net Zero goals.</li>
-                                                            <li>Canada Greener Homes Loan offers up to $40,000 interest-free for solar if the homeowner has occupied the home for at least 6 months: <a href="https://natural-resources.canada.ca/energy-efficiency/home-energy-efficiency/canada-greener-homes-initiative/canada-greener-homes-loan" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80">Learn more and apply</a></li>
-                                                        </ul>
-                                                    </div>
-                                                    <div>
-                                                        <h4 className="font-medium">Builder Benefits:</h4>
-                                                        <ul className="list-disc pl-5 space-y-1">
-                                                            <li>Inexpensive to incorporate during construction—highly valued by buyers and differentiates your home from the competition.</li>
-                                                            <li>Supports Net Zero Ready certification and prepares homes for future incentives.</li>
-                                                            <li>Enhances builder reputation in sustainability and long-term value creation.</li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </InfoButton>
+                                    <label className="text-sm font-medium text-foreground">Please select the certifications or programs you are interested in below:</label>
                                 </div>
                                 <div className="space-y-3">
                                     {certifications.map(cert => (
