@@ -1180,7 +1180,19 @@ const NBCCalculator = () => {
                               onCheckedChange={(checked) =>
                                 setAgreementChecked(checked as boolean)
                               }
-                            />
+                              className={`
+                                mt-0.5 h-5 w-5
+                                border-2 border-slate-400
+                                transition-all duration-200
+
+                                ${!agreementChecked ? 'animate-soft-pulse' : ''}
+
+                                data-[state=checked]:bg-green-600
+                                data-[state=checked]:border-green-600
+                                data-[state=checked]:text-white
+                                data-[state=checked]:shadow-[0_0_0_3px_rgba(34,197,94,0.45)]
+                              `}
+                            />                            
                             <label
                               htmlFor="agreement-performance"
                               className="text-sm text-slate-600 leading-relaxed cursor-pointer"
