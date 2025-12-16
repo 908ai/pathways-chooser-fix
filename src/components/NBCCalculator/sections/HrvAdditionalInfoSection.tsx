@@ -243,34 +243,33 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                     )}
 
                     {/* Certification Interests */}
-<div className="flex items-center justify-between gap-4">
-  <label className="text-sm font-medium text-foreground">
-    Are you interested in pursuing any certifications or programs?
-  </label>
+                    <div className="flex items-center justify-between gap-4">
+                        <label className="text-sm font-medium text-foreground">
+                            Are you interested in pursuing any certifications or programs?
+                        </label>
 
-  <Select
-    value={wantsCertifications ?? undefined}
-    onValueChange={(value) => {
-      setWantsCertifications(value);
+                        <Select
+                            value={wantsCertifications ?? undefined}
+                            onValueChange={(value) => {
+                            setWantsCertifications(value);
 
-      if (value === "no") {
-        setSelections(prev => ({
-          ...prev,
-          interestedCertifications: [],
-        }));
-      }
-    }}
-  >
-    <SelectTrigger className="w-[160px]">
-      <SelectValue placeholder="Select" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem value="yes">Yes</SelectItem>
-      <SelectItem value="no">No</SelectItem>
-    </SelectContent>
-  </Select>
-</div>
-
+                            if (value === "no") {
+                                setSelections(prev => ({
+                                ...prev,
+                                interestedCertifications: [],
+                                }));
+                            }
+                            }}
+                        >
+                            <SelectTrigger className="w-[160px]">
+                            <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                            <SelectContent>
+                            <SelectItem value="yes">Yes</SelectItem>
+                            <SelectItem value="no">No</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
 
                     {wantsCertifications === "yes" && (
                         <>
