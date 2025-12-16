@@ -125,7 +125,8 @@ export default function Prescriptive9362Section({
     const maxUValue = selections.province === "alberta" && selections.climateZone === "7B" ? 2.41 : 2.75;
 
     // Accordion state and completion badge helpers
-    const [openSections, setOpenSections] = useState<string[]>(["envelope"]);
+    //const [openSections, setOpenSections] = useState<string[]>(["envelope"]);
+    const [openSections, setOpenSections] = useState<string[]>([]);
 
     const isSet = (value: any) => {
         if (Array.isArray(value)) return value.length > 0;
@@ -240,24 +241,24 @@ export default function Prescriptive9362Section({
 
     return (
         <div className="space-y-3">
-            <div className="flex justify-end gap-2">
-                <Button variant="outline" size="sm" onClick={() => setOpenSections(["envelope", "mechanical"])}>
+            <div className="flex justify-center gap-2">
+                <Button variant="outline" size="xs" className="text-sm px-2" onClick={() => setOpenSections(["envelope", "mechanical"])}>
                     Expand All
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => setOpenSections([])}>
+                <Button variant="outline" size="xs" className="text-sm px-2" onClick={() => setOpenSections([])}>
                     Collapse All
                 </Button>
             </div>
 
             <Accordion type="multiple" value={openSections} onValueChange={(val: string[] | string) => setOpenSections(Array.isArray(val) ? val : [])} className="border rounded-md">
                 <AccordionItem value="envelope">
-                    <AccordionTrigger>
+                    <AccordionTrigger className="px-4">
                         <div className="flex w-full items-center justify-between">
                             <span className="text-base">Building Envelope</span>
                             <Badge variant="secondary">{envelopeCompleted} / {envelopeKeys.length} completed</Badge>
                         </div>
                     </AccordionTrigger>
-                    <AccordionContent>
+                    <AccordionContent className="px-4">
                         <div className="space-y-4">
                             {/* HRV/ERV Section for 9362 */}
                             <div id="hasHrv" className="space-y-2">
@@ -1068,13 +1069,13 @@ export default function Prescriptive9362Section({
                 </AccordionItem>
 
                 <AccordionItem value="mechanical">
-                    <AccordionTrigger>
+                    <AccordionTrigger className="px-4">
                         <div className="flex w-full items-center justify-between">
                             <span className="text-base">Mechanical Systems</span>
                             <Badge variant="secondary">{mechanicalCompleted} / {mechanicalKeys.length} completed</Badge>
                         </div>
                     </AccordionTrigger>
-                    <AccordionContent>
+                    <AccordionContent className="px-4">
                         <div className="space-y-4">
                             <div id="heatingType" className="space-y-2">
                                 <div className="flex items-center gap-3">
