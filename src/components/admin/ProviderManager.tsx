@@ -1,209 +1,126 @@
-"use client";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import { PlusCircle, Edit, Trash2, Check, X } from 'lucide-react';
 
-import { useState, useMemo } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { ServiceProvider } from "@/integrations/supabase/types";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { useToast } from "@/hooks/use-toast";
-import { ProviderDataTable } from "./providers/DataTable";
-import { getColumns } from "./providers/columns";
-import { ProviderForm, ProviderFormValues } from "./providers/ProviderForm";
-import { Skeleton } from "@/components/ui/skeleton";
-
-async function fetchProviders(): Promise<ServiceProvider[]> {
+const fetchProviders = async () => {
   const { data, error } = await supabase
-    .from("service_providers")
-    .select("*")
-    .order("name", { ascending: true });
-  if (error) throw new Error(error.message);
-  return data || [];
-}
+    .from('service_providers')
+    .select('*')
+    .order('created_at', { ascending: false });
 
-export default function ProviderManager() {
+  if (error) throw new Error(error.message);
+  return data;
+};
+
+const ProviderManager = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-  const [selectedProvider, setSelectedProvider] = useState<ServiceProvider | null>(null);
-
-  const { data: providers, isLoading } = useQuery<ServiceProvider[]>({
-    queryKey: ["service_providers"],
+  const { data: providers, isLoading, error } = useQuery({
+    queryKey: ['all_service_providers'],
     queryFn: fetchProviders,
   });
 
-  const mutationOptions = {
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["service_providers"] });
-      setIsFormOpen(false);
-      setIsDeleteConfirmOpen(false);
-      setSelectedProvider(null);
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  };
-
-  const createMutation = useMutation({
-    mutationFn: async (values: ProviderFormValues) => {
-      const { error } = await supabase.from("service_providers").insert([values]);
-      if (error) throw new Error(error.message);
-    },
-    ...mutationOptions,
-    onSuccess: () => {
-      mutationOptions.onSuccess();
-      toast({ title: "Success", description: "Provider created successfully." });
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async ({ id, ...values }: ProviderFormValues & { id: string }) => {
+  const updateProviderStatusMutation = useMutation({
+    mutationFn: async ({ providerId, is_approved }: { providerId: string; is_approved: boolean }) => {
       const { error } = await supabase
-        .from("service_providers")
-        .update(values)
-        .eq("id", id);
-      if (error) throw new Error(error.message);
-    },
-    ...mutationOptions,
-    onSuccess: () => {
-      mutationOptions.onSuccess();
-      toast({ title: "Success", description: "Provider updated successfully." });
-    },
-  });
-  
-  const toggleApprovedMutation = useMutation({
-    mutationFn: async ({ id, is_approved }: { id: string, is_approved: boolean }) => {
-      const { error } = await supabase
-        .from("service_providers")
+        .from('service_providers')
         .update({ is_approved })
-        .eq("id", id);
-      if (error) throw new Error(error.message);
+        .eq('id', providerId);
+      if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["service_providers"] });
-      toast({ title: "Success", description: "Provider approval status updated." });
+      queryClient.invalidateQueries({ queryKey: ['all_service_providers'] });
+      toast({ title: 'Success', description: 'Provider status updated.' });
     },
-    onError: mutationOptions.onError,
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("service_providers").delete().eq("id", id);
-      if (error) throw new Error(error.message);
-    },
-    ...mutationOptions,
-    onSuccess: () => {
-      mutationOptions.onSuccess();
-      toast({ title: "Success", description: "Provider deleted successfully." });
+    onError: (error: any) => {
+      toast({ title: 'Error', description: `Failed to update provider: ${error.message}`, variant: 'destructive' });
     },
   });
 
-  const handleAdd = () => {
-    setSelectedProvider(null);
-    setIsFormOpen(true);
-  };
-
-  const handleEdit = (provider: ServiceProvider) => {
-    setSelectedProvider(provider);
-    setIsFormOpen(true);
-  };
-
-  const handleDelete = (provider: ServiceProvider) => {
-    setSelectedProvider(provider);
-    setIsDeleteConfirmOpen(true);
-  };
-
-  const handleFormSubmit = (values: ProviderFormValues) => {
-    if (selectedProvider) {
-      updateMutation.mutate({ id: selectedProvider.id, ...values });
-    } else {
-      createMutation.mutate(values);
-    }
-  };
-  
-  const handleToggleApproved = (provider: ServiceProvider, isApproved: boolean) => {
-    toggleApprovedMutation.mutate({ id: provider.id, is_approved: isApproved });
-  };
-
-  const columns = useMemo(() => getColumns(handleEdit, handleDelete, handleToggleApproved), [handleEdit, handleDelete, handleToggleApproved]);
-
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <Skeleton className="h-10 w-48" />
-          <Skeleton className="h-10 w-32" />
-        </div>
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-64 w-full" />
-      </div>
-    );
-  }
+  if (isLoading) return <div>Loading providers...</div>;
+  if (error) return <div className="text-red-500">Error loading providers: {error.message}</div>;
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Service Providers</h2>
-        <Button onClick={handleAdd}>Add Provider</Button>
-      </div>
-      <ProviderDataTable columns={columns} data={providers || []} />
-
-      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>
-              {selectedProvider ? "Edit Provider" : "Add New Provider"}
-            </DialogTitle>
-          </DialogHeader>
-          <ProviderForm
-            provider={selectedProvider}
-            onSubmit={handleFormSubmit}
-            onCancel={() => setIsFormOpen(false)}
-            isSubmitting={createMutation.isPending || updateMutation.isPending}
-          />
-        </DialogContent>
-      </Dialog>
-
-      <AlertDialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the provider "{selectedProvider?.name}".
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => selectedProvider && deleteMutation.mutate(selectedProvider.id)}
-              disabled={deleteMutation.isPending}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              {deleteMutation.isPending ? "Deleting..." : "Delete"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+    <Card>
+      <CardHeader>
+        <div className="flex justify-between items-center">
+          <div>
+            <CardTitle>Service Provider Management</CardTitle>
+            <CardDescription>Add, edit, and approve service providers for the directory.</CardDescription>
+          </div>
+          <Button disabled>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Add Provider (Coming Soon)
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {providers && providers.length > 0 ? providers.map(provider => (
+              <TableRow key={provider.id}>
+                <TableCell>{provider.name}</TableCell>
+                <TableCell>{provider.service_category}</TableCell>
+                <TableCell>{provider.location_city}, {provider.location_province}</TableCell>
+                <TableCell>
+                  <Badge variant={provider.is_approved ? 'default' : 'secondary'}>
+                    {provider.is_approved ? 'Approved' : 'Pending'}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-right space-x-2">
+                  {provider.is_approved ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => updateProviderStatusMutation.mutate({ providerId: provider.id, is_approved: false })}
+                      disabled={updateProviderStatusMutation.isPending}
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      Revoke
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => updateProviderStatusMutation.mutate({ providerId: provider.id, is_approved: true })}
+                      disabled={updateProviderStatusMutation.isPending}
+                    >
+                      <Check className="h-4 w-4 mr-2" />
+                      Approve
+                    </Button>
+                  )}
+                  <Button variant="ghost" size="icon" disabled>
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600" disabled>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            )) : (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center">No providers found.</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
-}
+};
+
+export default ProviderManager;

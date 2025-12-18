@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
 import { AlertTriangle } from 'lucide-react';
 
-export interface HurdleData {
+interface HurdleData {
   name: string;
   count: number;
 }

@@ -1,7 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Zap } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { ProjectSummary } from '@/integrations/supabase/types';
 
 // Define the structure for an insight
 interface Insight {
@@ -60,14 +59,14 @@ const insights: Insight[] = [
   },
 ];
 
-const EfficiencyInsightCard = ({ projects }: { projects: ProjectSummary[] }) => {
+const EfficiencyInsightCard = () => {
   const [currentInsight, setCurrentInsight] = useState<Insight | null>(null);
 
   useEffect(() => {
     // Select a random insight when the component mounts
     const randomIndex = Math.floor(Math.random() * insights.length);
     setCurrentInsight(insights[randomIndex]);
-  }, [projects]); // Re-calculate if projects change
+  }, []);
 
   if (!currentInsight) {
     // Return a loading state or null while the insight is being selected

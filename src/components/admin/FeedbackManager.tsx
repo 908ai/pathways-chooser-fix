@@ -1,156 +1,121 @@
 "use client";
+
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { FeedbackWithUser } from '@/integrations/supabase/types';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, MessageSquare, ArrowRight } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import FeedbackConversation from './FeedbackConversation';
 import { useToast } from '@/hooks/use-toast';
-import { Database } from '@/integrations/supabase/database.types';
+import { Database } from '@/integrations/supabase/types';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
-type FeedbackDto = Database['public']['Functions']['get_feedback_with_user_details']['Returns']
+type Feedback = Database['public']['Functions']['get_feedback_with_user_details']['Returns'][number];
 
-async function fetchFeedback(): Promise<FeedbackWithUser[]> {
-  const { data, error } = await supabase.rpc('get_feedback_with_user_details');
-
-  if (error) {
-    console.error('Error fetching feedback:', error);
-    throw new Error(error.message);
-  }
-  
-  // The RPC function returns a JSON string, so we need to parse it.
-  // The actual return type from rpc is `any`, so we cast it.
-  const result = data as any as FeedbackWithUser[];
-
-  return result.map(f => ({
-    ...f,
-    unread_user_responses_count: f.unread_user_responses_count || 0,
-  }));
-}
-
-export default function FeedbackManager() {
-  const navigate = useNavigate();
+export const FeedbackManager = () => {
+  const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: feedback, isLoading, error, refetch } = useQuery<FeedbackWithUser[]>({
+  const { data: feedback, isLoading, error } = useQuery<Feedback[]>({
     queryKey: ['all_feedback'],
-    queryFn: fetchFeedback,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_feedback_with_user_details');
+      if (error) throw new Error(error.message);
+      return data || [];
+    }
   });
 
-  const updateStatusMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { error } = await supabase
-        .from('feedback')
-        .update({ status })
-        .eq('id', id);
-
+  const handleViewConversation = async (feedbackItem: Feedback) => {
+    setSelectedFeedback(feedbackItem);
+    setIsModalOpen(true);
+    if (feedbackItem.status === 'New') {
+      updateStatusMutation.mutate({ id: feedbackItem.id, status: 'In Progress', isAutomaticUpdate: true });
+    }
+    
+    if (feedbackItem.unread_user_responses_count > 0) {
+      const { error } = await supabase.rpc('mark_feedback_responses_as_read', { p_feedback_id: feedbackItem.id });
       if (error) {
-        throw new Error(error.message);
+        console.error('Error marking feedback as read:', error);
+      } else {
+        queryClient.invalidateQueries({ queryKey: ['unread_notifications_with_details'] });
+        queryClient.invalidateQueries({ queryKey: ['all_feedback'] });
       }
+    }
+  };
+
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ id, status, isAutomaticUpdate }: { id: string, status: string, isAutomaticUpdate?: boolean }) => {
+      const { error } = await supabase.from('feedback').update({ status }).eq('id', id);
+      if (error) throw error;
+      return { isAutomaticUpdate };
+    },
+    onSuccess: ({ isAutomaticUpdate }) => {
+      queryClient.invalidateQueries({ queryKey: ['all_feedback'] });
+      if (!isAutomaticUpdate) {
+        toast({ title: 'Success', description: 'Feedback status updated.' });
+      }
+    },
+    onError: (error: any) => {
+      toast({ title: 'Error', description: `Failed to update status: ${error.message}`, variant: 'destructive' });
+    },
+  });
+
+  const deleteFeedbackMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('feedback').delete().eq('id', id);
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['all_feedback'] });
-      toast({
-        title: 'Status Updated',
-        description: 'The feedback status has been updated.',
-      });
+      toast({ title: 'Success', description: 'Feedback entry deleted.' });
     },
-    onError: (error: Error) => {
-      toast({
-        title: 'Error',
-        description: `Failed to update status: ${error.message}`,
-        variant: 'destructive',
-      });
+    onError: (error: any) => {
+      toast({ title: 'Error', description: `Failed to delete feedback: ${error.message}`, variant: 'destructive' });
     },
   });
 
-  const handleStatusChange = (id: string, currentStatus: string) => {
-    let nextStatus: string;
-    switch (currentStatus) {
-      case 'New':
-        nextStatus = 'In Progress';
-        break;
-      case 'In Progress':
-        nextStatus = 'Resolved';
-        break;
-      case 'Resolved':
-        nextStatus = 'New'; // Or maybe 'Re-opened'
-        break;
-      default:
-        nextStatus = 'New';
-    }
-    updateStatusMutation.mutate({ id, status: nextStatus });
+  const handleStatusChange = (id: string, status: string) => {
+    updateStatusMutation.mutate({ id, status });
   };
 
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case 'New':
-        return 'destructive';
-      case 'In Progress':
-        return 'secondary';
-      case 'Resolved':
-        return 'default';
-      default:
-        return 'outline';
+  const handleDelete = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this feedback? This action cannot be undone.')) {
+      deleteFeedbackMutation.mutate(id);
     }
   };
 
-  if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>User Feedback</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <Skeleton key={i} className="h-12 w-full" />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Alert variant="destructive">
-        <Terminal className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>
-          Failed to load feedback: {error.message}
-        </AlertDescription>
-      </Alert>
-    );
-  }
+  if (isLoading) return <div>Loading feedback...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>User Feedback</CardTitle>
+        <CardTitle>Feedback Management</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Date</TableHead>
               <TableHead>User</TableHead>
-              <TableHead>Feedback</TableHead>
               <TableHead>Category</TableHead>
-              <TableHead>Submitted</TableHead>
+              <TableHead>Feedback</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -158,44 +123,63 @@ export default function FeedbackManager() {
           <TableBody>
             {feedback?.map((item) => (
               <TableRow key={item.id}>
-                <TableCell>{item.user_email || 'Anonymous'}</TableCell>
+                <TableCell>{new Date(item.created_at).toLocaleDateString()}</TableCell>
+                <TableCell>{item.user_email}</TableCell>
+                <TableCell>{item.category}</TableCell>
                 <TableCell className="max-w-xs truncate">{item.feedback_text}</TableCell>
                 <TableCell>
-                  <Badge variant="outline">{item.category}</Badge>
-                </TableCell>
-                <TableCell>
-                  {formatDistanceToNow(new Date(item.created_at!), { addSuffix: true })}
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant={getStatusBadgeVariant(item.status)}
-                    size="sm"
-                    onClick={() => handleStatusChange(item.id, item.status)}
-                    disabled={updateStatusMutation.isPending && updateStatusMutation.variables?.id === item.id}
-                  >
-                    {item.status}
-                  </Button>
+                  <Select value={item.status} onValueChange={(value) => handleStatusChange(item.id, value)}>
+                    <SelectTrigger className="w-[120px]">
+                      <SelectValue>
+                        <Badge variant={
+                          item.status === 'New' ? 'default' :
+                          item.status === 'In Progress' ? 'secondary' :
+                          item.status === 'Resolved' ? 'outline' : 'destructive'
+                        }>{item.status}</Badge>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="New">New</SelectItem>
+                      <SelectItem value="In Progress">In Progress</SelectItem>
+                      <SelectItem value="Resolved">Resolved</SelectItem>
+                      <SelectItem value="Archived">Archived</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => navigate(`/admin/feedback/${item.id}`)}
-                  >
-                    View
-                    {item.unread_user_responses_count > 0 && (
-                      <span className="ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                        {item.unread_user_responses_count}
+                  <div className="relative inline-block">
+                    <Button variant="outline" size="sm" onClick={() => handleViewConversation(item)}>View</Button>
+                    {(item.unread_user_responses_count > 0 || item.status === 'New') && (
+                      <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
                       </span>
                     )}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+                  </div>
+                  <Button variant="destructive" size="sm" className="ml-2" onClick={() => handleDelete(item.id)}>Delete</Button>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </CardContent>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-3xl h-[80vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Feedback Conversation</DialogTitle>
+          </DialogHeader>
+          {selectedFeedback && (
+            <FeedbackConversation
+              feedbackId={selectedFeedback.id}
+              userEmail={selectedFeedback.user_email}
+              onClose={() => setIsModalOpen(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </Card>
   );
-}
+};
+
+export default FeedbackManager;

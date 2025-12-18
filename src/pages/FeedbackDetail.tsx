@@ -1,186 +1,208 @@
-"use client";
-
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { FeedbackDetails } from '@/integrations/supabase/types';
 import { useAuth } from '@/hooks/useAuth';
-import { useUserRole } from '@/hooks/useUserRole';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { toast } from 'sonner';
+
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal, Loader2, Send, ArrowLeft } from 'lucide-react';
-import { format } from 'date-fns';
-import { useToast } from '@/hooks/use-toast';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Loader2, Send, ArrowLeft } from 'lucide-react';
+import { Json } from '@/integrations/supabase/types';
 
-async function fetchFeedbackDetails(feedbackId: string): Promise<FeedbackDetails> {
-  const { data, error } = await supabase
-    .rpc('get_feedback_details', { p_feedback_id: feedbackId });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-  return data as FeedbackDetails;
+interface FeedbackResponse {
+  id: string;
+  created_at: string;
+  response_text: string;
+  is_read: boolean;
+  user_id: string;
+  user_email: string;
 }
 
-async function markResponsesAsRead(feedbackId: string) {
-  const { error } = await supabase.rpc('mark_feedback_responses_as_read', { p_feedback_id: feedbackId });
-  if (error) {
-    console.error("Failed to mark as read:", error);
-  }
+interface Conversation {
+  id: string;
+  created_at: string;
+  user_id: string;
+  feedback_text: string;
+  category: string;
+  page_url: string;
+  status: string;
+  feedback_responses: FeedbackResponse[];
 }
 
-export default function FeedbackDetail() {
+const fetchConversation = async (feedbackId: string | undefined): Promise<Conversation | null> => {
+  if (!feedbackId) throw new Error("Feedback ID is required");
+
+  const { data, error } = await supabase.rpc('get_feedback_details', { p_feedback_id: feedbackId });
+
+  if (error) throw error;
+
+  return data as unknown as Conversation | null;
+};
+
+const responseSchema = z.object({
+  response_text: z.string().min(1, "Response cannot be empty."),
+});
+
+const FeedbackDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuth();
-  const { userRole } = useUserRole();
+  const { user, signOut } = useAuth();
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-  const [newResponse, setNewResponse] = useState('');
 
-  const { data: feedback, isLoading, error } = useQuery<FeedbackDetails>({
-    queryKey: ['feedback', id],
-    queryFn: async () => {
-      if (!id) throw new Error("No feedback ID provided");
-      const details = await fetchFeedbackDetails(id);
-      if (details) {
-        await markResponsesAsRead(id);
-        queryClient.invalidateQueries({ queryKey: ['unread_notifications'] });
-        queryClient.invalidateQueries({ queryKey: ['unread_notifications_with_details'] });
-        queryClient.invalidateQueries({ queryKey: ['all_feedback'] });
-      }
-      return details;
-    },
+  const { data: conversation, isLoading, error } = useQuery({
+    queryKey: ['feedbackConversation', id],
+    queryFn: () => fetchConversation(id),
     enabled: !!id,
   });
 
+  useEffect(() => {
+    const markAsRead = async () => {
+      if (id) {
+        const { error: rpcError } = await supabase
+          .rpc('mark_feedback_responses_as_read', { p_feedback_id: id });
+        
+        if (rpcError) {
+          console.error("Failed to mark messages as read:", rpcError);
+        } else {
+          queryClient.invalidateQueries({ queryKey: ['unread_notifications'] });
+        }
+      }
+    };
+    markAsRead();
+  }, [id, queryClient]);
+
+  const form = useForm<z.infer<typeof responseSchema>>({
+    resolver: zodResolver(responseSchema),
+    defaultValues: { response_text: '' },
+  });
+
   const addResponseMutation = useMutation({
-    mutationFn: async (responseText: string) => {
-      if (!id || !user) throw new Error("Missing information");
+    mutationFn: async (values: z.infer<typeof responseSchema>) => {
+      if (!user || !id) throw new Error("User not authenticated or feedback ID missing");
       const { error } = await supabase.from('feedback_responses').insert({
         feedback_id: id,
         user_id: user.id,
-        response_text: responseText,
+        response_text: values.response_text,
       });
-      if (error) throw new Error(error.message);
+      if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['feedback', id] });
-      setNewResponse('');
-      toast({ title: "Response sent!" });
+      queryClient.invalidateQueries({ queryKey: ['feedbackConversation', id] });
+      form.reset();
+      toast.success("Reply sent successfully!");
     },
-    onError: (err: Error) => {
-      toast({ title: "Error sending response", description: err.message, variant: 'destructive' });
-    }
+    onError: (error: any) => {
+      toast.error("Failed to send reply", { description: error.message });
+    },
   });
 
-  const handleAddResponse = () => {
-    if (newResponse.trim()) {
-      addResponseMutation.mutate(newResponse.trim());
-    }
+  const onSubmit = (values: z.infer<typeof responseSchema>) => {
+    addResponseMutation.mutate(values);
   };
-
-  const getAvatarFallback = (email: string | null) => {
-    return email ? email.charAt(0).toUpperCase() : 'U';
-  };
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto p-4 max-w-4xl">
-        <Skeleton className="h-8 w-48 mb-4" />
-        <Skeleton className="h-96 w-full" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto p-4 max-w-4xl">
-        <Alert variant="destructive">
-          <Terminal className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error.message}</AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
-
-  if (!feedback) {
-    return (
-      <div className="container mx-auto p-4 max-w-4xl">
-        <p>Feedback not found.</p>
-      </div>
-    );
-  }
 
   return (
-    <div className="container mx-auto p-4 max-w-4xl">
-      <Link to={userRole === 'admin' ? "/admin?tab=feedback" : "/my-feedback"} className="flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Back to Feedback List
-      </Link>
-      <Card>
-        <CardHeader>
-          <CardTitle>Feedback Details</CardTitle>
-          <CardDescription>Category: {feedback.category} | Status: {feedback.status}</CardDescription>
-          {feedback.page_url && <p className="text-sm text-muted-foreground">Page: {feedback.page_url}</p>}
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <h3 className="font-semibold mb-2">Original Feedback</h3>
-            <p className="p-4 bg-muted rounded-md">{feedback.feedback_text}</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Submitted on {format(new Date(feedback.created_at!), 'PPP p')}
-            </p>
-          </div>
+    <div className="min-h-screen flex flex-col bg-background">
+      <Header showSignOut={true} onSignOut={signOut} />
+      <main className="flex-1 container mx-auto px-4 py-8">
+        <Button variant="ghost" asChild className="mb-4">
+          <Link to="/my-feedback">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to My Feedback
+          </Link>
+        </Button>
 
-          <div>
-            <h3 className="font-semibold mb-4">Conversation</h3>
-            <div className="space-y-4">
-              {feedback.feedback_responses?.map(response => (
-                <div key={response.id} className={`flex items-start gap-4 ${response.user_id === user?.id ? 'justify-end' : ''}`}>
-                  {response.user_id !== user?.id && (
-                    <Avatar>
-                      <AvatarImage />
-                      <AvatarFallback>{getAvatarFallback(response.user_email)}</AvatarFallback>
+        {isLoading && <div className="flex justify-center items-center p-8"><Loader2 className="h-8 w-8 animate-spin" /></div>}
+        {error && <p className="text-red-500">Error loading conversation: {(error as Error).message}</p>}
+
+        {conversation && (
+          <Card className="max-w-3xl mx-auto">
+            <CardHeader>
+              <CardTitle>Conversation</CardTitle>
+              <CardDescription>Category: {conversation.category}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="space-y-4 max-h-[50vh] overflow-y-auto p-4 border rounded-lg">
+                  {/* Original Feedback */}
+                  <div className="flex items-start gap-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback>{user?.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
-                  )}
-                  <div className={`max-w-md p-3 rounded-lg ${response.user_id === user?.id ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                    <p className="text-sm">{response.response_text}</p>
-                    <p className={`text-xs mt-1 ${response.user_id === user?.id ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
-                      {response.user_email} - {format(new Date(response.created_at!), 'p')}
-                    </p>
+                    <div className="max-w-[75%] rounded-lg p-3 bg-muted">
+                      <p className="text-sm font-semibold">You</p>
+                      <p className="text-sm">{conversation.feedback_text}</p>
+                      <p className="text-xs mt-1 text-right text-muted-foreground">
+                        {new Date(conversation.created_at).toLocaleString()}
+                      </p>
+                    </div>
                   </div>
-                  {response.user_id === user?.id && (
-                    <Avatar>
-                      <AvatarImage />
-                      <AvatarFallback>{getAvatarFallback(response.user_email)}</AvatarFallback>
-                    </Avatar>
-                  )}
+                  {/* Responses */}
+                  {conversation.feedback_responses.map((response: any) => {
+                    const isUserReply = response.user_id === user?.id;
+                    return (
+                      <div key={response.id} className={`flex items-start gap-3 ${isUserReply ? 'justify-end' : ''}`}>
+                        {!isUserReply && (
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback>{response.user_email?.substring(0, 1).toUpperCase() || 'A'}</AvatarFallback>
+                          </Avatar>
+                        )}
+                        <div className={`max-w-[75%] rounded-lg p-3 ${isUserReply ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                          <p className="text-sm font-semibold">{isUserReply ? 'You' : response.user_email}</p>
+                          <p className="text-sm">{response.response_text}</p>
+                          <p className={`text-xs mt-1 text-right ${isUserReply ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
+                            {new Date(response.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                        {isUserReply && (
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback>{user?.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                          </Avatar>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter>
-          <div className="w-full space-y-2">
-            <Textarea
-              value={newResponse}
-              onChange={(e) => setNewResponse(e.target.value)}
-              placeholder="Type your response..."
-              rows={3}
-            />
-            <Button onClick={handleAddResponse} disabled={addResponseMutation.isPending}>
-              {addResponseMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
-              Send Response
-            </Button>
-          </div>
-        </CardFooter>
-      </Card>
+
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-2 pt-4 border-t">
+                    <FormField
+                      control={form.control}
+                      name="response_text"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Textarea
+                              placeholder="Type your reply..."
+                              className="resize-none"
+                              rows={3}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" disabled={addResponseMutation.isPending} size="icon">
+                      {addResponseMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                    </Button>
+                  </form>
+                </Form>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </main>
+      <Footer />
     </div>
   );
-}
+};
+
+export default FeedbackDetail;
