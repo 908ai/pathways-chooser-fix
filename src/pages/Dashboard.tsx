@@ -1,229 +1,224 @@
-import { useMemo, useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { Loader2, Plus, TrendingUp, CheckCircle } from 'lucide-react';
-import StatCard from '@/components/dashboard3/StatCard';
-import CompliancePathwayChart from '@/components/dashboard3/CompliancePathwayChart';
-import ProjectStatusChart from '@/components/dashboard3/ProjectStatusChart';
-import RecentProjectsList from '@/components/dashboard3/RecentProjectsList';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-import EfficiencyInsightCard from '@/components/dashboard3/EfficiencyInsightCard';
-import MonthlySubmissionsChart from '@/components/dashboard3/MonthlySubmissionsChart';
-import ComplianceHurdlesChart from '@/components/dashboard3/ComplianceHurdlesChart';
+"use client";
 
-const fetchUserProjects = async (userId: string | undefined) => {
-  if (!userId) return [];
-  const { data, error } = await supabase
-    .from('project_summaries')
-    .select('*')
-    .eq('user_id', userId)
-    .order('updated_at', { ascending: false });
-  if (error) throw new Error(error.message);
-  return data;
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { ProjectSummary } from "@/integrations/supabase/types";
+import StatCard from "@/components/dashboard3/StatCard";
+import ProjectStatusChart from "@/components/dashboard3/ProjectStatusChart";
+import CompliancePathwayChart from "@/components/dashboard3/CompliancePathwayChart";
+import MonthlySubmissionsChart from "@/components/dashboard3/MonthlySubmissionsChart";
+import RecentProjectsList from "@/components/dashboard3/RecentProjectsList";
+import ComplianceHurdlesChart, { HurdleData } from "@/components/dashboard3/ComplianceHurdlesChart";
+import AverageRsiCard from "@/components/dashboard3/AverageRsiCard";
+import EfficiencyInsightCard from "@/components/dashboard3/EfficiencyInsightCard";
+import TopComplianceContributors from "@/components/dashboard3/TopComplianceContributors";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal, DollarSign, Zap, TrendingUp, Target } from "lucide-react";
+import { useUserRole } from "@/hooks/useUserRole";
+import { useAuth } from "@/hooks/useAuth";
+import { Navigate } from "react-router-dom";
+
+async function fetchProjects(): Promise<ProjectSummary[]> {
+  const { data, error } = await supabase.from("project_summaries").select("*");
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data || [];
+}
+
+const calculateAnalytics = (projects: ProjectSummary[]) => {
+  if (!projects || projects.length === 0) {
+    return {
+      totalProjects: 0,
+      averageFloorArea: 0,
+      complianceRate: 0,
+      monthlySubmissions: [],
+      complianceHurdlesData: [],
+      averageRsi: { attic: 0, wall: 0, below_grade: 0 },
+      topContributors: [],
+    };
+  }
+
+  const totalProjects = projects.length;
+
+  const totalFloorArea = projects.reduce(
+    (sum, p) => sum + (p.floor_area || 0),
+    0
+  );
+  const averageFloorArea = totalFloorArea / totalProjects;
+
+  const compliantProjects = projects.filter(
+    (p) => p.compliance_status === "Compliant"
+  ).length;
+  const complianceRate = (compliantProjects / totalProjects) * 100;
+
+  const monthlySubmissions = projects.reduce((acc, p) => {
+    if (p.created_at) {
+      const month = new Date(p.created_at).toLocaleString("default", {
+        month: "short",
+        year: "2-digit",
+      });
+      acc[month] = (acc[month] || 0) + 1;
+    }
+    return acc;
+  }, {} as Record<string, number>);
+
+  const complianceHurdles = projects.reduce((acc, p) => {
+    if (p.compliance_status !== "Compliant" && p.recommendations) {
+      p.recommendations.forEach((rec) => {
+        // Example recommendation format: "Improve Attic RSI"
+        const hurdle = rec.split("Improve ")[1]?.split(" ")[0];
+        if (hurdle) {
+          acc[hurdle] = (acc[hurdle] || 0) + 1;
+        }
+      });
+    }
+    return acc;
+  }, {} as Record<string, number>);
+
+  const complianceHurdlesData: HurdleData[] = Object.entries(complianceHurdles)
+    .map(([name, count]) => ({ name, count: count as number }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+
+  const rsiValues = projects.reduce(
+    (acc, p) => {
+      if (p.attic_rsi) acc.attic.push(p.attic_rsi);
+      if (p.wall_rsi) acc.wall.push(p.wall_rsi);
+      if (p.below_grade_rsi) acc.below_grade.push(p.below_grade_rsi);
+      return acc;
+    },
+    { attic: [] as number[], wall: [] as number[], below_grade: [] as number[] }
+  );
+
+  const calculateAverage = (arr: number[]) =>
+    arr.length > 0 ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+
+  const averageRsi = {
+    attic: calculateAverage(rsiValues.attic),
+    wall: calculateAverage(rsiValues.wall),
+    below_grade: calculateAverage(rsiValues.below_grade),
+  };
+
+  const contributorScores = projects.reduce((acc, p) => {
+    const score = (p.total_points || 0) - 100; // Example scoring
+    if (score > 0) {
+      const contributor = p.project_name; // Or user/builder name if available
+      acc[contributor] = (acc[contributor] || 0) + score;
+    }
+    return acc;
+  }, {} as Record<string, number>);
+
+  const topContributors = Object.entries(contributorScores)
+    .map(([name, score]) => ({ name, score }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5);
+
+  return {
+    totalProjects,
+    averageFloorArea,
+    complianceRate,
+    monthlySubmissions: Object.entries(monthlySubmissions).map(
+      ([name, total]) => ({ name, total })
+    ),
+    complianceHurdlesData,
+    averageRsi,
+    topContributors,
+  };
 };
 
-const Dashboard3 = () => {
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
-  const [userName, setUserName] = useState<string | null>(null);
-  const { data: projects, isLoading } = useQuery({
-    queryKey: ['userProjects', user?.id],
-    queryFn: () => fetchUserProjects(user?.id),
-    enabled: !!user,
+export default function Dashboard() {
+  const { user } = useAuth();
+  const { userRole, loading: isRoleLoading } = useUserRole();
+
+  const {
+    data: projects,
+    isLoading: isProjectsLoading,
+    error,
+  } = useQuery<ProjectSummary[]>({
+    queryKey: ["projects"],
+    queryFn: fetchProjects,
   });
 
-  useEffect(() => {
-    const fetchUserName = async () => {
-      if (user) {
-        const { data: companyData, error: companyError } = await supabase
-          .from('companies')
-          .select('company_name')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        if (companyData && companyData.company_name) {
-          setUserName(companyData.company_name);
-        } else if (companyError && companyError.code !== 'PGRST116') {
-          console.error("Error fetching company name:", companyError);
-        }
-      }
-    };
-
-    fetchUserName();
-  }, [user]);
-
-  const analytics = useMemo(() => {
-    if (!projects || projects.length === 0) {
-      return {
-        totalProjects: 0,
-        complianceRate: 0,
-        inProgressCount: 0,
-        averagePoints: 0,
-        averageRsi: { attic: 0, wall: 0, belowGrade: 0 },
-        totalSavings: 0,
-        averageSavings: 0,
-        topContributors: [],
-        activeProjects: 0,
-        complianceHurdlesData: [],
-      };
-    }
-
-    const completed = projects.filter(p => p.compliance_status === 'pass' || p.compliance_status === 'Compliant' || p.compliance_status === 'fail');
-    const compliant = completed.filter(p => p.compliance_status === 'pass' || p.compliance_status === 'Compliant');
-    const complianceRate = completed.length > 0 ? (compliant.length / completed.length) * 100 : 0;
-    const activeProjects = projects.filter(p => p.compliance_status === 'submitted' || p.compliance_status === 'needs_revision').length;
-
-    const tieredProjects = projects.filter(p => p.selected_pathway === '9368' && p.total_points);
-    const averagePoints = tieredProjects.length > 0 ? tieredProjects.reduce((sum, p) => sum + p.total_points, 0) / tieredProjects.length : 0;
-
-    const getAverage = (field: keyof typeof projects[0]) => {
-      const validProjects = projects.filter(p => typeof p[field] === 'number');
-      if (validProjects.length === 0) return 0;
-      return validProjects.reduce((sum, p) => sum + (p[field] as number), 0) / validProjects.length;
-    };
-
-    // Cost Savings Calculation
-    const performanceProjects = projects.filter(p => p.selected_pathway === '9365' || p.selected_pathway === '9367');
-    const totalSavings = performanceProjects.reduce((sum, p) => {
-      const isTier2OrHigher = p.selected_pathway === '9367';
-      const prescriptiveCost = isTier2OrHigher ? 13550 : 6888;
-      const performanceCost = isTier2OrHigher ? 8150 : 1718;
-      return sum + (prescriptiveCost - performanceCost);
-    }, 0);
-    const averageSavings = performanceProjects.length > 0 ? totalSavings / performanceProjects.length : 0;
-
-    // Top Compliance Contributors Calculation
-    const pointCategories = {
-      'Airtightness': 'airtightness_points',
-      'Walls': 'wall_points',
-      'Attic': 'attic_points',
-      'Windows': 'window_points',
-      'Below Grade': 'below_grade_points',
-      'HRV/ERV': 'hrv_erv_points',
-      'Water Heater': 'water_heating_points',
-    };
-
-    const pointSums = Object.keys(pointCategories).reduce((acc, key) => {
-      acc[key] = 0;
-      return acc;
-    }, {} as Record<string, number>);
-
-    tieredProjects.forEach(p => {
-      for (const [name, field] of Object.entries(pointCategories)) {
-        if (p[field]) {
-          pointSums[name] += p[field];
-        }
-      }
-    });
-
-    const topContributors = Object.entries(pointSums)
-      .map(([name, sum]) => ({
-        name,
-        averagePoints: tieredProjects.length > 0 ? sum / tieredProjects.length : 0,
-      }))
-      .filter(item => item.averagePoints > 0)
-      .sort((a, b) => b.averagePoints - a.averagePoints)
-      .slice(0, 5);
-
-    // Compliance Hurdles Calculation
-    const hurdles = projects
-      .filter(p => p.compliance_status === 'fail' || p.compliance_status === 'needs_revision')
-      .flatMap(p => p.recommendations || [])
-      .reduce((acc, rec) => {
-          const lowerRec = rec.toLowerCase();
-          if (lowerRec.includes('wall')) acc['Wall Insulation'] = (acc['Wall Insulation'] || 0) + 1;
-          else if (lowerRec.includes('window')) acc['Windows'] = (acc['Windows'] || 0) + 1;
-          else if (lowerRec.includes('airtightness')) acc['Airtightness'] = (acc['Airtightness'] || 0) + 1;
-          else if (lowerRec.includes('attic')) acc['Attic Insulation'] = (acc['Attic Insulation'] || 0) + 1;
-          else if (lowerRec.includes('below grade')) acc['Foundation'] = (acc['Foundation'] || 0) + 1;
-          else acc['Other'] = (acc['Other'] || 0) + 1;
-          return acc;
-      }, {} as Record<string, number>);
-
-    const complianceHurdlesData = Object.entries(hurdles)
-      .map(([name, count]) => ({ name, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
-
-    return {
-      totalProjects: projects.length,
-      complianceRate: Math.round(complianceRate),
-      inProgressCount: projects.length - completed.length,
-      averagePoints: Math.round(averagePoints),
-      averageRsi: {
-        attic: getAverage('attic_rsi'),
-        wall: getAverage('wall_rsi'),
-        belowGrade: getAverage('below_grade_rsi'),
-      },
-      totalSavings,
-      averageSavings,
-      topContributors,
-      activeProjects,
-      complianceHurdlesData,
-    };
-  }, [projects]);
-
-  if (isLoading) {
+  if (isRoleLoading || isProjectsLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-12 w-12 text-slate-500 animate-spin" />
+      <div className="p-4 md:p-8 space-y-6">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Skeleton className="h-28" />
+          <Skeleton className="h-28" />
+          <Skeleton className="h-28" />
+          <Skeleton className="h-28" />
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <div className="col-span-1 lg:col-span-4 space-y-4">
+            <Skeleton className="h-80" />
+            <Skeleton className="h-80" />
+          </div>
+          <div className="col-span-1 lg:col-span-3 space-y-4">
+            <Skeleton className="h-64" />
+            <Skeleton className="h-96" />
+          </div>
+        </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <Header showSignOut={true} onSignOut={signOut} />
-      <main className="flex-1 container mx-auto px-4 py-8 relative">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <p className="text-2xl text-foreground">
-              Welcome back{userName ? `, ${userName}` : ''}!
-            </p>
-            <p className="text-muted-foreground mt-1">
-              You have <span className="font-semibold text-primary">{analytics.activeProjects} active projects</span> requiring attention.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button onClick={() => navigate('/calculator')}>
-              <Plus className="h-4 w-4 mr-2" />
-              New Project
-            </Button>
-          </div>
-        </div>
+  if (error) {
+    return (
+      <div className="p-4 md:p-8">
+        <Alert variant="destructive">
+          <Terminal className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            Failed to load project data: {error.message}
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          <div className="lg:col-span-3 space-y-6">
-            <EfficiencyInsightCard />
-            <RecentProjectsList data={projects || []} />
-            <MonthlySubmissionsChart data={projects || []} />
-          </div>
-          <div className="lg:col-span-2 space-y-6">
-            <div className="grid grid-cols-2 gap-6">
-              <StatCard 
-                title="Projects YTD" 
-                value={analytics.totalProjects} 
-                icon={<TrendingUp className="h-5 w-5 text-orange-600" />}
-              />
-              <StatCard 
-                title="Pass Rate" 
-                value={`${analytics.complianceRate}%`} 
-                icon={<CheckCircle className="h-5 w-5 text-green-600" />}
-              />
-            </div>
-            <CompliancePathwayChart data={projects || []} />
-            <ProjectStatusChart data={projects || []} />
-            <ComplianceHurdlesChart data={analytics.complianceHurdlesData} />
-          </div>
+  if (userRole === 'admin') {
+    return <Navigate to="/admin" replace />;
+  }
+
+  const analytics = calculateAnalytics(projects || []);
+
+  return (
+    <div className="flex-1 space-y-4 p-4 md:p-8">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatCard title="Total Projects" value={analytics.totalProjects} icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />} />
+        <StatCard
+          title="Average Floor Area"
+          value={`${analytics.averageFloorArea.toFixed(0)} sqft`}
+          icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
+        />
+        <StatCard
+          title="Compliance Rate"
+          value={`${analytics.complianceRate.toFixed(1)}%`}
+          icon={<Target className="h-4 w-4 text-muted-foreground" />}
+        />
+        <EfficiencyInsightCard />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2">
+          <MonthlySubmissionsChart data={projects || []} />
         </div>
-      </main>
-      <Footer />
+        <div className="lg:col-span-1">
+          <RecentProjectsList data={projects || []} />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-1 space-y-4">
+          <AverageRsiCard data={analytics.averageRsi} />
+          <TopComplianceContributors data={analytics.topContributors.map(c => ({ name: c.name, averagePoints: c.score }))} />
+        </div>
+        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CompliancePathwayChart data={projects || []} />
+          <ProjectStatusChart data={projects || []} />
+          <ComplianceHurdlesChart data={analytics.complianceHurdlesData} />
+        </div>
+      </div>
     </div>
   );
-};
-
-export default Dashboard3;
+}
