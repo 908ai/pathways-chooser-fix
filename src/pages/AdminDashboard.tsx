@@ -74,7 +74,7 @@ const AdminDashboard = () => {
           </TabsContent>
           <TabsContent value="providers" className="mt-6">
             <Tabs defaultValue="provider-management" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-card border">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="provider-management">Provider Management</TabsTrigger>
                 <TabsTrigger value="access-requests">Access Requests</TabsTrigger>
               </TabsList>
