@@ -7,17 +7,6 @@ export interface NBCOption {
   points: number;
 }
 
-export const PROVINCE_OPTIONS = [
-  "Alberta", "British Columbia", "Manitoba", "New Brunswick", 
-  "Newfoundland and Labrador", "Nova Scotia", "Ontario", "Prince Edward Island", 
-  "Quebec", "Saskatchewan", "Northwest Territories", "Nunavut", "Yukon"
-];
-
-export const SERVICE_CATEGORIES = [
-  "Energy Advisor", "HVAC Contractor", "Insulation Contractor", 
-  "Window & Door Installer", "Solar Installer", "General Contractor", "Architectural Designer"
-];
-
 /* -------------------------
    Zone 7A Options
 ------------------------- */

@@ -76,7 +76,7 @@ export function ProviderForm({ provider, onSave, setOpen }: ProviderFormProps) {
           .update(values)
           .eq("id", provider.id)
           .select()
-      : await supabase.from("service_providers").insert([values]).select();
+      : await supabase.from("service_providers").insert(values).select();
 
     if (error) {
       toast({
