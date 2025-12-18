@@ -22,7 +22,7 @@ import { SERVICE_CATEGORIES, PROVINCES, PROVIDER_STATUSES, SERVICE_TYPES } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export const providerSchema = z.object({
@@ -42,6 +42,7 @@ export const providerSchema = z.object({
   services_offered: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: "You have to select at least one service.",
   }),
+  other_service_text: z.string().optional(),
 });
 
 type ProviderFormValues = z.infer<typeof providerSchema>;
@@ -53,6 +54,22 @@ interface ProviderFormProps {
 }
 
 export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFormProps) {
+  const [otherServiceText, setOtherServiceText] = useState("");
+
+  const getInitialOtherService = () => {
+    const otherService = initialData?.services_offered?.find(s => !SERVICE_TYPES.map(st => st.value).includes(s));
+    return otherService || "";
+  }
+
+  const getInitialServicesOffered = () => {
+    const initialServices = initialData?.services_offered || [];
+    const otherService = initialServices.find(s => !SERVICE_TYPES.map(st => st.value).includes(s));
+    if (otherService) {
+      return [...initialServices.filter(s => s !== otherService), "Other specialized services"];
+    }
+    return initialServices;
+  }
+
   const form = useForm<ProviderFormValues>({
     resolver: zodResolver(providerSchema),
     defaultValues: {
@@ -69,7 +86,8 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
       cacea_member: initialData?.cacea_member || false,
       region: initialData?.region || "",
       status: initialData?.status || "Pending",
-      services_offered: initialData?.services_offered || [],
+      services_offered: getInitialServicesOffered(),
+      other_service_text: getInitialOtherService(),
     },
   });
 
@@ -83,6 +101,11 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
     name: 'region',
   });
 
+  const watchedServices = useWatch({
+    control: form.control,
+    name: 'services_offered',
+  });
+
   useEffect(() => {
     if (watchedProvince === 'AB') {
       form.setValue('region', 'Local');
@@ -91,9 +114,18 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
     }
   }, [watchedProvince, form]);
 
+  const handleFormSubmit = (values: ProviderFormValues) => {
+    const finalServices = [...values.services_offered];
+    if (values.services_offered.includes("Other specialized services") && values.other_service_text) {
+      const index = finalServices.indexOf("Other specialized services");
+      finalServices.splice(index, 1, values.other_service_text);
+    }
+    onSubmit({ ...values, services_offered: finalServices });
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -273,12 +305,6 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
                                 }
                                 field.onChange(newValue);
                               }}
-                              className="
-                                    border-2 border-gray-400
-                                    accent-gray-500
-                                    dark:border-gray-600
-                                    dark:accent-white
-                              "
                             />
                           </FormControl>
                           <FormLabel className="font-normal flex items-center">
@@ -295,6 +321,21 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
             </FormItem>
           )}
         />
+        {watchedServices?.includes("Other specialized services") && (
+          <FormField
+            control={form.control}
+            name="other_service_text"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Other Service</FormLabel>
+                <FormControl>
+                  <Input placeholder="Specify the other service" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="status"
