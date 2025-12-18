@@ -36,7 +36,7 @@ export const providerSchema = z.object({
   description: z.string().optional(),
   logo_url: z.string().url({ message: "Invalid URL." }).optional().or(z.literal('')),
   is_approved: z.boolean().default(false),
-  cacea_member: z.boolean().default(false).refine(val => val === true, { message: "Provider must be a CACEA member." }),
+  cacea_member: z.boolean().default(false),
   region: z.string().min(1, { message: "Please select a region." }),
   status: z.string().min(1, { message: "Please select a status." }),
   services_offered: z.array(z.string()).refine((value) => value.some((item) => item), {
@@ -141,7 +141,10 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
       Pending: "bg-red-500 text-white",
     };
 
-    return cn(base, status === selectedStatus ? selectedColors[status] : statusColors[status]);
+    if (status === selectedStatus) {
+      return cn(base, selectedColors[status]);
+    }
+    return cn(base, statusColors[status] || "border-gray-300 text-gray-500 hover:bg-gray-50");
   };
 
   return (
