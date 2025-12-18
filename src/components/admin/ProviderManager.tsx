@@ -110,7 +110,7 @@ const ProviderManager = () => {
     if (selectedProvider) {
       updateProviderMutation.mutate({ id: selectedProvider.id, values });
     } else {
-      createProviderMutation.mutate(values);
+      createProviderMutation.mutate(values as TablesInsert<'service_providers'>);
     }
   };
 
