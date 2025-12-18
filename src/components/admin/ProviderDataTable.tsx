@@ -60,6 +60,7 @@ export const ProviderDataTable: React.FC<ProviderDataTableProps> = ({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [globalFilter, setGlobalFilter] = React.useState('');
 
   const columns: ColumnDef<ServiceProvider>[] = [
     {
@@ -76,9 +77,19 @@ export const ProviderDataTable: React.FC<ProviderDataTableProps> = ({
       cell: ({ row }) => <div>{row.getValue("name")}</div>,
     },
     {
-      accessorKey: "service_category",
-      header: "Category",
-      cell: ({ row }) => <div>{row.getValue("service_category")}</div>,
+      accessorKey: "services_offered",
+      header: "Services",
+      cell: ({ row }) => {
+        const services = row.getValue("services_offered") as string[];
+        if (!services || services.length === 0) return null;
+        return (
+          <div className="flex flex-wrap gap-1">
+            {services.map((service) => (
+              <Badge key={service} variant="secondary">{service}</Badge>
+            ))}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "location_city",
@@ -99,10 +110,11 @@ export const ProviderDataTable: React.FC<ProviderDataTableProps> = ({
       header: "Availability",
       cell: ({ row }) => {
         const status = row.getValue("status") as string;
-        let variant: "default" | "secondary" | "destructive" = "secondary";
-        if (status === "Available") variant = "default";
-        if (status === "At Capacity") variant = "destructive";
-        return <Badge variant={variant}>{status}</Badge>;
+        let className = "";
+        if (status === "Available") className = "bg-green-500 hover:bg-green-600";
+        if (status === "At Capacity") className = "bg-yellow-500 hover:bg-yellow-600";
+        if (status === "Pending") className = "bg-red-500 hover:bg-red-600";
+        return <Badge className={className}>{status}</Badge>;
       },
     },
     {
@@ -166,11 +178,21 @@ export const ProviderDataTable: React.FC<ProviderDataTableProps> = ({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: (row, columnId, filterValue) => {
+      const name = row.getValue('name') as string;
+      const services = row.getValue('services_offered') as string[];
+      const search = filterValue.toLowerCase();
+      
+      return name.toLowerCase().includes(search) || 
+             (services && services.some(s => s.toLowerCase().includes(search)));
+    },
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
+      globalFilter,
     },
   });
 
@@ -178,11 +200,9 @@ export const ProviderDataTable: React.FC<ProviderDataTableProps> = ({
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter by name..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
+          placeholder="Filter by name or service..."
+          value={globalFilter}
+          onChange={(event) => setGlobalFilter(event.target.value)}
           className="max-w-sm"
         />
         <div className="ml-auto flex items-center gap-2">

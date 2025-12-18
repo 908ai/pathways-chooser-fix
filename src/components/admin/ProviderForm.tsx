@@ -128,6 +128,22 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
     onSubmit({ ...rest, services_offered: finalServices });
   };
 
+  const getStatusClass = (status: string, selectedStatus: string) => {
+    const base = "cursor-pointer rounded-full border px-4 py-2 text-sm font-medium transition-colors";
+    const statusColors: { [key: string]: string } = {
+      Available: "border-green-500 text-green-500 hover:bg-green-50",
+      "At Capacity": "border-yellow-500 text-yellow-500 hover:bg-yellow-50",
+      Pending: "border-red-500 text-red-500 hover:bg-red-50",
+    };
+    const selectedColors: { [key: string]: string } = {
+      Available: "bg-green-500 text-white",
+      "At Capacity": "bg-yellow-500 text-white",
+      Pending: "bg-red-500 text-white",
+    };
+
+    return cn(base, status === selectedStatus ? selectedColors[status] : statusColors[status]);
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
@@ -358,12 +374,7 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
                       <FormControl>
                         <RadioGroupItem value={status} className="sr-only" />
                       </FormControl>
-                      <FormLabel className={cn(
-                        "cursor-pointer rounded-full border px-4 py-2 text-sm font-medium transition-colors",
-                        field.value === status
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-transparent hover:bg-accent"
-                      )}>
+                      <FormLabel className={getStatusClass(status, field.value)}>
                         {status}
                       </FormLabel>
                     </FormItem>
