@@ -21,6 +21,9 @@ import { Tables } from "@/integrations/supabase/types";
 import { SERVICE_CATEGORIES, PROVINCES, PROVIDER_STATUSES, SERVICE_TYPES } from "@/lib/constants";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 export const providerSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -65,9 +68,14 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
       is_approved: initialData?.is_approved || false,
       cacea_member: initialData?.cacea_member || false,
       region: initialData?.region || "",
-      status: initialData?.status || "",
+      status: initialData?.status || "Pending",
       services_offered: initialData?.services_offered || [],
     },
+  });
+
+  const watchedProvince = useWatch({
+    control: form.control,
+    name: 'location_province',
   });
 
   const watchedRegion = useWatch({
@@ -75,9 +83,17 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
     name: 'region',
   });
 
+  useEffect(() => {
+    if (watchedProvince === 'AB') {
+      form.setValue('region', 'Local');
+    } else if (watchedProvince) {
+      form.setValue('region', 'Out-of-Region');
+    }
+  }, [watchedProvince, form]);
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -123,7 +139,7 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
               <FormItem>
                 <FormLabel>City</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Saskatoon" {...field} />
+                  <Input placeholder="e.g., Calgary" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -160,17 +176,9 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
           render={({ field }) => (
             <FormItem>
               <FormLabel>Region</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a region" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="Local">Local</SelectItem>
-                  <SelectItem value="Out-of-Region">Out-of-Region</SelectItem>
-                </SelectContent>
-              </Select>
+              <FormControl>
+                <Input {...field} readOnly className="bg-muted" />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -195,7 +203,7 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
             <FormItem>
               <FormLabel>Phone Number</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., (306) 555-1234" {...field} />
+                <Input placeholder="e.g., (403) 555-1234" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -235,47 +243,48 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
               <div className="mb-4">
                 <FormLabel className="text-base">Services Offered</FormLabel>
                 <FormDescription>
-                  Select the services this provider offers. Some services require a "Local" region.
+                  Select the services this provider offers. Some services require a "Local" region (Alberta).
                 </FormDescription>
               </div>
-              {SERVICE_TYPES.map((item) => (
-                <FormField
-                  key={item.value}
-                  control={form.control}
-                  name="services_offered"
-                  render={({ field }) => {
-                    const isDisabled = item.localOnly && watchedRegion !== 'Local';
-                    return (
-                      <FormItem
-                        key={item.value}
-                        className="flex flex-row items-start space-x-3 space-y-0"
-                      >
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(item.value)}
-                            disabled={isDisabled}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                field.onChange([...field.value, item.value]);
-                              } else {
-                                field.onChange(
-                                  field.value?.filter(
+              <div className="space-y-2">
+                {SERVICE_TYPES.map((item) => (
+                  <FormField
+                    key={item.value}
+                    control={form.control}
+                    name="services_offered"
+                    render={({ field }) => {
+                      const isDisabled = item.localOnly && watchedRegion !== 'Local';
+                      return (
+                        <FormItem
+                          className="flex flex-row items-start space-x-3 space-y-0"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(item.value)}
+                              disabled={isDisabled}
+                              onCheckedChange={(checked) => {
+                                let newValue: string[];
+                                if (checked) {
+                                  newValue = [...(field.value || []), item.value];
+                                } else {
+                                  newValue = field.value?.filter(
                                     (value) => value !== item.value
-                                  )
-                                );
-                              }
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className="font-normal flex items-center">
-                          {item.label}
-                          {item.localOnly && <Badge variant="outline" className="ml-2">Local Only</Badge>}
-                        </FormLabel>
-                      </FormItem>
-                    );
-                  }}
-                />
-              ))}
+                                  );
+                                }
+                                field.onChange(newValue);
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal flex items-center">
+                            {item.label}
+                            {item.localOnly && <Badge variant="outline" className="ml-2">Local Only</Badge>}
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+              </div>
               <FormMessage />
             </FormItem>
           )}
@@ -284,22 +293,31 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
           control={form.control}
           name="status"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-3">
               <FormLabel>Status</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-wrap gap-2"
+                >
                   {PROVIDER_STATUSES.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
-                    </SelectItem>
+                    <FormItem key={status} className="flex items-center space-x-0 space-y-0">
+                      <FormControl>
+                        <RadioGroupItem value={status} className="sr-only" />
+                      </FormControl>
+                      <FormLabel className={cn(
+                        "cursor-pointer rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+                        field.value === status
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-transparent hover:bg-accent"
+                      )}>
+                        {status}
+                      </FormLabel>
+                    </FormItem>
                   ))}
-                </SelectContent>
-              </Select>
+                </RadioGroup>
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
