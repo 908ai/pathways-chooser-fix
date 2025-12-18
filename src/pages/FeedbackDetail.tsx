@@ -1,208 +1,221 @@
-import { useEffect } from 'react';
+"use client";
+
+import { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { toast } from 'sonner';
-
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Loader2, Send, ArrowLeft } from 'lucide-react';
-import { Json } from '@/integrations/supabase/types';
+import { Json, FeedbackDetails } from '@/integrations/supabase/types';
+import { format } from 'date-fns';
+import { useUserRole } from '@/hooks/useUserRole';
 
-interface FeedbackResponse {
-  id: string;
-  created_at: string;
-  response_text: string;
-  is_read: boolean;
-  user_id: string;
-  user_email: string;
-}
-
-interface Conversation {
-  id: string;
-  created_at: string;
-  user_id: string;
-  feedback_text: string;
-  category: string;
-  page_url: string;
-  status: string;
-  feedback_responses: FeedbackResponse[];
-}
-
-const fetchConversation = async (feedbackId: string | undefined): Promise<Conversation | null> => {
-  if (!feedbackId) throw new Error("Feedback ID is required");
-
-  const { data, error } = await supabase.rpc('get_feedback_details', { p_feedback_id: feedbackId });
-
-  if (error) throw error;
-
-  return data as unknown as Conversation | null;
-};
-
-const responseSchema = z.object({
-  response_text: z.string().min(1, "Response cannot be empty."),
-});
-
-const FeedbackDetail = () => {
+export default function FeedbackDetail() {
   const { id } = useParams<{ id: string }>();
-  const { user, signOut } = useAuth();
-  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const { userRole: role } = useUserRole();
+  const { toast } = useToast();
+  const [feedbackDetails, setFeedbackDetails] = useState<FeedbackDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [newResponse, setNewResponse] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { data: conversation, isLoading, error } = useQuery({
-    queryKey: ['feedbackConversation', id],
-    queryFn: () => fetchConversation(id),
-    enabled: !!id,
-  });
-
-  useEffect(() => {
-    const markAsRead = async () => {
-      if (id) {
-        const { error: rpcError } = await supabase
-          .rpc('mark_feedback_responses_as_read', { p_feedback_id: id });
-        
-        if (rpcError) {
-          console.error("Failed to mark messages as read:", rpcError);
-        } else {
-          queryClient.invalidateQueries({ queryKey: ['unread_notifications'] });
-        }
-      }
-    };
-    markAsRead();
-  }, [id, queryClient]);
-
-  const form = useForm<z.infer<typeof responseSchema>>({
-    resolver: zodResolver(responseSchema),
-    defaultValues: { response_text: '' },
-  });
-
-  const addResponseMutation = useMutation({
-    mutationFn: async (values: z.infer<typeof responseSchema>) => {
-      if (!user || !id) throw new Error("User not authenticated or feedback ID missing");
-      const { error } = await supabase.from('feedback_responses').insert({
-        feedback_id: id,
-        user_id: user.id,
-        response_text: values.response_text,
-      });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['feedbackConversation', id] });
-      form.reset();
-      toast.success("Reply sent successfully!");
-    },
-    onError: (error: any) => {
-      toast.error("Failed to send reply", { description: error.message });
-    },
-  });
-
-  const onSubmit = (values: z.infer<typeof responseSchema>) => {
-    addResponseMutation.mutate(values);
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const fetchFeedbackDetails = async () => {
+    if (!id) return;
+    setLoading(true);
+    const { data, error } = await supabase
+      .rpc('get_feedback_details', { p_feedback_id: id });
+
+    if (error) {
+      toast({
+        title: 'Error fetching feedback details',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } else {
+      setFeedbackDetails(data as FeedbackDetails);
+    }
+    setLoading(false);
+  };
+
+  const markAsRead = async () => {
+    if (!id) return;
+    const { error } = await supabase.rpc('mark_feedback_responses_as_read', { p_feedback_id: id });
+    if (error) {
+      console.error('Error marking responses as read:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFeedbackDetails();
+  }, [id]);
+
+  useEffect(() => {
+    if (feedbackDetails) {
+      scrollToBottom();
+      markAsRead();
+    }
+  }, [feedbackDetails]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const channel = supabase
+      .channel(`feedback-thread-${id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'feedback_responses',
+          filter: `feedback_id=eq.${id}`,
+        },
+        (payload) => {
+          console.log('New response received!', payload);
+          fetchFeedbackDetails();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [id]);
+
+  const handleResponseSubmit = async () => {
+    if (!newResponse.trim() || !user || !id) return;
+    setIsSubmitting(true);
+
+    const { error } = await supabase.from('feedback_responses').insert({
+      feedback_id: id,
+      user_id: user.id,
+      response_text: newResponse,
+    });
+
+    if (error) {
+      toast({
+        title: 'Error sending response',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } else {
+      setNewResponse('');
+      // The realtime subscription will handle updating the UI
+    }
+    setIsSubmitting(false);
+  };
+
+  const handleStatusChange = async (newStatus: string) => {
+    if (!id) return;
+    const { error } = await supabase
+      .from('feedback')
+      .update({ status: newStatus })
+      .eq('id', id);
+
+    if (error) {
+      toast({
+        title: 'Error updating status',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } else {
+      toast({ title: 'Status updated' });
+      fetchFeedbackDetails();
+    }
+  };
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>;
+  }
+
+  if (!feedbackDetails) {
+    return <div className="text-center py-10">Feedback not found.</div>;
+  }
+
+  const { feedback_responses = [] } = feedbackDetails;
+
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header showSignOut={true} onSignOut={signOut} />
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <Button variant="ghost" asChild className="mb-4">
-          <Link to="/my-feedback">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to My Feedback
-          </Link>
-        </Button>
+    <div className="container mx-auto p-4 max-w-4xl">
+      <Link to={role === 'admin' ? "/admin/feedback" : "/my-feedback"} className="flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Back to Feedback List
+      </Link>
 
-        {isLoading && <div className="flex justify-center items-center p-8"><Loader2 className="h-8 w-8 animate-spin" /></div>}
-        {error && <p className="text-red-500">Error loading conversation: {(error as Error).message}</p>}
-
-        {conversation && (
-          <Card className="max-w-3xl mx-auto">
-            <CardHeader>
-              <CardTitle>Conversation</CardTitle>
-              <CardDescription>Category: {conversation.category}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div className="space-y-4 max-h-[50vh] overflow-y-auto p-4 border rounded-lg">
-                  {/* Original Feedback */}
-                  <div className="flex items-start gap-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback>{user?.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
-                    </Avatar>
-                    <div className="max-w-[75%] rounded-lg p-3 bg-muted">
-                      <p className="text-sm font-semibold">You</p>
-                      <p className="text-sm">{conversation.feedback_text}</p>
-                      <p className="text-xs mt-1 text-right text-muted-foreground">
-                        {new Date(conversation.created_at).toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                  {/* Responses */}
-                  {conversation.feedback_responses.map((response: any) => {
-                    const isUserReply = response.user_id === user?.id;
-                    return (
-                      <div key={response.id} className={`flex items-start gap-3 ${isUserReply ? 'justify-end' : ''}`}>
-                        {!isUserReply && (
-                          <Avatar className="h-8 w-8">
-                            <AvatarFallback>{response.user_email?.substring(0, 1).toUpperCase() || 'A'}</AvatarFallback>
-                          </Avatar>
-                        )}
-                        <div className={`max-w-[75%] rounded-lg p-3 ${isUserReply ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                          <p className="text-sm font-semibold">{isUserReply ? 'You' : response.user_email}</p>
-                          <p className="text-sm">{response.response_text}</p>
-                          <p className={`text-xs mt-1 text-right ${isUserReply ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
-                            {new Date(response.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </p>
-                        </div>
-                        {isUserReply && (
-                          <Avatar className="h-8 w-8">
-                            <AvatarFallback>{user?.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
-                          </Avatar>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-2 pt-4 border-t">
-                    <FormField
-                      control={form.control}
-                      name="response_text"
-                      render={({ field }) => (
-                        <FormItem className="flex-1">
-                          <FormControl>
-                            <Textarea
-                              placeholder="Type your reply..."
-                              className="resize-none"
-                              rows={3}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button type="submit" disabled={addResponseMutation.isPending} size="icon">
-                      {addResponseMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                    </Button>
-                  </form>
-                </Form>
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle className="mb-2">Feedback Details</CardTitle>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>Category: <Badge variant="secondary">{feedbackDetails.category}</Badge></span>
+                <span>Status: <Badge>{feedbackDetails.status}</Badge></span>
               </div>
-            </CardContent>
-          </Card>
-        )}
-      </main>
-      <Footer />
+            </div>
+            {role === 'admin' && (
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => handleStatusChange('In Progress')}>Set In Progress</Button>
+                <Button size="sm" variant="outline" onClick={() => handleStatusChange('Resolved')}>Set Resolved</Button>
+              </div>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="border rounded-lg p-4 mb-6 bg-muted/20">
+            <p className="font-semibold">Original Feedback:</p>
+            <p className="text-muted-foreground">{feedbackDetails.feedback_text}</p>
+            <p className="text-xs text-muted-foreground mt-2">
+              Submitted on {format(new Date(feedbackDetails.created_at), 'PPP p')}
+            </p>
+          </div>
+
+          <div className="space-y-4 h-[400px] overflow-y-auto p-4 border rounded-lg">
+            {feedback_responses.map((response) => (
+              <div
+                key={response.id}
+                className={`flex flex-col ${response.user_id === user?.id ? 'items-end' : 'items-start'}`}
+              >
+                <div
+                  className={`max-w-md p-3 rounded-lg ${
+                    response.user_id === user?.id
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted'
+                  }`}
+                >
+                  <p className="text-sm">{response.response_text}</p>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {response.user_email} - {format(new Date(response.created_at), 'p')}
+                </p>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+        </CardContent>
+        <CardFooter>
+          <div className="w-full flex items-start gap-4">
+            <Textarea
+              placeholder="Type your response..."
+              value={newResponse}
+              onChange={(e) => setNewResponse(e.target.value)}
+              className="flex-1"
+              rows={3}
+            />
+            <Button onClick={handleResponseSubmit} disabled={isSubmitting || !newResponse.trim()}>
+              {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              <span className="ml-2">Send</span>
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
     </div>
   );
-};
-
-export default FeedbackDetail;
+}

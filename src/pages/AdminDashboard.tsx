@@ -1,99 +1,69 @@
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { useAuth } from '@/hooks/useAuth';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import ProviderManager from '@/components/admin/ProviderManager';
-import RequestManager from '@/components/admin/RequestManager';
-import FeedbackManager from '@/components/admin/FeedbackManager';
-import AllProjectsTab from '@/components/admin/AllProjectsTab';
-import { Briefcase, MessageSquare, LayoutGrid, BarChart2, Map, Users } from 'lucide-react';
-import ReportingTab from '@/components/admin/ReportingTab';
-import ProjectMap from '@/components/admin/ProjectMap';
-import UserManager from '@/components/admin/UserManager';
-import { Link } from 'react-router-dom';
-import { useUnreadNotificationsWithDetails } from '@/hooks/useUnreadNotificationsWithDetails';
+"use client";
 
-const AdminDashboard = () => {
-  const { signOut } = useAuth();
-  const { unreadFeedback, isLoading } = useUnreadNotificationsWithDetails();
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import UserManager from "@/components/admin/UserManager";
+import AllProjectsTab from "@/components/admin/AllProjectsTab";
+import ReportingTab from "@/components/admin/ReportingTab";
+import FeedbackManager from "@/components/admin/FeedbackManager";
+import RequestManager from "@/components/admin/RequestManager";
+import ProviderManager from "@/components/admin/ProviderManager";
+import { ProjectSummary } from '@/integrations/supabase/types';
+
+export default function AdminDashboard() {
+  const [projects, setProjects] = useState<ProjectSummary[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('project_summaries')
+        .select('*');
+      
+      if (error) {
+        console.error("Error fetching all projects:", error);
+      } else {
+        setProjects(data as ProjectSummary[]);
+      }
+      setLoading(false);
+    };
+
+    fetchProjects();
+  }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header showSignOut={true} onSignOut={signOut} />
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-3 text-foreground">Admin Dashboard</h1>
-          <p className="text-muted-foreground text-lg">
-            Manage projects, providers, user access, and feedback.
-          </p>
-        </div>
-
-        <Tabs defaultValue="reporting" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 bg-accent dark:bg-muted">
-            <TabsTrigger value="reporting" className="flex items-center gap-2">
-              <BarChart2 className="h-4 w-4" />
-              Reporting
-            </TabsTrigger>
-            <TabsTrigger value="all-projects" className="flex items-center gap-2">
-              <LayoutGrid className="h-4 w-4" />
-              Projects
-            </TabsTrigger>
-            <TabsTrigger value="map" className="flex items-center gap-2">
-              <Map className="h-4 w-4" />
-              Map
-            </TabsTrigger>
-            <TabsTrigger value="users" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Users
-            </TabsTrigger>
-            <TabsTrigger value="providers" className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4" />
-              Providers
-            </TabsTrigger>
-            <TabsTrigger value="feedback" className="flex items-center gap-2 relative">
-              <MessageSquare className="h-4 w-4" />
-              Feedback
-              {!isLoading && unreadFeedback > 0 && (
-                <span className="absolute -top-1 -right-1 h-5 w-5 bg-primary text-primary-foreground text-xs font-bold rounded-full flex items-center justify-center">
-                  {unreadFeedback}
-                </span>
-              )}
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="reporting" className="mt-6">
-            <ReportingTab />
-          </TabsContent>
-          <TabsContent value="all-projects" className="mt-6">
-            <AllProjectsTab />
-          </TabsContent>
-          <TabsContent value="map" className="mt-6">
-            <ProjectMap />
-          </TabsContent>
-          <TabsContent value="users" className="mt-6">
-            <UserManager />
-          </TabsContent>
-          <TabsContent value="providers" className="mt-6">
-            <Tabs defaultValue="provider-management" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="provider-management">Provider Management</TabsTrigger>
-                <TabsTrigger value="access-requests">Access Requests</TabsTrigger>
-              </TabsList>
-              <TabsContent value="provider-management" className="mt-6">
-                <ProviderManager />
-              </TabsContent>
-              <TabsContent value="access-requests" className="mt-6">
-                <RequestManager />
-              </TabsContent>
-            </Tabs>
-          </TabsContent>
-          <TabsContent value="feedback" className="mt-6">
-            <FeedbackManager />
-          </TabsContent>
-        </Tabs>
-      </main>
-      <Footer />
+    <div className="container mx-auto p-4 md:p-8">
+      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+      <Tabs defaultValue="projects">
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="projects">All Projects</TabsTrigger>
+          <TabsTrigger value="users">User Management</TabsTrigger>
+          <TabsTrigger value="reporting">Reporting</TabsTrigger>
+          <TabsTrigger value="feedback">Feedback</TabsTrigger>
+          <TabsTrigger value="requests">Access Requests</TabsTrigger>
+          <TabsTrigger value="providers">Providers</TabsTrigger>
+        </TabsList>
+        <TabsContent value="projects" className="mt-6">
+          <AllProjectsTab projects={projects} loading={loading} />
+        </TabsContent>
+        <TabsContent value="users" className="mt-6">
+          <UserManager />
+        </TabsContent>
+        <TabsContent value="reporting" className="mt-6">
+          <ReportingTab projects={projects} />
+        </TabsContent>
+        <TabsContent value="feedback" className="mt-6">
+          <FeedbackManager />
+        </TabsContent>
+        <TabsContent value="requests" className="mt-6">
+          <RequestManager />
+        </TabsContent>
+        <TabsContent value="providers" className="mt-6">
+          <ProviderManager />
+        </TabsContent>
+      </Tabs>
     </div>
   );
-};
-
-export default AdminDashboard;
+}
