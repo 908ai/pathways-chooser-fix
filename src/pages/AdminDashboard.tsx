@@ -29,7 +29,7 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="reporting" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 bg-accent dark:bg-muted">
+          <TabsList className="grid w-full grid-cols-6 bg-card border">
             <TabsTrigger value="reporting" className="flex items-center gap-2">
               <BarChart2 className="h-4 w-4" />
               Reporting
@@ -74,7 +74,7 @@ const AdminDashboard = () => {
           </TabsContent>
           <TabsContent value="providers" className="mt-6">
             <Tabs defaultValue="provider-management" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-2 bg-card border">
                 <TabsTrigger value="provider-management">Provider Management</TabsTrigger>
                 <TabsTrigger value="access-requests">Access Requests</TabsTrigger>
               </TabsList>
