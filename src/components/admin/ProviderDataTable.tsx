@@ -184,9 +184,11 @@ export const ProviderDataTable: React.FC<ProviderDataTableProps> = ({
     globalFilterFn: (row, columnId, filterValue) => {
       const name = row.getValue('name') as string;
       const services = row.getValue('services_offered') as string[];
+      const city = row.original.location_city;
       const search = filterValue.toLowerCase();
       
       return name.toLowerCase().includes(search) || 
+             (city && city.toLowerCase().includes(search)) ||
              (services && services.some(s => s.toLowerCase().includes(search)));
     },
     state: {
@@ -202,7 +204,7 @@ export const ProviderDataTable: React.FC<ProviderDataTableProps> = ({
     <div className="w-full">
       <div className="flex items-center py-4 gap-2">
         <Input
-          placeholder="Filter by name or service..."
+          placeholder="Filter by name, city, or service..."
           value={globalFilter}
           onChange={(event) => setGlobalFilter(event.target.value)}
           className="max-w-sm"
