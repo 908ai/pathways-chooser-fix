@@ -231,7 +231,7 @@ const ProjectSummaryForm = ({
 
         if (fetchError) throw fetchError;
 
-        if (currentProject.compliance_status === 'needs_revision') {
+        if (currentProject.compliance_status === 'needs_revision' || currentProject.compliance_status === 'update_allowed') {
           eventType = 'project_resubmitted';
         } else {
           eventType = 'project_submitted';

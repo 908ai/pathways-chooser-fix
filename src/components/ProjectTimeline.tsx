@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { AlertTriangle, MessageSquare, Send, User, Shield } from 'lucide-react';
+import { AlertTriangle, MessageSquare, Send, User, Shield, RefreshCw, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useQueryClient } from '@tanstack/react-query';
@@ -104,10 +104,44 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus, events, 
   const EventItem = ({ event }: { event: ProjectEvent }) => {
     const isAuthor = user?.id === event.user_id;
     const isRevisionRequest = event.event_type === 'revision_request';
+    const isUpdateRequest = event.event_type === 'update_requested';
+    const isUpdateAllowed = event.event_type === 'update_allowed';
 
     // Filter out non-comment events from this view
-    if (event.event_type !== 'user_comment' && event.event_type !== 'revision_request') {
+    if (
+      event.event_type !== 'user_comment' && 
+      event.event_type !== 'revision_request' &&
+      event.event_type !== 'update_requested' &&
+      event.event_type !== 'update_allowed'
+    ) {
       return null;
+    }
+
+    let bgColor = isAuthor ? 'bg-primary text-primary-foreground' : 'bg-muted';
+    let borderColor = '';
+    let textColor = '';
+    let icon = null;
+    let label = event.user_role === 'admin' ? 'Admin' : 'User';
+    let actionText = 'commented';
+
+    if (isRevisionRequest) {
+      bgColor = 'bg-yellow-100 dark:bg-yellow-900/50';
+      borderColor = 'border border-yellow-200 dark:border-yellow-800';
+      textColor = 'text-yellow-900 dark:text-yellow-200';
+      icon = <AlertTriangle className="inline-block h-4 w-4 mr-2" />;
+      actionText = 'requested a revision';
+    } else if (isUpdateRequest) {
+      bgColor = 'bg-blue-100 dark:bg-blue-900/50';
+      borderColor = 'border border-blue-200 dark:border-blue-800';
+      textColor = 'text-blue-900 dark:text-blue-200';
+      icon = <RefreshCw className="inline-block h-4 w-4 mr-2" />;
+      actionText = 'requested to edit project';
+    } else if (isUpdateAllowed) {
+      bgColor = 'bg-green-100 dark:bg-green-900/50';
+      borderColor = 'border border-green-200 dark:border-green-800';
+      textColor = 'text-green-900 dark:text-green-200';
+      icon = <CheckCircle2 className="inline-block h-4 w-4 mr-2" />;
+      actionText = 'allowed edits';
     }
 
     return (
@@ -117,18 +151,11 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus, events, 
             <AvatarFallback>{event.user_role === 'admin' ? <Shield className="h-5 w-5" /> : getInitials(event.user_email)}</AvatarFallback>
           </Avatar>
         )}
-        <div className={`max-w-md rounded-lg px-4 py-3 ${
-          isRevisionRequest 
-            ? 'bg-yellow-100 dark:bg-yellow-900/50 border border-yellow-200 dark:border-yellow-800' 
-            : isAuthor 
-              ? 'bg-primary text-primary-foreground' 
-              : 'bg-muted'
-        }`}>
+        <div className={`max-w-md rounded-lg px-4 py-3 ${bgColor} ${borderColor}`}>
           <div className="flex items-center justify-between mb-1">
-            <p className={`font-semibold text-sm ${isRevisionRequest ? 'text-yellow-900 dark:text-yellow-200' : ''}`}>
-              {isRevisionRequest && <AlertTriangle className="inline-block h-4 w-4 mr-2" />}
-              {event.user_role === 'admin' ? 'Admin' : 'User'}
-              {isRevisionRequest ? ' requested a revision' : ' commented'}
+            <p className={`font-semibold text-sm ${textColor}`}>
+              {icon}
+              {label} {actionText}
             </p>
           </div>
           <p className="text-sm">{event.payload?.comment}</p>
@@ -146,7 +173,12 @@ const ProjectTimeline = ({ projectId, projectOwnerId, complianceStatus, events, 
   };
 
   const canComment = complianceStatus === 'needs_revision' || isAdmin;
-  const commentEvents = events.filter(e => e.event_type === 'user_comment' || e.event_type === 'revision_request');
+  const commentEvents = events.filter(e => 
+    e.event_type === 'user_comment' || 
+    e.event_type === 'revision_request' ||
+    e.event_type === 'update_requested' ||
+    e.event_type === 'update_allowed'
+  );
 
   return (
     <Card>
