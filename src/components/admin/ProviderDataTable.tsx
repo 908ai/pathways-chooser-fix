@@ -36,8 +36,6 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tables } from "@/integrations/supabase/types";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PROVINCES, PROVIDER_STATUSES } from "@/lib/constants";
 
 export type ServiceProvider = Tables<'service_providers'>;
 
@@ -94,7 +92,7 @@ export const ProviderDataTable: React.FC<ProviderDataTableProps> = ({
       },
     },
     {
-      accessorKey: "location_province",
+      accessorKey: "location_city",
       header: "Location",
       cell: ({ row }) => (
         <div>
@@ -200,37 +198,13 @@ export const ProviderDataTable: React.FC<ProviderDataTableProps> = ({
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4 gap-4">
+      <div className="flex items-center py-4">
         <Input
           placeholder="Filter by name or service..."
           value={globalFilter}
           onChange={(event) => setGlobalFilter(event.target.value)}
           className="max-w-sm"
         />
-        <Select
-          value={table.getColumn("location_province")?.getFilterValue() as string ?? ""}
-          onValueChange={(value) => table.getColumn("location_province")?.setFilterValue(value)}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by Province" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">All Provinces</SelectItem>
-            {PROVINCES.map(p => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
-          </SelectContent>
-        </Select>
-        <Select
-          value={table.getColumn("status")?.getFilterValue() as string ?? ""}
-          onValueChange={(value) => table.getColumn("status")?.setFilterValue(value)}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by Availability" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">All Statuses</SelectItem>
-            {PROVIDER_STATUSES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-          </SelectContent>
-        </Select>
         <div className="ml-auto flex items-center gap-2">
           <Button onClick={onAdd}>
             <PlusCircle className="mr-2 h-4 w-4" />
