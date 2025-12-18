@@ -26,7 +26,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 type Feedback = Database['public']['Functions']['get_feedback_with_user_details']['Returns'][number];
 
-export const FeedbackManager = () => {
+const FeedbackManager = () => {
   const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const queryClient = useQueryClient();
