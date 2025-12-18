@@ -273,6 +273,12 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
                                 }
                                 field.onChange(newValue);
                               }}
+                              className="
+                                    border-2 border-gray-400
+                                    accent-gray-500
+                                    dark:border-gray-600
+                                    dark:accent-white
+                              "
                             />
                           </FormControl>
                           <FormLabel className="font-normal flex items-center">
