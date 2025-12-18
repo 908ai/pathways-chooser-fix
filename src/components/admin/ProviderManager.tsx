@@ -10,74 +10,14 @@ import { ProviderDataTable, ServiceProvider } from './ProviderDataTable';
 import { z } from 'zod';
 import { TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 
-const sampleProviders: ServiceProvider[] = [
-  {
-    id: '1',
-    name: 'Green Home Energy',
-    service_category: 'Energy Advisor',
-    location_city: 'Calgary',
-    location_province: 'AB',
-    contact_email: 'contact@greenhome.ca',
-    phone_number: '403-555-1111',
-    website: 'https://greenhome.ca',
-    description: 'Certified energy advisors for new and existing homes.',
-    logo_url: null,
-    is_approved: true,
-    cacea_member: true,
-    region: 'Local',
-    status: 'Available',
-    services_offered: ['EnerGuide modelling', 'Blower door testing'],
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    name: 'Eco Builders Inc.',
-    service_category: 'Builder',
-    location_city: 'Edmonton',
-    location_province: 'AB',
-    contact_email: 'info@ecobuilders.com',
-    phone_number: '780-555-2222',
-    website: 'https://ecobuilders.com',
-    description: 'Specializing in net-zero and passive house construction.',
-    logo_url: null,
-    is_approved: true,
-    cacea_member: true,
-    region: 'Local',
-    status: 'At Capacity',
-    services_offered: ['CHBA Net Zero Certifications', 'General Contracting'],
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    name: 'BC Heat Pumps',
-    service_category: 'HVAC Contractor',
-    location_city: 'Vancouver',
-    location_province: 'BC',
-    contact_email: 'sales@bcheatpumps.com',
-    phone_number: '604-555-3333',
-    website: 'https://bcheatpumps.com',
-    description: 'Installation and maintenance of high-efficiency heat pumps.',
-    logo_url: null,
-    is_approved: false,
-    cacea_member: false,
-    region: 'Out-of-Region',
-    status: 'Pending',
-    services_offered: ['F280 heat loss/gain calculations'],
-    created_at: new Date().toISOString(),
-  },
-];
-
 const fetchProviders = async () => {
-  // For now, we'll return sample data.
-  // In a real app, you would fetch from Supabase.
-  // const { data, error } = await supabase
-  //   .from('service_providers')
-  //   .select('*')
-  //   .order('name', { ascending: true });
+  const { data, error } = await supabase
+    .from('service_providers')
+    .select('*')
+    .order('name', { ascending: true });
 
-  // if (error) throw new Error(error.message);
-  // return data;
-  return sampleProviders;
+  if (error) throw new Error(error.message);
+  return data;
 };
 
 const ProviderManager = () => {
