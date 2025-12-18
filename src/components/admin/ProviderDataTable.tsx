@@ -208,26 +208,26 @@ export const ProviderDataTable: React.FC<ProviderDataTableProps> = ({
           className="max-w-sm"
         />
         <Select
-          value={(table.getColumn("location_province")?.getFilterValue() as string) ?? ""}
-          onValueChange={(value) => table.getColumn("location_province")?.setFilterValue(value)}
+          value={(table.getColumn("location_province")?.getFilterValue() as string) ?? "all"}
+          onValueChange={(value) => table.getColumn("location_province")?.setFilterValue(value === "all" ? "" : value)}
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter by Province" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Provinces</SelectItem>
+            <SelectItem value="all">All Provinces</SelectItem>
             {PROVINCES.map(p => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select
-          value={(table.getColumn("status")?.getFilterValue() as string) ?? ""}
-          onValueChange={(value) => table.getColumn("status")?.setFilterValue(value)}
+          value={(table.getColumn("status")?.getFilterValue() as string) ?? "all"}
+          onValueChange={(value) => table.getColumn("status")?.setFilterValue(value === "all" ? "" : value)}
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter by Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Statuses</SelectItem>
+            <SelectItem value="all">All Statuses</SelectItem>
             {PROVIDER_STATUSES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
           </SelectContent>
         </Select>
