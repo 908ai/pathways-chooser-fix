@@ -90,8 +90,24 @@ export const ProviderDataTable: React.FC<ProviderDataTableProps> = ({
       ),
     },
     {
+      accessorKey: "region",
+      header: "Region",
+      cell: ({ row }) => <Badge variant={row.getValue("region") === "Local" ? "default" : "secondary"}>{row.getValue("region")}</Badge>,
+    },
+    {
+      accessorKey: "status",
+      header: "Availability",
+      cell: ({ row }) => {
+        const status = row.getValue("status") as string;
+        let variant: "default" | "secondary" | "destructive" = "secondary";
+        if (status === "Available") variant = "default";
+        if (status === "At Capacity") variant = "destructive";
+        return <Badge variant={variant}>{status}</Badge>;
+      },
+    },
+    {
       accessorKey: "is_approved",
-      header: "Status",
+      header: "Approval Status",
       cell: ({ row }) => (
         <Badge variant={row.getValue("is_approved") ? "default" : "secondary"}>
           {row.getValue("is_approved") ? "Approved" : "Pending"}

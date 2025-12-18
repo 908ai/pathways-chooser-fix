@@ -608,6 +608,7 @@ export type Database = {
       }
       service_providers: {
         Row: {
+          cacea_member: boolean | null
           contact_email: string | null
           created_at: string
           description: string | null
@@ -618,10 +619,14 @@ export type Database = {
           logo_url: string | null
           name: string
           phone_number: string | null
+          region: string | null
           service_category: string
+          services_offered: string[] | null
+          status: string | null
           website: string | null
         }
         Insert: {
+          cacea_member?: boolean | null
           contact_email?: string | null
           created_at?: string
           description?: string | null
@@ -632,10 +637,14 @@ export type Database = {
           logo_url?: string | null
           name: string
           phone_number?: string | null
+          region?: string | null
           service_category: string
+          services_offered?: string[] | null
+          status?: string | null
           website?: string | null
         }
         Update: {
+          cacea_member?: boolean | null
           contact_email?: string | null
           created_at?: string
           description?: string | null
@@ -646,7 +655,10 @@ export type Database = {
           logo_url?: string | null
           name?: string
           phone_number?: string | null
+          region?: string | null
           service_category?: string
+          services_offered?: string[] | null
+          status?: string | null
           website?: string | null
         }
         Relationships: []

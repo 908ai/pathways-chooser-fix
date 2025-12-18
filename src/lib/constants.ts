@@ -25,3 +25,18 @@ export const SERVICE_CATEGORIES = [
   "General Contractor",
   "Other"
 ];
+
+export const PROVIDER_STATUSES = [
+  "Available",
+  "At Capacity",
+  "Pending"
+];
+
+export const SERVICE_TYPES = [
+  { value: "Blower door testing", label: "Blower door testing", localOnly: true },
+  { value: "F280 heat loss/gain calculations", label: "F280 heat loss/gain calculations", localOnly: false },
+  { value: "RSI/UA trade-off calculations", label: "RSI/UA trade-off calculations", localOnly: false },
+  { value: "EnerGuide modelling", label: "EnerGuide modelling", localOnly: true },
+  { value: "CHBA Net Zero Certifications", label: "CHBA Net Zero Certifications", localOnly: true },
+  { value: "Other specialized services", label: "Other specialized services", localOnly: false },
+];
