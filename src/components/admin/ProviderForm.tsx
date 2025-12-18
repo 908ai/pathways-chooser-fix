@@ -48,14 +48,12 @@ export const providerSchema = z.object({
 type ProviderFormValues = z.infer<typeof providerSchema>;
 
 interface ProviderFormProps {
-  onSubmit: (values: ProviderFormValues) => void;
+  onSubmit: (values: Omit<ProviderFormValues, 'other_service_text'>) => void;
   initialData?: Tables<'service_providers'>;
   isSubmitting: boolean;
 }
 
 export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFormProps) {
-  const [otherServiceText, setOtherServiceText] = useState("");
-
   const getInitialOtherService = () => {
     const otherService = initialData?.services_offered?.find(s => !SERVICE_TYPES.map(st => st.value).includes(s));
     return otherService || "";
@@ -115,12 +113,19 @@ export function ProviderForm({ onSubmit, initialData, isSubmitting }: ProviderFo
   }, [watchedProvince, form]);
 
   const handleFormSubmit = (values: ProviderFormValues) => {
+    const { other_service_text, ...rest } = values;
     const finalServices = [...values.services_offered];
-    if (values.services_offered.includes("Other specialized services") && values.other_service_text) {
+    
+    if (values.services_offered.includes("Other specialized services")) {
       const index = finalServices.indexOf("Other specialized services");
-      finalServices.splice(index, 1, values.other_service_text);
+      if (other_service_text) {
+        finalServices.splice(index, 1, other_service_text);
+      } else {
+        finalServices.splice(index, 1);
+      }
     }
-    onSubmit({ ...values, services_offered: finalServices });
+    
+    onSubmit({ ...rest, services_offered: finalServices });
   };
 
   return (

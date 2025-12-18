@@ -106,7 +106,7 @@ const ProviderManager = () => {
     updateProviderMutation.mutate({ id: provider.id, values: { ...updateData, is_approved: !provider.is_approved } });
   };
 
-  const handleFormSubmit = (values: z.infer<typeof providerSchema>) => {
+  const handleFormSubmit = (values: Omit<z.infer<typeof providerSchema>, 'other_service_text'>) => {
     if (selectedProvider) {
       updateProviderMutation.mutate({ id: selectedProvider.id, values });
     } else {
