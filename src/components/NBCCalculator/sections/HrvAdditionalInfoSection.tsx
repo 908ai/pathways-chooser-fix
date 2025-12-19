@@ -91,6 +91,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
         <>
             {
                 <div className="pt-6 border-t border-slate-200 dark:border-slate-700 space-y-6">
+
                     {/* Certification Interests */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
