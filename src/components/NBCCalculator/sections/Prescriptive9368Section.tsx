@@ -53,13 +53,13 @@ export default function Prescriptive9368Section({
         variant = "warning",
         defaultOpen = false,
     }: {
-        title: string;
+        title: React.ReactNode;
         children: React.ReactNode;
         variant?: "warning" | "destructive";
         defaultOpen?: boolean;
     }) => {
         const [isOpen, setIsOpen] = useState(defaultOpen);
-
+        
         return (
             <Collapsible open={isOpen} onOpenChange={setIsOpen} className={cn(
                 "p-2 border rounded-lg",
@@ -113,6 +113,42 @@ export default function Prescriptive9368Section({
         }
         return baseOptions;
     };
+
+    const WarningButton = ({
+        warningId,
+        title,
+        children,
+        variant = "warning",
+        defaultOpen = false,
+    }: {
+        warningId: string;
+        title: string;
+        children: React.ReactNode;
+        variant?: "warning" | "destructive";
+        defaultOpen?: boolean;
+    }) => {
+        const [isOpen, setIsOpen] = useState(defaultOpen);
+        
+        const baseClasses = "p-2 border rounded-lg";
+        const variantClasses = {
+            warning: "bg-orange-50 border-orange-200 text-orange-800 dark:bg-orange-900/30 dark:border-orange-500/50 dark:text-orange-300",
+            destructive: "bg-red-50 border-red-200 text-red-800 dark:bg-red-900/30 dark:border-red-500/50 dark:text-red-300",
+        };
+        const iconColor = variant === "warning" ? "text-orange-700 dark:text-orange-400" : "text-red-700 dark:text-red-400";
+        const contentColor = variant === "warning" ? "text-orange-700 dark:text-orange-300" : "text-red-700 dark:text-red-300";
+
+        return (
+            <Collapsible open={isOpen} onOpenChange={setIsOpen} className={cn(baseClasses, variantClasses[variant])}>
+                <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
+                    <span className="text-xs font-bold">{title}</span>
+                    <ChevronDown className={cn("h-5 w-5 transition-transform duration-300", isOpen ? "rotate-180" : "", iconColor)} />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-4 data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden">
+                    <div className={cn("text-xs", contentColor)}>{children}</div>
+                </CollapsibleContent>
+            </Collapsible>
+        );
+    };    
 
     return (
         <div className="space-y-6">
@@ -258,7 +294,7 @@ export default function Prescriptive9368Section({
                             Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value’s (ie, U-value W/(m²×).
                         </p>
                         <p className="text-muted-foreground mt-2">
-                            See below an illustrative example of a window unit showing the performance values that must be recorded in the Window & Door Schedule.                        
+                            See below an illustrative example of a window unit showing the performance values that must be recorded in the Window & Door Schedule.
                         </p>
                         <img src="/assets/img/window-door-uvalue-example.png" alt="Window & Door Performance Example" className="mt-4 rounded-md border mx-auto block" />
                     </InfoCollapsible>
@@ -668,7 +704,7 @@ export default function Prescriptive9368Section({
                                     <Search className="h-4 w-4" />
                                     Find a service provider
                                 </a>
-                            </Button>                         
+                            </Button>
                         </div>
 
                         <InfoCollapsible title="ℹ️ Benefits of Mid-Construction Blower Door Testing">
@@ -686,14 +722,14 @@ export default function Prescriptive9368Section({
                                     <span>📄</span>
                                     <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80">
                                         View the Blower Door Checklist
-                                    </a>  
+                                    </a>
                                 </div>
                                 <div className="flex items-center gap-1 text-sm mt-3">
                                     <span>▶️</span>
                                     <a href="https://www.youtube.com/watch?v=4KtCansnpLE" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80">
                                         BILD Alberta - Building Airtightness Testing
-                                    </a>  
-                                </div>   
+                                    </a>
+                                </div>
                             </div>
                         </InfoCollapsible>
                     </div>
@@ -751,62 +787,62 @@ export default function Prescriptive9368Section({
                 </div>
             )}
 
-                            {/* Secondary Suite HRV - Show for buildings with multiple units */}
-                            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv" && <div className="space-y-4 p-4 bg-muted/50 border rounded-md">
-                                <h5 className="font-medium text-foreground">Secondary Suite HRV/ERV</h5>
+            {/* Secondary Suite HRV - Show for buildings with multiple units */}
+            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv" && <div className="space-y-4 p-4 bg-muted/50 border rounded-md">
+                <h5 className="font-medium text-foreground">Secondary Suite HRV/ERV</h5>
 
-                                <div id="hasSecondaryHrv" className="space-y-2">
-                                    <div className="flex items-center gap-3">
-                                        <label className="text-sm font-medium text-foreground">Will there be a second HRV/ERV for the secondary suite?</label>
-                                        <InfoButton title="Secondary Suite HRV/ERV Information">
-                                            <div className="space-y-4">
-                                                <div>
-                                                    <h4 className="font-semibold text-base mb-2">Secondary Suite HRV/ERV Options</h4>
-                                                    <p className="text-base text-muted-foreground">
-                                                        For buildings with secondary suites, you have options for ventilation systems.
-                                                    </p>
-                                                </div>
-
-                                                <div>
-                                                    <h5 className="font-medium text-base mb-1">Option 1: Shared System</h5>
-                                                    <p className="text-base text-muted-foreground">
-                                                        Use one larger HRV/ERV system to serve both the main dwelling and secondary suite, with proper ducting and controls.
-                                                    </p>
-                                                </div>
-
-                                                <div>
-                                                    <h5 className="font-medium text-base mb-1">Option 2: Separate Systems</h5>
-                                                    <p className="text-base text-muted-foreground">
-                                                        Install separate HRV/ERV systems for each unit to provide independent control and operation.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </InfoButton>
-                                    </div>
-                                    <Select value={selections.hasSecondaryHrv} onValueChange={value => setSelections(prev => ({
-                                        ...prev,
-                                        hasSecondaryHrv: value,
-                                        secondaryHrvEfficiency: value !== 'separate' ? '' : prev.secondaryHrvEfficiency,
-                                    }))}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select option" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="shared">Shared system (one HRV/ERV for both units)</SelectItem>
-                                            <SelectItem value="separate">Separate HRV/ERV for secondary suite</SelectItem>
-                                            <SelectItem value="none">No secondary HRV/ERV</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                <div id="hasSecondaryHrv" className="space-y-2">
+                    <div className="flex items-center gap-3">
+                        <label className="text-sm font-medium text-foreground">Will there be a second HRV/ERV for the secondary suite?</label>
+                        <InfoButton title="Secondary Suite HRV/ERV Information">
+                            <div className="space-y-4">
+                                <div>
+                                    <h4 className="font-semibold text-base mb-2">Secondary Suite HRV/ERV Options</h4>
+                                    <p className="text-base text-muted-foreground">
+                                        For buildings with secondary suites, you have options for ventilation systems.
+                                    </p>
                                 </div>
 
-                                {selections.hasSecondaryHrv === "separate" && <div id="secondaryHrvEfficiency" className="space-y-2">
-                                    <label className="text-sm font-medium text-foreground">Secondary Suite HRV/ERV Make/Model</label>
-                                    <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
-                                        ...prev,
-                                        secondaryHrvEfficiency: e.target.value
-                                    }))} />
-                                </div>}
-                            </div>}            
+                                <div>
+                                    <h5 className="font-medium text-base mb-1">Option 1: Shared System</h5>
+                                    <p className="text-base text-muted-foreground">
+                                        Use one larger HRV/ERV system to serve both the main dwelling and secondary suite, with proper ducting and controls.
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <h5 className="font-medium text-base mb-1">Option 2: Separate Systems</h5>
+                                    <p className="text-base text-muted-foreground">
+                                        Install separate HRV/ERV systems for each unit to provide independent control and operation.
+                                    </p>
+                                </div>
+                            </div>
+                        </InfoButton>
+                    </div>
+                    <Select value={selections.hasSecondaryHrv} onValueChange={value => setSelections(prev => ({
+                        ...prev,
+                        hasSecondaryHrv: value,
+                        secondaryHrvEfficiency: value !== 'separate' ? '' : prev.secondaryHrvEfficiency,
+                    }))}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select option" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="shared">Shared system (one HRV/ERV for both units)</SelectItem>
+                            <SelectItem value="separate">Separate HRV/ERV for secondary suite</SelectItem>
+                            <SelectItem value="none">No secondary HRV/ERV</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {selections.hasSecondaryHrv === "separate" && <div id="secondaryHrvEfficiency" className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">Secondary Suite HRV/ERV Make/Model</label>
+                    <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
+                        ...prev,
+                        secondaryHrvEfficiency: e.target.value
+                    }))} />
+                </div>}
+            </div>}
 
             {/* Service Water Heater */}
             {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <div id="waterHeater" className="space-y-2">
@@ -921,7 +957,7 @@ export default function Prescriptive9368Section({
                         }
                         className={cn(
                             validationErrors.cathedralFlatRSI &&
-                                "border-red-500 ring-2 ring-red-500"
+                            "border-red-500 ring-2 ring-red-500"
                         )}
                     />
                     {(() => {
@@ -1031,7 +1067,7 @@ export default function Prescriptive9368Section({
                         </div>
                     </div>
                 )}
-            </div>            
+            </div>
 
             {/* Heated Floors (Province dependent minimums) */}
             <div id="heatedFloorsRSI" className="space-y-2">
@@ -1126,68 +1162,68 @@ export default function Prescriptive9368Section({
                     )}
 
                 {selections.hasInFloorHeat === "no" && (
-                <>
-                    <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">
-                        Unheated Floor Below Frost Line
-                    </label>
-                    <Input
-                        type="text"
-                        placeholder="Enter RSI value or 'uninsulated'"
-                        value={selections.unheatedFloorBelowFrostRSI}
-                        onChange={(e) =>
-                        setSelections((prev) => ({
-                            ...prev,
-                            unheatedFloorBelowFrostRSI: e.target.value,
-                        }))
-                        }
-                        className="flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-900 dark:text-slate-50 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:ring-primary"
-                    />
+                    <>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">
+                                Unheated Floor Below Frost Line
+                            </label>
+                            <Input
+                                type="text"
+                                placeholder="Enter RSI value or 'uninsulated'"
+                                value={selections.unheatedFloorBelowFrostRSI}
+                                onChange={(e) =>
+                                    setSelections((prev) => ({
+                                        ...prev,
+                                        unheatedFloorBelowFrostRSI: e.target.value,
+                                    }))
+                                }
+                                className="flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-900 dark:text-slate-50 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:ring-primary"
+                            />
 
-                    <InfoCollapsible title="ℹ️ Unheated Floor Below Frost Line" defaultOpen={false}>
-                        <p className="text-xs text-foreground">
-                        This assembly typically remains uninsulated as per NBC requirements
-                        but can be insulated to improve comfort in these areas. Enter
-                        <code className="px-1">uninsulated</code> or specify an RSI value if
-                        insulation is provided.
-                        </p>
-                    </InfoCollapsible>
-                    </div>
+                            <InfoCollapsible title="ℹ️ Unheated Floor Below Frost Line" defaultOpen={false}>
+                                <p className="text-xs text-foreground">
+                                    This assembly typically remains uninsulated as per NBC requirements
+                                    but can be insulated to improve comfort in these areas. Enter
+                                    <code className="px-1">uninsulated</code> or specify an RSI value if
+                                    insulation is provided.
+                                </p>
+                            </InfoCollapsible>
+                        </div>
 
-                    <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">
-                        Unheated Floor Above Frost Line
-                    </label>
-                    <Input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        placeholder="Min RSI 1.96 (R-11.1)"
-                        value={selections.unheatedFloorAboveFrostRSI}
-                        onChange={(e) =>
-                        setSelections((prev) => ({
-                            ...prev,
-                            unheatedFloorAboveFrostRSI: e.target.value,
-                        }))
-                        }
-                        className="flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-900 dark:text-slate-50 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:ring-primary"
-                    />
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">
+                                Unheated Floor Above Frost Line
+                            </label>
+                            <Input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                placeholder="Min RSI 1.96 (R-11.1)"
+                                value={selections.unheatedFloorAboveFrostRSI}
+                                onChange={(e) =>
+                                    setSelections((prev) => ({
+                                        ...prev,
+                                        unheatedFloorAboveFrostRSI: e.target.value,
+                                    }))
+                                }
+                                className="flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-900 dark:text-slate-50 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:ring-primary"
+                            />
 
-                    {selections.unheatedFloorAboveFrostRSI &&
-                        parseFloat(selections.unheatedFloorAboveFrostRSI) < 1.96 && (
-                        <InfoCollapsible
-                            title={<span className="text-sm">🛑 RSI Value Too Low</span>}
-                            variant="destructive"
-                            defaultOpen={true}
-                        >
-                            <p className="text-xs">
-                            The RSI value must be increased to at least 1.96 to meet NBC
-                            requirements for unheated floor above frost line.
-                            </p>
-                        </InfoCollapsible>
-                        )}
-                    </div>
-                </>
+                            {selections.unheatedFloorAboveFrostRSI &&
+                                parseFloat(selections.unheatedFloorAboveFrostRSI) < 1.96 && (
+                                    <InfoCollapsible
+                                        title={<span className="text-sm">🛑 RSI Value Too Low</span>}
+                                        variant="destructive"
+                                        defaultOpen={true}
+                                    >
+                                        <p className="text-xs">
+                                            The RSI value must be increased to at least 1.96 to meet NBC
+                                            requirements for unheated floor above frost line.
+                                        </p>
+                                    </InfoCollapsible>
+                                )}
+                        </div>
+                    </>
                 )}
 
                 <EffectiveRSIWarning />
@@ -1316,7 +1352,7 @@ export default function Prescriptive9368Section({
                                 }
                                 className={cn(
                                     validationErrors.unheatedFloorAboveFrostRSI &&
-                                        "border-red-500 ring-2 ring-red-500"
+                                    "border-red-500 ring-2 ring-red-500"
                                 )}
                             />
                         </div>
@@ -1341,7 +1377,7 @@ export default function Prescriptive9368Section({
                                 }
                                 className={cn(
                                     validationErrors.unheatedFloorBelowFrostRSI &&
-                                        "border-red-500 ring-2 ring-red-500"
+                                    "border-red-500 ring-2 ring-red-500"
                                 )}
                             />
                         </div>
