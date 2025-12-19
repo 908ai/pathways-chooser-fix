@@ -612,7 +612,7 @@ const NBCCalculator = () => {
         hrv_erv_efficiency: parseFloat(selections.hrvEfficiency) || null,
         airtightness_al: parseFloat(selections.airtightness || selections.customAirtightness) || null,
         building_volume: parseFloat(selections.buildingVolume) || null,
-        compliance_status: editingProjectStatus === 'needs_revision' ? 'needs_revision' : 'draft',
+        compliance_status: (editingProjectStatus === 'needs_revision' || editingProjectStatus === 'update_allowed') ? editingProjectStatus : 'draft',
         total_points: totalPoints,
         interested_certifications: selections.interestedCertifications,
         wants_certifications: selections.wantsCertifications,
