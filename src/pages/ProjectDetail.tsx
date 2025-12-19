@@ -785,7 +785,7 @@ const ProjectDetail = () => {
   const isSubmitted = project.compliance_status === 'submitted';
   const isCompleted = project.compliance_status === 'pass' || project.compliance_status === 'fail' || project.compliance_status === 'Compliant' || project.compliance_status === 'complete';
   const isUpdateAllowed = project.compliance_status === 'update_allowed';
-  const isEditable = (!isSubmitted && !isCompleted) || isUpdateAllowed;
+  const isEditable = (!isSubmitted && !isCompleted && project.compliance_status !== 'update_requested') || isUpdateAllowed;
   const isDeletable = canDeleteProjects || (!isSubmitted && !isCompleted);
   const isFileUploadDisabled = (isSubmitted || isCompleted) && !isUpdateAllowed;
 

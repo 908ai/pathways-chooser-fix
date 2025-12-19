@@ -1,4 +1,4 @@
-import { File, MessageSquare, AlertTriangle, CheckCircle, XCircle, Edit, PlusCircle, Trash2, Send } from 'lucide-react';
+import { File, MessageSquare, AlertTriangle, CheckCircle, XCircle, Edit, PlusCircle, Trash2, Send, RefreshCw, CheckCircle2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { History } from 'lucide-react';
 
@@ -13,6 +13,10 @@ const getEventIcon = (eventType: string) => {
       return <Send className={`${commonClasses} text-blue-500`} />;
     case 'revision_request':
       return <AlertTriangle className={`${commonClasses} text-yellow-500`} />;
+    case 'update_requested':
+      return <RefreshCw className={`${commonClasses} text-blue-500`} />;
+    case 'update_allowed':
+      return <CheckCircle2 className={`${commonClasses} text-green-500`} />;
     case 'user_comment':
       return <MessageSquare className={`${commonClasses} text-gray-500`} />;
     case 'project_approved':
@@ -45,6 +49,28 @@ const getEventContent = (event: any) => {
       return (
         <div>
           <p><span className="font-semibold">{userIdentifier}</span> requested a revision.</p>
+          {payload?.comment && (
+            <p className="mt-2 text-sm text-muted-foreground pl-4 border-l-2 border-slate-200 dark:border-slate-700">
+              "{payload.comment}"
+            </p>
+          )}
+        </div>
+      );
+    case 'update_requested':
+      return (
+        <div>
+          <p><span className="font-semibold">{userIdentifier}</span> requested to edit the project.</p>
+          {payload?.comment && (
+            <p className="mt-2 text-sm text-muted-foreground pl-4 border-l-2 border-slate-200 dark:border-slate-700">
+              "{payload.comment}"
+            </p>
+          )}
+        </div>
+      );
+    case 'update_allowed':
+      return (
+        <div>
+          <p><span className="font-semibold">{userIdentifier}</span> allowed the project to be edited.</p>
           {payload?.comment && (
             <p className="mt-2 text-sm text-muted-foreground pl-4 border-l-2 border-slate-200 dark:border-slate-700">
               "{payload.comment}"
