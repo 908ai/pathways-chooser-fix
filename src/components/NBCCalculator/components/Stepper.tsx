@@ -1,6 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { CheckCircle, Building, Edit } from "lucide-react";
+import { CheckCircle, Building, Edit, Pencil } from "lucide-react";
 import { PATHWAY_CONFIG } from "@/components/NBCCalculator/utils/pathwayConfig";
 
 interface StepperProps {
@@ -22,9 +22,9 @@ interface StepperProps {
  * ----------------------------- */
 
 const EditBadge = () => (
-  <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-600/40 text-yellow-800 dark:text-yellow-200 text-xs font-medium whitespace-nowrap -mt-[22px]">
+  <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-600/40 text-yellow-800 dark:text-yellow-200 text-xs font-medium whitespace-nowrap">
     <Edit className="h-3.5 w-3.5" />
-    Editing
+    You're Editing this Project
   </div>
 );
 
@@ -129,8 +129,8 @@ const Stepper = ({
                     isCompleted
                       ? "bg-green-500 border-green-500 text-white"
                       : isActive
-                        ? "bg-primary border-primary/50 text-primary-foreground"
-                        : "bg-muted border-border text-muted-foreground",
+                      ? "bg-primary border-primary/50 text-primary-foreground"
+                      : "bg-muted border-border text-muted-foreground",
                     isSticky ? "w-6 h-6" : "w-10 h-10"
                   )}
                 >
@@ -168,7 +168,7 @@ const Stepper = ({
       </div>
 
       {/* -----------------------------
-       * Context Bar (always visible)
+       * Context Bar
        * ----------------------------- */}
       <div
         className={cn(
@@ -182,11 +182,10 @@ const Stepper = ({
         {/* Project line */}
         <div
           className={cn(
-            "flex flex-wrap items-center justify-center gap-2 font-medium text-foreground truncate max-w-full",
+            "flex flex-wrap items-center justify-center gap-2 font-medium text-foreground",
             isSticky ? "text-xs" : "text-sm"
           )}
         >
-
           <Building
             className={cn(
               "shrink-0 text-blue-500",
@@ -198,6 +197,19 @@ const Stepper = ({
             {projectName || "Draft Project"}
           </span>
 
+          {/* Edit project → Step 1 */}
+          {currentStep >= 2 && (
+            <button
+              type="button"
+              onClick={() => onStepClick(1)}
+              className="ml-1 text-muted-foreground hover:text-foreground transition-colors"
+              title="Edit project information"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
+          )}
+
+          {/* Pathway */}
           {compliancePath && (
             <>
               <div className="hidden sm:block h-4 w-px bg-border" />
@@ -205,11 +217,23 @@ const Stepper = ({
                 compliancePath={compliancePath}
                 isSticky={isSticky}
               />
+
+              {/* Edit pathway → Step 2 */}
+              {currentStep >= 3 && (
+                <button
+                  type="button"
+                  onClick={() => onStepClick(2)}
+                  className="ml-1 text-muted-foreground hover:text-foreground transition-colors"
+                  title="Edit compliance pathway"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </button>
+              )}
             </>
           )}
         </div>
 
-        {/* Technical context (secondary) */}
+        {/* Technical context */}
         <TechnicalContext
           buildingType={buildingType}
           climateZone={climateZone}
