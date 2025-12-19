@@ -42,7 +42,7 @@ import HrvAdditionalInfoSection from "./NBCCalculator/sections/HrvAdditionalInfo
 import EnerGuidePathwaySection from "./NBCCalculator/sections/EnerGuidePathwaySection";
 import HelpDrawer from "@/components/HelpDrawer";
 import { cn } from "@/lib/utils";
-import { getPathwayDisplayName } from "./NBCCalculator/utils/helpers";
+import { getPathwayDisplayName, normalizeProvince } from "./NBCCalculator/utils/helpers";
 import { getPendingItems } from "@/lib/projectUtils";
 
 const getStepForField = (fieldId: string) => {
@@ -1015,10 +1015,23 @@ const NBCCalculator = () => {
     <div className="relative">
       <div ref={sentinelRef} className="absolute top-0 h-px" />
       <HelpDrawer open={isHelpDrawerOpen} onOpenChange={setIsHelpDrawerOpen} />
-
-      <Stepper steps={steps} currentStep={currentStep} onStepClick={handleStepClick} isSticky={isSticky} />
-
-      {searchParams.get('edit') && <EditModeIndicator projectName={editingProjectName} />}
+     
+      <Stepper
+        steps={steps}
+        currentStep={currentStep}
+        onStepClick={handleStepClick}
+        isSticky={isSticky}
+        projectName={
+          editingProjectName ||
+          (selections.streetAddress
+            ? `${selections.firstName} ${selections.lastName} – ${selections.streetAddress}, ${selections.city} ${normalizeProvince(selections.province)} `
+            : "New Project")
+        }
+        compliancePath={selections.compliancePath}
+        isEditing={!!searchParams.get('edit')}
+        buildingType={selections.buildingType}
+        climateZone={selections.climateZone}
+      />
 
       <div className="relative flex justify-center">
         <div className={cn(

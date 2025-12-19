@@ -18,3 +18,11 @@ export const getPathwayDisplayName = (compliancePath: string) => {
 export const isSingleDetached = (buildingType: string) => { 
   return buildingType === 'single-detached' || buildingType === 'single-detached-secondary';
 };
+
+const PROVINCE_ABBR: Record<string, string> = {
+  alberta: "AB",
+  saskatchewan: "SK",
+};
+
+export const normalizeProvince = (province?: string) =>
+  PROVINCE_ABBR[province ?? ""] ?? province;
