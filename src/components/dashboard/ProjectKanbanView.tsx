@@ -30,7 +30,7 @@ const ProjectKanbanView = ({ projects, onViewProject, onEditProject, onDuplicate
     return projects.filter(p => {
       const status = p.compliance_status;
       if (statusId === 'draft') return status === 'draft';
-      if (statusId === 'submitted') return status === 'submitted';
+      if (statusId === 'submitted') return status === 'submitted' || status === 'update_requested' || status === 'update_allowed';
       if (statusId === 'needs_revision') return status === 'needs_revision';
       if (statusId === 'complete') return status === 'pass' || status === 'Compliant' || status === 'fail';
       return false;
