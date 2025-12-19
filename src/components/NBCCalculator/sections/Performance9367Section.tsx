@@ -58,7 +58,7 @@ export default function Performance9367Section({
         defaultOpen?: boolean;
     }) => {
         const [isOpen, setIsOpen] = useState(defaultOpen);
-        
+
         const baseClasses = "p-2 border rounded-lg";
         const variantClasses = {
             warning: "bg-orange-50 border-orange-200 text-orange-800 dark:bg-orange-900/30 dark:border-orange-500/50 dark:text-orange-300",
@@ -123,7 +123,7 @@ export default function Performance9367Section({
         ];
 
         if (selections.heatingType) keys.push("heatingEfficiency");
-        
+
         if (selections.heatingType === 'boiler') {
             keys.push("indirectTank");
             if (selections.indirectTank === 'yes') keys.push("indirectTankSize");
@@ -150,7 +150,7 @@ export default function Performance9367Section({
 
     const envelopeKeys = getEnvelopeKeys();
     const mechanicalKeys = getMechanicalKeys();
-    
+
     // Count uploaded files as one completed item for envelope if any exist
     const envelopeCompleted = envelopeKeys.filter(key => isSet(selections[key])).length + (uploadedFiles.length > 0 ? 1 : 0);
     const envelopeTotal = envelopeKeys.length + 1; // +1 for the file upload requirement
@@ -293,8 +293,8 @@ export default function Performance9367Section({
                                                     if (!newFloorsSlabsSelected.includes('heatedFloors')) {
                                                         newFloorsSlabsSelected.push('heatedFloors');
                                                     }
-                                                    newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item => 
-                                                        item !== 'unheatedBelowFrost' && 
+                                                    newFloorsSlabsSelected = newFloorsSlabsSelected.filter(item =>
+                                                        item !== 'unheatedBelowFrost' &&
                                                         item !== 'unheatedAboveFrost' &&
                                                         item !== 'slabOnGradeIntegralFooting'
                                                     );
@@ -575,7 +575,7 @@ export default function Performance9367Section({
                                                         <p>• Use Table 9.36.-A for guarded tests (stricter limits)</p>
                                                         <p>• Use Table 9.36.-B for unguarded tests (more lenient for attached buildings)</p>
                                                     </div>
-                                                    <p className="text-base text-muted-foreground mt-2">The design air leakage rate, established by the builder and energy modeller, is incorporated into the energy model and later verified through testing at either the mid-construction or final stage. If the measured air changes per hour (ACH, if chosen) exceed the code-specified airtightness level, the building fails; if the measured ACH is lower, it passes.</p>                                            
+                                                    <p className="text-base text-muted-foreground mt-2">The design air leakage rate, established by the builder and energy modeller, is incorporated into the energy model and later verified through testing at either the mid-construction or final stage. If the measured air changes per hour (ACH, if chosen) exceed the code-specified airtightness level, the building fails; if the measured ACH is lower, it passes.</p>
                                                     <p className="text-base text-muted-foreground mt-2">In multi-unit buildings, the worst-performing zone sets the final score.</p>
                                                 </div>
 
@@ -647,7 +647,7 @@ export default function Performance9367Section({
                                                 You've selected an air leakage rate below {thresholdText} ACH@50pa. A blower door test is required prior to occupancy to verify this result.
                                             </AlertDescription>
                                         </Alert>
-                                    ) : null;   
+                                    ) : null;
                                 })()}
 
                                 {/* Mid-Construction Blower Door Test Checkbox */}
@@ -674,7 +674,7 @@ export default function Performance9367Section({
                                             <Search className="h-4 w-4" />
                                             Find a service provider
                                         </a>
-                                    </Button> 
+                                    </Button>
                                     <WarningButton warningId="mid-construction-blower-door-info-9367-3" title="ℹ️ Benefits of Mid-Construction Blower Door Testing">
                                         <div className="text-xs space-y-2">
                                             <p className="font-medium">Benefits of a mid-construction (misconstruction) blower door test:</p>
@@ -690,14 +690,14 @@ export default function Performance9367Section({
                                                 <span>📄</span>
                                                 <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                                                     View the Blower Door Checklist
-                                                </a>  
+                                                </a>
                                             </div>
                                             <div className="flex items-center gap-1 text-sm mt-3">
                                                 <span>▶️</span>
                                                 <a href="https://www.youtube.com/watch?v=4KtCansnpLE" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                                                     BILD Alberta - Building Airtightness Testing
-                                                </a>  
-                                            </div>   
+                                                </a>
+                                            </div>
                                         </div>
                                     </WarningButton>
                                 </div>
@@ -743,7 +743,7 @@ export default function Performance9367Section({
                                             </div>
                                         </div>
                                     </InfoButton>
-                                </div>                
+                                </div>
                                 <Select value={selections.heatingType} onValueChange={value => setSelections(prev => ({
                                     ...prev,
                                     heatingType: value,
@@ -932,62 +932,152 @@ export default function Performance9367Section({
                                 </Select>
                             </div>
 
-                            {/* Secondary Suite HRV - Show for buildings with multiple units */}
-                            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && <div className="space-y-4 p-4 bg-muted/50 border rounded-md">
-                                <h5 className="font-medium text-foreground">Secondary Suite HRV/ERV</h5>
-
-                                <div id="hasSecondaryHrv" className="space-y-2">
+                            <div className="pt-6 border-slate-200 dark:border-slate-700 space-y-6">
+                                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">HRV/ERV Information</h3>
+                                <div id="hasHrv" className="space-y-2">
                                     <div className="flex items-center gap-3">
-                                        <label className="text-sm font-medium text-foreground">Will there be a second HRV/ERV for the secondary suite?</label>
-                                        <InfoButton title="Secondary Suite HRV/ERV Information">
+                                        <label className="text-sm font-medium text-foreground">Does this building include an HRV or ERV?</label>
+                                        <InfoButton title="Should I include an HRV (Heat Recovery Ventilator)?">
                                             <div className="space-y-4">
                                                 <div>
-                                                    <h4 className="font-semibold text-base mb-2">Secondary Suite HRV/ERV Options</h4>
+                                                    <h4 className="font-semibold text-base mb-2">Should I include an HRV (Heat Recovery Ventilator)?</h4>
                                                     <p className="text-base text-muted-foreground">
-                                                        For buildings with secondary suites, you have options for ventilation systems.
+                                                        An HRV is a system that brings in fresh outdoor air while recovering heat from the stale indoor air it exhausts. It improves indoor air quality and energy efficiency — especially in airtight homes.
                                                     </p>
                                                 </div>
 
                                                 <div>
-                                                    <h5 className="font-medium text-base mb-1">Option 1: Shared System</h5>
+                                                    <h5 className="font-medium text-base mb-1">Why you should consider an HRV:</h5>
+                                                    <ul className="text-base text-muted-foreground space-y-1 ml-4 list-disc">
+                                                        <li><strong>Better indoor air quality:</strong> Removes stale air, moisture, odors, and pollutants while bringing in fresh air.</li>
+                                                        <li><strong>Energy savings:</strong> Recovery up to 80-90% of the heat from outgoing air, reducing heating costs.</li>
+                                                        <li><strong>Comfort:</strong> Maintains consistent temperatures and humidity levels throughout your home.</li>
+                                                        <li><strong>Code compliance:</strong> In many cases, an HRV can help you meet building envelope requirements with less insulation.</li>
+                                                    </ul>
+                                                </div>
+
+                                                <div>
+                                                    <h5 className="font-medium text-base mb-1">When is an HRV required?</h5>
                                                     <p className="text-base text-muted-foreground">
-                                                        Use one larger HRV/ERV system to serve both the main dwelling and secondary suite, with proper ducting and controls.
+                                                        While not always mandatory, HRVs are required or strongly recommended for homes with very low air leakage rates (typically below 2.5 ACH50) to ensure adequate ventilation. They're also required for certain energy efficiency programs.
                                                     </p>
                                                 </div>
 
                                                 <div>
-                                                    <h5 className="font-medium text-base mb-1">Option 2: Separate Systems</h5>
-                                                    <p className="text-base text-muted-foreground">
-                                                        Install separate HRV/ERV systems for each unit to provide independent control and operation.
-                                                    </p>
+                                                    <h5 className="font-medium text-base mb-1">HRV vs. ERV:</h5>
+                                                    <div className="text-base text-muted-foreground space-y-1">
+                                                        <p><strong>HRV (Heat Recovery Ventilator):</strong> Recovers heat only. Best for cold, dry climates like most of Canada.</p>
+                                                        <p><strong>ERV (Energy Recovery Ventilator):</strong> Recovers both heat and moisture. Better for humid climates or homes with high humidity issues.</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </InfoButton>
                                     </div>
-                                    <Select value={selections.hasSecondaryHrv} onValueChange={value => setSelections(prev => ({
+                                    <Select value={selections.hasHrv} onValueChange={value => setSelections(prev => ({
                                         ...prev,
-                                        hasSecondaryHrv: value,
-                                        secondaryHrvEfficiency: value !== 'separate' ? '' : prev.secondaryHrvEfficiency,
+                                        hasHrv: value,
+                                        hrvEfficiency: value === 'without_hrv' ? '' : prev.hrvEfficiency,
+                                        hasSecondaryHrv: value === 'without_hrv' ? '' : prev.hasSecondaryHrv,
+                                        secondaryHrvEfficiency: value === 'without_hrv' ? '' : prev.secondaryHrvEfficiency,
                                     }))}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select option" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="shared">Shared system (one HRV/ERV for both units)</SelectItem>
-                                            <SelectItem value="separate">Separate HRV/ERV for secondary suite</SelectItem>
-                                            <SelectItem value="none">No secondary HRV/ERV</SelectItem>
+                                            <SelectItem value="with_hrv">Yes - with HRV/ERV</SelectItem>
+                                            <SelectItem value="without_hrv">No</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
 
-                                {selections.hasSecondaryHrv === "separate" && <div id="secondaryHrvEfficiency" className="space-y-2">
-                                    <label className="text-sm font-medium text-foreground">Secondary Suite HRV/ERV Make/Model</label>
-                                    <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
+                                {selections.hasHrv === "with_hrv" && <div id="hrvEfficiency" className="space-y-2">
+                                    <label className="text-sm font-medium text-foreground">HRV/ERV Make/Model</label>
+                                    <Input type="text" placeholder="Input HRV/ERV make/model (e.g. Fantech SHR 1504)" value={selections.hrvEfficiency || ""} onChange={e => setSelections(prev => ({
                                         ...prev,
-                                        secondaryHrvEfficiency: e.target.value
+                                        hrvEfficiency: e.target.value
                                     }))} />
                                 </div>}
-                            </div>}
+
+                                {/* Secondary Suite HRV - Show for buildings with multiple units */}
+                                {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv" && <div className="space-y-4 p-4 bg-muted/50 border rounded-md">
+                                    <h5 className="font-medium text-foreground">Secondary Suite HRV/ERV</h5>
+
+                                    <div id="hasSecondaryHrv" className="space-y-2">
+                                        <div className="flex items-center gap-3">
+                                            <label className="text-sm font-medium text-foreground">Will there be a second HRV/ERV for the secondary suite?</label>
+                                            <InfoButton title="Secondary Suite HRV/ERV Information">
+                                                <div className="space-y-4">
+                                                    <div>
+                                                        <h4 className="font-semibold text-base mb-2">Secondary Suite HRV/ERV Options</h4>
+                                                        <p className="text-base text-muted-foreground">
+                                                            For buildings with secondary suites, you have options for ventilation systems.
+                                                        </p>
+                                                    </div>
+
+                                                    <div>
+                                                        <h5 className="font-medium text-base mb-1">Option 1: Shared System</h5>
+                                                        <p className="text-base text-muted-foreground">
+                                                            Use one larger HRV/ERV system to serve both the main dwelling and secondary suite, with proper ducting and controls.
+                                                        </p>
+                                                    </div>
+
+                                                    <div>
+                                                        <h5 className="font-medium text-base mb-1">Option 2: Separate Systems</h5>
+                                                        <p className="text-base text-muted-foreground">
+                                                            Install separate HRV/ERV systems for each unit to provide independent control and operation.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </InfoButton>
+                                        </div>
+                                        <Select value={selections.hasSecondaryHrv} onValueChange={value => setSelections(prev => ({
+                                            ...prev,
+                                            hasSecondaryHrv: value,
+                                            secondaryHrvEfficiency: value !== 'separate' ? '' : prev.secondaryHrvEfficiency,
+                                        }))}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select option" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="shared">Shared system (one HRV/ERV for both units)</SelectItem>
+                                                <SelectItem value="separate">Separate HRV/ERV for secondary suite</SelectItem>
+                                                <SelectItem value="none">No secondary HRV/ERV</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    {selections.hasSecondaryHrv === "separate" && <div id="secondaryHrvEfficiency" className="space-y-2">
+                                        <label className="text-sm font-medium text-foreground">Secondary Suite HRV/ERV Make/Model</label>
+                                        <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
+                                            ...prev,
+                                            secondaryHrvEfficiency: e.target.value
+                                        }))} />
+                                    </div>}
+                                </div>}
+
+                                {/* MURB/Secondary Suite Mechanical Systems Warning */}
+                                {(selections.buildingType === "multi-unit" || selections.buildingType === "single-detached-secondary") && <div className="p-4 bg-orange-50 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-500/50 rounded-lg">
+                                    <div className="flex items-start gap-2">
+                                        <span className="text-orange-600 dark:text-orange-400 text-lg">⚠️</span>
+                                        <div className="space-y-2">
+                                            <h4 className="font-medium text-orange-800 dark:text-orange-300">MURB/Secondary Suite Mechanical Systems</h4>
+                                            <p className="text-base text-orange-700 dark:text-orange-300">
+                                                For {selections.buildingType === "multi-unit" ? "multi-unit residential buildings (MURBs)" : "homes with secondary suites"},
+                                                please ensure you list all mechanical system types, make/models, and any other relevant information
+                                                in the comments section below. This includes:
+                                            </p>
+                                            <ul className="list-disc ml-4 text-base text-orange-700 dark:text-orange-300 space-y-1">
+                                                <li>Secondary heating system type and make/model (if applicable)</li>
+                                                <li>Secondary/multiple service water heating systems</li>
+                                                <li>Secondary HRV/ERV systems</li>
+                                                <li>Any additional heating equipment specifications</li>
+                                                <li>Special installation requirements or configurations</li>
+                                                <li>Zone-specific heating arrangements</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>}
+                            </div>
                         </div>
                     </AccordionContent>
                 </AccordionItem>
