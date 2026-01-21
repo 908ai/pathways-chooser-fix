@@ -1325,7 +1325,7 @@ const NBCCalculator = () => {
           </Card>
         </div>
         {selections.compliancePath === "9368" && (
-          <div className="hidden lg:block fixed top-24 right-4 w-80">
+          <div className="hidden lg:block fixed top-24 right-4 w-60 z-[40] mt-2">
             <FloatingPointsSummary
               selections={selections}
               totalPoints={totalPoints}
