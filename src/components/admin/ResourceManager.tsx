@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,6 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -33,7 +32,24 @@ import {
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Plus, Pencil, Trash2, ExternalLink, Image as ImageIcon, Upload } from 'lucide-react';
+import { Loader2, Plus, Pencil, Trash2, ExternalLink, Image as ImageIcon, GripVertical } from 'lucide-react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  rectSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface Resource {
   id: string;
@@ -44,6 +60,107 @@ interface Resource {
   logo_url: string | null;
   position: number;
 }
+
+// Sortable Resource Card Component
+const SortableResourceCard = ({ 
+  resource, 
+  handleEdit, 
+  handleDelete 
+}: { 
+  resource: Resource; 
+  handleEdit: (r: Resource) => void; 
+  handleDelete: (id: string) => void;
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: resource.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 1 : 0,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="h-full">
+      <Card className="overflow-hidden flex flex-col h-full group hover:shadow-md transition-shadow relative">
+        <div 
+          {...attributes} 
+          {...listeners} 
+          className="absolute top-2 right-2 p-1 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground bg-background/50 rounded z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <GripVertical className="h-4 w-4" />
+        </div>
+        
+        <CardHeader className="pb-3 flex flex-row items-start space-y-0 gap-4 pt-4 pr-8">
+          <div className="relative">
+            {resource.logo_url ? (
+              <div className="h-12 w-12 rounded border bg-muted flex items-center justify-center flex-shrink-0 p-1 bg-white">
+                <img 
+                  src={resource.logo_url} 
+                  alt={resource.title} 
+                  className="max-h-full max-w-full object-contain" 
+                />
+              </div>
+            ) : (
+              <div className="h-12 w-12 rounded border bg-muted flex items-center justify-center flex-shrink-0">
+                <ImageIcon className="h-6 w-6 text-muted-foreground" />
+              </div>
+            )}
+            <div className="absolute -top-2 -left-2 bg-primary text-primary-foreground text-[10px] w-5 h-5 flex items-center justify-center rounded-full shadow-sm border border-white">
+              {resource.position}
+            </div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <CardTitle className="text-base font-medium line-clamp-2" title={resource.title}>
+              {resource.title}
+            </CardTitle>
+            <a 
+              href={resource.url} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-xs text-primary hover:underline flex items-center gap-1 mt-1 truncate"
+            >
+              {resource.url}
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          </div>
+        </CardHeader>
+        <CardContent className="flex-1 pb-3">
+          <p className="text-sm text-muted-foreground line-clamp-3">
+            {resource.description}
+          </p>
+        </CardContent>
+        <CardFooter className="pt-0 flex justify-end gap-2 border-t bg-muted/20 p-3 mt-auto">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEdit(resource)}
+            className="h-8 px-2"
+          >
+            <Pencil className="h-4 w-4 mr-1.5" />
+            Edit
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleDelete(resource.id)}
+            className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+          >
+            <Trash2 className="h-4 w-4 mr-1.5" />
+            Delete
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+};
 
 const ResourceManager = () => {
   const { toast } = useToast();
@@ -67,6 +184,18 @@ const ResourceManager = () => {
     position: 0,
   });
   const [isUploading, setIsUploading] = useState(false);
+  const [localResources, setLocalResources] = useState<Resource[]>([]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const { data: resources, isLoading } = useQuery({
     queryKey: ['resources'],
@@ -82,6 +211,13 @@ const ResourceManager = () => {
       return data as Resource[];
     },
   });
+
+  // Sync local state with fetched data
+  useEffect(() => {
+    if (resources) {
+      setLocalResources(resources);
+    }
+  }, [resources]);
 
   const uploadLogo = async (file: File) => {
     const fileExt = file.name.split('.').pop();
@@ -112,6 +248,11 @@ const ResourceManager = () => {
         setIsUploading(false);
       }
 
+      // Get the highest position to add to end
+      const maxPos = localResources
+        .filter(r => r.category === newResource.category)
+        .reduce((max, r) => Math.max(max, r.position), -1);
+
       const { data, error } = await supabase
         .from('resources')
         .insert([{
@@ -120,7 +261,7 @@ const ResourceManager = () => {
           url: newResource.url,
           category: newResource.category,
           logo_url: logoUrl,
-          position: newResource.position,
+          position: newResource.position > 0 ? newResource.position : maxPos + 1,
         }])
         .select()
         .single();
@@ -194,6 +335,37 @@ const ResourceManager = () => {
     },
   });
 
+  const updatePositions = useMutation({
+    mutationFn: async (updatedResources: Resource[]) => {
+      // Create updates for all affected resources
+      const updates = updatedResources.map(r => ({
+        id: r.id,
+        position: r.position,
+        updated_at: new Date().toISOString(),
+      }));
+
+      const { error } = await supabase
+        .from('resources')
+        .upsert(updates, { onConflict: 'id' }); // Upsert is efficient for batch updates if ID matches
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Order updated',
+        description: 'The resource order has been saved.',
+      });
+      queryClient.invalidateQueries({ queryKey: ['resources'] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description: 'Failed to save new order.',
+        variant: 'destructive',
+      });
+    },
+  });
+
   const deleteResource = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
@@ -245,13 +417,19 @@ const ResourceManager = () => {
     setIsDialogOpen(true);
   };
 
+  const handleDelete = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this resource?')) {
+      deleteResource.mutate(id);
+    }
+  };
+
   const resetForm = () => {
     setEditingResource(null);
     setFormData({
       title: '',
       description: '',
       url: '',
-      category: activeTab, // Set category to current tab
+      category: activeTab,
       logo_file: null,
       position: 0,
     });
@@ -263,8 +441,43 @@ const ResourceManager = () => {
     }
   };
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setLocalResources((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+
+        const categoryItems = items.filter(i => i.category === activeTab);
+        const otherItems = items.filter(i => i.category !== activeTab);
+        
+        const newCategoryOrder = arrayMove(categoryItems, 
+          categoryItems.findIndex(i => i.id === active.id), 
+          categoryItems.findIndex(i => i.id === over.id)
+        );
+
+        // Update positions based on new index
+        const updatedCategoryItems = newCategoryOrder.map((item, index) => ({
+          ...item,
+          position: index,
+        }));
+
+        // Combine back
+        const newItems = [...otherItems, ...updatedCategoryItems];
+        
+        // Trigger update to backend
+        updatePositions.mutate(updatedCategoryItems);
+
+        return newItems;
+      });
+    }
+  };
+
   const renderResourceList = (category: string) => {
-    const categoryResources = resources?.filter(r => r.category === category) || [];
+    const categoryResources = localResources
+      .filter(r => r.category === category)
+      .sort((a, b) => a.position - b.position);
     
     if (categoryResources.length === 0) {
       return (
@@ -275,75 +488,27 @@ const ResourceManager = () => {
     }
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {categoryResources.map((resource) => (
-          <Card key={resource.id} className="overflow-hidden flex flex-col h-full group hover:shadow-md transition-all">
-            <CardHeader className="pb-3 flex flex-row items-start space-y-0 gap-4">
-              <div className="relative">
-                {resource.logo_url ? (
-                  <div className="h-12 w-12 rounded border bg-muted flex items-center justify-center flex-shrink-0 p-1 bg-white">
-                    <img 
-                      src={resource.logo_url} 
-                      alt={resource.title} 
-                      className="max-h-full max-w-full object-contain" 
-                    />
-                  </div>
-                ) : (
-                  <div className="h-12 w-12 rounded border bg-muted flex items-center justify-center flex-shrink-0">
-                    <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                  </div>
-                )}
-                <div className="absolute -top-2 -left-2 bg-primary text-primary-foreground text-[10px] w-5 h-5 flex items-center justify-center rounded-full shadow-sm border border-white">
-                  {resource.position}
-                </div>
-              </div>
-              <div className="flex-1 min-w-0">
-                <CardTitle className="text-base font-medium line-clamp-2" title={resource.title}>
-                  {resource.title}
-                </CardTitle>
-                <a 
-                  href={resource.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-xs text-primary hover:underline flex items-center gap-1 mt-1 truncate"
-                >
-                  {resource.url}
-                  <ExternalLink className="h-3 w-3" />
-                </a>
-              </div>
-            </CardHeader>
-            <CardContent className="flex-1 pb-3">
-              <p className="text-sm text-muted-foreground line-clamp-3">
-                {resource.description}
-              </p>
-            </CardContent>
-            <CardFooter className="pt-0 flex justify-end gap-2 border-t bg-muted/20 p-3 mt-auto">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEdit(resource)}
-                className="h-8 px-2"
-              >
-                <Pencil className="h-4 w-4 mr-1.5" />
-                Edit
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  if (window.confirm('Are you sure you want to delete this resource?')) {
-                    deleteResource.mutate(resource.id);
-                  }
-                }}
-                className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-              >
-                <Trash2 className="h-4 w-4 mr-1.5" />
-                Delete
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={categoryResources.map(r => r.id)}
+          strategy={rectSortingStrategy}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {categoryResources.map((resource) => (
+              <SortableResourceCard 
+                key={resource.id} 
+                resource={resource} 
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
     );
   };
 
@@ -352,7 +517,7 @@ const ResourceManager = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold">Resources Management</h2>
-          <p className="text-muted-foreground">Add, edit, and manage external resources.</p>
+          <p className="text-muted-foreground">Add, edit, and reorder external resources. Drag cards to reorder.</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={(open) => {
           setIsDialogOpen(open);
@@ -391,14 +556,13 @@ const ResourceManager = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="position">Position (Order)</Label>
+                  <Label htmlFor="position">Position</Label>
                   <Input
                     id="position"
                     type="number"
                     value={formData.position}
                     onChange={(e) => setFormData({ ...formData, position: parseInt(e.target.value) || 0 })}
                   />
-                  <p className="text-[10px] text-muted-foreground">Lower numbers appear first</p>
                 </div>
               </div>
 
@@ -472,7 +636,7 @@ const ResourceManager = () => {
         </Dialog>
       </div>
 
-      {isLoading ? (
+      {isLoading && localResources.length === 0 ? (
         <div className="flex justify-center p-12">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
