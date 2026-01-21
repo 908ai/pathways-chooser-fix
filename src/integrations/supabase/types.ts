@@ -17,6 +17,7 @@ export type Database = {
           url: string
           category: string
           logo_url: string | null
+          position: number
           created_at: string
           updated_at: string
         }
@@ -27,6 +28,7 @@ export type Database = {
           url: string
           category: string
           logo_url?: string | null
+          position?: number
           created_at?: string
           updated_at?: string
         }
@@ -37,6 +39,7 @@ export type Database = {
           url?: string
           category?: string
           logo_url?: string | null
+          position?: number
           created_at?: string
           updated_at?: string
         }

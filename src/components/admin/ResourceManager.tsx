@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Plus, Pencil, Trash2, ExternalLink, Image as ImageIcon, Upload } from 'lucide-react';
 
@@ -41,6 +42,7 @@ interface Resource {
   url: string;
   category: string;
   logo_url: string | null;
+  position: number;
 }
 
 const ResourceManager = () => {
@@ -48,18 +50,21 @@ const ResourceManager = () => {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingResource, setEditingResource] = useState<Resource | null>(null);
+  const [activeTab, setActiveTab] = useState('alberta');
   const [formData, setFormData] = useState<{
     title: string;
     description: string;
     url: string;
     category: string;
     logo_file: File | null;
+    position: number;
   }>({
     title: '',
     description: '',
     url: '',
     category: 'alberta',
     logo_file: null,
+    position: 0,
   });
   const [isUploading, setIsUploading] = useState(false);
 
@@ -69,6 +74,7 @@ const ResourceManager = () => {
       const { data, error } = await supabase
         .from('resources')
         .select('*')
+        .order('position', { ascending: true })
         .order('category', { ascending: true })
         .order('title', { ascending: true });
 
@@ -114,6 +120,7 @@ const ResourceManager = () => {
           url: newResource.url,
           category: newResource.category,
           logo_url: logoUrl,
+          position: newResource.position,
         }])
         .select()
         .single();
@@ -158,6 +165,7 @@ const ResourceManager = () => {
           url: resource.url,
           category: resource.category,
           logo_url: logoUrl,
+          position: resource.position,
           updated_at: new Date().toISOString(),
         })
         .eq('id', resource.id!)
@@ -232,6 +240,7 @@ const ResourceManager = () => {
       url: resource.url,
       category: resource.category,
       logo_file: null,
+      position: resource.position || 0,
     });
     setIsDialogOpen(true);
   };
@@ -242,8 +251,9 @@ const ResourceManager = () => {
       title: '',
       description: '',
       url: '',
-      category: 'alberta',
+      category: activeTab, // Set category to current tab
       logo_file: null,
+      position: 0,
     });
   };
 
@@ -251,6 +261,90 @@ const ResourceManager = () => {
     if (e.target.files && e.target.files[0]) {
       setFormData({ ...formData, logo_file: e.target.files[0] });
     }
+  };
+
+  const renderResourceList = (category: string) => {
+    const categoryResources = resources?.filter(r => r.category === category) || [];
+    
+    if (categoryResources.length === 0) {
+      return (
+        <div className="text-center p-8 text-muted-foreground bg-muted/20 rounded-lg border border-dashed">
+          No resources found for this category.
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {categoryResources.map((resource) => (
+          <Card key={resource.id} className="overflow-hidden flex flex-col h-full group hover:shadow-md transition-all">
+            <CardHeader className="pb-3 flex flex-row items-start space-y-0 gap-4">
+              <div className="relative">
+                {resource.logo_url ? (
+                  <div className="h-12 w-12 rounded border bg-muted flex items-center justify-center flex-shrink-0 p-1 bg-white">
+                    <img 
+                      src={resource.logo_url} 
+                      alt={resource.title} 
+                      className="max-h-full max-w-full object-contain" 
+                    />
+                  </div>
+                ) : (
+                  <div className="h-12 w-12 rounded border bg-muted flex items-center justify-center flex-shrink-0">
+                    <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                )}
+                <div className="absolute -top-2 -left-2 bg-primary text-primary-foreground text-[10px] w-5 h-5 flex items-center justify-center rounded-full shadow-sm border border-white">
+                  {resource.position}
+                </div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <CardTitle className="text-base font-medium line-clamp-2" title={resource.title}>
+                  {resource.title}
+                </CardTitle>
+                <a 
+                  href={resource.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-xs text-primary hover:underline flex items-center gap-1 mt-1 truncate"
+                >
+                  {resource.url}
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+            </CardHeader>
+            <CardContent className="flex-1 pb-3">
+              <p className="text-sm text-muted-foreground line-clamp-3">
+                {resource.description}
+              </p>
+            </CardContent>
+            <CardFooter className="pt-0 flex justify-end gap-2 border-t bg-muted/20 p-3 mt-auto">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleEdit(resource)}
+                className="h-8 px-2"
+              >
+                <Pencil className="h-4 w-4 mr-1.5" />
+                Edit
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  if (window.confirm('Are you sure you want to delete this resource?')) {
+                    deleteResource.mutate(resource.id);
+                  }
+                }}
+                className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+              >
+                <Trash2 className="h-4 w-4 mr-1.5" />
+                Delete
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -278,6 +372,36 @@ const ResourceManager = () => {
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="category">Category</Label>
+                  <Select
+                    value={formData.category}
+                    onValueChange={(value) => setFormData({ ...formData, category: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="alberta">Alberta</SelectItem>
+                      <SelectItem value="national">National</SelectItem>
+                      <SelectItem value="saskatchewan">Saskatchewan</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="position">Position (Order)</Label>
+                  <Input
+                    id="position"
+                    type="number"
+                    value={formData.position}
+                    onChange={(e) => setFormData({ ...formData, position: parseInt(e.target.value) || 0 })}
+                  />
+                  <p className="text-[10px] text-muted-foreground">Lower numbers appear first</p>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="title">Title</Label>
                 <Input
@@ -286,23 +410,6 @@ const ResourceManager = () => {
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   required
                 />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Select
-                  value={formData.category}
-                  onValueChange={(value) => setFormData({ ...formData, category: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="alberta">Alberta</SelectItem>
-                    <SelectItem value="national">National</SelectItem>
-                    <SelectItem value="saskatchewan">Saskatchewan</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
               <div className="space-y-2">
@@ -370,84 +477,22 @@ const ResourceManager = () => {
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
       ) : (
-        <div className="grid gap-6">
-          {['alberta', 'national', 'saskatchewan'].map((category) => {
-            const categoryResources = resources?.filter(r => r.category === category) || [];
-            if (categoryResources.length === 0) return null;
-
-            return (
-              <div key={category} className="space-y-4">
-                <h3 className="text-xl font-semibold capitalize border-b pb-2">
-                  {category} Resources
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {categoryResources.map((resource) => (
-                    <Card key={resource.id} className="overflow-hidden flex flex-col h-full">
-                      <CardHeader className="pb-3 flex flex-row items-start space-y-0 gap-4">
-                        {resource.logo_url ? (
-                          <div className="h-12 w-12 rounded border bg-muted flex items-center justify-center flex-shrink-0 p-1 bg-white">
-                            <img 
-                              src={resource.logo_url} 
-                              alt={resource.title} 
-                              className="max-h-full max-w-full object-contain" 
-                            />
-                          </div>
-                        ) : (
-                          <div className="h-12 w-12 rounded border bg-muted flex items-center justify-center flex-shrink-0">
-                            <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <CardTitle className="text-base font-medium line-clamp-2" title={resource.title}>
-                            {resource.title}
-                          </CardTitle>
-                          <a 
-                            href={resource.url} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            className="text-xs text-primary hover:underline flex items-center gap-1 mt-1 truncate"
-                          >
-                            {resource.url}
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="flex-1 pb-3">
-                        <p className="text-sm text-muted-foreground line-clamp-3">
-                          {resource.description}
-                        </p>
-                      </CardContent>
-                      <CardFooter className="pt-0 flex justify-end gap-2 border-t bg-muted/20 p-3 mt-auto">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEdit(resource)}
-                          className="h-8 px-2"
-                        >
-                          <Pencil className="h-4 w-4 mr-1.5" />
-                          Edit
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            if (window.confirm('Are you sure you want to delete this resource?')) {
-                              deleteResource.mutate(resource.id);
-                            }
-                          }}
-                          className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 className="h-4 w-4 mr-1.5" />
-                          Delete
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsTrigger value="alberta">Alberta</TabsTrigger>
+            <TabsTrigger value="national">National</TabsTrigger>
+            <TabsTrigger value="saskatchewan">Saskatchewan</TabsTrigger>
+          </TabsList>
+          <TabsContent value="alberta" className="mt-0">
+            {renderResourceList('alberta')}
+          </TabsContent>
+          <TabsContent value="national" className="mt-0">
+            {renderResourceList('national')}
+          </TabsContent>
+          <TabsContent value="saskatchewan" className="mt-0">
+            {renderResourceList('saskatchewan')}
+          </TabsContent>
+        </Tabs>
       )}
     </div>
   );

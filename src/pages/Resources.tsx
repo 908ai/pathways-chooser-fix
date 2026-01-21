@@ -15,6 +15,7 @@ interface Resource {
   url: string;
   category: string;
   logo_url: string | null;
+  position: number;
 }
 
 const ResourceItem = ({ resource }: { resource: Resource }) => (
@@ -47,6 +48,7 @@ const ResourcesPage = () => {
       const { data, error } = await supabase
         .from('resources')
         .select('*')
+        .order('position', { ascending: true })
         .order('title', { ascending: true });
 
       if (error) throw error;
