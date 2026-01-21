@@ -338,15 +338,22 @@ const ResourceManager = () => {
   const updatePositions = useMutation({
     mutationFn: async (updatedResources: Resource[]) => {
       // Create updates for all affected resources
+      // We must provide all required fields to satisfy TypeScript upsert definition
+      // or cast to any if we know what we are doing (but let's be type safe)
       const updates = updatedResources.map(r => ({
         id: r.id,
+        title: r.title,
+        description: r.description,
+        url: r.url,
+        category: r.category,
+        logo_url: r.logo_url,
         position: r.position,
         updated_at: new Date().toISOString(),
       }));
 
       const { error } = await supabase
         .from('resources')
-        .upsert(updates, { onConflict: 'id' }); // Upsert is efficient for batch updates if ID matches
+        .upsert(updates, { onConflict: 'id' });
 
       if (error) throw error;
     },
@@ -449,23 +456,33 @@ const ResourceManager = () => {
         const oldIndex = items.findIndex((item) => item.id === active.id);
         const newIndex = items.findIndex((item) => item.id === over.id);
 
-        const categoryItems = items.filter(i => i.category === activeTab);
-        const otherItems = items.filter(i => i.category !== activeTab);
+        // This simplistic approach might have issues if we are filtering items
+        // We should operate on the filtered list for correct index manipulation
+        // BUT arrayMove expects the full array or indices relative to the array passed
         
-        const newCategoryOrder = arrayMove(categoryItems, 
-          categoryItems.findIndex(i => i.id === active.id), 
-          categoryItems.findIndex(i => i.id === over.id)
-        );
-
-        // Update positions based on new index
+        // Correct approach:
+        // 1. Get the items for the current category
+        const currentCategoryItems = items.filter(i => i.category === activeTab).sort((a, b) => a.position - b.position);
+        
+        // 2. Find the active and over items in this specific list
+        const activeItemIndex = currentCategoryItems.findIndex(i => i.id === active.id);
+        const overItemIndex = currentCategoryItems.findIndex(i => i.id === over.id);
+        
+        // 3. Move them
+        const newCategoryOrder = arrayMove(currentCategoryItems, activeItemIndex, overItemIndex);
+        
+        // 4. Assign new positions
         const updatedCategoryItems = newCategoryOrder.map((item, index) => ({
           ...item,
           position: index,
         }));
-
-        // Combine back
-        const newItems = [...otherItems, ...updatedCategoryItems];
         
+        // 5. Merge back into the main list
+        // Create a map of updated items for O(1) lookup
+        const updatedMap = new Map(updatedCategoryItems.map(i => [i.id, i]));
+        
+        const newItems = items.map(item => updatedMap.get(item.id) || item);
+
         // Trigger update to backend
         updatePositions.mutate(updatedCategoryItems);
 
