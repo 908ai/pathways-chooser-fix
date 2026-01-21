@@ -77,7 +77,12 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
   const mainNavLinks = [
     { path: '/dashboard', label: 'Dashboard', icon: <PieChart className="h-4 w-4" /> },
     { path: '/projects', label: 'Projects', icon: <LayoutGrid className="h-4 w-4" /> },
-    { path: '/calculator?showHelp=true', label: 'Calculator', icon: <Calculator className="h-4 w-4" /> },
+    {
+      path: '/calculator?showHelp=true',
+      label: 'Start Compliance',
+      icon: <Calculator className="h-4 w-4" />,
+      isCTA: true,
+    },
   ];
 
   const secondaryNavLinks = [
@@ -144,21 +149,37 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
                       </NavigationMenuList>
                     </NavigationMenu>
                   )}
-                  {mainNavLinks.map(link => (
-                    <Link
-                      key={link.path}
-                      to={link.path}
-                      className={cn(
-                        "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                        isLinkActive(link.path.split('?')[0])
-                          ? "bg-primary/10 text-primary"
-                          : "text-slate-500 dark:text-slate-400 hover:bg-accent hover:text-accent-foreground"
-                      )}
-                    >
-                      {link.icon}
-                      {link.label}
-                    </Link>
-                  ))}
+                  {mainNavLinks.map((link: any) => {
+                    const basePath = link.path.split('?')[0];
+                    const isActive = isLinkActive(basePath);
+
+                    return (
+                      <Link
+                        key={link.path}
+                        to={link.path}
+                        className={cn(
+                          "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                          link.isCTA
+                            ? cn(
+                              "ml-1",
+                              "bg-primary text-primary-foreground shadow-sm",
+                              "hover:brightness-95 dark:hover:brightness-110",
+                              "dark:bg-primary dark:text-primary-foreground",
+                              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                              isActive && "ring-1 ring-primary/40"
+                            )
+                            : cn(
+                              isActive
+                                ? "bg-primary/10 text-primary"
+                                : "text-slate-500 dark:text-slate-400 hover:bg-accent hover:text-accent-foreground"
+                            )
+                        )}
+                      >
+                        {link.icon}
+                        {link.label}
+                      </Link>
+                    );
+                  })}
                 </nav>
 
                 <span className="h-4 w-px bg-slate-300 dark:bg-slate-600" aria-hidden="true"></span>
