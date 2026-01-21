@@ -5,8 +5,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProviderManager from '@/components/admin/ProviderManager';
 import RequestManager from '@/components/admin/RequestManager';
 import FeedbackManager from '@/components/admin/FeedbackManager';
+import ResourceManager from '@/components/admin/ResourceManager';
 import AllProjectsTab from '@/components/admin/AllProjectsTab';
-import { Briefcase, MessageSquare, LayoutGrid, BarChart2, Map, Users } from 'lucide-react';
+import { Briefcase, MessageSquare, LayoutGrid, BarChart2, Map, Users, Link2 } from 'lucide-react';
 import ReportingTab from '@/components/admin/ReportingTab';
 import ProjectMap from '@/components/admin/ProjectMap';
 import UserManager from '@/components/admin/UserManager';
@@ -29,7 +30,7 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="reporting" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 bg-card border">
+          <TabsList className="grid w-full grid-cols-7 bg-card border">
             <TabsTrigger value="reporting" className="flex items-center gap-2">
               <BarChart2 className="h-4 w-4" />
               Reporting
@@ -49,6 +50,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="providers" className="flex items-center gap-2">
               <Briefcase className="h-4 w-4" />
               Providers
+            </TabsTrigger>
+            <TabsTrigger value="resources" className="flex items-center gap-2">
+              <Link2 className="h-4 w-4" />
+              Resources
             </TabsTrigger>
             <TabsTrigger value="feedback" className="flex items-center gap-2 relative">
               <MessageSquare className="h-4 w-4" />
@@ -85,6 +90,9 @@ const AdminDashboard = () => {
                 <RequestManager />
               </TabsContent>
             </Tabs>
+          </TabsContent>
+          <TabsContent value="resources" className="mt-6">
+            <ResourceManager />
           </TabsContent>
           <TabsContent value="feedback" className="mt-6">
             <FeedbackManager />
