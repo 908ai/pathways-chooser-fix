@@ -1107,6 +1107,7 @@ const NBCCalculator = () => {
                       handleFileUploadRequest={handleFileUploadRequest}
                       uploadedFiles={uploadedFiles}
                       removeFile={removeFile}
+                      showMissingFields={showMissingFields}
                     />}
                     {selections.compliancePath === "9365" && <Performance9365Section 
                       selections={selections} 
