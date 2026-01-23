@@ -18,6 +18,7 @@ export interface Selections {
   hasHrv: string;
   hrvEfficiency: string;
   airtightness: string;
+  notes?: string; // Optional notes field
 }
 
 const initialSelections: Selections = {
@@ -35,6 +36,7 @@ const initialSelections: Selections = {
   hasHrv: 'yes_hrv',
   hrvEfficiency: '',
   airtightness: '',
+  notes: '',
 };
 
 // Hook for core calculator state
