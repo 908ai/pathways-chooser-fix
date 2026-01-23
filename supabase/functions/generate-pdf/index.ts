@@ -318,6 +318,7 @@ const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
   addDetailItem('Interested Certifications', asList(project.interested_certifications));
   addDetailItem('Recommendations', asList(project.recommendations));
   addDetailItem('Energy Insights (JSON)', project.energy_insights ? JSON.stringify(project.energy_insights) : null);
+  addDetailItem('Notes', (project.notes && project.notes.trim()) ? project.notes : '-');
 
   // Uploaded documents
   if (project.uploaded_files && Array.isArray(project.uploaded_files) && project.uploaded_files.length > 0) {
