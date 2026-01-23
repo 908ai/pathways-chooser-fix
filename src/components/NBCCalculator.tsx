@@ -1099,7 +1099,12 @@ const NBCCalculator = () => {
                           setSelections={setSelections}
                         />
                       )}
-                    {selections.compliancePath === "9362" && <Prescriptive9362Section selections={selections} setSelections={setSelections} validationErrors={validationErrors} />}
+                    {selections.compliancePath === "9362" && <Prescriptive9362Section 
+                      selections={selections} 
+                      setSelections={setSelections} 
+                      validationErrors={validationErrors}
+                      showMissingFields={showMissingFields} 
+                    />}
                     {selections.compliancePath === "9368" && <Prescriptive9368Section 
                       selections={selections} 
                       setSelections={setSelections} 

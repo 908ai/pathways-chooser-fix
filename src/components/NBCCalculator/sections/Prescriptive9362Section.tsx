@@ -33,10 +33,12 @@ export default function Prescriptive9362Section({
     selections,
     setSelections,
     validationErrors,
+    showMissingFields = false,
 }: {
     selections: any;
     setSelections: any;
     validationErrors: Record<string, boolean>;
+    showMissingFields?: boolean;
 }) {
     useEffect(() => {
         let targetAirtightness = '';
@@ -125,7 +127,6 @@ export default function Prescriptive9362Section({
     const maxUValue = selections.province === "alberta" && selections.climateZone === "7B" ? 2.41 : 2.75;
 
     // Accordion state and completion badge helpers
-    //const [openSections, setOpenSections] = useState<string[]>(["envelope"]);
     const [openSections, setOpenSections] = useState<string[]>([]);
 
     const isSet = (value: any) => {
@@ -134,6 +135,12 @@ export default function Prescriptive9362Section({
         if (typeof value === "boolean") return true; // booleans are explicitly set
         return value !== null && value !== undefined;
     };
+
+    const isMissing = (key: string) => {
+        return showMissingFields && !isSet(selections[key]);
+    };
+
+    const missingFieldClass = "border-red-400 bg-red-50 focus-visible:ring-red-500";
 
     const isComplete = (key: string) => {
         const val = selections[key];
@@ -239,6 +246,24 @@ export default function Prescriptive9362Section({
     const envelopeCompleted = envelopeKeys.filter(isComplete).length;
     const mechanicalCompleted = mechanicalKeys.filter(isComplete).length;
 
+    const hasMissingEnvelope = envelopeKeys.some(key => !isComplete(key));
+    const hasMissingMechanical = mechanicalKeys.some(key => !isComplete(key));
+
+    useEffect(() => {
+        if (showMissingFields) {
+            const newOpenSections = [];
+            if (hasMissingEnvelope) newOpenSections.push("envelope");
+            if (hasMissingMechanical) newOpenSections.push("mechanical");
+            
+            if (newOpenSections.length > 0) {
+                 setOpenSections(prev => {
+                    const unique = Array.from(new Set([...prev, ...newOpenSections]));
+                    return unique.length !== prev.length ? unique : prev;
+                 });
+            }
+        }
+    }, [showMissingFields, hasMissingEnvelope, hasMissingMechanical]);
+
     return (
         <div className="space-y-3">
             <div className="flex justify-center gap-2">
@@ -252,13 +277,16 @@ export default function Prescriptive9362Section({
 
             <Accordion type="multiple" value={openSections} onValueChange={(val: string[] | string) => setOpenSections(Array.isArray(val) ? val : [])} className="border rounded-md">
                 <AccordionItem value="envelope">
-                    <AccordionTrigger className="px-4">
+                    <AccordionTrigger className={cn("px-4", showMissingFields && hasMissingEnvelope ? "bg-red-50 text-red-900" : "")}>
                         <div className="flex w-full items-center justify-between">
-                            <span className="text-base">Building Envelope</span>
-                            <Badge variant="secondary">{envelopeCompleted} / {envelopeKeys.length} completed</Badge>
+                            <span className="text-base flex items-center gap-2">
+                                Building Envelope
+                                {showMissingFields && hasMissingEnvelope && <AlertTriangle className="h-4 w-4 text-red-600" />}
+                            </span>
+                            <Badge variant={showMissingFields && hasMissingEnvelope ? "destructive" : "secondary"}>{envelopeCompleted} / {envelopeKeys.length} completed</Badge>
                         </div>
                     </AccordionTrigger>
-                    <AccordionContent className="px-4">
+                    <AccordionContent className="px-4 pt-4">
                         <div className="space-y-4">
                             {/* HRV/ERV Section for 9362 */}
                             <div id="hasHrv" className="space-y-2">
@@ -310,7 +338,10 @@ export default function Prescriptive9362Section({
                                         return newSelections;
                                     });
                                 }}>
-                                    <SelectTrigger className={cn(validationErrors.hasHrv && "border-red-500 ring-2 ring-red-500")}>
+                                    <SelectTrigger className={cn(
+                                        (validationErrors.hasHrv || isMissing("hasHrv")) && missingFieldClass,
+                                        validationErrors.hasHrv && "border-red-500 ring-2 ring-red-500"
+                                    )}>
                                         <SelectValue placeholder="Select option" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -322,17 +353,25 @@ export default function Prescriptive9362Section({
 
                             {selections.hasHrv === "with_hrv" && <div id="hrvEfficiency" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">HRV/ERV Efficiency <span className="text-red-500">*</span></label>
-                                <Input required type="text" placeholder="Input HRV/ERV efficiency (e.g. SRE 65%)" value={selections.hrvEfficiency || ""} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    hrvEfficiency: e.target.value
-                                }))} className={cn(validationErrors.hrvEfficiency && "border-red-500 ring-2 ring-red-500")} />
+                                <Input required type="text" 
+                                    placeholder="Input HRV/ERV efficiency (e.g. SRE 65%)" 
+                                    value={selections.hrvEfficiency || ""} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        hrvEfficiency: e.target.value
+                                    }))} 
+                                    className={cn(
+                                        (validationErrors.hrvEfficiency || isMissing("hrvEfficiency")) && missingFieldClass,
+                                        validationErrors.hrvEfficiency && "border-red-500 ring-2 ring-red-500"
+                                    )} 
+                                />
                             </div>}
 
                             {/* Secondary Suite HRV - Show for buildings with multiple units */}
                             {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv" && <div className="space-y-4 p-4 bg-muted/50 border rounded-md">
                                 <h5 className="font-medium text-foreground">Secondary Suite HRV/ERV</h5>
 
-                                <div id="hasSecondaryHrv" className={cn("space-y-2", validationErrors.hasSecondaryHrv && "p-2 border-2 border-red-500 rounded-md")}>
+                                <div id="hasSecondaryHrv" className={cn("space-y-2", (validationErrors.hasSecondaryHrv || isMissing("hasSecondaryHrv")) && "p-2 border-2 border-red-500 rounded-md bg-red-50")}>
                                     <div className="flex items-center gap-3">
                                         <label className="text-sm font-medium text-foreground">Will there be a second HRV/ERV for the secondary suite? <span className="text-red-500">*</span></label>
                                         <InfoButton title="Secondary Suite HRV/ERV Information">
@@ -378,19 +417,35 @@ export default function Prescriptive9362Section({
 
                                 {selections.hasSecondaryHrv === "yes" && <div id="secondaryHrvEfficiency" className="space-y-2">
                                     <label className="text-sm font-medium text-foreground">Secondary Suite HRV/ERV Efficiency <span className="text-red-500">*</span></label>
-                                    <Input required type="text" placeholder="Input secondary HRV/ERV efficiency (e.g. SRE 65%)" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
-                                        ...prev,
-                                        secondaryHrvEfficiency: e.target.value
-                                    }))} className={cn(validationErrors.secondaryHrvEfficiency && "border-red-500 ring-2 ring-red-500")} />
+                                    <Input required type="text" 
+                                        placeholder="Input secondary HRV/ERV efficiency (e.g. SRE 65%)" 
+                                        value={selections.secondaryHrvEfficiency || ""} 
+                                        onChange={e => setSelections(prev => ({
+                                            ...prev,
+                                            secondaryHrvEfficiency: e.target.value
+                                        }))} 
+                                        className={cn(
+                                            (validationErrors.secondaryHrvEfficiency || isMissing("secondaryHrvEfficiency")) && missingFieldClass,
+                                            validationErrors.secondaryHrvEfficiency && "border-red-500 ring-2 ring-red-500"
+                                        )} 
+                                    />
                                 </div>}
                             </div>}
 
                             <div id="ceilingsAtticRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Ceilings below Attics <span className="text-red-500">*</span></label>
-                                <Input required type="text" placeholder={selections.hasHrv === "with_hrv" ? "Min RSI 8.67 w/ HRV" : selections.hasHrv === "without_hrv" ? "Min RSI 10.43 w/o HRV" : "Min RSI 8.67 w/ HRV, 10.43 w/o HRV"} value={selections.ceilingsAtticRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    ceilingsAtticRSI: e.target.value
-                                }))} className={cn(validationErrors.ceilingsAtticRSI && "border-red-500 ring-2 ring-red-500")} />
+                                <Input required type="text" 
+                                    placeholder={selections.hasHrv === "with_hrv" ? "Min RSI 8.67 w/ HRV" : selections.hasHrv === "without_hrv" ? "Min RSI 10.43 w/o HRV" : "Min RSI 8.67 w/ HRV, 10.43 w/o HRV"} 
+                                    value={selections.ceilingsAtticRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        ceilingsAtticRSI: e.target.value
+                                    }))} 
+                                    className={cn(
+                                        (validationErrors.ceilingsAtticRSI || isMissing("ceilingsAtticRSI")) && missingFieldClass,
+                                        validationErrors.ceilingsAtticRSI && "border-red-500 ring-2 ring-red-500"
+                                    )} 
+                                />
                                 {(() => {
                                     if (selections.compliancePath === "9368") {
                                         const minRSI = 8.67; // For 9368, HRV is mandatory
@@ -404,14 +459,6 @@ export default function Prescriptive9362Section({
                                         }
                                         return null;
                                     }
-
-                                    // Existing validation for other paths
-                                    /*console.log("Ceilings validation debug:", {
-                                        ceilingsAtticRSI: selections.ceilingsAtticRSI,
-                                        hasHrv: selections.hasHrv,
-                                        parsedValue: parseFloat(selections.ceilingsAtticRSI || "0"),
-                                        minRSI: selections.hasHrv === "with_hrv" ? 8.67 : 10.43
-                                    });*/
                                     const minRSI = selections.hasHrv === "with_hrv" ? 8.67 : selections.hasHrv === "without_hrv" ? 10.43 : 8.67;
                                     const validation = validateRSI_9362(selections.ceilingsAtticRSI, minRSI, `ceilings below attics ${selections.hasHrv === "with_hrv" ? "with HRV" : "without HRV"}`);
                                     if (!validation.isValid && validation.warning) {
@@ -427,13 +474,16 @@ export default function Prescriptive9362Section({
                             </div>
 
                             <div id="hasCathedralOrFlatRoof" className="space-y-2">
-                                <label className={cn("text-sm font-medium text-foreground", validationErrors.hasCathedralOrFlatRoof && "text-red-500")}>Is there any cathedral ceilings or flat roof? <span className="text-red-500">*</span></label>
+                                <label className={cn("text-sm font-medium text-foreground", (validationErrors.hasCathedralOrFlatRoof || isMissing("hasCathedralOrFlatRoof")) && "text-red-500")}>Is there any cathedral ceilings or flat roof? <span className="text-red-500">*</span></label>
                                 <Select required value={selections.hasCathedralOrFlatRoof} onValueChange={value => setSelections(prev => ({
                                     ...prev,
                                     hasCathedralOrFlatRoof: value,
                                     cathedralFlatRSIValue: ""
                                 }))}>
-                                    <SelectTrigger className={cn(validationErrors.hasCathedralOrFlatRoof && "border-red-500 ring-2 ring-red-500")}>
+                                    <SelectTrigger className={cn(
+                                        (validationErrors.hasCathedralOrFlatRoof || isMissing("hasCathedralOrFlatRoof")) && missingFieldClass,
+                                        validationErrors.hasCathedralOrFlatRoof && "border-red-500 ring-2 ring-red-500"
+                                    )}>
                                         <SelectValue placeholder="Select option" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -445,10 +495,18 @@ export default function Prescriptive9362Section({
 
                             {selections.hasCathedralOrFlatRoof === "yes" && <div id="cathedralFlatRSIValue" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Cathedral / Flat Roofs - Min. 5.02 RSI <span className="text-red-500">*</span></label>
-                                <Input required type="text" placeholder="Enter RSI value (min. 5.02)" value={selections.cathedralFlatRSIValue || ""} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    cathedralFlatRSIValue: e.target.value
-                                }))} className={cn(validationErrors.cathedralFlatRSIValue && "border-red-500 ring-2 ring-red-500")} />
+                                <Input required type="text" 
+                                    placeholder="Enter RSI value (min. 5.02)" 
+                                    value={selections.cathedralFlatRSIValue || ""} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        cathedralFlatRSIValue: e.target.value
+                                    }))} 
+                                    className={cn(
+                                        (validationErrors.cathedralFlatRSIValue || isMissing("cathedralFlatRSIValue")) && missingFieldClass,
+                                        validationErrors.cathedralFlatRSIValue && "border-red-500 ring-2 ring-red-500"
+                                    )} 
+                                />
                                 {(() => {
                                     const minRSI = 5.02;
                                     const validation = validateRSI_9362(selections.cathedralFlatRSIValue, minRSI, `cathedral/flat roofs`);
@@ -466,10 +524,18 @@ export default function Prescriptive9362Section({
 
                             <div id="wallRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Above Grade Walls <span className="text-red-500">*</span></label>
-                                <Input required type="text" placeholder={selections.hasHrv === "with_hrv" ? 'Min RSI 2.97 w/ HRV' : selections.hasHrv === "without_hrv" ? 'Min RSI 3.69 w/o HRV' : 'Min RSI 2.97 w/ HRV, 3.69 w/o HRV'} value={selections.wallRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    wallRSI: e.target.value
-                                }))} className={cn(validationErrors.wallRSI && "border-red-500 ring-2 ring-red-500")} />
+                                <Input required type="text" 
+                                    placeholder={selections.hasHrv === "with_hrv" ? 'Min RSI 2.97 w/ HRV' : selections.hasHrv === "without_hrv" ? 'Min RSI 3.69 w/o HRV' : 'Min RSI 2.97 w/ HRV, 3.69 w/o HRV'} 
+                                    value={selections.wallRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        wallRSI: e.target.value
+                                    }))} 
+                                    className={cn(
+                                        (validationErrors.wallRSI || isMissing("wallRSI")) && missingFieldClass,
+                                        validationErrors.wallRSI && "border-red-500 ring-2 ring-red-500"
+                                    )} 
+                                />
                                 {(() => {
                                     const minRSI = selections.hasHrv === "with_hrv" ? 2.97 : 3.69;
                                     const validation = validateRSI_9362(selections.wallRSI, minRSI, `above grade walls`);
@@ -487,10 +553,18 @@ export default function Prescriptive9362Section({
 
                             <div id="belowGradeRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Below Grade Walls (Foundation Walls) <span className="text-red-500">*</span></label>
-                                <Input required type="text" placeholder={selections.hasHrv === "with_hrv" ? "Min RSI 2.98 (with HRV)" : selections.hasHrv === "without_hrv" ? "Min RSI 3.46 (without HRV)" : "Select HRV option first"} value={selections.belowGradeRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    belowGradeRSI: e.target.value
-                                }))} className={cn(validationErrors.belowGradeRSI && "border-red-500 ring-2 ring-red-500")} />
+                                <Input required type="text" 
+                                    placeholder={selections.hasHrv === "with_hrv" ? "Min RSI 2.98 (with HRV)" : selections.hasHrv === "without_hrv" ? "Min RSI 3.46 (without HRV)" : "Select HRV option first"} 
+                                    value={selections.belowGradeRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        belowGradeRSI: e.target.value
+                                    }))} 
+                                    className={cn(
+                                        (validationErrors.belowGradeRSI || isMissing("belowGradeRSI")) && missingFieldClass,
+                                        validationErrors.belowGradeRSI && "border-red-500 ring-2 ring-red-500"
+                                    )} 
+                                />
                                 {(() => {
                                     const minRSI = selections.hasHrv === "with_hrv" ? 2.98 : 3.46;
                                     const validation = validateRSI_9362(selections.belowGradeRSI, minRSI, `below grade walls`);
@@ -506,7 +580,10 @@ export default function Prescriptive9362Section({
                                 <EffectiveRSIWarning />
                             </div>
 
-                            <div id="floorsSlabsSelected" className={cn("space-y-4", validationErrors.floorsSlabsSelected && "p-2 border-2 border-red-500 rounded-md")}>
+                            <div id="floorsSlabsSelected" className={cn(
+                                "space-y-4", 
+                                (validationErrors.floorsSlabsSelected || isMissing("floorsSlabsSelected")) && "p-2 border-2 border-red-500 rounded-md bg-red-50"
+                            )}>
                                 <label className="text-sm font-medium text-foreground">Floors/Slabs (Select all that apply) <span className="text-red-500">*</span></label>
                                 <div className="space-y-2">
                                     <label className={cn("flex items-center gap-2", isHeatedFloorsChecked && "opacity-50 cursor-not-allowed")}>
@@ -618,10 +695,18 @@ export default function Prescriptive9362Section({
 
                             {selections.floorsSlabsSelected.includes("heatedFloors") && <div id="inFloorHeatRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Heated Floors <span className="text-red-500">*</span></label>
-                                <Input required type="text" placeholder={`Min RSI ${selections.province === "saskatchewan" ? "2.84 (R-16.1)" : "1.34"} for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.inFloorHeatRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    inFloorHeatRSI: e.target.value
-                                }))} className={cn(validationErrors.inFloorHeatRSI && "border-red-500 ring-2 ring-red-500")} />
+                                <Input required type="text" 
+                                    placeholder={`Min RSI ${selections.province === "saskatchewan" ? "2.84 (R-16.1)" : "1.34"} for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} 
+                                    value={selections.inFloorHeatRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        inFloorHeatRSI: e.target.value
+                                    }))} 
+                                    className={cn(
+                                        (validationErrors.inFloorHeatRSI || isMissing("inFloorHeatRSI")) && missingFieldClass,
+                                        validationErrors.inFloorHeatRSI && "border-red-500 ring-2 ring-red-500"
+                                    )} 
+                                />
                                 {(() => {
                                     const minRSI = selections.province === "saskatchewan" ? 2.84 : 1.34;
                                     const validation = validateRSI_9362(selections.inFloorHeatRSI, minRSI, `heated floors`);
@@ -639,10 +724,18 @@ export default function Prescriptive9362Section({
 
                             {selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting") && <div id="slabOnGradeIntegralFootingRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Slab on grade with integral Footing <span className="text-red-500">*</span></label>
-                                <Input required type="text" placeholder="Min RSI 2.84 or N/A" value={selections.slabOnGradeIntegralFootingRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    slabOnGradeIntegralFootingRSI: e.target.value
-                                }))} className={cn(validationErrors.slabOnGradeIntegralFootingRSI && "border-red-500 ring-2 ring-red-500")} />
+                                <Input required type="text" 
+                                    placeholder="Min RSI 2.84 or N/A" 
+                                    value={selections.slabOnGradeIntegralFootingRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        slabOnGradeIntegralFootingRSI: e.target.value
+                                    }))} 
+                                    className={cn(
+                                        (validationErrors.slabOnGradeIntegralFootingRSI || isMissing("slabOnGradeIntegralFootingRSI")) && missingFieldClass,
+                                        validationErrors.slabOnGradeIntegralFootingRSI && "border-red-500 ring-2 ring-red-500"
+                                    )} 
+                                />
                                 <EffectiveRSIWarning />
 
                                 {selections.slabOnGradeIntegralFootingRSI && !isNaN(parseFloat(selections.slabOnGradeIntegralFootingRSI)) && parseFloat(selections.slabOnGradeIntegralFootingRSI) < 2.84 && <WarningButton title="🛑 RSI Value Too Low" variant="destructive" defaultOpen={true}>
@@ -654,10 +747,18 @@ export default function Prescriptive9362Section({
 
                             {selections.floorsSlabsSelected.includes("floorsOverUnheatedSpaces") && <div id="floorsOverUnheatedSpacesRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Floors over Unheated Spaces (Cantilevers or Exposed Floors) <span className="text-red-500">*</span></label>
-                                <Input required type="text" placeholder="Min RSI 5.02" value={selections.floorsOverUnheatedSpacesRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    floorsOverUnheatedSpacesRSI: e.target.value
-                                }))} className={cn(validationErrors.floorsOverUnheatedSpacesRSI && "border-red-500 ring-2 ring-red-500")} />
+                                <Input required type="text" 
+                                    placeholder="Min RSI 5.02" 
+                                    value={selections.floorsOverUnheatedSpacesRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        floorsOverUnheatedSpacesRSI: e.target.value
+                                    }))} 
+                                    className={cn(
+                                        (validationErrors.floorsOverUnheatedSpacesRSI || isMissing("floorsOverUnheatedSpacesRSI")) && missingFieldClass,
+                                        validationErrors.floorsOverUnheatedSpacesRSI && "border-red-500 ring-2 ring-red-500"
+                                    )} 
+                                />
                                 {(() => {
                                     const minRSI = 5.02;
                                     const validation = validateRSI_9362(
@@ -686,10 +787,18 @@ export default function Prescriptive9362Section({
 
                             {selections.floorsSlabsSelected.includes("unheatedBelowFrost") && <div id="unheatedFloorBelowFrostRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Unheated Floor Below Frost Line <span className="text-red-500">*</span></label>
-                                <Input required type="text" placeholder="Enter RSI value or 'uninsulated'" value={selections.unheatedFloorBelowFrostRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    unheatedFloorBelowFrostRSI: e.target.value
-                                }))} className={cn(validationErrors.unheatedFloorBelowFrostRSI && "border-red-500 ring-2 ring-red-500")} />
+                                <Input required type="text" 
+                                    placeholder="Enter RSI value or 'uninsulated'" 
+                                    value={selections.unheatedFloorBelowFrostRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        unheatedFloorBelowFrostRSI: e.target.value
+                                    }))} 
+                                    className={cn(
+                                        (validationErrors.unheatedFloorBelowFrostRSI || isMissing("unheatedFloorBelowFrostRSI")) && missingFieldClass,
+                                        validationErrors.unheatedFloorBelowFrostRSI && "border-red-500 ring-2 ring-red-500"
+                                    )} 
+                                />
                                 <div className="p-3 bg-muted border border-border rounded-md">
                                     <p className="text-sm font-medium">
                                         ℹ️ Unheated Floor Below Frost Line
@@ -702,10 +811,18 @@ export default function Prescriptive9362Section({
 
                             {selections.floorsSlabsSelected.includes("unheatedAboveFrost") && <div id="unheatedFloorAboveFrostRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Unheated Floor Above Frost Line <span className="text-red-500">*</span></label>
-                                <Input required type="number" step="0.01" min="0" placeholder="Minimum RSI 1.96" value={selections.unheatedFloorAboveFrostRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    unheatedFloorAboveFrostRSI: e.target.value
-                                }))} className={cn(validationErrors.unheatedFloorAboveFrostRSI && "border-red-500 ring-2 ring-red-500")} />
+                                <Input required type="number" step="0.01" min="0" 
+                                    placeholder="Minimum RSI 1.96" 
+                                    value={selections.unheatedFloorAboveFrostRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        unheatedFloorAboveFrostRSI: e.target.value
+                                    }))} 
+                                    className={cn(
+                                        (validationErrors.unheatedFloorAboveFrostRSI || isMissing("unheatedFloorAboveFrostRSI")) && missingFieldClass,
+                                        validationErrors.unheatedFloorAboveFrostRSI && "border-red-500 ring-2 ring-red-500"
+                                    )} 
+                                />
                                 {selections.unheatedFloorAboveFrostRSI && parseFloat(selections.unheatedFloorAboveFrostRSI) < 1.96 && <WarningButton title="🛑 RSI Value Too Low" variant="destructive" defaultOpen={true}>
                                     <p className="text-xs">
                                         The RSI value must be increased to at least 1.96 to meet NBC requirements for unheated floor above frost line.
@@ -766,10 +883,18 @@ export default function Prescriptive9362Section({
                                         </Button>                        
                                     </InfoButton>      
                                 </div>       
-                                <Input required type="text" placeholder="Input Range of U-values - Max U-Value 1.61 W/(m²·K) or Min Energy Rating ≥ 25" value={selections.windowUValue} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    windowUValue: e.target.value
-                                }))} className={cn(validationErrors.windowUValue && "border-red-500 ring-2 ring-red-500")} />
+                                <Input required type="text" 
+                                    placeholder="Input Range of U-values - Max U-Value 1.61 W/(m²·K) or Min Energy Rating ≥ 25" 
+                                    value={selections.windowUValue} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        windowUValue: e.target.value
+                                    }))} 
+                                    className={cn(
+                                        (validationErrors.windowUValue || isMissing("windowUValue")) && missingFieldClass,
+                                        validationErrors.windowUValue && "border-red-500 ring-2 ring-red-500"
+                                    )} 
+                                />
                                 {(() => {
                                     // Check if input is a U-value and if it's too high
                                     const inputValue = selections.windowUValue;
@@ -796,7 +921,10 @@ export default function Prescriptive9362Section({
                                 </WarningButton>
                             </div>
 
-                            <div id="hasSkylights" className={cn("space-y-2", validationErrors.hasSkylights && "p-2 border-2 border-red-500 rounded-md")}>
+                            <div id="hasSkylights" className={cn(
+                                "space-y-2", 
+                                (validationErrors.hasSkylights || isMissing("hasSkylights")) && "p-2 border-2 border-red-500 rounded-md bg-red-50"
+                            )}>
                                 <label className="text-sm font-medium text-foreground">Does the house have skylights? <span className="text-red-500">*</span></label>
                                 <div className="flex gap-4">
                                     <label className="flex items-center gap-2">
@@ -819,10 +947,18 @@ export default function Prescriptive9362Section({
 
                             {selections.hasSkylights === "yes" && <div id="skylightUValue" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Skylight U-Value <span className="text-red-500">*</span></label>
-                                <Input required type="text" placeholder={`Enter U-value (maximum ${selections.province === "alberta" && selections.climateZone === "7B" ? "2.41" : "2.75"} W/(m²·K))`} value={selections.skylightUValue} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    skylightUValue: e.target.value
-                                }))} className={cn(validationErrors.skylightUValue && "border-red-500 ring-2 ring-red-500")} />
+                                <Input required type="text" 
+                                    placeholder={`Enter U-value (maximum ${selections.province === "alberta" && selections.climateZone === "7B" ? "2.41" : "2.75"} W/(m²·K))`} 
+                                    value={selections.skylightUValue} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        skylightUValue: e.target.value
+                                    }))} 
+                                    className={cn(
+                                        (validationErrors.skylightUValue || isMissing("skylightUValue")) && missingFieldClass,
+                                        validationErrors.skylightUValue && "border-red-500 ring-2 ring-red-500"
+                                    )} 
+                                />
                                 {(() => {
                                     return selections.skylightUValue && parseFloat(selections.skylightUValue) > maxUValue && <WarningButton title="U-Value Too High" variant="destructive">
                                         <p className="text-sm text-destructive/80">
@@ -1069,13 +1205,16 @@ export default function Prescriptive9362Section({
                 </AccordionItem>
 
                 <AccordionItem value="mechanical">
-                    <AccordionTrigger className="px-4">
+                    <AccordionTrigger className={cn("px-4", showMissingFields && hasMissingMechanical ? "bg-red-50 text-red-900" : "")}>
                         <div className="flex w-full items-center justify-between">
-                            <span className="text-base">Mechanical Systems</span>
-                            <Badge variant="secondary">{mechanicalCompleted} / {mechanicalKeys.length} completed</Badge>
+                            <span className="text-base flex items-center gap-2">
+                                Mechanical Systems
+                                {showMissingFields && hasMissingMechanical && <AlertTriangle className="h-4 w-4 text-red-600" />}
+                            </span>
+                            <Badge variant={showMissingFields && hasMissingMechanical ? "destructive" : "secondary"}>{mechanicalCompleted} / {mechanicalKeys.length} completed</Badge>
                         </div>
                     </AccordionTrigger>
-                    <AccordionContent className="px-4">
+                    <AccordionContent className="px-4 pt-4">
                         <div className="space-y-4">
                             <div id="heatingType" className="space-y-2">
                                 <div className="flex items-center gap-3">
@@ -1114,7 +1253,10 @@ export default function Prescriptive9362Section({
                                     indirectTank: value !== 'boiler' ? '' : prev.indirectTank,
                                     indirectTankSize: value !== 'boiler' ? '' : prev.indirectTankSize,
                                 }))}>
-                                    <SelectTrigger className={cn(validationErrors.heatingType && "border-red-500 ring-2 ring-red-500")}>
+                                    <SelectTrigger className={cn(
+                                        (validationErrors.heatingType || isMissing("heatingType")) && missingFieldClass,
+                                        validationErrors.heatingType && "border-red-500 ring-2 ring-red-500"
+                                    )}>
                                         <SelectValue placeholder="Select heating type" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -1149,7 +1291,10 @@ export default function Prescriptive9362Section({
                                     {selections.heatingType === 'heat-pump' ? (
                                         <>
                                             <Select required value={selections.heatingEfficiency} onValueChange={value => setSelections(prev => ({ ...prev, heatingEfficiency: value, otherHeatingEfficiency: "" }))}>
-                                                <SelectTrigger className={cn(validationErrors.heatingEfficiency && "border-red-500 ring-2 ring-red-500")}>
+                                                <SelectTrigger className={cn(
+                                                    (validationErrors.heatingEfficiency || isMissing("heatingEfficiency")) && missingFieldClass,
+                                                    validationErrors.heatingEfficiency && "border-red-500 ring-2 ring-red-500"
+                                                )}>
                                                     <SelectValue placeholder="Select heat pump type and efficiency" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -1166,6 +1311,7 @@ export default function Prescriptive9362Section({
                                                         placeholder="Enter specifications manually"
                                                         value={selections.otherHeatingEfficiency || ''}
                                                         onChange={e => setSelections(prev => ({ ...prev, otherHeatingEfficiency: e.target.value }))}
+                                                        className={cn((validationErrors.otherHeatingEfficiency || isMissing("otherHeatingEfficiency")) && missingFieldClass)}
                                                     />
                                                     <Dialog>
                                                         <DialogTrigger asChild>
@@ -1187,10 +1333,18 @@ export default function Prescriptive9362Section({
                                             )}
                                         </>
                                     ) : (
-                                        <Input required type="text" placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90% AFUE)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
-                                            ...prev,
-                                            heatingEfficiency: e.target.value
-                                        }))} className={cn(validationErrors.heatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
+                                        <Input required type="text" 
+                                            placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90% AFUE)" : "Enter heating efficiency (e.g. 95% AFUE)"} 
+                                            value={selections.heatingEfficiency} 
+                                            onChange={e => setSelections(prev => ({
+                                                ...prev,
+                                                heatingEfficiency: e.target.value
+                                            }))} 
+                                            className={cn(
+                                                (validationErrors.heatingEfficiency || isMissing("heatingEfficiency")) && missingFieldClass,
+                                                validationErrors.heatingEfficiency && "border-red-500 ring-2 ring-red-500"
+                                            )} 
+                                        />
                                     )}
                                     {selections.heatingEfficiency && selections.heatingType !== 'heat-pump' && (() => {
                                         const inputValue = parseFloat(selections.heatingEfficiency);
@@ -1227,7 +1381,10 @@ export default function Prescriptive9362Section({
                                         indirectTank: value,
                                         indirectTankSize: value === 'no' ? '' : prev.indirectTankSize
                                     }))}>
-                                        <SelectTrigger className={cn(validationErrors.indirectTank && "border-red-500 ring-2 ring-red-500")}>
+                                        <SelectTrigger className={cn(
+                                            (validationErrors.indirectTank || isMissing("indirectTank")) && missingFieldClass,
+                                            validationErrors.indirectTank && "border-red-500 ring-2 ring-red-500"
+                                        )}>
                                             <SelectValue placeholder="Select if installing indirect tank" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -1239,10 +1396,18 @@ export default function Prescriptive9362Section({
 
                                 {selections.indirectTank === 'yes' && <div id="indirectTankSize" className="space-y-2">
                                     <label className="text-sm font-medium text-foreground">Indirect tank size (gallons) <span className="text-red-500">*</span></label>
-                                    <Input required type="number" placeholder="Enter tank size in gallons" value={selections.indirectTankSize} onChange={e => setSelections(prev => ({
-                                        ...prev,
-                                        indirectTankSize: e.target.value
-                                    }))} className={cn(validationErrors.indirectTankSize && "border-red-500 ring-2 ring-red-500")} />
+                                    <Input required type="number" 
+                                        placeholder="Enter tank size in gallons" 
+                                        value={selections.indirectTankSize} 
+                                        onChange={e => setSelections(prev => ({
+                                            ...prev,
+                                            indirectTankSize: e.target.value
+                                        }))} 
+                                        className={cn(
+                                            (validationErrors.indirectTankSize || isMissing("indirectTankSize")) && missingFieldClass,
+                                            validationErrors.indirectTankSize && "border-red-500 ring-2 ring-red-500"
+                                        )} 
+                                    />
                                 </div>}
                             </div>}
 
@@ -1250,7 +1415,10 @@ export default function Prescriptive9362Section({
                             {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit" && ["9362", "9365", "9367"].includes(selections.compliancePath)) && <div className="space-y-4 p-4 bg-muted/50 border rounded-md">
                                 <h5 className="font-medium text-foreground">Secondary Suite Heating System</h5>
 
-                                <div id="hasSecondaryHeating" className={cn("space-y-2", validationErrors.hasSecondaryHeating && "p-2 border-2 border-red-500 rounded-md")}>
+                                <div id="hasSecondaryHeating" className={cn(
+                                    "space-y-2", 
+                                    (validationErrors.hasSecondaryHeating || isMissing("hasSecondaryHeating")) && "p-2 border-2 border-red-500 rounded-md bg-red-50"
+                                )}>
                                     <label className="text-sm font-medium text-foreground">Will there be a separate heating system for the secondary suite? <span className="text-red-500">*</span></label>
                                     <div className="flex gap-4">
                                         <label className="flex items-center gap-2">
@@ -1292,7 +1460,10 @@ export default function Prescriptive9362Section({
                                             secondaryIndirectTank: value !== 'boiler' ? '' : prev.secondaryIndirectTank,
                                             secondaryIndirectTankSize: value !== 'boiler' ? '' : prev.secondaryIndirectTankSize,
                                         }))}>
-                                            <SelectTrigger className={cn(validationErrors.secondaryHeatingType && "border-red-500 ring-2 ring-red-500")}>
+                                            <SelectTrigger className={cn(
+                                                (validationErrors.secondaryHeatingType || isMissing("secondaryHeatingType")) && missingFieldClass,
+                                                validationErrors.secondaryHeatingType && "border-red-500 ring-2 ring-red-500"
+                                            )}>
                                                 <SelectValue placeholder="Select heating type" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -1317,7 +1488,10 @@ export default function Prescriptive9362Section({
                                         {selections.secondaryHeatingType === 'heat-pump' ? (
                                             <>
                                                 <Select required value={selections.secondaryHeatingEfficiency} onValueChange={value => setSelections(prev => ({ ...prev, secondaryHeatingEfficiency: value, otherSecondaryHeatingEfficiency: "" }))}>
-                                                    <SelectTrigger className={cn(validationErrors.secondaryHeatingEfficiency && "border-red-500 ring-2 ring-red-500")}>
+                                                    <SelectTrigger className={cn(
+                                                        (validationErrors.secondaryHeatingEfficiency || isMissing("secondaryHeatingEfficiency")) && missingFieldClass,
+                                                        validationErrors.secondaryHeatingEfficiency && "border-red-500 ring-2 ring-red-500"
+                                                    )}>
                                                         <SelectValue placeholder="Select heat pump type and efficiency" />
                                                     </SelectTrigger>
                                                     <SelectContent>
@@ -1334,6 +1508,7 @@ export default function Prescriptive9362Section({
                                                             placeholder="Enter specifications manually"
                                                             value={selections.otherSecondaryHeatingEfficiency || ''}
                                                             onChange={e => setSelections(prev => ({ ...prev, otherSecondaryHeatingEfficiency: e.target.value }))}
+                                                            className={cn((validationErrors.otherSecondaryHeatingEfficiency || isMissing("otherSecondaryHeatingEfficiency")) && missingFieldClass)}
                                                         />
                                                         <Dialog>
                                                             <DialogTrigger asChild>
@@ -1355,10 +1530,18 @@ export default function Prescriptive9362Section({
                                                 )}
                                             </>
                                         ) : (
-                                            <Input required type="text" placeholder={selections.secondaryHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90% AFUE)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.secondaryHeatingEfficiency} onChange={e => setSelections(prev => ({
-                                                ...prev,
-                                                secondaryHeatingEfficiency: e.target.value
-                                            }))} className={cn(validationErrors.secondaryHeatingEfficiency && "border-red-500 ring-2 ring-red-500")} />
+                                            <Input required type="text" 
+                                                placeholder={selections.secondaryHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90% AFUE)" : "Enter heating efficiency (e.g. 95% AFUE)"} 
+                                                value={selections.secondaryHeatingEfficiency} 
+                                                onChange={e => setSelections(prev => ({
+                                                    ...prev,
+                                                    secondaryHeatingEfficiency: e.target.value
+                                                }))} 
+                                                className={cn(
+                                                    (validationErrors.secondaryHeatingEfficiency || isMissing("secondaryHeatingEfficiency")) && missingFieldClass,
+                                                    validationErrors.secondaryHeatingEfficiency && "border-red-500 ring-2 ring-red-500"
+                                                )} 
+                                            />
                                         )}
                                         {selections.secondaryHeatingEfficiency && selections.secondaryHeatingType !== 'heat-pump' && (() => {
                                             const inputValue = parseFloat(selections.secondaryHeatingEfficiency);
@@ -1396,7 +1579,10 @@ export default function Prescriptive9362Section({
                                                 secondaryIndirectTank: value,
                                                 secondaryIndirectTankSize: value === 'no' ? '' : prev.secondaryIndirectTankSize,
                                             }))}>
-                                                <SelectTrigger className={cn(validationErrors.secondaryIndirectTank && "border-red-500 ring-2 ring-red-500")}>
+                                                <SelectTrigger className={cn(
+                                                    (validationErrors.secondaryIndirectTank || isMissing("secondaryIndirectTank")) && missingFieldClass,
+                                                    validationErrors.secondaryIndirectTank && "border-red-500 ring-2 ring-red-500"
+                                                )}>
                                                     <SelectValue placeholder="Select option" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -1408,10 +1594,18 @@ export default function Prescriptive9362Section({
 
                                         {selections.secondaryIndirectTank === 'yes' && <div id="secondaryIndirectTankSize" className="space-y-2">
                                             <label className="text-sm font-medium text-foreground">Secondary Suite Indirect Tank Size (Gallons) <span className="text-red-500">*</span></label>
-                                            <Input required type="text" placeholder="Enter tank size in gallons (e.g., 40, 50, 60, 80)" value={selections.secondaryIndirectTankSize} onChange={e => setSelections(prev => ({
-                                                ...prev,
-                                                secondaryIndirectTankSize: e.target.value
-                                            }))} className={cn(validationErrors.secondaryIndirectTankSize && "border-red-500 ring-2 ring-red-500")} />
+                                            <Input required type="text" 
+                                                placeholder="Enter tank size in gallons (e.g., 40, 50, 60, 80)" 
+                                                value={selections.secondaryIndirectTankSize} 
+                                                onChange={e => setSelections(prev => ({
+                                                    ...prev,
+                                                    secondaryIndirectTankSize: e.target.value
+                                                }))} 
+                                                className={cn(
+                                                    (validationErrors.secondaryIndirectTankSize || isMissing("secondaryIndirectTankSize")) && missingFieldClass,
+                                                    validationErrors.secondaryIndirectTankSize && "border-red-500 ring-2 ring-red-500"
+                                                )} 
+                                            />
                                         </div>}
                                     </div>}
                                 </>}
@@ -1424,7 +1618,10 @@ export default function Prescriptive9362Section({
                                     coolingApplicable: value,
                                     coolingEfficiency: value === 'no' ? '' : prev.coolingEfficiency,
                                 }))}>
-                                    <SelectTrigger className={cn(validationErrors.coolingApplicable && "border-red-500 ring-2 ring-red-500")}>
+                                    <SelectTrigger className={cn(
+                                        (validationErrors.coolingApplicable || isMissing("coolingApplicable")) && missingFieldClass,
+                                        validationErrors.coolingApplicable && "border-red-500 ring-2 ring-red-500"
+                                    )}>
                                         <SelectValue placeholder="Select if cooling is applicable" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -1446,7 +1643,10 @@ export default function Prescriptive9362Section({
                                             ...prev,
                                             coolingEfficiency: e.target.value
                                         }))}
-                                        className={cn(validationErrors.coolingEfficiency && "border-red-500 ring-2 ring-red-500")}
+                                        className={cn(
+                                            (validationErrors.coolingEfficiency || isMissing("coolingEfficiency")) && missingFieldClass,
+                                            validationErrors.coolingEfficiency && "border-red-500 ring-2 ring-red-500"
+                                        )}
                                     />
                                 </div>
                             )}
@@ -1461,7 +1661,10 @@ export default function Prescriptive9362Section({
                                         otherWaterHeaterType: value !== 'other' ? '' : prev.otherWaterHeaterType,
                                     }));
                                 }} disabled={isWaterHeaterBoiler}>
-                                    <SelectTrigger className={cn(validationErrors.waterHeaterType && "border-red-500 ring-2 ring-red-500")}>
+                                    <SelectTrigger className={cn(
+                                        (validationErrors.waterHeaterType || isMissing("waterHeaterType")) && missingFieldClass,
+                                        validationErrors.waterHeaterType && "border-red-500 ring-2 ring-red-500"
+                                    )}>
                                         <SelectValue placeholder="Select water heater type" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -1478,10 +1681,18 @@ export default function Prescriptive9362Section({
 
                             {selections.waterHeaterType === "other" && <div id="otherWaterHeaterType" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Specify Other Water Heater Type <span className="text-red-500">*</span></label>
-                                <Input required type="text" placeholder="Please specify the water heater type" value={selections.otherWaterHeaterType || ""} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    otherWaterHeaterType: e.target.value
-                                }))} className={cn(validationErrors.otherWaterHeaterType && "border-red-500 ring-2 ring-red-500")} />
+                                <Input required type="text" 
+                                    placeholder="Please specify the water heater type" 
+                                    value={selections.otherWaterHeaterType || ""} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        otherWaterHeaterType: e.target.value
+                                    }))} 
+                                    className={cn(
+                                        (validationErrors.otherWaterHeaterType || isMissing("otherWaterHeaterType")) && missingFieldClass,
+                                        validationErrors.otherWaterHeaterType && "border-red-500 ring-2 ring-red-500"
+                                    )} 
+                                />
                             </div>}
 
                             {selections.waterHeaterType && selections.waterHeaterType !== 'boiler' && <div id="waterHeater" className="space-y-2">
@@ -1506,14 +1717,22 @@ export default function Prescriptive9362Section({
                                 })()} value={selections.waterHeater} onChange={e => setSelections(prev => ({
                                     ...prev,
                                     waterHeater: e.target.value
-                                }))} className={cn(validationErrors.waterHeater && "border-red-500 ring-2 ring-red-500")} />
+                                }))} 
+                                className={cn(
+                                    (validationErrors.waterHeater || isMissing("waterHeater")) && missingFieldClass,
+                                    validationErrors.waterHeater && "border-red-500 ring-2 ring-red-500"
+                                )} 
+                                />
                             </div>}
 
                             {/* Secondary Suite Water Heater - Show for single-detached with secondary suite AND multi-unit buildings for performance path */}
                             {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit" && ["9362", "9365", "9367"].includes(selections.compliancePath)) && <div className="space-y-4 p-4 bg-muted/50 border rounded-md">
                                 <h5 className="font-medium text-foreground">Secondary Suite Water Heating</h5>
 
-                                <div id="hasSecondaryWaterHeater" className={cn("space-y-2", validationErrors.hasSecondaryWaterHeater && "p-2 border-2 border-red-500 rounded-md")}>
+                                <div id="hasSecondaryWaterHeater" className={cn(
+                                    "space-y-2", 
+                                    (validationErrors.hasSecondaryWaterHeater || isMissing("hasSecondaryWaterHeater")) && "p-2 border-2 border-red-500 rounded-md bg-red-50"
+                                )}>
                                     <label className="text-sm font-medium text-foreground">Will there be a second hot water system for the secondary suite? <span className="text-red-500">*</span></label>
                                     <div className="flex gap-4">
                                         <label className="flex items-center gap-2">
@@ -1541,7 +1760,10 @@ export default function Prescriptive9362Section({
                                 </div>
 
                                 {selections.hasSecondaryWaterHeater === "yes" && <>
-                                    <div id="secondaryWaterHeaterSameAsMain" className={cn("space-y-2", validationErrors.secondaryWaterHeaterSameAsMain && "p-2 border-2 border-red-500 rounded-md")}>
+                                    <div id="secondaryWaterHeaterSameAsMain" className={cn(
+                                        "space-y-2", 
+                                        (validationErrors.secondaryWaterHeaterSameAsMain || isMissing("secondaryWaterHeaterSameAsMain")) && "p-2 border-2 border-red-500 rounded-md bg-red-50"
+                                    )}>
                                         <label className="text-sm font-medium text-foreground">Will it be the same as the main water heater system? <span className="text-red-500">*</span></label>
                                         <div className="flex gap-4">
                                             <label className="flex items-center gap-2">
@@ -1573,7 +1795,10 @@ export default function Prescriptive9362Section({
                                                     secondaryWaterHeater: "" // Reset efficiency when type changes
                                                 }));
                                             }} disabled={isSecondaryWaterHeaterBoiler}>
-                                                <SelectTrigger className={cn(validationErrors.secondaryWaterHeaterType && "border-red-500 ring-2 ring-red-500")}>
+                                                <SelectTrigger className={cn(
+                                                    (validationErrors.secondaryWaterHeaterType || isMissing("secondaryWaterHeaterType")) && missingFieldClass,
+                                                    validationErrors.secondaryWaterHeaterType && "border-red-500 ring-2 ring-red-500"
+                                                )}>
                                                     <SelectValue placeholder="Select water heater type" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -1606,7 +1831,12 @@ export default function Prescriptive9362Section({
                                             })()} value={selections.secondaryWaterHeater} onChange={e => setSelections(prev => ({
                                                 ...prev,
                                                 secondaryWaterHeater: e.target.value
-                                            }))} className={cn(validationErrors.secondaryWaterHeater && "border-red-500 ring-2 ring-red-500")} />
+                                            }))} 
+                                            className={cn(
+                                                (validationErrors.secondaryWaterHeater || isMissing("secondaryWaterHeater")) && missingFieldClass,
+                                                validationErrors.secondaryWaterHeater && "border-red-500 ring-2 ring-red-500"
+                                            )} 
+                                            />
                                         </div>}
                                     </>}
                                 </>}
@@ -1648,7 +1878,10 @@ export default function Prescriptive9362Section({
                                     ...prev,
                                     hasDWHR: value
                                 }))}>
-                                    <SelectTrigger className={cn(validationErrors.hasDWHR && "border-red-500 ring-2 ring-red-500")}>
+                                    <SelectTrigger className={cn(
+                                        (validationErrors.hasDWHR || isMissing("hasDWHR")) && missingFieldClass,
+                                        validationErrors.hasDWHR && "border-red-500 ring-2 ring-red-500"
+                                    )}>
                                         <SelectValue placeholder="Select yes or no" />
                                     </SelectTrigger>
                                     <SelectContent>
