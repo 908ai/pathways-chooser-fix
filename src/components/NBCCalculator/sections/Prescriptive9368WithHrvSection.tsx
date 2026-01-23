@@ -334,7 +334,16 @@ export const Prescriptive9368WithHrvSection: React.FC<Props> = ({ selections, se
             )}
 
             <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Is the house installing or roughing in in-floor heat?</label>
+                <div className="flex items-center gap-3">
+                    <label className="text-sm font-medium text-foreground">Is the house installing or roughing in in-floor heat?</label>
+                    <InfoButton title="In-Floor Heating System">
+                        <div className="space-y-4">
+                            <div>
+                                <p className="text-base text-muted-foreground">If Hot Water recirculation is proposed (or roughed-in), and the thickness and extent of pipe insulation in the Service Hot Water system must be noted on the drawings.</p>
+                            </div>
+                        </div>
+                    </InfoButton>                    
+                </div>
                 <Select value={selections.hasInFloorHeat} onValueChange={value => {
                     setSelections(prev => ({
                         ...prev,
