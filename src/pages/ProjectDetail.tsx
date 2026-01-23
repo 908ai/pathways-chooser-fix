@@ -1145,6 +1145,7 @@ const ProjectDetail = () => {
                     <p className="font-medium text-card-foreground">{project.floor_area ? `${project.floor_area} m²` : 'Not specified'}</p>
                   </div>
                   <DetailItem label="Comments" value={project.comments} />
+                  <DetailItem label="Notes" value={project.notes} />
                 </CardContent>
               </Card>
 

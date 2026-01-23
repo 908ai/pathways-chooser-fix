@@ -39,6 +39,7 @@ export const mapProjectToSelections = (project: any) => {
     hasDWHR: project.has_dwhr,
     wantsCertifications: project.wants_certifications,
     midConstructionBlowerDoorPlanned: project.mid_construction_blower_door_planned,
+    notes: project.notes, // Added notes mapping
   };
 };
 
@@ -148,6 +149,7 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
         addIfMissing(optional, 'wantsCertifications', 'Interested in Certifications');
         addIfMissing(optional, 'midConstructionBlowerDoorPlanned', 'Mid-Construction Blower Door Test');
         addIfMissing(optional, 'occupancyClass', 'Occupancy Class');
+        addIfMissing(optional, 'notes', 'Additional Notes'); // Added notes to optional items
 
         // Conditional optional fields that depend on other selections
         if (selections.hasCathedralOrFlatRoof === 'yes') {
@@ -219,6 +221,7 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
         addIfMissing(required, 'airtightness', 'Airtightness Level');
         addIfMissing(required, 'hrvEfficiency', 'HRV/ERV Efficiency');
         addIfMissing(required, 'waterHeater', 'Water Heater Type');
+        addIfMissing(optional, 'notes', 'Additional Notes'); // Added notes to optional items
         break;
     }
   }

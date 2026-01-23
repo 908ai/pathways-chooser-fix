@@ -216,6 +216,7 @@ const ProjectSummaryForm = ({
         has_murb_multiple_water_heaters: selections.hasMurbMultipleWaterHeaters === 'yes',
         murb_second_water_heater_type: selections.murbSecondWaterHeaterType,
         murb_second_water_heater: selections.murbSecondWaterHeater,
+        notes: selections.notes, // Added notes field
       };
 
       let savedProject;
@@ -435,6 +436,17 @@ const ProjectSummaryForm = ({
                 <AccordionContent className="pt-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                     {renderField('Interested Certifications', selections.interestedCertifications.join(', '))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            )}
+
+            {selections.notes && (
+              <AccordionItem value="item-notes">
+                <AccordionTrigger className="text-lg font-semibold"><FileText className="h-5 w-5 mr-2" />Additional Notes</AccordionTrigger>
+                <AccordionContent className="pt-4">
+                  <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-md text-sm whitespace-pre-wrap">
+                    {selections.notes}
                   </div>
                 </AccordionContent>
               </AccordionItem>
