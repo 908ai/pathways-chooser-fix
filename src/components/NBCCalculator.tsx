@@ -1099,12 +1099,7 @@ const NBCCalculator = () => {
                           setSelections={setSelections}
                         />
                       )}
-                    {selections.compliancePath === "9362" && <Prescriptive9362Section 
-                      selections={selections} 
-                      setSelections={setSelections} 
-                      validationErrors={validationErrors}
-                      showMissingFields={showMissingFields} 
-                    />}
+                    {selections.compliancePath === "9362" && <Prescriptive9362Section selections={selections} setSelections={setSelections} validationErrors={validationErrors} showMissingFields={showMissingFields} />}
                     {selections.compliancePath === "9368" && <Prescriptive9368Section 
                       selections={selections} 
                       setSelections={setSelections} 
@@ -1121,7 +1116,14 @@ const NBCCalculator = () => {
                       removeFile={removeFile}
                       showMissingFields={showMissingFields}
                     />}
-                    {selections.compliancePath === "9367" && <Performance9367Section selections={selections} setSelections={setSelections} handleFileUploadRequest={handleFileUploadRequest} uploadedFiles={uploadedFiles} removeFile={removeFile} />}
+                    {selections.compliancePath === "9367" && <Performance9367Section 
+                      selections={selections} 
+                      setSelections={setSelections} 
+                      handleFileUploadRequest={handleFileUploadRequest} 
+                      uploadedFiles={uploadedFiles} 
+                      removeFile={removeFile}
+                      showMissingFields={showMissingFields}
+                    />}
                     {selections.compliancePath && (
                       <HrvAdditionalInfoSection
                         selections={selections}
