@@ -11,6 +11,8 @@ import ProjectSummaryForm from "@/components/ProjectSummaryForm";
 import FloatingPointsSummary from "./NBCCalculator/components/FloatingPointsSummary";
 import Stepper from "./NBCCalculator/components/Stepper";
 import FileUploadSection from "./NBCCalculator/sections/FileUploadSection";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   wallRSIOptions,
   windowUValueOptions,
@@ -48,7 +50,7 @@ import { getPendingItems } from "@/lib/projectUtils";
 const getStepForField = (fieldId: string) => {
   const step1Fields = ['firstName', 'lastName', 'company', 'phoneNumber', 'companyAddress', 'streetAddress', 'unitNumber', 'city', 'postalCode', 'buildingType', 'province', 'climateZone', 'occupancyClass'];
   const step2Fields = ['compliancePath', 'frontDoorOrientation'];
-  const step4Fields = ['fileUploadSection'];
+  const step4Fields = ['fileUploadSection', 'notes'];
 
   if (step1Fields.includes(fieldId)) return 1;
   if (step2Fields.includes(fieldId)) return 2;
@@ -178,7 +180,8 @@ const NBCCalculator = () => {
     interestedCertifications: [] as string[],
     wantsCertifications: "",
     midConstructionBlowerDoorPlanned: false,
-    energuidePathway: ""
+    energuidePathway: "",
+    notes: ""
   });
   const { uploadedFiles, setUploadedFiles, isUploading, uploadFile, removeFile } = useFileUploads(user);
 
@@ -463,7 +466,8 @@ const NBCCalculator = () => {
           interestedCertifications: p.interested_certifications || [],
           wantsCertifications: p.wants_certifications || "",
           midConstructionBlowerDoorPlanned: p.mid_construction_blower_door_planned || false,
-          energuidePathway: p.energuide_pathway || ""
+          energuidePathway: p.energuide_pathway || "",
+          notes: p.notes || ""
         };
         setSelections(newSelections);
 
@@ -625,6 +629,7 @@ const NBCCalculator = () => {
         interested_certifications: selections.interestedCertifications,
         wants_certifications: selections.wantsCertifications,
         mid_construction_blower_door_planned: selections.midConstructionBlowerDoorPlanned,
+        notes: selections.notes
       };
 
       const { error } = await supabase
@@ -1203,8 +1208,20 @@ const NBCCalculator = () => {
                       </Card>
                     )}
 
+                    {/* Notes Section */}
+                    <div className="space-y-4 pt-6 border-t" id="notes">
+                      <Label htmlFor="notes">Notes (Optional)</Label>
+                      <Textarea
+                        id="notes"
+                        placeholder="Add any additional notes here..."
+                        value={selections.notes || ''}
+                        onChange={(e) => setSelections({ ...selections, notes: e.target.value })}
+                        className="min-h-[100px]"
+                      />
+                    </div>
+
                     {/* Submit section — conditional on path */}
-                    <div className="pt-6 border-t space-y-4">
+                    <div className="space-y-4">
                       {selections.compliancePath === "9365" ||
                         selections.compliancePath === "9367" ? (
                         <>
