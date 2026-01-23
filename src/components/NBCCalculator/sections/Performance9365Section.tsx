@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Select,
     SelectContent,
@@ -23,12 +23,14 @@ export default function Performance9365Section({
     handleFileUploadRequest,
     uploadedFiles,
     removeFile,
+    showMissingFields = false,
 }: {
     selections: any;
     setSelections: any;
     handleFileUploadRequest: (file: File) => Promise<void>;
     uploadedFiles: File[];
     removeFile: (file: File) => void;
+    showMissingFields?: boolean;
 }) {
     // Local state for collapsible warnings
     const [expandedWarnings, setExpandedWarnings] = useState<{
@@ -91,6 +93,12 @@ export default function Performance9365Section({
         if (typeof value === "boolean") return true;
         return value !== null && value !== undefined;
     };
+
+    const isMissing = (key: string) => {
+        return showMissingFields && !isSet(selections[key]);
+    };
+
+    const missingFieldClass = "border-red-400 bg-red-50 focus-visible:ring-red-500";
 
     const getEnvelopeKeys = () => {
         const keys = [
@@ -162,6 +170,26 @@ export default function Performance9365Section({
 
     const mechanicalCompleted = mechanicalKeys.filter(key => isSet(selections[key])).length;
 
+    const hasMissingEnvelope = envelopeKeys.some(key => !isSet(selections[key])) || uploadedFiles.length === 0;
+    const hasMissingMechanical = mechanicalKeys.some(key => !isSet(selections[key]));
+
+    useEffect(() => {
+        if (showMissingFields) {
+            const newOpenSections = [];
+            if (hasMissingEnvelope) newOpenSections.push("envelope");
+            if (hasMissingMechanical) newOpenSections.push("mechanical");
+            
+            // Only update if there's a difference to avoid infinite loops or unnecessary renders
+            if (newOpenSections.length > 0) {
+                 // Use functional update and check if it already contains the values to avoid overriding user interaction too aggressively
+                 setOpenSections(prev => {
+                    const unique = Array.from(new Set([...prev, ...newOpenSections]));
+                    return unique.length !== prev.length ? unique : prev;
+                 });
+            }
+        }
+    }, [showMissingFields, hasMissingEnvelope, hasMissingMechanical]);
+
     return (
         <div className="space-y-3">
             <div className="flex justify-center gap-2">
@@ -175,20 +203,28 @@ export default function Performance9365Section({
 
             <Accordion type="multiple" value={openSections} onValueChange={(val: string[] | string) => setOpenSections(Array.isArray(val) ? val : [])} className="border rounded-md">
                 <AccordionItem value="envelope">
-                    <AccordionTrigger className="px-4">
+                    <AccordionTrigger className={cn("px-4", showMissingFields && hasMissingEnvelope ? "bg-red-50 text-red-900" : "")}>
                         <div className="flex w-full items-center justify-between">
-                            <span className="text-base">Building Envelope</span>
-                            <Badge variant="secondary">{envelopeCompleted} / {envelopeTotal} completed</Badge>
+                            <span className="text-base flex items-center gap-2">
+                                Building Envelope
+                                {showMissingFields && hasMissingEnvelope && <AlertTriangle className="h-4 w-4 text-red-600" />}
+                            </span>
+                            <Badge variant={showMissingFields && hasMissingEnvelope ? "destructive" : "secondary"}>{envelopeCompleted} / {envelopeTotal} completed</Badge>
                         </div>
                     </AccordionTrigger>
-                    <AccordionContent className="px-4">
+                    <AccordionContent className="px-4 pt-4">
                         <div className="space-y-4">
                             <div id="ceilingsAtticRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Ceilings below Attics</label>
-                                <Input type="text" placeholder='Enter assembly info (e.g., R50 Loose-fill/2x10/16"OC)' value={selections.ceilingsAtticRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    ceilingsAtticRSI: e.target.value
-                                }))} />
+                                <Input type="text" 
+                                    placeholder='Enter assembly info (e.g., R50 Loose-fill/2x10/16"OC)' 
+                                    value={selections.ceilingsAtticRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        ceilingsAtticRSI: e.target.value
+                                    }))}
+                                    className={cn(isMissing("ceilingsAtticRSI") && missingFieldClass)}
+                                />
                             </div>
 
                             <div id="hasCathedralOrFlatRoof" className="space-y-2">
@@ -198,7 +234,7 @@ export default function Performance9365Section({
                                     hasCathedralOrFlatRoof: value,
                                     cathedralFlatRSI: ""
                                 }))}>
-                                    <SelectTrigger>
+                                    <SelectTrigger className={cn(isMissing("hasCathedralOrFlatRoof") && missingFieldClass)}>
                                         <SelectValue placeholder="Select option" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -210,31 +246,48 @@ export default function Performance9365Section({
 
                             {selections.hasCathedralOrFlatRoof === "yes" && <div id="cathedralFlatRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Cathedral / Flat Roofs</label>
-                                <Input type="text" placeholder="Enter insulation type &/or R-value (e.g, R50 Loose-fill)., N/A" value={selections.cathedralFlatRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    cathedralFlatRSI: e.target.value
-                                }))} />
+                                <Input type="text" 
+                                    placeholder="Enter insulation type &/or R-value (e.g, R50 Loose-fill)., N/A" 
+                                    value={selections.cathedralFlatRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        cathedralFlatRSI: e.target.value
+                                    }))} 
+                                    className={cn(isMissing("cathedralFlatRSI") && missingFieldClass)}
+                                />
                             </div>}
 
                             <div id="wallRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Above Grade Walls</label>
-                                <Input type="text" placeholder='Enter assembly info (e.g., R20 Batt/2x6/16"OC)' value={selections.wallRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    wallRSI: e.target.value
-                                }))} />
+                                <Input type="text" 
+                                    placeholder='Enter assembly info (e.g., R20 Batt/2x6/16"OC)' 
+                                    value={selections.wallRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        wallRSI: e.target.value
+                                    }))} 
+                                    className={cn(isMissing("wallRSI") && missingFieldClass)}
+                                />
                             </div>
 
                             <div id="belowGradeRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Below Grade Walls (Foundation Walls)</label>
-                                <Input type="text" placeholder='Enter assembly info (e.g., R12 Batt/2x4/24"OC)' value={selections.belowGradeRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    belowGradeRSI: e.target.value
-                                }))} />
+                                <Input type="text" 
+                                    placeholder='Enter assembly info (e.g., R12 Batt/2x4/24"OC)' 
+                                    value={selections.belowGradeRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        belowGradeRSI: e.target.value
+                                    }))} 
+                                    className={cn(isMissing("belowGradeRSI") && missingFieldClass)}
+                                />
                             </div>
 
                             <div id="floorsSlabsSelected" className="space-y-4">
-                                <label className="text-sm font-medium text-foreground">Floors/Slabs (Select all that apply)</label>
-                                <div className="space-y-2">
+                                <label className={cn("text-sm font-medium", isMissing("floorsSlabsSelected") ? "text-red-600" : "text-foreground")}>
+                                    Floors/Slabs (Select all that apply)
+                                </label>
+                                <div className={cn("space-y-2 p-2 rounded-md", isMissing("floorsSlabsSelected") ? "border border-red-300 bg-red-50/50" : "")}>
                                     <label className="flex items-center gap-2">
                                         <input type="checkbox" checked={selections.floorsSlabsSelected.includes("floorsUnheated")} onChange={e => {
                                             const value = "floorsUnheated";
@@ -387,7 +440,7 @@ export default function Performance9365Section({
                                         };
                                     });
                                 }}>
-                                    <SelectTrigger>
+                                    <SelectTrigger className={cn(isMissing("hasInFloorHeat9365") && missingFieldClass)}>
                                         <SelectValue placeholder="Select an option" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -406,42 +459,67 @@ export default function Performance9365Section({
 
                             {selections.floorsSlabsSelected.includes("floorsUnheated") && <div id="floorsUnheatedRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</label>
-                                <Input type="text" placeholder="Enter insulation type &/or RSI/R-value, or N/A" value={selections.floorsUnheatedRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    floorsUnheatedRSI: e.target.value
-                                }))} />
+                                <Input type="text" 
+                                    placeholder="Enter insulation type &/or RSI/R-value, or N/A" 
+                                    value={selections.floorsUnheatedRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        floorsUnheatedRSI: e.target.value
+                                    }))} 
+                                    className={cn(isMissing("floorsUnheatedRSI") && missingFieldClass)}
+                                />
                             </div>}
 
                             {selections.floorsSlabsSelected.includes("floorsGarage") && <div id="floorsGarageRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Floors above Garages</label>
-                                <Input type="text" placeholder="Enter insulation type &/or RSI/R-value, or N/A" value={selections.floorsGarageRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    floorsGarageRSI: e.target.value
-                                }))} />
+                                <Input type="text" 
+                                    placeholder="Enter insulation type &/or RSI/R-value, or N/A" 
+                                    value={selections.floorsGarageRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        floorsGarageRSI: e.target.value
+                                    }))} 
+                                    className={cn(isMissing("floorsGarageRSI") && missingFieldClass)}
+                                />
                             </div>}
 
                             {selections.floorsSlabsSelected.includes("unheatedBelowFrost") && <div id="unheatedFloorBelowFrostRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Unheated Floor Below Frost Line</label>
-                                <Input type="text" placeholder="Enter RSI value or 'uninsulated'" value={selections.unheatedFloorBelowFrostRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    unheatedFloorBelowFrostRSI: e.target.value
-                                }))} />
+                                <Input type="text" 
+                                    placeholder="Enter RSI value or 'uninsulated'" 
+                                    value={selections.unheatedFloorBelowFrostRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        unheatedFloorBelowFrostRSI: e.target.value
+                                    }))} 
+                                    className={cn(isMissing("unheatedFloorBelowFrostRSI") && missingFieldClass)}
+                                />
                             </div>}
 
                             {selections.floorsSlabsSelected.includes("unheatedAboveFrost") && <div id="unheatedFloorAboveFrostRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Unheated Floor Above Frost Line</label>
-                                <Input type="text" placeholder='Enter insulation type & R-value (e.g., 2" XPS or R10 Rigid), or N/A' value={selections.unheatedFloorAboveFrostRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    unheatedFloorAboveFrostRSI: e.target.value
-                                }))} />
+                                <Input type="text" 
+                                    placeholder='Enter insulation type & R-value (e.g., 2" XPS or R10 Rigid), or N/A' 
+                                    value={selections.unheatedFloorAboveFrostRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        unheatedFloorAboveFrostRSI: e.target.value
+                                    }))} 
+                                    className={cn(isMissing("unheatedFloorAboveFrostRSI") && missingFieldClass)}
+                                />
                             </div>}
 
                             {selections.floorsSlabsSelected.includes("heatedFloors") && <div id="heatedFloorsRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Heated Floors</label>
-                                <Input type="text" placeholder='Enter insulation type & R-value (e.g., 2" XPS or R10 Rigid)' value={selections.heatedFloorsRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    heatedFloorsRSI: e.target.value
-                                }))} />
+                                <Input type="text" 
+                                    placeholder='Enter insulation type & R-value (e.g., 2" XPS or R10 Rigid)' 
+                                    value={selections.heatedFloorsRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        heatedFloorsRSI: e.target.value
+                                    }))} 
+                                    className={cn(isMissing("heatedFloorsRSI") && missingFieldClass)}
+                                />
                                 <WarningButton warningId="heatedFloorsRSI-hydronic-9365" title="⚠️ Hydronic Floor Insulation Required">
                                     <p className="text-xs space-y-2">
                                         Hydronic floors must be insulated to prevent heat loss to the ground or unheated areas below. The insulation should be installed between the heated floor and any unheated space, with proper vapor barrier placement. Minimum insulation values vary by province and specific application - consult local building codes and your mechanical designer for specific requirements.
@@ -451,14 +529,23 @@ export default function Performance9365Section({
 
                             {selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting") && <div id="slabOnGradeIntegralFootingRSI" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Slab on grade with integral Footing</label>
-                                <Input type="text" placeholder="Enter insulation type &/or R-value, or N/A" value={selections.slabOnGradeIntegralFootingRSI} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    slabOnGradeIntegralFootingRSI: e.target.value
-                                }))} />
+                                <Input type="text" 
+                                    placeholder="Enter insulation type &/or R-value, or N/A" 
+                                    value={selections.slabOnGradeIntegralFootingRSI} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        slabOnGradeIntegralFootingRSI: e.target.value
+                                    }))} 
+                                    className={cn(isMissing("slabOnGradeIntegralFootingRSI") && missingFieldClass)}
+                                />
                             </div>}
 
                             {/* Window Schedule Upload */}
-                            <div className="space-y-4 p-4 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/30 dark:border-red-500/50">
+                            <div className={cn("space-y-4 p-4 border rounded-lg", 
+                                showMissingFields && uploadedFiles.length === 0 
+                                    ? "bg-red-50 border-red-400 dark:bg-red-900/30 dark:border-red-500" 
+                                    : "bg-red-50 border-red-200 dark:bg-red-900/30 dark:border-red-500/50"
+                            )}>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-foreground">Upload window/door schedule from your supplier e.g., "All Weather, Plygem, etc."</label>
                                     <div className="flex items-center space-x-4">
@@ -520,7 +607,7 @@ export default function Performance9365Section({
                                     hasSkylights: value,
                                     skylightUValue: ""
                                 }))}>
-                                    <SelectTrigger>
+                                    <SelectTrigger className={cn(isMissing("hasSkylights") && missingFieldClass)}>
                                         <SelectValue placeholder="Select option" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -531,10 +618,15 @@ export default function Performance9365Section({
 
                                 {selections.hasSkylights === "yes" && <div id="skylightUValue" className="space-y-2">
                                     <label className="text-sm font-medium text-foreground">Skylight U-Value</label>
-                                    <Input type="text" placeholder="Enter U-Value (W/(m²·K))" value={selections.skylightUValue || ""} onChange={e => setSelections(prev => ({
+                                    <Input type="text" 
+                                        placeholder="Enter U-Value (W/(m²·K))" 
+                                        value={selections.skylightUValue || ""} 
+                                        onChange={e => setSelections(prev => ({
                                         ...prev,
                                         skylightUValue: e.target.value
-                                    }))} />
+                                    }))} 
+                                    className={cn(isMissing("skylightUValue") && missingFieldClass)}
+                                    />
                                 </div>}
                             </div>
 
@@ -687,10 +779,15 @@ export default function Performance9365Section({
                                         </div>
                                     </InfoButton>
                                 </div>
-                                <Input type="text" placeholder={`Min ${selections.province === "saskatchewan" ? "3.2" : "3.0"} ACH50 for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} value={selections.airtightness} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    airtightness: e.target.value
-                                }))} />
+                                <Input type="text" 
+                                    placeholder={`Min ${selections.province === "saskatchewan" ? "3.2" : "3.0"} ACH50 for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`} 
+                                    value={selections.airtightness} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        airtightness: e.target.value
+                                    }))} 
+                                    className={cn(isMissing("airtightness") && missingFieldClass)}
+                                />
 
                                 {(() => {
                                     const airtightnessValue = parseFloat(selections.airtightness || "0");
@@ -774,13 +871,16 @@ export default function Performance9365Section({
                 </AccordionItem>
 
                 <AccordionItem value="mechanical">
-                    <AccordionTrigger className="px-4">
+                    <AccordionTrigger className={cn("px-4", showMissingFields && hasMissingMechanical ? "bg-red-50 text-red-900" : "")}>
                         <div className="flex w-full items-center justify-between">
-                            <span className="text-base">Mechanical Systems</span>
-                            <Badge variant="secondary">{mechanicalCompleted} / {mechanicalKeys.length} completed</Badge>
+                            <span className="text-base flex items-center gap-2">
+                                Mechanical Systems
+                                {showMissingFields && hasMissingMechanical && <AlertTriangle className="h-4 w-4 text-red-600" />}
+                            </span>
+                            <Badge variant={showMissingFields && hasMissingMechanical ? "destructive" : "secondary"}>{mechanicalCompleted} / {mechanicalKeys.length} completed</Badge>
                         </div>
                     </AccordionTrigger>
-                    <AccordionContent className="px-4">
+                    <AccordionContent className="px-4 pt-4">
                         <div className="space-y-4">
                             {selections.city && selections.city.toLowerCase().trim() === "red deer" && selections.province === "alberta" && <div id="hasF280Calculation" className="space-y-2">
                                 <div className="flex items-center gap-3">
@@ -828,7 +928,7 @@ export default function Performance9365Section({
                                     ...prev,
                                     hasF280Calculation: value
                                 }))}>
-                                    <SelectTrigger>
+                                    <SelectTrigger className={cn(isMissing("hasF280Calculation") && missingFieldClass)}>
                                         <SelectValue placeholder="Select option" />
                                     </SelectTrigger>
                                     <SelectContent className="bg-background border shadow-lg z-50">
@@ -874,7 +974,7 @@ export default function Performance9365Section({
                                     indirectTank: value !== 'boiler' ? '' : prev.indirectTank,
                                     indirectTankSize: value !== 'boiler' ? '' : prev.indirectTankSize,
                                 }))}>
-                                    <SelectTrigger>
+                                    <SelectTrigger className={cn(isMissing("heatingType") && missingFieldClass)}>
                                         <SelectValue placeholder="Select heating type" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -910,10 +1010,15 @@ export default function Performance9365Section({
                                 <label className="text-sm font-medium text-foreground">
                                     {selections.heatingType === 'furnace' ? 'Furnace' : selections.heatingType === 'boiler' ? 'Boiler' : selections.heatingType === 'heat-pump' ? 'Heat Pump' : 'Heating Efficiency'}
                                 </label>
-                                <Input type="text" placeholder={selections.heatingType === 'furnace' ? "Enter Furnace Make/Model" : selections.heatingType === 'boiler' ? "Enter Boiler Make/Model" : selections.heatingType === 'heat-pump' ? "Enter Heat Pump Make/Model" : "Enter heating equipment make/model"} value={selections.heatingEfficiency} onChange={e => setSelections(prev => ({
-                                    ...prev,
-                                    heatingEfficiency: e.target.value
-                                }))} />
+                                <Input type="text" 
+                                    placeholder={selections.heatingType === 'furnace' ? "Enter Furnace Make/Model" : selections.heatingType === 'boiler' ? "Enter Boiler Make/Model" : selections.heatingType === 'heat-pump' ? "Enter Heat Pump Make/Model" : "Enter heating equipment make/model"} 
+                                    value={selections.heatingEfficiency} 
+                                    onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        heatingEfficiency: e.target.value
+                                    }))} 
+                                    className={cn(isMissing("heatingEfficiency") && missingFieldClass)}
+                                />
                             </div>}
 
                             {selections.heatingType === 'boiler' && <div className="space-y-4">
@@ -924,7 +1029,7 @@ export default function Performance9365Section({
                                         indirectTank: value,
                                         indirectTankSize: value === 'no' ? '' : prev.indirectTankSize,
                                     }))}>
-                                        <SelectTrigger>
+                                        <SelectTrigger className={cn(isMissing("indirectTank") && missingFieldClass)}>
                                             <SelectValue placeholder="Select if installing indirect tank" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -936,10 +1041,15 @@ export default function Performance9365Section({
 
                                 {selections.indirectTank === 'yes' && <div id="indirectTankSize" className="space-y-2">
                                     <label className="text-sm font-medium text-foreground">Indirect tank size (gallons)</label>
-                                    <Input type="number" placeholder="Enter tank size in gallons" value={selections.indirectTankSize} onChange={e => setSelections(prev => ({
-                                        ...prev,
-                                        indirectTankSize: e.target.value
-                                    }))} />
+                                    <Input type="number" 
+                                        placeholder="Enter tank size in gallons" 
+                                        value={selections.indirectTankSize} 
+                                        onChange={e => setSelections(prev => ({
+                                            ...prev,
+                                            indirectTankSize: e.target.value
+                                        }))} 
+                                        className={cn(isMissing("indirectTankSize") && missingFieldClass)}
+                                    />
                                 </div>}
                             </div>}
 
@@ -951,7 +1061,7 @@ export default function Performance9365Section({
                                     coolingMakeModel: value === 'no' ? '' : prev.coolingMakeModel,
                                     coolingEfficiency: value === 'no' ? '' : prev.coolingEfficiency,
                                 }))}>
-                                    <SelectTrigger>
+                                    <SelectTrigger className={cn(isMissing("coolingApplicable") && missingFieldClass)}>
                                         <SelectValue placeholder="Select if cooling is applicable" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -964,10 +1074,15 @@ export default function Performance9365Section({
                             {selections.coolingApplicable === "yes" && <div className="space-y-4">
                                 <div id="coolingMakeModel" className="space-y-2">
                                     <label className="text-sm font-medium text-foreground">Cooling System Make/Model</label>
-                                    <Input type="text" value={selections.coolingMakeModel} onChange={e => setSelections(prev => ({
-                                        ...prev,
-                                        coolingMakeModel: e.target.value
-                                    }))} placeholder="Enter cooling system make and model" />
+                                    <Input type="text" 
+                                        value={selections.coolingMakeModel} 
+                                        onChange={e => setSelections(prev => ({
+                                            ...prev,
+                                            coolingMakeModel: e.target.value
+                                        }))} 
+                                        placeholder="Enter cooling system make and model" 
+                                        className={cn(isMissing("coolingMakeModel") && missingFieldClass)}
+                                    />
                                 </div>
                                 <div id="coolingEfficiency" className="space-y-2">
                                     <label className="text-sm font-medium text-foreground">Cooling System Efficiency</label>
@@ -979,6 +1094,7 @@ export default function Performance9365Section({
                                             ...prev,
                                             coolingEfficiency: e.target.value
                                         }))}
+                                        className={cn(isMissing("coolingEfficiency") && missingFieldClass)}
                                     />
                                 </div>
                             </div>}
@@ -990,7 +1106,7 @@ export default function Performance9365Section({
                                         ...prev,
                                         waterHeaterType: value
                                     }))}>
-                                        <SelectTrigger>
+                                        <SelectTrigger className={cn(isMissing("waterHeaterType") && missingFieldClass)}>
                                             <SelectValue placeholder="Select water heater type" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -1002,10 +1118,15 @@ export default function Performance9365Section({
 
                                 <div id="waterHeater" className="space-y-2">
                                     <label className="text-sm font-medium text-foreground">Water Heater</label>
-                                    <Input type="text" placeholder="Enter Water Heater Make/Model" value={selections.waterHeater} onChange={e => setSelections(prev => ({
-                                        ...prev,
-                                        waterHeater: e.target.value
-                                    }))} />
+                                    <Input type="text" 
+                                        placeholder="Enter Water Heater Make/Model" 
+                                        value={selections.waterHeater} 
+                                        onChange={e => setSelections(prev => ({
+                                            ...prev,
+                                            waterHeater: e.target.value
+                                        }))} 
+                                        className={cn(isMissing("waterHeater") && missingFieldClass)}
+                                    />
                                 </div>
                             </>}
 
@@ -1045,7 +1166,7 @@ export default function Performance9365Section({
                                     ...prev,
                                     hasDWHR: value
                                 }))}>
-                                    <SelectTrigger>
+                                    <SelectTrigger className={cn(isMissing("hasDWHR") && missingFieldClass)}>
                                         <SelectValue placeholder="Select yes or no" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -1103,7 +1224,7 @@ export default function Performance9365Section({
                                         hasSecondaryHrv: value === 'without_hrv' ? '' : prev.hasSecondaryHrv,
                                         secondaryHrvEfficiency: value === 'without_hrv' ? '' : prev.secondaryHrvEfficiency,
                                     }))}>
-                                        <SelectTrigger>
+                                        <SelectTrigger className={cn(isMissing("hasHrv") && missingFieldClass)}>
                                             <SelectValue placeholder="Select option" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -1115,10 +1236,15 @@ export default function Performance9365Section({
 
                                 {selections.hasHrv === "with_hrv" && <div id="hrvEfficiency" className="space-y-2">
                                     <label className="text-sm font-medium text-foreground">HRV/ERV Make/Model</label>
-                                    <Input type="text" placeholder="Input HRV/ERV make/model (e.g. Fantech SHR 1504)" value={selections.hrvEfficiency || ""} onChange={e => setSelections(prev => ({
-                                        ...prev,
-                                        hrvEfficiency: e.target.value
-                                    }))} />
+                                    <Input type="text" 
+                                        placeholder="Input HRV/ERV make/model (e.g. Fantech SHR 1504)" 
+                                        value={selections.hrvEfficiency || ""} 
+                                        onChange={e => setSelections(prev => ({
+                                            ...prev,
+                                            hrvEfficiency: e.target.value
+                                        }))} 
+                                        className={cn(isMissing("hrvEfficiency") && missingFieldClass)}
+                                    />
                                 </div>}
 
                                 {/* Secondary Suite HRV - Show for buildings with multiple units */}
@@ -1158,7 +1284,7 @@ export default function Performance9365Section({
                                             hasSecondaryHrv: value,
                                             secondaryHrvEfficiency: value !== 'separate' ? '' : prev.secondaryHrvEfficiency,
                                         }))}>
-                                            <SelectTrigger>
+                                            <SelectTrigger className={cn(isMissing("hasSecondaryHrv") && missingFieldClass)}>
                                                 <SelectValue placeholder="Select option" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -1171,10 +1297,15 @@ export default function Performance9365Section({
 
                                     {selections.hasSecondaryHrv === "separate" && <div id="secondaryHrvEfficiency" className="space-y-2">
                                         <label className="text-sm font-medium text-foreground">Secondary Suite HRV/ERV Make/Model</label>
-                                        <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
-                                            ...prev,
-                                            secondaryHrvEfficiency: e.target.value
-                                        }))} />
+                                        <Input type="text" 
+                                            placeholder="Input secondary HRV/ERV make/model" 
+                                            value={selections.secondaryHrvEfficiency || ""} 
+                                            onChange={e => setSelections(prev => ({
+                                                ...prev,
+                                                secondaryHrvEfficiency: e.target.value
+                                            }))} 
+                                            className={cn(isMissing("secondaryHrvEfficiency") && missingFieldClass)}
+                                        />
                                     </div>}
                                 </div>}
 

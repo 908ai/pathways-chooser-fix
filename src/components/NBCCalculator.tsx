@@ -82,6 +82,7 @@ const NBCCalculator = () => {
   const [isHelpDrawerOpen, setIsHelpDrawerOpen] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [editingProjectStatus, setEditingProjectStatus] = useState<string | null>(null);
+  const [showMissingFields, setShowMissingFields] = useState(false);
 
   const [selections, setSelections] = useState({
     firstName: "",
@@ -329,6 +330,9 @@ const NBCCalculator = () => {
 
   const loadProjectForEditing = async (projectId: string) => {
     setIsLoading(true);
+    // When loading an existing project (which might be incomplete), default to showing missing fields
+    setShowMissingFields(true);
+    
     try {
       const {
         data: project,
@@ -579,6 +583,10 @@ const NBCCalculator = () => {
     }
 
     setIsSavingDraft(true);
+    // Enable missing fields highlighting when saving a draft
+    if (!isIncrementalSave) {
+        setShowMissingFields(true);
+    }
 
     try {
       const currentProjectId = projectId || await ensureProjectExists();
@@ -629,7 +637,7 @@ const NBCCalculator = () => {
       if (isIncrementalSave) {
         toast({ title: "Progress Saved", description: "Your changes have been saved." });
       } else {
-        toast({ title: "Draft Saved", description: "Your progress has been saved successfully." });
+        toast({ title: "Draft Saved", description: "Your progress has been saved successfully. Missing fields have been highlighted." });
       }
 
     } catch (error: any) {
@@ -1100,7 +1108,14 @@ const NBCCalculator = () => {
                       uploadedFiles={uploadedFiles}
                       removeFile={removeFile}
                     />}
-                    {selections.compliancePath === "9365" && <Performance9365Section selections={selections} setSelections={setSelections} handleFileUploadRequest={handleFileUploadRequest} uploadedFiles={uploadedFiles} removeFile={removeFile} />}
+                    {selections.compliancePath === "9365" && <Performance9365Section 
+                      selections={selections} 
+                      setSelections={setSelections} 
+                      handleFileUploadRequest={handleFileUploadRequest} 
+                      uploadedFiles={uploadedFiles} 
+                      removeFile={removeFile}
+                      showMissingFields={showMissingFields}
+                    />}
                     {selections.compliancePath === "9367" && <Performance9367Section selections={selections} setSelections={setSelections} handleFileUploadRequest={handleFileUploadRequest} uploadedFiles={uploadedFiles} removeFile={removeFile} />}
                     {selections.compliancePath && (
                       <HrvAdditionalInfoSection
