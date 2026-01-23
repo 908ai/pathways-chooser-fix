@@ -1,14 +1,15 @@
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { HelpCircle, X } from "lucide-react";
 import ContactBanner from "@/components/NBCCalculator/sections/ContactBanner";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface HelpDrawerProps {
   open?: boolean;
@@ -17,41 +18,35 @@ interface HelpDrawerProps {
 
 const HelpDrawer = ({ open, onOpenChange }: HelpDrawerProps) => {
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerTrigger asChild>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetTrigger asChild>
         <Button
           variant="default"
           className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50 transform hover:scale-110 transition-transform duration-200 flex items-center justify-center"
         >
           <HelpCircle style={{ width: 35, height: 35 }} />
         </Button>
-      </DrawerTrigger>
-      <DrawerContent className="bg-background text-foreground border-t">
-        <div className="mx-auto w-full max-w-4xl relative">
-          <DrawerHeader>
-            <DrawerTitle className="text-2xl font-bold text-center text-foreground">
+      </SheetTrigger>
+      <SheetContent side="right" className="w-full sm:max-w-xl p-0 flex flex-col h-full bg-background border-l">
+        <div className="p-6 border-b">
+          <SheetHeader>
+            <SheetTitle className="text-2xl font-bold text-left text-foreground pr-8">
               Getting Started & Instructions
-            </DrawerTitle>
-          </DrawerHeader>
-          <DrawerClose asChild>
-            <Button
-              variant="ghost"
-              className="absolute top-3 right-3 rounded-full h-8 w-8 p-0 text-muted-foreground hover:text-foreground hover:bg-accent"
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </Button>
-          </DrawerClose>
-          <div className="p-4 pb-8 text-muted-foreground max-h-[80vh] overflow-y-auto">
-            <div className="space-y-4 text-sm">
+            </SheetTitle>
+          </SheetHeader>
+        </div>
+        
+        <ScrollArea className="flex-1">
+          <div className="p-6 pb-20">
+            <div className="space-y-4 text-sm text-muted-foreground">
               <p>
                 Welcome! This tool helps you compare different energy code compliance paths under NBC 2020 Part 9 — including both the Prescriptive and Performance options.
               </p>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <h4 className="font-semibold text-foreground text-base">Please follow these instructions:</h4>
                 
-                <div className="space-y-3">
+                <div className="space-y-6">
                   <div>
                     <h5 className="font-medium text-foreground mb-2 text-base">1. Choose Your Code Pathway:</h5>
                      <ul className="list-disc ml-6 space-y-1 text-muted-foreground">
@@ -77,7 +72,24 @@ const HelpDrawer = ({ open, onOpenChange }: HelpDrawerProps) => {
                   </div>
                   
                   <div>
-                    <h5 className="font-medium text-foreground mb-2 text-base">4. Need Help?</h5>
+                    <h5 className="font-medium text-foreground mb-2 text-base">4. Additional information required for all pathways:</h5>
+                    <ul className="list-disc ml-6 space-y-1 text-muted-foreground">
+                      <li>Identify on the plans any/all assemblies containing heating pipes, cables, or membranes.</li>
+                      <li>Indicate the air barrier system being proposed.</li>
+                      <li>Provide the following architectural details indicating continuity of insulation and air barrier: Attic hatch, eaves/top of wall, upper floor rim joist, top of basement wall/main floor junction, slab/footing junction, cantilever, bonus room floor over attached garage including ducts, typical outlet box detail, typical window/door jamb.</li>
+                    </ul>
+                    <div className="ml-6 mt-3 space-y-2 text-muted-foreground text-sm border-l-2 border-primary/20 pl-4 py-1">
+                      <p>
+                        <span className="font-semibold text-foreground">Note:</span> if Hot Water recirculation is proposed, and the thickness and extent of pipe insulation in the Service Hot Water system.
+                      </p>
+                      <p>
+                        And, if applicable: Party wall meeting outside wall, electric meter/vent pipe/duct in insulated wall, skylight shaft walls, slab edges in walkouts & heated slabs, masonry chimneys and fireplaces.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h5 className="font-medium text-foreground mb-2 text-base">5. Need Help?</h5>
                     <ul className="list-disc ml-6 space-y-1 text-muted-foreground">
                       <li>If you have any questions, just click the "Contact Us" button. You'll talk to a real person from our local team - we're here to help you understand your options.</li>
                     </ul>
@@ -97,13 +109,13 @@ const HelpDrawer = ({ open, onOpenChange }: HelpDrawerProps) => {
                   </div>
               </div>
             </div>
-            <div className="mt-6">
+            <div className="mt-8">
               <ContactBanner />
             </div>
           </div>
-        </div>
-      </DrawerContent>
-    </Drawer>
+        </ScrollArea>
+      </SheetContent>
+    </Sheet>
   );
 };
 
