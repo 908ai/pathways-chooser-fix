@@ -76,36 +76,6 @@ const ResourcesPage = () => {
             <div className="lg:sticky lg:top-24 space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-card-foreground">
-                    <Clock className="h-5 w-5 text-muted-foreground" />
-                    File Processing Timeline
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="text-muted-foreground space-y-4">
-                  <div className="p-4 bg-muted/50 border rounded-lg">
-                    <div className="grid grid-cols-1 gap-4 mb-4">
-                      <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-                        <div className="font-semibold text-blue-800 dark:text-blue-300">Day 1-2</div>
-                        <div className="text-sm text-blue-700 dark:text-blue-400">Project review & initial assessment</div>
-                      </div>
-                      <div className="text-center p-3 bg-orange-50 dark:bg-orange-900/30 rounded-lg">
-                        <div className="font-semibold text-orange-800 dark:text-orange-300">Day 3-5</div>
-                        <div className="text-sm text-orange-700 dark:text-orange-400">Initial modeling & recommendations</div>
-                      </div>
-                      <div className="text-center p-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
-                        <div className="font-semibold text-green-800 dark:text-green-300">Upon Compliance</div>
-                        <div className="text-sm text-green-700 dark:text-green-400">Invoice → Payment → Report Release</div>
-                      </div>
-                    </div>
-                    <p className="text-xs text-muted-foreground text-center">
-                      * Timelines reset if files are sent back for corrections.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
                   <CardTitle className="text-card-foreground">Energy Code Resources</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
