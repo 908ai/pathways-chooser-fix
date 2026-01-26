@@ -259,7 +259,7 @@ const ProjectDetail = () => {
         title: "Project Deleted",
         description: "The project has been permanently deleted.",
       });
-      navigate('/dashboard');
+      navigate('/projects');
 
     } catch (error) {
       console.error('Error deleting project:', error);
