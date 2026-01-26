@@ -74,8 +74,13 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
     return email.substring(0, 2).toUpperCase();
   }
 
+  // Determine the dashboard path based on role
+  const dashboardPath = (isMunicipal || isAgency) ? '/municipal-dashboard' : '/dashboard';
+  // Determine the dashboard icon based on role (optional, but BarChart3 fits municipal better)
+  const DashboardIcon = (isMunicipal || isAgency) ? BarChart3 : PieChart;
+
   const mainNavLinks = [
-    { path: '/dashboard', label: 'Dashboard', icon: <PieChart className="h-4 w-4" /> },
+    { path: dashboardPath, label: 'Dashboard', icon: <DashboardIcon className="h-4 w-4" /> },
     { path: '/projects', label: 'Projects', icon: <LayoutGrid className="h-4 w-4" /> },
     {
       path: '/calculator?showHelp=true',
@@ -95,7 +100,7 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
     <header className="bg-white dark:bg-slate-800 border-b dark:border-slate-700 sticky top-0 z-40">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center">
-          <Link to={isLoginVariant ? "/login" : "/dashboard"}>
+          <Link to={isLoginVariant ? "/login" : dashboardPath}>
             <img src="/assets/energy-navigator-logo.png" alt="Energy Navigator 9.36 Logo" className="h-[75px] dark:hidden" />
             <img src="/assets/energy-navigator-logo-w.png" alt="Energy Navigator 9.36 Logo" className="h-[75px] hidden dark:block" />
           </Link>
@@ -150,22 +155,6 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
                     </NavigationMenu>
                   )}
                   
-                  {/* Municipal / Agency dedicated dashboard link */}
-                  {(isMunicipal || isAgency) && (
-                    <Link
-                      to="/municipal-dashboard"
-                      className={cn(
-                        "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                        isLinkActive("/municipal-dashboard")
-                          ? "bg-primary/10 text-primary"
-                          : "text-primary dark:text-primary hover:bg-accent hover:text-primary/80"
-                      )}
-                    >
-                      <BarChart3 className="h-4 w-4" />
-                      Municipal Dashboard
-                    </Link>
-                  )}
-
                   {mainNavLinks.map((link: any) => {
                     const basePath = link.path.split('?')[0];
                     const isActive = isLinkActive(basePath);
