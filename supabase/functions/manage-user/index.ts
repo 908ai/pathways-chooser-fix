@@ -11,7 +11,7 @@ const corsHeaders = {
 interface RequestBody {
   action: 'delete' | 'block' | 'unblock' | 'approve' | 'reject';
   user_id: string;
-  role?: 'municipal' | 'agency'; // Required for 'approve' action
+  role?: 'municipal' | 'agency'; // Required for 'approve' action ONLY if changing role (e.g. for building officials)
   notes?: string;
 }
 
@@ -89,17 +89,20 @@ serve(async (req) => {
         break;
 
       case 'approve':
-        if (!role || (role !== 'municipal' && role !== 'agency')) {
-           throw new Error("Valid role (municipal or agency) is required for approval.");
+        // If a role is provided, it must be valid.
+        // If NO role is provided, we assume it's a simple verification approval (e.g. Energy Advisor) and skip role update.
+        if (role && (role !== 'municipal' && role !== 'agency')) {
+           throw new Error("Valid role (municipal or agency) is required if a role is specified.");
         }
 
-        // 1. Update user_roles
-        // Use onConflict to ensure we update existing role instead of inserting a duplicate
-        const { error: roleUpdateError } = await supabaseAdmin
-          .from('user_roles')
-          .upsert({ user_id: user_id, role: role }, { onConflict: 'user_id' });
-        
-        if (roleUpdateError) throw roleUpdateError;
+        // 1. Update user_roles IF a role was provided
+        if (role) {
+            const { error: roleUpdateError } = await supabaseAdmin
+            .from('user_roles')
+            .upsert({ user_id: user_id, role: role }, { onConflict: 'user_id' });
+            
+            if (roleUpdateError) throw roleUpdateError;
+        }
 
         // 2. Update profiles verification status
         const { error: profileUpdateError } = await supabaseAdmin
@@ -114,7 +117,7 @@ serve(async (req) => {
 
         if (profileUpdateError) throw profileUpdateError;
 
-        responseData = { message: `User ${user_id} approved as ${role}.` };
+        responseData = { message: `User ${user_id} approved${role ? ` as ${role}` : ''}.` };
         break;
 
       case 'reject':
