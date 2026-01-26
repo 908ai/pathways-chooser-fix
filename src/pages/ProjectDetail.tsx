@@ -919,7 +919,7 @@ const ProjectDetail = () => {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Duplicate This Project</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Create a copy of this project with all specifications intact. The duplicate will be placed in your "In Progress" section with a reset compliance status, allowing you to modify it as needed for new projects.
+                              Create a copy of this project with all specifications intact. The duplicate will be placed in your "Draft" section with a reset compliance status, allowing you to modify it as needed for new projects.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-500/50 rounded-md p-4">
