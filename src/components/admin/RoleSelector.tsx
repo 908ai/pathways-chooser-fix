@@ -11,7 +11,7 @@ interface RoleSelectorProps {
 
 const RoleSelector = ({ userId, currentRole }: RoleSelectorProps) => {
   const queryClient = useQueryClient();
-  const roles: UserRole[] = ['user', 'account_manager', 'municipal', 'agency', 'admin'];
+  const roles: UserRole[] = ['user', 'energy_advisor', 'account_manager', 'municipal', 'agency', 'admin'];
 
   const updateRoleMutation = useMutation({
     mutationFn: async ({ role }: { role: UserRole }) => {
