@@ -201,9 +201,11 @@ const ProjectDetail = () => {
         user_id: user.id,
       };
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('project_summaries')
-        .insert(duplicateData);
+        .insert(duplicateData)
+        .select()
+        .single();
 
       if (error) throw error;
 
@@ -211,7 +213,12 @@ const ProjectDetail = () => {
         title: "Project Duplicated",
         description: "A copy of this project has been created and moved to 'Draft'.",
       });
-      navigate('/dashboard');
+      
+      if (data) {
+        navigate(`/project/${data.id}`);
+      } else {
+        navigate('/dashboard');
+      }
 
     } catch (error) {
       console.error('Error duplicating project:', error);
