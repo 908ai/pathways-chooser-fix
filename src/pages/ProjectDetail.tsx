@@ -1018,7 +1018,7 @@ const ProjectDetail = () => {
           </div>
 
           {/* Centered Admin Actions */}
-          {isAdmin && (
+          {isAdmin && (project.compliance_status === 'submitted' || project.compliance_status === 'update_requested') && (
             <div className="mb-8 flex justify-center">
               <div className="bg-card rounded-lg p-[15px] flex items-center gap-3">
                 {/* Allow Edit Action (Only when update_requested) */}
