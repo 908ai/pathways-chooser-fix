@@ -467,7 +467,7 @@ export type Database = {
           other_water_heater_type?: string | null
           performance_compliance_result?: string | null
           postal_code?: string | null
-          project_name: string
+          project_name?: string
           province?: string | null
           recommendations?: string[] | null
           secondary_heating_efficiency?: string | null
@@ -493,7 +493,7 @@ export type Database = {
           updated_at?: string
           upgrade_costs?: number | null
           uploaded_files?: Json | null
-          user_id: string
+          user_id?: string
           volume_points?: number | null
           wall_points?: number | null
           wall_rsi?: number | null
@@ -838,7 +838,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "account_manager" | "user" | "municipal" | "agency"
+      app_role: "admin" | "account_manager" | "user" | "municipal" | "agency" | "energy_advisor"
     }
     CompositeTypes: {
       [_ in never]: never

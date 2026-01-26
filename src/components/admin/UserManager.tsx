@@ -31,7 +31,7 @@ const UserManager = () => {
   });
 
   const manageUserMutation = useMutation({
-    mutationFn: async ({ action, userId, role }: { action: 'delete' | 'block' | 'unblock' | 'approve' | 'reject', userId: string, role?: 'municipal' | 'agency' }) => {
+    mutationFn: async ({ action, userId, role }: { action: 'delete' | 'block' | 'unblock' | 'approve' | 'reject', userId: string, role?: 'municipal' | 'agency' | 'energy_advisor' }) => {
       const { data, error } = await supabase.functions.invoke('manage-user', {
         body: { action, user_id: userId, role },
       });
@@ -60,6 +60,8 @@ const UserManager = () => {
         return filtered.filter(u => u.role === 'user' && u.profile_type !== 'building_official');
       case 'municipal':
         return filtered.filter(u => u.role === 'municipal' || u.role === 'agency');
+      case 'energy':
+        return filtered.filter(u => u.role === 'energy_advisor' || (u.profile_type === 'energy_advisor' && u.verification_status === 'approved'));
       case 'pending':
         // Show pending building officials AND pending energy advisors
         return filtered.filter(u => 
@@ -120,6 +122,12 @@ const UserManager = () => {
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-2"
           >
             Municipal / Agencies
+          </TabsTrigger>
+          <TabsTrigger 
+            value="energy" 
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-2"
+          >
+            Energy Advisors
           </TabsTrigger>
           <TabsTrigger 
             value="pending" 
@@ -251,7 +259,7 @@ const UserManager = () => {
                                 size="sm" 
                                 variant="outline" 
                                 className="h-8 text-green-600 border-green-200 bg-green-50 hover:bg-green-100 hover:text-green-700 hover:border-green-300"
-                                onClick={() => manageUserMutation.mutate({ action: 'approve', userId: user.user_id })}
+                                onClick={() => manageUserMutation.mutate({ action: 'approve', userId: user.user_id, role: 'energy_advisor' })}
                               >
                                 <ShieldCheck className="w-3.5 h-3.5 mr-1.5" />
                                 Approve

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
-export type UserRole = 'admin' | 'account_manager' | 'user' | 'municipal' | 'agency';
+export type UserRole = 'admin' | 'account_manager' | 'user' | 'municipal' | 'agency' | 'energy_advisor';
 
 export const useUserRole = () => {
   const { user } = useAuth();
@@ -61,6 +61,10 @@ export const useUserRole = () => {
        return role === 'agency';
     }
 
+    if (userRole === 'energy_advisor') {
+       return role === 'energy_advisor';
+    }
+
     if (userRole === 'user') {
        return role === 'user';
     }
@@ -91,7 +95,8 @@ export const useUserRole = () => {
     isAccountManager: userRole === 'account_manager',
     isUser: userRole === 'user',
     isMunicipal: userRole === 'municipal',
-    isAgency: userRole === 'agency'
+    isAgency: userRole === 'agency',
+    isEnergyAdvisor: userRole === 'energy_advisor'
   }), [userRole, loading, hasRole, canDeleteProjects, canViewAllProjects, canViewMunicipalDashboard]);
 
   return value;

@@ -11,7 +11,7 @@ const corsHeaders = {
 interface RequestBody {
   action: 'delete' | 'block' | 'unblock' | 'approve' | 'reject';
   user_id: string;
-  role?: 'municipal' | 'agency'; // Required for 'approve' action ONLY if changing role (e.g. for building officials)
+  role?: 'municipal' | 'agency' | 'energy_advisor'; // Required for 'approve' action ONLY if changing role
   notes?: string;
 }
 
@@ -91,8 +91,8 @@ serve(async (req) => {
       case 'approve':
         // If a role is provided, it must be valid.
         // If NO role is provided, we assume it's a simple verification approval (e.g. Energy Advisor) and skip role update.
-        if (role && (role !== 'municipal' && role !== 'agency')) {
-           throw new Error("Valid role (municipal or agency) is required if a role is specified.");
+        if (role && (role !== 'municipal' && role !== 'agency' && role !== 'energy_advisor')) {
+           throw new Error("Valid role (municipal, agency, or energy_advisor) is required if a role is specified.");
         }
 
         // 1. Update user_roles IF a role was provided
