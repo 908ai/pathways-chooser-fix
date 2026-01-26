@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Loader2, Plus, TrendingUp, CheckCircle } from 'lucide-react';
+import { Loader2, Plus, TrendingUp, CheckCircle, Info } from 'lucide-react';
 import StatCard from '@/components/dashboard3/StatCard';
 import CompliancePathwayChart from '@/components/dashboard3/CompliancePathwayChart';
 import ProjectStatusChart from '@/components/dashboard3/ProjectStatusChart';
@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import EfficiencyInsightCard from '@/components/dashboard3/EfficiencyInsightCard';
 import MonthlySubmissionsChart from '@/components/dashboard3/MonthlySubmissionsChart';
 import ComplianceHurdlesChart from '@/components/dashboard3/ComplianceHurdlesChart';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const fetchUserProjects = async (userId: string | undefined) => {
   if (!userId) return [];
@@ -30,6 +31,9 @@ const Dashboard3 = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [userName, setUserName] = useState<string | null>(null);
+  const [verificationStatus, setVerificationStatus] = useState<string | null>(null);
+  const [profileType, setProfileType] = useState<string | null>(null);
+
   const { data: projects, isLoading } = useQuery({
     queryKey: ['userProjects', user?.id],
     queryFn: () => fetchUserProjects(user?.id),
@@ -37,8 +41,9 @@ const Dashboard3 = () => {
   });
 
   useEffect(() => {
-    const fetchUserName = async () => {
+    const fetchUserData = async () => {
       if (user) {
+        // Fetch company name
         const { data: companyData, error: companyError } = await supabase
           .from('companies')
           .select('company_name')
@@ -50,10 +55,22 @@ const Dashboard3 = () => {
         } else if (companyError && companyError.code !== 'PGRST116') {
           console.error("Error fetching company name:", companyError);
         }
+
+        // Fetch profile data for verification status
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('profile_type, verification_status')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        if (profileData) {
+            setProfileType(profileData.profile_type);
+            setVerificationStatus(profileData.verification_status);
+        }
       }
     };
 
-    fetchUserName();
+    fetchUserData();
   }, [user]);
 
   const analytics = useMemo(() => {
@@ -175,10 +192,22 @@ const Dashboard3 = () => {
     );
   }
 
+  const isPendingAHJ = profileType === 'building_official' && verificationStatus === 'pending';
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Header showSignOut={true} onSignOut={signOut} />
       <main className="flex-1 container mx-auto px-4 py-8 relative">
+        {isPendingAHJ && (
+          <Alert className="mb-6 border-blue-200 bg-blue-50 text-blue-900">
+            <Info className="h-4 w-4 text-blue-600" />
+            <AlertTitle>Account Pending Approval</AlertTitle>
+            <AlertDescription>
+              Your Building Official (AHJ) account is pending approval. You will gain access to the Municipal Dashboard once approved by an administrator.
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="flex justify-between items-center mb-8">
           <div>
             <p className="text-2xl text-foreground">

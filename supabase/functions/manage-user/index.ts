@@ -9,8 +9,10 @@ const corsHeaders = {
 };
 
 interface RequestBody {
-  action: 'delete' | 'block' | 'unblock';
+  action: 'delete' | 'block' | 'unblock' | 'approve' | 'reject';
   user_id: string;
+  role?: 'municipal' | 'agency'; // Required for 'approve' action
+  notes?: string;
 }
 
 serve(async (req) => {
@@ -53,7 +55,7 @@ serve(async (req) => {
     }
 
     // Proceed with the action
-    const { action, user_id }: RequestBody = await req.json();
+    const { action, user_id, role, notes }: RequestBody = await req.json();
 
     if (!user_id) {
       throw new Error("User ID is required.");
@@ -84,6 +86,51 @@ serve(async (req) => {
         );
         if (unblockError) throw unblockError;
         responseData = { message: `User ${user_id} unblocked successfully.`, user: unblockData.user };
+        break;
+
+      case 'approve':
+        if (!role || (role !== 'municipal' && role !== 'agency')) {
+           throw new Error("Valid role (municipal or agency) is required for approval.");
+        }
+
+        // 1. Update user_roles
+        const { error: roleUpdateError } = await supabaseAdmin
+          .from('user_roles')
+          .upsert({ user_id: user_id, role: role });
+        
+        if (roleUpdateError) throw roleUpdateError;
+
+        // 2. Update profiles verification status
+        const { error: profileUpdateError } = await supabaseAdmin
+          .from('profiles')
+          .update({
+            verification_status: 'approved',
+            verification_reviewed_at: new Date().toISOString(),
+            verification_reviewed_by: user.id,
+            verification_notes: notes || null
+          })
+          .eq('id', user_id);
+
+        if (profileUpdateError) throw profileUpdateError;
+
+        responseData = { message: `User ${user_id} approved as ${role}.` };
+        break;
+
+      case 'reject':
+        // Update profiles verification status only
+        const { error: rejectError } = await supabaseAdmin
+          .from('profiles')
+          .update({
+            verification_status: 'rejected',
+            verification_reviewed_at: new Date().toISOString(),
+            verification_reviewed_by: user.id,
+            verification_notes: notes || null
+          })
+          .eq('id', user_id);
+
+        if (rejectError) throw rejectError;
+
+        responseData = { message: `User ${user_id} verification rejected.` };
         break;
 
       default:

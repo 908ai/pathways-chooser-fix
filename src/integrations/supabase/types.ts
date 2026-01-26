@@ -202,18 +202,33 @@ export type Database = {
           id: string
           profile_type: string | null
           updated_at: string | null
+          verification_status: string | null
+          verification_requested_at: string | null
+          verification_reviewed_at: string | null
+          verification_reviewed_by: string | null
+          verification_notes: string | null
         }
         Insert: {
           can_access_providers?: boolean
           id: string
           profile_type?: string | null
           updated_at?: string | null
+          verification_status?: string | null
+          verification_requested_at?: string | null
+          verification_reviewed_at?: string | null
+          verification_reviewed_by?: string | null
+          verification_notes?: string | null
         }
         Update: {
           can_access_providers?: boolean
           id?: string
           profile_type?: string | null
           updated_at?: string | null
+          verification_status?: string | null
+          verification_requested_at?: string | null
+          verification_reviewed_at?: string | null
+          verification_reviewed_by?: string | null
+          verification_notes?: string | null
         }
         Relationships: [
           {
@@ -750,6 +765,8 @@ export type Database = {
           role: Database["public"]["Enums"]["app_role"]
           company_name: string
           project_count: number
+          profile_type: string
+          verification_status: string
         }[]
       }
       get_feedback_details: {
@@ -821,7 +838,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "account_manager" | "user"
+      app_role: "admin" | "account_manager" | "user" | "municipal" | "agency"
     }
     CompositeTypes: {
       [_ in never]: never

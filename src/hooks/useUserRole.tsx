@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
-export type UserRole = 'admin' | 'account_manager' | 'user';
+export type UserRole = 'admin' | 'account_manager' | 'user' | 'municipal' | 'agency';
 
 export const useUserRole = () => {
   const { user } = useAuth();
@@ -47,8 +47,24 @@ export const useUserRole = () => {
   const hasRole = useCallback((role: UserRole): boolean => {
     if (!userRole) return false;
     if (userRole === 'admin') return true;
-    if (userRole === 'account_manager' && (role === 'account_manager' || role === 'user')) return true;
-    if (userRole === 'user' && role === 'user') return true;
+    // Admins have all permissions
+    
+    if (userRole === 'account_manager') {
+      return role === 'account_manager' || role === 'user';
+    }
+    
+    if (userRole === 'municipal') {
+       return role === 'municipal';
+    }
+
+    if (userRole === 'agency') {
+       return role === 'agency';
+    }
+
+    if (userRole === 'user') {
+       return role === 'user';
+    }
+    
     return false;
   }, [userRole]);
 
@@ -61,7 +77,7 @@ export const useUserRole = () => {
   }, [userRole]);
 
   const canViewMunicipalDashboard = useMemo((): boolean => {
-    return userRole === 'admin' || userRole === 'account_manager';
+    return userRole === 'admin' || userRole === 'account_manager' || userRole === 'municipal' || userRole === 'agency';
   }, [userRole]);
 
   const value = useMemo(() => ({
@@ -73,7 +89,9 @@ export const useUserRole = () => {
     canViewMunicipalDashboard,
     isAdmin: userRole === 'admin',
     isAccountManager: userRole === 'account_manager',
-    isUser: userRole === 'user'
+    isUser: userRole === 'user',
+    isMunicipal: userRole === 'municipal',
+    isAgency: userRole === 'agency'
   }), [userRole, loading, hasRole, canDeleteProjects, canViewAllProjects, canViewMunicipalDashboard]);
 
   return value;

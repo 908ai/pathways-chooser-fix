@@ -16,6 +16,7 @@ import MockEditor from "./pages/MockEditor";
 import TestUpload from "./pages/TestUpload";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
+import MunicipalRoute from "./components/MunicipalRoute";
 import ProviderAccessRoute from "./components/ProviderAccessRoute";
 import NotFound from "./pages/NotFound";
 import FaqPage from "./pages/Faq";
@@ -65,7 +66,7 @@ const App = () => (
 
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-              <Route path="/municipal-dashboard" element={<AdminRoute><MunicipalDashboard /></AdminRoute>} />
+              <Route path="/municipal-dashboard" element={<MunicipalRoute><MunicipalDashboard /></MunicipalRoute>} />
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
