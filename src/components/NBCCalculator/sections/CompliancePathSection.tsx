@@ -290,11 +290,19 @@ export default function CompliancePathSection({
                                           <p className="text-base text-muted-foreground">Strategic solar design can earn "bonus points" in energy models by reducing heating demand—advantages not available in the prescriptive path.</p>
                                         </div>
                                         <div>
-                                          <h5 className="font-medium text-base mb-1">Glazing Area Impacts Compliance:</h5>
+                                          <h5 className="font-medium text-base mb-1">Glazing Area Impacts Performance Compliance:</h5>
+                                          <p className="text-base text-muted-foreground mb-2">
+                                            In the Performance path, the reference house glazing area is adjusted based on the proposed design:
+                                          </p>
                                           <ul className="list-disc pl-5 space-y-1 text-base text-muted-foreground">
-                                            <li>Reference house assume a 17–22% window-to-wall ratio.</li>
-                                            <li>Homes with less glazing than the reference benefit from reduced heat loss and can earn additional performance credits.</li>
+                                            <li>If the proposed FDWR is below <strong>17%</strong>, the reference house uses <strong>17%</strong>.</li>
+                                            <li>If the proposed FDWR is between <strong>17% and 22%</strong>, the reference house matches the proposed value.</li>
+                                            <li>If the proposed FDWR is above <strong>22%</strong>, the reference house is capped at <strong>22%</strong>.</li>
                                           </ul>
+                                          <p className="text-base text-muted-foreground mt-2">
+                                            Homes with less glazing than the reference experience reduced heat loss and can earn additional performance credits.
+                                            This applies to most homes.
+                                          </p>
                                         </div>
                                         <div>
                                           <h5 className="font-medium text-base mb-1">Supports Higher Tier Compliance:</h5>
