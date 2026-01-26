@@ -147,6 +147,15 @@ export default function Prescriptive9362Section({
         return isSet(val) && !validationErrors[key];
     };
 
+    const isF280RequiredCity =
+        ["red deer", "innisfail"].includes((selections?.city || "").toLowerCase().trim());
+
+    useEffect(() => {
+    if (!isF280RequiredCity && selections.hasF280Calculation) {
+        setSelections((prev: any) => ({ ...prev, hasF280Calculation: "" }));
+    }
+    }, [isF280RequiredCity, selections.hasF280Calculation, setSelections]);
+
     const getEnvelopeKeys = () => {
         const keys: string[] = [
             "hasHrv",
@@ -237,6 +246,8 @@ export default function Prescriptive9362Section({
                 }
             }
         }
+
+        if (isF280RequiredCity) keys.push("hasF280Calculation");
 
         return keys;
     };
@@ -1216,6 +1227,64 @@ export default function Prescriptive9362Section({
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pt-4">
                         <div className="space-y-4">
+                            {/* F280 Calculation (only when required by city/jurisdiction) */}
+                            {isF280RequiredCity && (
+                            <div id="hasF280Calculation" className="space-y-2">
+                                <div className="flex items-center gap-3">
+                                <label className="text-sm font-medium text-foreground">
+                                    Have you completed the required CSA-F280 Calculation for heating and cooling loads?
+                                    <span className="text-red-500"> *</span>
+                                </label>
+
+                                <InfoButton title="What is an F280 Calculation?">
+                                    <div className="space-y-4">
+                                    <p className="text-sm text-foreground">
+                                        An F280 calculation is a heating and cooling load calculation based on CSA Standard F280.
+                                        It helps size HVAC equipment properly based on insulation, windows, air leakage, and climate.
+                                    </p>
+
+                                    <div>
+                                        <p className="text-sm font-medium mb-2">Why it's beneficial:</p>
+                                        <ul className="list-disc list-inside space-y-1 text-sm">
+                                        <li>Ensures equipment is properly sized (not too big or too small).</li>
+                                        <li>Improves comfort and efficiency.</li>
+                                        <li>Can reduce costs by avoiding oversized systems.</li>
+                                        <li>Often required for permits in some jurisdictions.</li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="p-3 bg-blue-100 rounded-md">
+                                        <p className="text-sm font-medium mb-1">💡 Pro Tip:</p>
+                                        <p className="text-sm text-foreground">
+                                        F280 is especially helpful in energy-efficient homes where heating loads are much lower.
+                                        </p>
+                                    </div>
+                                    </div>
+                                </InfoButton>
+                                </div>
+
+                                <Select
+                                required
+                                value={selections.hasF280Calculation}
+                                onValueChange={(value) =>
+                                    setSelections((prev) => ({
+                                    ...prev,
+                                    hasF280Calculation: value,
+                                    }))
+                                }
+                                >
+                                <SelectTrigger className={cn(isMissing("hasF280Calculation") && missingFieldClass)}>
+                                    <SelectValue placeholder="Select option" />
+                                </SelectTrigger>
+
+                                <SelectContent className="bg-background border shadow-lg z-50">
+                                    <SelectItem value="completed">✓ Yes, I have completed the F280 calculation</SelectItem>
+                                    <SelectItem value="request-quote">Request a quote for F280 calculation</SelectItem>
+                                </SelectContent>
+                                </Select>
+                            </div>
+                            )}
+
                             <div id="heatingType" className="space-y-2">
                                 <div className="flex items-center gap-3">
                                     <label className="text-sm font-medium text-foreground">Heating Type <span className="text-red-500">*</span></label>
