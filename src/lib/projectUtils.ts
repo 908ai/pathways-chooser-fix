@@ -185,7 +185,7 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
             addIfMissing(optional, 'waterHeater', 'Water Heater Make/Model');
           }
         }
-        if (selections.city?.toLowerCase().trim() === "red deer" && selections.province === "alberta") {
+        if ((selections.city?.toLowerCase().trim() === "red deer" || selections.city?.toLowerCase().trim() === "innisfail") && selections.province === "alberta") {
           addIfMissing(optional, 'hasF280Calculation', 'F280 Calculation status');
         }
         

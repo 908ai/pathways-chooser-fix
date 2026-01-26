@@ -131,7 +131,7 @@ export default function Performance9365Section({
             "hasDWHR",
         ];
 
-        if (selections.city && selections.city.toLowerCase().trim() === "red deer" && selections.province === "alberta") {
+        if (selections.city && (selections.city.toLowerCase().trim() === "red deer" || selections.city.toLowerCase().trim() === "innisfail") && selections.province === "alberta") {
             keys.push("hasF280Calculation");
         }
 
@@ -891,7 +891,7 @@ export default function Performance9365Section({
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pt-4">
                         <div className="space-y-4">
-                            {selections.city && selections.city.toLowerCase().trim() === "red deer" && selections.province === "alberta" && <div id="hasF280Calculation" className="space-y-2">
+                            {selections.city && (selections.city.toLowerCase().trim() === "red deer" || selections.city.toLowerCase().trim() === "innisfail") && selections.province === "alberta" && <div id="hasF280Calculation" className="space-y-2">
                                 <div className="flex items-center gap-3">
                                     <label className="text-sm font-medium text-foreground">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
                                     <InfoButton title="What is an F280 Calculation?">
