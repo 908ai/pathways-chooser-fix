@@ -57,11 +57,22 @@ const UserManager = () => {
 
     switch (activeTab) {
       case 'builders':
-        return filtered.filter(u => u.role === 'user' && u.profile_type !== 'building_official');
+        // Show users who are NOT building officials AND NOT energy advisors
+        return filtered.filter(u => 
+          u.role === 'user' && 
+          u.profile_type !== 'building_official' && 
+          u.profile_type !== 'energy_advisor'
+        );
       case 'municipal':
-        return filtered.filter(u => u.role === 'municipal' || u.role === 'agency');
+        // Show approved municipal/agency roles OR pending building officials
+        return filtered.filter(u => 
+          u.role === 'municipal' || 
+          u.role === 'agency' || 
+          u.profile_type === 'building_official'
+        );
       case 'energy':
-        return filtered.filter(u => u.role === 'energy_advisor' || (u.profile_type === 'energy_advisor' && u.verification_status === 'approved'));
+        // Show all Energy Advisors regardless of status
+        return filtered.filter(u => u.profile_type === 'energy_advisor');
       case 'pending':
         // Show pending building officials AND pending energy advisors
         return filtered.filter(u => 
