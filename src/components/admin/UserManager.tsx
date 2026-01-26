@@ -61,7 +61,11 @@ const UserManager = () => {
       case 'municipal':
         return filtered.filter(u => u.role === 'municipal' || u.role === 'agency');
       case 'pending':
-        return filtered.filter(u => u.profile_type === 'building_official' && u.verification_status === 'pending');
+        // Show pending building officials AND pending energy advisors
+        return filtered.filter(u => 
+          (u.profile_type === 'building_official' || u.profile_type === 'energy_advisor') 
+          && u.verification_status === 'pending'
+        );
       default:
         return filtered;
     }
@@ -71,7 +75,10 @@ const UserManager = () => {
     return email.substring(0, 2).toUpperCase();
   };
 
-  const pendingCount = users?.filter(u => u.profile_type === 'building_official' && u.verification_status === 'pending').length || 0;
+  const pendingCount = users?.filter(u => 
+    (u.profile_type === 'building_official' || u.profile_type === 'energy_advisor') 
+    && u.verification_status === 'pending'
+  ).length || 0;
 
   if (isLoading) return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
   if (error) return <div className="bg-destructive/15 text-destructive p-4 rounded-md">Error loading users: {error.message}</div>;
@@ -118,7 +125,7 @@ const UserManager = () => {
             value="pending" 
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-0 py-2 flex items-center gap-2"
           >
-            Pending AHJ
+            Pending Approval
             {pendingCount > 0 && (
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] font-medium text-destructive-foreground">
                 {pendingCount}
@@ -153,7 +160,9 @@ const UserManager = () => {
                 ) : (
                   filteredUsers.map(user => {
                     const isBlocked = user.banned_until && new Date(user.banned_until) > new Date();
-                    const isPending = user.profile_type === 'building_official' && user.verification_status === 'pending';
+                    const isPending = user.verification_status === 'pending';
+                    const isBuildingOfficial = user.profile_type === 'building_official';
+                    const isEnergyAdvisor = user.profile_type === 'energy_advisor';
                     
                     return (
                       <TableRow key={user.user_id} className="group">
@@ -206,7 +215,7 @@ const UserManager = () => {
                           </div>
                         </TableCell>
                         <TableCell className="text-right">
-                          {isPending ? (
+                          {isPending && isBuildingOfficial ? (
                             <div className="flex justify-end gap-2 opacity-100 transition-opacity">
                               <Button 
                                 size="sm" 
@@ -225,6 +234,27 @@ const UserManager = () => {
                               >
                                 <ShieldCheck className="w-3.5 h-3.5 mr-1.5" />
                                 Agency
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="ghost"
+                                className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                onClick={() => manageUserMutation.mutate({ action: 'reject', userId: user.user_id })}
+                              >
+                                <ShieldX className="w-4 h-4" />
+                                <span className="sr-only">Reject</span>
+                              </Button>
+                            </div>
+                          ) : isPending && isEnergyAdvisor ? (
+                            <div className="flex justify-end gap-2 opacity-100 transition-opacity">
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="h-8 text-green-600 border-green-200 bg-green-50 hover:bg-green-100 hover:text-green-700 hover:border-green-300"
+                                onClick={() => manageUserMutation.mutate({ action: 'approve', userId: user.user_id })}
+                              >
+                                <ShieldCheck className="w-3.5 h-3.5 mr-1.5" />
+                                Approve
                               </Button>
                               <Button 
                                 size="sm" 
