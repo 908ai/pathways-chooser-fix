@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, UserCircle, Shield, LayoutGrid, PieChart, Calculator, MessageSquare } from 'lucide-react';
+import { LogOut, UserCircle, Shield, LayoutGrid, PieChart, Calculator, MessageSquare, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import {
@@ -38,7 +38,7 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { isAdmin } = useUserRole();
+  const { isAdmin, isMunicipal, isAgency } = useUserRole();
   const [userName, setUserName] = useState<string | null>(null);
   const { data: unreadCount } = useUnreadFeedback();
 
@@ -149,6 +149,23 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
                       </NavigationMenuList>
                     </NavigationMenu>
                   )}
+                  
+                  {/* Municipal / Agency dedicated dashboard link */}
+                  {(isMunicipal || isAgency) && (
+                    <Link
+                      to="/municipal-dashboard"
+                      className={cn(
+                        "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                        isLinkActive("/municipal-dashboard")
+                          ? "bg-primary/10 text-primary"
+                          : "text-primary dark:text-primary hover:bg-accent hover:text-primary/80"
+                      )}
+                    >
+                      <BarChart3 className="h-4 w-4" />
+                      Municipal Dashboard
+                    </Link>
+                  )}
+
                   {mainNavLinks.map((link: any) => {
                     const basePath = link.path.split('?')[0];
                     const isActive = isLinkActive(basePath);

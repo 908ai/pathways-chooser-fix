@@ -6,7 +6,7 @@ import { Loader2 } from 'lucide-react';
 
 const Index = () => {
   const { user, loading: authLoading } = useAuth();
-  const { isAdmin, loading: roleLoading } = useUserRole();
+  const { isAdmin, isMunicipal, isAgency, loading: roleLoading } = useUserRole();
   const navigate = useNavigate();
 
   const loading = authLoading || roleLoading;
@@ -18,12 +18,14 @@ const Index = () => {
       } else {
         if (isAdmin) {
           navigate('/admin');
+        } else if (isMunicipal || isAgency) {
+          navigate('/municipal-dashboard');
         } else {
           navigate('/dashboard');
         }
       }
     }
-  }, [user, loading, isAdmin, navigate]);
+  }, [user, loading, isAdmin, isMunicipal, isAgency, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
