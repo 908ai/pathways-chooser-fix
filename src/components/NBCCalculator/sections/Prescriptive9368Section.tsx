@@ -62,12 +62,12 @@ export default function Prescriptive9368Section({
         defaultOpen?: boolean;
     }) => {
         const [isOpen, setIsOpen] = useState(defaultOpen);
-        
+
         return (
             <Collapsible open={isOpen} onOpenChange={setIsOpen} className={cn(
                 "p-2 border rounded-lg",
-                variant === "warning" 
-                    ? "bg-orange-50 border-orange-200 dark:bg-orange-900/30 dark:border-orange-500/50" 
+                variant === "warning"
+                    ? "bg-orange-50 border-orange-200 dark:bg-orange-900/30 dark:border-orange-500/50"
                     : "bg-red-50 border-red-200 dark:bg-red-900/30 dark:border-red-500/50"
             )}>
                 <CollapsibleTrigger className="flex items-center justify-between gap-3 w-full text-left group">
@@ -103,6 +103,18 @@ export default function Prescriptive9368Section({
         }
     }, [selections.compliancePath]);
 
+    const isF280RequiredCity =
+        ["red deer", "innisfail"].includes((selections?.city || "").toLowerCase().trim());
+
+    useEffect(() => {
+        if (!isF280RequiredCity && selections.hasF280Calculation) {
+            setSelections((prev: any) => ({
+                ...prev,
+                hasF280Calculation: ""
+            }));
+        }
+    }, [isF280RequiredCity]);
+
     // Get filtered airtightness options based on building type and climate zone
     const getFilteredAirtightnessOptions = () => {
         const isZone7B = selections.province === "alberta" && selections.climateZone === "7B";
@@ -131,7 +143,7 @@ export default function Prescriptive9368Section({
         defaultOpen?: boolean;
     }) => {
         const [isOpen, setIsOpen] = useState(defaultOpen);
-        
+
         const baseClasses = "p-2 border rounded-lg";
         const variantClasses = {
             warning: "bg-orange-50 border-orange-200 text-orange-800 dark:bg-orange-900/30 dark:border-orange-500/50 dark:text-orange-300",
@@ -158,7 +170,7 @@ export default function Prescriptive9368Section({
     const isSet = (value: any) => {
         if (Array.isArray(value)) return value.length > 0;
         if (typeof value === "string") return value.trim() !== "";
-        if (typeof value === "boolean") return true; 
+        if (typeof value === "boolean") return true;
         return value !== null && value !== undefined;
     };
 
@@ -196,10 +208,10 @@ export default function Prescriptive9368Section({
             if (selections.floorsSlabsSelected?.includes("above-frost")) keys.push("unheatedFloorAboveFrostRSI");
             if (selections.floorsSlabsSelected?.includes("below-frost")) keys.push("unheatedFloorBelowFrostRSI");
         } else {
-             keys.push("unheatedFloorAboveFrostRSI");
+            keys.push("unheatedFloorAboveFrostRSI");
         }
         if (selections.hasSkylights === "yes") keys.push("skylightUValue");
-        
+
         return keys;
     };
 
@@ -207,14 +219,15 @@ export default function Prescriptive9368Section({
         const keys: string[] = [
             "hrvEfficiency", // hasHrv is forced
             "waterHeater",
-            "hasF280Calculation"
         ];
-        
+
+        if (isF280RequiredCity) keys.push("hasF280Calculation");
+
         if (selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") {
-             keys.push("hasSecondaryHrv");
-             if (selections.hasSecondaryHrv === "separate") keys.push("secondaryHrvEfficiency");
+            keys.push("hasSecondaryHrv");
+            if (selections.hasSecondaryHrv === "separate") keys.push("secondaryHrvEfficiency");
         }
-        
+
         if (selections.buildingType === "multi-unit") {
             keys.push("hasMurbMultipleHeating");
             if (selections.hasMurbMultipleHeating === "yes") {
@@ -225,11 +238,11 @@ export default function Prescriptive9368Section({
                     if (selections.murbSecondIndirectTank === 'yes') keys.push("murbSecondIndirectTankSize");
                 }
             }
-            
+
             keys.push("hasMurbMultipleWaterHeaters");
             if (selections.hasMurbMultipleWaterHeaters === "yes") {
-                 keys.push("murbSecondWaterHeaterType");
-                 keys.push("murbSecondWaterHeater");
+                keys.push("murbSecondWaterHeaterType");
+                keys.push("murbSecondWaterHeater");
             }
         }
 
@@ -249,12 +262,12 @@ export default function Prescriptive9368Section({
             const newOpenSections = [];
             if (hasMissingEnvelope) newOpenSections.push("envelope");
             if (hasMissingMechanical) newOpenSections.push("mechanical");
-            
+
             if (newOpenSections.length > 0) {
-                 setOpenSections(prev => {
+                setOpenSections(prev => {
                     const unique = Array.from(new Set([...prev, ...newOpenSections]));
                     return unique.length !== prev.length ? unique : prev;
-                 });
+                });
             }
         }
     }, [showMissingFields, hasMissingEnvelope, hasMissingMechanical]);
@@ -289,11 +302,11 @@ export default function Prescriptive9368Section({
                                 <Input type="text" placeholder={selections.compliancePath === "9368" ? "Min RSI 8.67 (R-49.2) with HRV" : selections.hasHrv === "with_hrv" ? "Min RSI 8.67 (R-49.2) with HRV" : selections.hasHrv === "without_hrv" ? "Min RSI 10.43 (R-59.2) without HRV" : "Min RSI 8.67 (R-49.2) with HRV, 10.43 (R-59.2) without HRV"} value={selections.ceilingsAtticRSI} onChange={e => setSelections(prev => ({
                                     ...prev,
                                     ceilingsAtticRSI: e.target.value
-                                }))} 
-                                className={cn(
-                                    (validationErrors.ceilingsAtticRSI || isMissing("ceilingsAtticRSI")) && missingFieldClass,
-                                    validationErrors.ceilingsAtticRSI && "border-red-500 ring-2 ring-red-500"
-                                )} 
+                                }))}
+                                    className={cn(
+                                        (validationErrors.ceilingsAtticRSI || isMissing("ceilingsAtticRSI")) && missingFieldClass,
+                                        validationErrors.ceilingsAtticRSI && "border-red-500 ring-2 ring-red-500"
+                                    )}
                                 />
                                 {(() => {
                                     if (selections.compliancePath === "9368") {
@@ -872,7 +885,7 @@ export default function Prescriptive9368Section({
                                     </InfoCollapsible>
                                 </div>
                             </div>
-                            
+
                             {/* Cathedral / Flat Roof */}
                             <div id="hasCathedralOrFlatRoof" className="space-y-2">
                                 <label className="text-sm font-medium text-foreground">Is there any cathedral ceilings or flat roof?</label>
@@ -1032,7 +1045,7 @@ export default function Prescriptive9368Section({
                                                     <p className="text-base text-muted-foreground">If Hot Water recirculation is proposed (or roughed-in), and the thickness and extent of pipe insulation in the Service Hot Water system must be noted on the drawings.</p>
                                                 </div>
                                             </div>
-                                        </InfoButton>                                         
+                                        </InfoButton>
                                     </div>
                                     <Select value={selections.hasInFloorHeat} onValueChange={value => {
                                         setSelections(prev => ({
@@ -1310,7 +1323,7 @@ export default function Prescriptive9368Section({
                                                 onChange={(e) =>
                                                     setSelections((prev) => ({
                                                         ...prev,
-                                                            unheatedFloorAboveFrostRSI: e.target.value,
+                                                        unheatedFloorAboveFrostRSI: e.target.value,
                                                     }))
                                                 }
                                                 className={cn(
@@ -1375,11 +1388,11 @@ export default function Prescriptive9368Section({
                                 <Input type="text" placeholder={`Enter U-value (maximum ${selections.province === "alberta" && selections.climateZone === "7B" ? "2.41" : "2.75"} W/(m²·K))`} value={selections.skylightUValue} onChange={e => setSelections(prev => ({
                                     ...prev,
                                     skylightUValue: e.target.value
-                                }))} 
-                                className={cn(
-                                    (isMissing("skylightUValue")) && missingFieldClass,
-                                    "flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-900 dark:text-slate-50 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:ring-primary"
-                                )}
+                                }))}
+                                    className={cn(
+                                        (isMissing("skylightUValue")) && missingFieldClass,
+                                        "flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-900 dark:text-slate-50 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:ring-primary"
+                                    )}
                                 />
                                 {(() => {
                                     const maxUValue = selections.province === "alberta" && selections.climateZone === "7B" ? 2.41 : 2.75;
@@ -1521,10 +1534,10 @@ export default function Prescriptive9368Section({
                                     <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
                                         ...prev,
                                         secondaryHrvEfficiency: e.target.value
-                                    }))} 
-                                    className={cn(
-                                        (isMissing("secondaryHrvEfficiency")) && missingFieldClass
-                                    )}
+                                    }))}
+                                        className={cn(
+                                            (isMissing("secondaryHrvEfficiency")) && missingFieldClass
+                                        )}
                                     />
                                 </div>}
                             </div>}
@@ -1551,89 +1564,70 @@ export default function Prescriptive9368Section({
                             </div>}
 
                             {/* F280 Calculation */}
-                            <div id="hasF280Calculation" className="space-y-2">
-                                <label className="text-sm font-medium text-foreground">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
-                                <InfoButton title="What is an F280 Calculation?">
-                                    <div className="space-y-4">
-                                        <div className="space-y-3">
-                                            <p className="text-sm text-foreground">
-                                                An F280 calculation is a heating and cooling load calculation based on CSA Standard F280-12 (or updated versions), which is the Canadian standard for determining how much heating or cooling a home needs. It accounts for factors like insulation levels, windows, air leakage, and local climate.
-                                            </p>
+                            {isF280RequiredCity && (
+                                <div id="hasF280Calculation" className="space-y-2">
+                                    <label className="text-sm font-medium text-foreground">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
+                                    <InfoButton title="What is an F280 Calculation?">
+                                        <div className="space-y-4">
+                                            <div className="space-y-3">
+                                                <p className="text-sm text-foreground">
+                                                    An F280 calculation is a heating and cooling load calculation based on CSA Standard F280-12 (or updated versions), which is the Canadian standard for determining how much heating or cooling a home needs. It accounts for factors like insulation levels, windows, air leakage, and local climate.
+                                                </p>
 
-                                            <div>
-                                                <p className="text-sm font-medium mb-2">Why it's beneficial:</p>
-                                                <div className="space-y-1">
-                                                    <div className="flex items-start gap-2">
-                                                        <span className="text-green-600 text-sm">•</span>
-                                                        <span className="text-sm">Ensures HVAC systems are properly sized — not too big or too small.</span>
-                                                    </div>
-                                                    <div className="flex items-start gap-2">
-                                                        <span className="text-green-600 text-sm">•</span>
-                                                        <span className="text-sm">Improves comfort, efficiency, and equipment lifespan.</span>
-                                                    </div>
-                                                    <div className="flex items-start gap-2">
-                                                        <span className="text-green-600 text-sm">•</span>
-                                                        <span className="text-sm">Reduces energy costs and avoids overspending on unnecessary system capacity.</span>
-                                                    </div>
-                                                    <div className="flex items-start gap-2">
-                                                        <span className="text-green-600 text-sm">•</span>
-                                                        <span className="text-sm">Often required for building permits or energy code compliance in many jurisdictions.</span>
+                                                <div>
+                                                    <p className="text-sm font-medium mb-2">Why it's beneficial:</p>
+                                                    <div className="space-y-1">
+                                                        <div className="flex items-start gap-2">
+                                                            <span className="text-green-600 text-sm">•</span>
+                                                            <span className="text-sm">Ensures HVAC systems are properly sized — not too big or too small.</span>
+                                                        </div>
+                                                        <div className="flex items-start gap-2">
+                                                            <span className="text-green-600 text-sm">•</span>
+                                                            <span className="text-sm">Improves comfort, efficiency, and equipment lifespan.</span>
+                                                        </div>
+                                                        <div className="flex items-start gap-2">
+                                                            <span className="text-green-600 text-sm">•</span>
+                                                            <span className="text-sm">Reduces energy costs and avoids overspending on unnecessary system capacity.</span>
+                                                        </div>
+                                                        <div className="flex items-start gap-2">
+                                                            <span className="text-green-600 text-sm">•</span>
+                                                            <span className="text-sm">Often required for building permits or energy code compliance in many jurisdictions.</span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            <div className="p-3 bg-blue-100 rounded-md">
-                                                <p className="text-sm font-medium mb-1">💡 Pro Tip:</p>
-                                                <p className="text-sm text-foreground">
-                                                    F280 calcs are especially valuable in energy-efficient homes where heating loads can be dramatically lower than traditional assumptions.
-                                                </p>
+                                                <div className="p-3 bg-blue-100 rounded-md">
+                                                    <p className="text-sm font-medium mb-1">💡 Pro Tip:</p>
+                                                    <p className="text-sm text-foreground">
+                                                        F280 calcs are especially valuable in energy-efficient homes where heating loads can be dramatically lower than traditional assumptions.
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </InfoButton>
-                                <Select value={selections.hasF280Calculation} onValueChange={value => setSelections(prev => ({
-                                    ...prev,
-                                    hasF280Calculation: value
-                                }))}>
-                                    <SelectTrigger className={cn(
-                                        (isMissing("hasF280Calculation")) && missingFieldClass
-                                    )}>
-                                        <SelectValue placeholder="Select option" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-background border shadow-lg z-50">
-                                        <SelectItem value="completed">✓ Yes, I have completed the F280 calculation</SelectItem>
-                                        <SelectItem value="request-quote">Request a quote for F280 calculation</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            {/* Service Water Heater - Second Occurrence */}
-                            {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <div id="waterHeater" className="space-y-2">
-                                <label className="text-sm font-medium text-foreground">Service Water Heater <span className="text-red-400">*</span></label>
-                                <Select value={selections.waterHeater} onValueChange={value => setSelections(prev => ({
-                                    ...prev,
-                                    waterHeater: value
-                                }))}>
-                                    <SelectTrigger className={cn(
-                                        (validationErrors.waterHeater || isMissing("waterHeater")) && missingFieldClass,
-                                        validationErrors.waterHeater && "border-red-500 ring-2 ring-red-500"
-                                    )}>
-                                        <SelectValue placeholder="Select water heater type" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {waterHeaterOptions.map(option => <SelectItem key={option.value} value={option.value}>
-                                            {option.label} ({option.points} points)
-                                        </SelectItem>)}
-                                    </SelectContent>
-                                </Select>
-                            </div>}
+                                    </InfoButton>
+                                    <Select value={selections.hasF280Calculation} onValueChange={value => setSelections(prev => ({
+                                        ...prev,
+                                        hasF280Calculation: value
+                                    }))}>
+                                        <SelectTrigger className={cn(
+                                            (isMissing("hasF280Calculation")) && missingFieldClass
+                                        )}>
+                                            <SelectValue placeholder="Select option" />
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-background border shadow-lg z-50">
+                                            <SelectItem value="completed">✓ Yes, I have completed the F280 calculation</SelectItem>
+                                            <SelectItem value="request-quote">Request a quote for F280 calculation</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            )}
 
                             {/* MURB Multiple Heating Systems - Only show for Multi-Unit buildings */}
                             {selections.buildingType === "multi-unit" && <div className="space-y-4 p-4 bg-green-50 border border-green-200 rounded-md dark:bg-green-900/30 dark:border-green-500/50">
                                 <h5 className="font-medium text-green-800 dark:text-green-300">Multi-Unit Building Heating Systems</h5>
 
                                 <div id="hasMurbMultipleHeating" className={cn(
-                                    "space-y-2", 
+                                    "space-y-2",
                                     (validationErrors.hasMurbMultipleHeating || isMissing("hasMurbMultipleHeating")) && "p-2 border-2 border-red-500 rounded-md"
                                 )}>
                                     <label className="text-sm font-medium text-green-800 dark:text-green-300">Will there be multiple heating systems in this building? <span className="text-red-400">*</span></label>
@@ -1694,11 +1688,11 @@ export default function Prescriptive9368Section({
                                         <Input type="text" placeholder={selections.murbSecondHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.murbSecondHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.murbSecondHeatingEfficiency} onChange={e => setSelections(prev => ({
                                             ...prev,
                                             murbSecondHeatingEfficiency: e.target.value
-                                        }))} 
-                                        className={cn(
-                                            (validationErrors.murbSecondHeatingEfficiency || isMissing("murbSecondHeatingEfficiency")) && missingFieldClass,
-                                            validationErrors.murbSecondHeatingEfficiency && "border-red-500 ring-2 ring-red-500"
-                                        )} 
+                                        }))}
+                                            className={cn(
+                                                (validationErrors.murbSecondHeatingEfficiency || isMissing("murbSecondHeatingEfficiency")) && missingFieldClass,
+                                                validationErrors.murbSecondHeatingEfficiency && "border-red-500 ring-2 ring-red-500"
+                                            )}
                                         />
                                         {selections.murbSecondHeatingEfficiency && selections.murbSecondHeatingType !== 'heat-pump' && (() => {
                                             const inputValue = parseFloat(selections.murbSecondHeatingEfficiency);
@@ -1775,7 +1769,7 @@ export default function Prescriptive9368Section({
                                 <h5 className="font-medium text-orange-800 dark:text-orange-300">Multi-Unit Building Water Heating</h5>
 
                                 <div id="hasMurbMultipleWaterHeaters" className={cn(
-                                    "space-y-2", 
+                                    "space-y-2",
                                     (validationErrors.hasMurbMultipleWaterHeaters || isMissing("hasMurbMultipleWaterHeaters")) && "p-2 border-2 border-red-500 rounded-md"
                                 )}>
                                     <label className="text-sm font-medium text-orange-800 dark:text-orange-300">Will there be multiple hot water system types in this building? <span className="text-red-400">*</span></label>
@@ -1847,11 +1841,11 @@ export default function Prescriptive9368Section({
                                         })()} value={selections.murbSecondWaterHeater} onChange={e => setSelections(prev => ({
                                             ...prev,
                                             murbSecondWaterHeater: e.target.value
-                                        }))} 
-                                        className={cn(
-                                            (validationErrors.murbSecondWaterHeater || isMissing("murbSecondWaterHeater")) && missingFieldClass,
-                                            validationErrors.murbSecondWaterHeater && "border-red-500 ring-2 ring-red-500"
-                                        )} 
+                                        }))}
+                                            className={cn(
+                                                (validationErrors.murbSecondWaterHeater || isMissing("murbSecondWaterHeater")) && missingFieldClass,
+                                                validationErrors.murbSecondWaterHeater && "border-red-500 ring-2 ring-red-500"
+                                            )}
                                         />
                                     </div>}
                                 </div>}
