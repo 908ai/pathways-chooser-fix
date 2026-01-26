@@ -15,6 +15,7 @@ import EfficiencyInsightCard from '@/components/dashboard3/EfficiencyInsightCard
 import MonthlySubmissionsChart from '@/components/dashboard3/MonthlySubmissionsChart';
 import ComplianceHurdlesChart from '@/components/dashboard3/ComplianceHurdlesChart';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useUserRole } from '@/hooks/useUserRole';
 
 const fetchUserProjects = async (userId: string | undefined) => {
   if (!userId) return [];
@@ -30,6 +31,7 @@ const fetchUserProjects = async (userId: string | undefined) => {
 const Dashboard3 = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { isMunicipal, isAgency } = useUserRole();
   const [userName, setUserName] = useState<string | null>(null);
   const [verificationStatus, setVerificationStatus] = useState<string | null>(null);
   const [profileType, setProfileType] = useState<string | null>(null);
@@ -39,6 +41,13 @@ const Dashboard3 = () => {
     queryFn: () => fetchUserProjects(user?.id),
     enabled: !!user,
   });
+
+  // Redirect Municipal/Agency users
+  useEffect(() => {
+    if (isMunicipal || isAgency) {
+        navigate('/municipal-dashboard');
+    }
+  }, [isMunicipal, isAgency, navigate]);
 
   useEffect(() => {
     const fetchUserData = async () => {

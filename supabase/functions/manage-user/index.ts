@@ -94,9 +94,10 @@ serve(async (req) => {
         }
 
         // 1. Update user_roles
+        // Use onConflict to ensure we update existing role instead of inserting a duplicate
         const { error: roleUpdateError } = await supabaseAdmin
           .from('user_roles')
-          .upsert({ user_id: user_id, role: role });
+          .upsert({ user_id: user_id, role: role }, { onConflict: 'user_id' });
         
         if (roleUpdateError) throw roleUpdateError;
 
