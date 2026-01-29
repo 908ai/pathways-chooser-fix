@@ -153,47 +153,16 @@ const showSubmittedRecommendation =
             )}
 
 {optional.length > 0 && (
-  showSubmittedRecommendation ? (
-    <div className="p-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20">
-      <div className="flex items-start gap-2 text-xs text-blue-600 dark:text-blue-400">
-        <Info className="h-4 w-4 flex-shrink-0 mt-0.5 text-blue-500" />
-        <p>
-          <span className="font-semibold">Recommended:</span> Test &amp; Track Air-tightness
-        </p>
-      </div>
+  <div className="p-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20">
+    <div className="flex items-start gap-2 text-xs text-blue-600 dark:text-blue-400">
+      <Info className="h-4 w-4 flex-shrink-0 mt-0.5 text-blue-500" />
+      <p>
+        <span className="font-semibold">Recommended:</span> Test &amp; Track Air-tightness
+      </p>
     </div>
-  ) : (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <div className="p-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20">
-          <div className="flex items-start gap-2 text-xs text-blue-600 dark:text-blue-400">
-            <Info className="h-4 w-4 flex-shrink-0 mt-0.5 text-blue-500" />
-            <p>
-              <span className="font-semibold">Recommended ({optional.length}):</span>{" "}
-              {optional[0].label}
-              {optional.length > 1 && `, +${optional.length - 1} more`}
-            </p>
-          </div>
-        </div>
-      </TooltipTrigger>
-      <TooltipContent>
-        <div className="p-2">
-          <p className="font-semibold mb-2">Recommended Items:</p>
-          <ul className="list-disc list-inside space-y-1 text-xs">
-            {optional.slice(0, 5).map(item => (
-              <li key={item.fieldId}>{item.label}</li>
-            ))}
-            {optional.length > 5 && (
-              <li className="font-medium text-muted-foreground">
-                ...and {optional.length - 5} more
-              </li>
-            )}
-          </ul>
-        </div>
-      </TooltipContent>
-    </Tooltip>
-  )
+  </div>
 )}
+
 
           </div>
         )}
