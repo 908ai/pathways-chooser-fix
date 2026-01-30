@@ -3,7 +3,7 @@ import { Link as LinkIcon } from "lucide-react";
 
 export const EffectiveRSIWarning = () => {
     return (
-        <WarningButton title="Effective RSI/R-Value Required">
+        <WarningButton title="Effective RSI Required">
             <div className="space-y-3">
                 <p>
                     You must provide calculated proof that each part of the building envelope meets or exceeds the required effective RSI value, using approved methods like the isothermal planes approach. Each wall type — including exterior walls, tall walls, walls next to garages, and attic-adjacent walls like skylight shafts — must be calculated separately.

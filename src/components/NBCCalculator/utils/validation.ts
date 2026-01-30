@@ -46,16 +46,16 @@ export const validateRSI = (inputValue: string, minRSI: number, fieldName: strin
   const suspectedRValue = numValue / 5.678;
   const minRValue = minRSI * 5.678;
 
-  // Check if this appears to be an R-value that's too low (below R30)
-  if (numValue >= 10 && numValue < 30) {
-    return {
-      isValid: false,
-      warning: {
-        type: "rvalue-too-low",
-        message: `This appears to be an R-value (${numValue.toFixed(1)}) which is too low. R-values should be at least R30. Please enter a higher R-value or the equivalent RSI value.`
-      }
-    };
-  }
+  // // Check if this appears to be an R-value that's too low (below R30)
+  // if (numValue >= 10 && numValue < 30) {
+  //   return {
+  //     isValid: false,
+  //     warning: {
+  //       type: "rvalue-too-low",
+  //       message: `This appears to be an R-value (${numValue.toFixed(1)}) which is too low. R-values should be at least R30. Please enter a higher R-value or the equivalent RSI value.`
+  //     }
+  //   };
+  // }
 
   // Check if this appears to be a valid R-value that should be converted to RSI
   if (numValue > minRSI * 3 && numValue >= 30 && suspectedRValue >= minRSI * 0.8 && suspectedRValue <= minRSI * 1.2) {

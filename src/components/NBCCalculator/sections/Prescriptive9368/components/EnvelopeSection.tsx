@@ -36,15 +36,49 @@ export default function EnvelopeSection({
             {/* Ceiling/Attic Insulation */}
             <div id="ceilingsAtticRSI" className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Effective RSI - Ceilings below Attics <span className="text-red-400">*</span></label>
-                <Input type="text" placeholder={selections.compliancePath === "9368" ? "Min RSI 8.67 (R-49.2) with HRV" : selections.hasHrv === "with_hrv" ? "Min RSI 8.67 (R-49.2) with HRV" : selections.hasHrv === "without_hrv" ? "Min RSI 10.43 (R-59.2) without HRV" : "Min RSI 8.67 (R-49.2) with HRV, 10.43 (R-59.2) without HRV"} value={selections.ceilingsAtticRSI} onChange={e => setSelections(prev => ({
-                    ...prev,
-                    ceilingsAtticRSI: e.target.value
-                }))}
+                <Input
+                    type="number"
+                    inputMode="decimal"
+                    step="0.01"
+                    min="0"
+                    placeholder={
+                        selections.compliancePath === "9368"
+                            ? "Min RSI 8.67 with HRV"
+                            : selections.hasHrv === "with_hrv"
+                                ? "Min RSI 8.67 with HRV"
+                                : selections.hasHrv === "without_hrv"
+                                    ? "Min RSI 10.43 without HRV"
+                                    : "Min RSI 8.67 with HRV, 10.43 without HRV"
+                    }
+                    value={selections.ceilingsAtticRSI}
+                    onKeyDown={(e) => {
+                        // Blocks letters like "e", "+", "-" that some browsers allow in number inputs
+                        if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
+                    }}
+                    onChange={(e) => {
+                        // Keep ONLY digits + a single dot
+                        let v = e.target.value;
+
+                        // Remove anything that's not digit or dot
+                        v = v.replace(/[^\d.]/g, "");
+
+                        // Allow only one dot
+                        const firstDot = v.indexOf(".");
+                        if (firstDot !== -1) {
+                            v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, "");
+                        }
+
+                        setSelections((prev) => ({
+                            ...prev,
+                            ceilingsAtticRSI: v,
+                        }));
+                    }}
                     className={cn(
                         (validationErrors.ceilingsAtticRSI || isMissing("ceilingsAtticRSI")) && missingFieldClass,
                         validationErrors.ceilingsAtticRSI && "border-red-500 ring-2 ring-red-500"
                     )}
                 />
+
                 {(() => {
                     if (selections.compliancePath === "9368") {
                         const minRSI = 8.67; // For 9368, HRV is mandatory
@@ -76,7 +110,16 @@ export default function EnvelopeSection({
 
             {/* Wall Insulation */}
             <div id="wallRSI" className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Above Grade Walls - RSI Value <span className="text-red-400">*</span></label>
+                <div className="flex items-center gap-2">
+                    <label className="text-sm font-medium text-foreground">Above Grade Walls - RSI Value <span className="text-red-400">*</span></label>
+                    <InfoButton title="Above Grade Walls - RSI Value">
+                        <div className="space-y-4">
+                            <p className="text-sm">
+                                Enter the RSI value for your lowest-performing wall assembly, including tall walls.
+                            </p>
+                        </div>
+                    </InfoButton>
+                </div>
                 <Select value={selections.wallRSI} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     wallRSI: value
@@ -648,15 +691,33 @@ export default function EnvelopeSection({
                         Cathedral / Flat Roofs (RSI)
                     </label>
                     <Input
-                        type="text"
+                        type="number"
+                        inputMode="decimal"
+                        step="0.01"
+                        min="0"
                         placeholder="Min RSI 5.02"
                         value={selections.cathedralFlatRSI}
-                        onChange={(e) =>
+                        onKeyDown={(e) => {
+                            // Prevent letters/symbols some browsers allow in number inputs
+                            if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
+                        }}
+                        onChange={(e) => {
+                            let v = e.target.value;
+
+                            // Remove anything that's not digit or dot
+                            v = v.replace(/[^\d.]/g, "");
+
+                            // Allow only one dot
+                            const firstDot = v.indexOf(".");
+                            if (firstDot !== -1) {
+                                v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, "");
+                            }
+
                             setSelections((prev) => ({
                                 ...prev,
-                                cathedralFlatRSI: e.target.value,
-                            }))
-                        }
+                                cathedralFlatRSI: v,
+                            }));
+                        }}
                         className={cn(
                             validationErrors.cathedralFlatRSI &&
                             "border-red-500 ring-2 ring-red-500"
@@ -689,26 +750,208 @@ export default function EnvelopeSection({
             {/* Floors over Unheated Spaces */}
             <div id="floorsUnheatedRSI" className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</label>
-                <Input type="text" placeholder="Min. RSI 5.02 or N/A" value={selections.floorsUnheatedRSI} onChange={e => setSelections(prev => ({
-                    ...prev,
-                    floorsUnheatedRSI: e.target.value
-                }))} className="flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-900 dark:text-slate-50 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:ring-primary" />
-                {selections.floorsUnheatedRSI && parseFloat(selections.floorsUnheatedRSI) < 5.02 && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md" style={{ backgroundColor: 'beige' }}>
-                </div>}
+                <Input
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="Min. RSI 5.02 or N/A"
+                    value={selections.floorsUnheatedRSI}
+                    onKeyDown={(e) => {
+                        // allow navigation/edit keys
+                        const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End"];
+                        if (allowedKeys.includes(e.key)) return;
+
+                        // allow digits + dot always
+                        if (/[0-9.]/.test(e.key)) return;
+
+                        // allow typing toward N/A only (n, a, /)
+                        if (/[a-z]/i.test(e.key) && !["n", "a"].includes(e.key.toLowerCase())) {
+                            e.preventDefault();
+                            return;
+                        }
+                        if (!["/", "n", "N", "a", "A"].includes(e.key)) {
+                            e.preventDefault();
+                        }
+                    }}
+                    onChange={(e) => {
+                        const raw = e.target.value; // don't trim here (avoids cursor weirdness)
+
+                        // If user is typing anything starting with N (N, n, N/, na, n/a...), just keep it (no auto-uppercase)
+                        if (/^n/i.test(raw)) {
+                            // keep only characters that make sense for N/A typing
+                            const kept = raw.replace(/[^nNaA/]/g, "");
+                            // also prevent multiple slashes
+                            const firstSlash = kept.indexOf("/");
+                            const finalNA =
+                                firstSlash === -1 ? kept : kept.slice(0, firstSlash + 1) + kept.slice(firstSlash + 1).replace(/\//g, "");
+
+                            setSelections((prev) => ({ ...prev, floorsUnheatedRSI: finalNA }));
+                            return;
+                        }
+
+                        // Otherwise numeric-only decimal
+                        let v = raw.replace(/[^\d.]/g, "");
+                        const firstDot = v.indexOf(".");
+                        if (firstDot !== -1) {
+                            v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, "");
+                        }
+
+                        setSelections((prev) => ({ ...prev, floorsUnheatedRSI: v }));
+                    }}
+                    onBlur={() => {
+                        const v = (selections.floorsUnheatedRSI || "").replace(/\s+/g, "");
+
+                        // normalize N/A only when user leaves the field (prevents laggy typing)
+                        if (/^n\/?a$/i.test(v)) {
+                            setSelections((prev) => ({ ...prev, floorsUnheatedRSI: "N/A" }));
+                            return;
+                        }
+
+                        // optional: if ends with ".", clean it up on blur (e.g. "5.")
+                        if (/^\d+\.$/.test(v)) {
+                            setSelections((prev) => ({ ...prev, floorsUnheatedRSI: v.slice(0, -1) }));
+                        }
+                    }}
+                    className="flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-900 dark:text-slate-50 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:ring-primary"
+                />
+
+                {(() => {
+                    const minRSI = 5.02;
+
+                    // Treat N/A as valid (no warning)
+                    const v = (selections.floorsUnheatedRSI || "").trim();
+                    const isNA = v.toUpperCase() === "N/A";
+                    if (isNA || v === "") return null;
+
+                    const validation = validateRSI(
+                        v,
+                        minRSI,
+                        "floors over unheated spaces"
+                    );
+
+                    const showWarning = !validation.isValid && !!validation.warning;
+
+                    return showWarning ? (
+                        <InfoCollapsible
+                            title="🛑 RSI Value Too Low"
+                            variant="destructive"
+                            defaultOpen={true}
+                        >
+                            <p className="text-xs">
+                                {`The RSI value must be increased to at least ${minRSI} for floors over unheated spaces.`}
+                            </p>
+                        </InfoCollapsible>
+                    ) : null;
+                })()}
+
+
                 <EffectiveRSIWarning />
             </div>
 
             {/* Floors over Garages */}
             <div id="floorsGarageRSI" className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Floors over Garage (Bonus Floor)</label>
-                <Input type="text" placeholder="Min RSI 4.86 or N/A" value={selections.floorsGarageRSI} onChange={e => setSelections(prev => ({
-                    ...prev,
-                    floorsGarageRSI: e.target.value
-                }))} className="flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-900 dark:text-slate-50 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:ring-primary" />
-                {selections.floorsGarageRSI && parseFloat(selections.floorsGarageRSI) < 4.86 && <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md" style={{ backgroundColor: 'beige' }}>
-                </div>}
+                <label className="text-sm font-medium text-foreground">
+                    Floors over Garage (Bonus Floor)
+                </label>
+
+                <Input
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="Min RSI 4.86 or N/A"
+                    value={selections.floorsGarageRSI}
+                    onKeyDown={(e) => {
+                        // allow navigation/edit keys
+                        const allowedKeys = [
+                            "Backspace",
+                            "Delete",
+                            "ArrowLeft",
+                            "ArrowRight",
+                            "Tab",
+                            "Home",
+                            "End",
+                        ];
+                        if (allowedKeys.includes(e.key)) return;
+
+                        // allow digits + dot always
+                        if (/[0-9.]/.test(e.key)) return;
+
+                        // allow typing toward N/A only (n, a, /)
+                        if (/[a-z]/i.test(e.key) && !["n", "a"].includes(e.key.toLowerCase())) {
+                            e.preventDefault();
+                            return;
+                        }
+                        if (!["/", "n", "N", "a", "A"].includes(e.key)) {
+                            e.preventDefault();
+                        }
+                    }}
+                    onChange={(e) => {
+                        const raw = e.target.value; // don't trim here (prevents cursor lag)
+
+                        // If user is typing anything starting with N, keep it (N, N/, NA, N/A)
+                        if (/^n/i.test(raw)) {
+                            const kept = raw.replace(/[^nNaA/]/g, "");
+                            const firstSlash = kept.indexOf("/");
+                            const finalNA =
+                                firstSlash === -1
+                                    ? kept
+                                    : kept.slice(0, firstSlash + 1) +
+                                    kept.slice(firstSlash + 1).replace(/\//g, "");
+
+                            setSelections((prev) => ({ ...prev, floorsGarageRSI: finalNA }));
+                            return;
+                        }
+
+                        // Otherwise numeric-only decimal
+                        let v = raw.replace(/[^\d.]/g, "");
+                        const firstDot = v.indexOf(".");
+                        if (firstDot !== -1) {
+                            v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, "");
+                        }
+
+                        setSelections((prev) => ({ ...prev, floorsGarageRSI: v }));
+                    }}
+                    onBlur={() => {
+                        const v = (selections.floorsGarageRSI || "").replace(/\s+/g, "");
+
+                        // normalize N/A only on blur
+                        if (/^n\/?a$/i.test(v)) {
+                            setSelections((prev) => ({ ...prev, floorsGarageRSI: "N/A" }));
+                            return;
+                        }
+
+                        // optional cleanup: "4." -> "4"
+                        if (/^\d+\.$/.test(v)) {
+                            setSelections((prev) => ({ ...prev, floorsGarageRSI: v.slice(0, -1) }));
+                        }
+                    }}
+                    className="flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-slate-900 dark:text-slate-50 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:ring-primary"
+                />
+
+                {(() => {
+                    const minRSI = 4.86;
+
+                    const v = (selections.floorsGarageRSI || "").trim();
+                    const isNA = v.toUpperCase() === "N/A";
+                    if (isNA || v === "") return null;
+
+                    const validation = validateRSI(v, minRSI, "floors over garage");
+                    const showWarning = !validation.isValid && !!validation.warning;
+
+                    return showWarning ? (
+                        <InfoCollapsible
+                            title="🛑 RSI Value Too Low"
+                            variant="destructive"
+                            defaultOpen={true}
+                        >
+                            <p className="text-xs">
+                                {`The RSI value must be increased to at least ${minRSI} for floors over garage.`}
+                            </p>
+                        </InfoCollapsible>
+                    ) : null;
+                })()}
+
                 <EffectiveRSIWarning />
             </div>
+
 
             {/* Slab-on-Grade */}
             <div id="hasSlabOnGrade" className="space-y-2">
