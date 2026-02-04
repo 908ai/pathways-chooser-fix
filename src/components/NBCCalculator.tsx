@@ -337,36 +337,35 @@ const NBCCalculator = () => {
   const loadProfileAndCompanyData = async () => {
     if (!user) return;
     try {
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('*, company:companies(*)')
-        .eq('id', user.id)
-        .single();
+      // Fetch profile and company data in parallel
+      const [
+        { data: profile, error: profileError },
+        { data: company, error: companyError }
+      ] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('first_name, last_name')
+          .eq('id', user.id)
+          .single(),
+        supabase
+          .from('companies')
+          .select('company_name, phone, address')
+          .eq('user_id', user.id)
+          .single()
+      ]);
 
-      if (profileError && profileError.code !== 'PGRST116') {
-        throw profileError;
-      }
+      if (profileError && profileError.code !== 'PGRST116') throw profileError;
+      if (companyError && companyError.code !== 'PGRST116') throw companyError;
 
-      const { data: company, error: companyError } = await supabase
-        .from('companies')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
+      setSelections(prev => ({
+        ...prev,
+        firstName: profile?.first_name || '',
+        lastName: profile?.last_name || '',
+        company: company?.company_name || '',
+        phoneNumber: company?.phone || '',
+        companyAddress: company?.address || ''
+      }));
 
-      if (companyError && companyError.code !== 'PGRST116') {
-        throw companyError;
-      }
-
-      if (profile || company) {
-        setSelections(prev => ({
-          ...prev,
-          firstName: profile?.first_name || '',
-          lastName: profile?.last_name || '',
-          company: company?.company_name || '',
-          phoneNumber: company?.phone || '',
-          companyAddress: company?.address || ''
-        }));
-      }
     } catch (error) {
       console.error('Error loading profile and company data:', error);
       toast({ title: "Error", description: "Could not load your profile information.", variant: "destructive" });
