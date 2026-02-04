@@ -303,6 +303,9 @@ const NBCCalculator = () => {
       if (user) {
         loadProjectForEditing(editProjectId);
       }
+    } else if (user) {
+      // If not editing, it's a new project, so load profile data
+      loadProfileAndCompanyData();
     }
   }, [searchParams, user]);
 
@@ -330,6 +333,35 @@ const NBCCalculator = () => {
       }
     }
   }, [selections, validationErrors]);
+
+  const loadProfileAndCompanyData = async () => {
+    if (!user) return;
+    try {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*, company:companies(*)')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError && profileError.code !== 'PGRST116') {
+        throw profileError;
+      }
+
+      if (profile) {
+        setSelections(prev => ({
+          ...prev,
+          firstName: profile.first_name || '',
+          lastName: profile.last_name || '',
+          company: profile.company?.name || '',
+          phoneNumber: profile.company?.phone_number || '',
+          companyAddress: profile.company?.address || ''
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading profile and company data:', error);
+      toast({ title: "Error", description: "Could not load your profile information.", variant: "destructive" });
+    }
+  };
 
   const loadProjectForEditing = async (projectId: string) => {
     setIsLoading(true);
@@ -359,6 +391,17 @@ const NBCCalculator = () => {
         console.error('Error loading company data:', companyError);
       }
 
+      // Fetch the latest profile data regardless of what is in the project
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('first_name, last_name')
+        .eq('id', user?.id)
+        .single();
+
+      if (profileError && profileError.code !== 'PGRST116') {
+        console.error('Error loading profile data:', profileError);
+      }
+
       if (p) {
         const namePart = p.project_name?.split(' - ')[0] || "";
         const nameParts = namePart.split(' ');
@@ -373,16 +416,19 @@ const NBCCalculator = () => {
         }
 
         const newSelections = {
-          firstName: firstName || companyData?.company_name?.split(' ')[0] || "",
-          lastName: lastName || companyData?.company_name?.split(' ').slice(1).join(' ') || "",
-          company: companyData?.company_name || "",
+          // Always prioritize fresh data from profile and company tables
+          firstName: profileData?.first_name || "",
+          lastName: profileData?.last_name || "",
+          company: companyData?.name || "",
           companyAddress: companyData?.address || "",
+          phoneNumber: companyData?.phone_number || "",
+
+          // Load project-specific data from the saved project
           streetAddress: p.street_address || p.location || "",
           unitNumber: p.unit_number || "",
           city: p.city || "",
           postalCode: p.postal_code || "",
           buildingType: p.building_type || "",
-          phoneNumber: companyData?.phone || "",
           province: p.province || "",
           frontDoorOrientation: p.front_door_orientation || "",
           climateZone: p.climate_zone || "",

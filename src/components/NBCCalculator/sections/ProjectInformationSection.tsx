@@ -16,9 +16,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-
 
 type Props = {
   selections: any;
@@ -34,40 +31,6 @@ export default function ProjectInformationSection({
 }: Props) {
   const [userProfile, setUserProfile] = useState<any>(null);
   const [company, setCompany] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select(`
-            *,
-            company:companies(*)
-          `)
-          .eq('id', user.id)
-          .single();
-
-        if (profile) {
-          setUserProfile(profile);
-          if (profile.company) {
-            setCompany(profile.company);
-          }
-          
-          setSelections(prev => ({
-            ...prev,
-            firstName: profile.first_name || '',
-            lastName: profile.last_name || '',
-            company: profile.company?.name || '',
-            phoneNumber: profile.company?.phone_number || '',
-            companyAddress: profile.company?.address || ''
-          }));
-        }
-      }
-    };
-
-    fetchProfile();
-  }, [setSelections]);
 
   return (
     <>
