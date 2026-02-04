@@ -29,9 +29,6 @@ export default function ProjectInformationSection({
   setSelections,
   validationErrors,
 }: Props) {
-  const [userProfile, setUserProfile] = useState<any>(null);
-  const [company, setCompany] = useState<any>(null);
-
   return (
     <>
       {
