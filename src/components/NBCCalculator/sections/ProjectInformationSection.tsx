@@ -94,7 +94,7 @@ export default function ProjectInformationSection({
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Link to="/profile">
+                        <Link to="/account">
                           <Pencil className="h-5 w-5 text-muted-foreground cursor-pointer" />
                         </Link>
                       </TooltipTrigger>
