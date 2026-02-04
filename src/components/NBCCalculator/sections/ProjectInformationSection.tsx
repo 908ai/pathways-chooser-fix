@@ -89,92 +89,8 @@ export default function ProjectInformationSection({
            <CardContent className="space-y-6 pt-6">
              {/* Personal/Contact Information */}
              <div className="space-y-4">
-               <h4 className="text-md font-medium border-b border-border pb-2 tracking-wide text-foreground">Personal & Contact Information <span className="text-red-400 font-semibold">(Required)</span></h4>
-               
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div id="firstName" className="space-y-2">
-                   <label className="text-sm font-medium text-foreground">First Name</label>
-                   <div className="flex items-center gap-2">
-                    <Input type="text" placeholder="Enter first name" value={selections.firstName} disabled className={cn(validationErrors.firstName && "border-red-500 ring-2 ring-red-500")} />
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Link to="/profile">
-                            <Pencil className="h-5 w-5 text-muted-foreground cursor-pointer" />
-                          </Link>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>To change this, please edit your profile.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                   </div>
-                 </div>
-                 
-                 <div id="lastName" className="space-y-2">
-                   <label className="text-sm font-medium text-foreground">Last Name</label>
-                   <div className="flex items-center gap-2">
-                    <Input type="text" placeholder="Enter last name" value={selections.lastName} disabled className={cn(validationErrors.lastName && "border-red-500 ring-2 ring-red-500")} />
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Link to="/profile">
-                            <Pencil className="h-5 w-5 text-muted-foreground cursor-pointer" />
-                          </Link>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>To change this, please edit your profile.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                   </div>
-                 </div>
-               </div>
-
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div id="company" className="space-y-2">
-                   <label className="text-sm font-medium text-foreground">Company</label>
-                   <div className="flex items-center gap-2">
-                    <Input type="text" placeholder="Enter company name" value={selections.company} disabled className={cn(validationErrors.company && "border-red-500 ring-2 ring-red-500")} />
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Link to="/profile">
-                            <Pencil className="h-5 w-5 text-muted-foreground cursor-pointer" />
-                          </Link>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>To change this, please edit your profile.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                   </div>
-                 </div>
-
-                 <div id="phoneNumber" className="space-y-2">
-                   <label className="text-sm font-medium text-foreground">Phone Number</label>
-                   <div className="flex items-center gap-2">
-                    <Input type="tel" placeholder="Enter phone number" value={selections.phoneNumber} disabled className={cn(validationErrors.phoneNumber && "border-red-500 ring-2 ring-red-500")} />
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Link to="/profile">
-                            <Pencil className="h-5 w-5 text-muted-foreground cursor-pointer" />
-                          </Link>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>To change this, please edit your profile.</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                   </div>
-                 </div>
-               </div>
-
-               <div id="companyAddress" className="space-y-2">
-                 <label className="text-sm font-medium text-foreground">Company Address</label>
-                 <div className="flex items-center gap-2">
-                  <Input type="text" placeholder="Enter company address" value={selections.companyAddress} disabled className={cn(validationErrors.companyAddress && "border-red-500 ring-2 ring-red-500")} />
+                <div className="flex items-center gap-2">
+                  <h4 className="text-md font-medium border-b border-border pb-2 tracking-wide text-foreground">Personal & Contact Information <span className="text-red-400 font-semibold">(Required)</span></h4>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -187,7 +103,35 @@ export default function ProjectInformationSection({
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
+                </div>
+               
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div id="firstName" className="space-y-2">
+                   <label className="text-sm font-medium text-foreground">First Name</label>
+                   <Input type="text" placeholder="Enter first name" value={selections.firstName} disabled className={cn(validationErrors.firstName && "border-red-500 ring-2 ring-red-500")} />
                  </div>
+                 
+                 <div id="lastName" className="space-y-2">
+                   <label className="text-sm font-medium text-foreground">Last Name</label>
+                   <Input type="text" placeholder="Enter last name" value={selections.lastName} disabled className={cn(validationErrors.lastName && "border-red-500 ring-2 ring-red-500")} />
+                 </div>
+               </div>
+
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div id="company" className="space-y-2">
+                   <label className="text-sm font-medium text-foreground">Company</label>
+                   <Input type="text" placeholder="Enter company name" value={selections.company} disabled className={cn(validationErrors.company && "border-red-500 ring-2 ring-red-500")} />
+                 </div>
+
+                 <div id="phoneNumber" className="space-y-2">
+                   <label className="text-sm font-medium text-foreground">Phone Number</label>
+                   <Input type="tel" placeholder="Enter phone number" value={selections.phoneNumber} disabled className={cn(validationErrors.phoneNumber && "border-red-500 ring-2 ring-red-500")} />
+                 </div>
+               </div>
+
+               <div id="companyAddress" className="space-y-2">
+                 <label className="text-sm font-medium text-foreground">Company Address</label>
+                 <Input type="text" placeholder="Enter company address" value={selections.companyAddress} disabled className={cn(validationErrors.companyAddress && "border-red-500 ring-2 ring-red-500")} />
                </div>
              </div>
 

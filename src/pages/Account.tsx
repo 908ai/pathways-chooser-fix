@@ -19,6 +19,11 @@ const AccountPage = () => {
   const [isEditingCompany, setIsEditingCompany] = useState(false);
   const [editedCompanyInfo, setEditedCompanyInfo] = useState<any>({});
 
+  const [profile, setProfile] = useState<any>(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editedProfile, setEditedProfile] = useState<any>({});
+
   // State for password change
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -45,6 +50,35 @@ const AccountPage = () => {
       }
     };
     loadCompanyInfo();
+
+    const loadProfileInfo = async () => {
+      if (!user) return;
+      setLoadingProfile(true);
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        if (error) {
+          // It's okay if a profile doesn't exist yet
+          if (error.code !== 'PGRST116') {
+            throw error;
+          }
+        }
+        if (data) {
+          setProfile(data);
+        }
+      } catch (error) {
+        console.error('Error loading profile info:', error);
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+    if (user) {
+      loadProfileInfo();
+    }
+
   }, [user]);
 
   const handleEditCompany = () => {
@@ -85,6 +119,39 @@ const AccountPage = () => {
   const handleCancelEdit = () => {
     setIsEditingCompany(false);
     setEditedCompanyInfo({});
+  };
+
+  const handleEditProfile = () => {
+    setEditedProfile({
+      first_name: profile?.first_name || '',
+      last_name: profile?.last_name || '',
+    });
+    setIsEditingProfile(true);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .upsert({ ...editedProfile, id: user.id })
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      setProfile(data);
+      setIsEditingProfile(false);
+      toast({ title: "Success", description: "Profile information updated successfully" });
+    } catch (error) {
+      console.error('Error saving profile info:', error);
+      toast({ title: "Error", description: "Failed to save profile information", variant: "destructive" });
+    }
+  };
+
+  const handleCancelEditProfile = () => {
+    setIsEditingProfile(false);
+    setEditedProfile({});
   };
 
   const handlePasswordUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -131,6 +198,32 @@ const AccountPage = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              {isEditingProfile ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="first_name">First Name</Label>
+                      <Input id="first_name" value={editedProfile.first_name || ''} onChange={e => setEditedProfile({ ...editedProfile, first_name: e.target.value })} placeholder="Enter first name" />
+                    </div>
+                    <div>
+                      <Label htmlFor="last_name">Last Name</Label>
+                      <Input id="last_name" value={editedProfile.last_name || ''} onChange={e => setEditedProfile({ ...editedProfile, last_name: e.target.value })} placeholder="Enter last name" />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-foreground">First Name</label>
+                    <p className="text-sm text-muted-foreground">{loadingProfile ? 'Loading...' : profile?.first_name || 'Not set'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-foreground">Last Name</label>
+                    <p className="text-sm text-muted-foreground">{loadingProfile ? 'Loading...' : profile?.last_name || 'Not set'}</p>
+                  </div>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-foreground">Email</label>
@@ -141,51 +234,72 @@ const AccountPage = () => {
                   <p className="text-sm text-muted-foreground">Active</p>
                 </div>
               </div>
-              <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="mt-4">
-                    <KeyRound className="h-4 w-4 mr-2" />
-                    Change Password
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Change Password</DialogTitle>
-                    <DialogDescription>
-                      Enter your new password below. Make sure it's at least 6 characters long.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <form onSubmit={handlePasswordUpdate} className="space-y-4 pt-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="new-password-account">New Password</Label>
-                      <Input
-                        id="new-password-account"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter new password"
-                        minLength={6}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="confirm-password-account">Confirm New Password</Label>
-                      <Input
-                        id="confirm-password-account"
-                        type="password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="Confirm new password"
-                        minLength={6}
-                        required
-                      />
-                    </div>
-                    <Button type="submit" disabled={isUpdatingPassword} className="w-full">
-                      {isUpdatingPassword ? 'Updating...' : 'Update Password'}
+
+              <div className="flex items-center gap-4">
+                {isEditingProfile ? (
+                  <div className="flex gap-2">
+                    <Button onClick={handleSaveProfile}>
+                      <Save className="h-4 w-4 mr-2" />
+                      Save
                     </Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
+                    <Button variant="outline" onClick={handleCancelEditProfile}>
+                      <X className="h-4 w-4 mr-2" />
+                      Cancel
+                    </Button>
+                  </div>
+                ) : (
+                  <Button variant="outline" onClick={handleEditProfile}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit Profile
+                  </Button>
+                )}
+
+                <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline">
+                      <KeyRound className="h-4 w-4 mr-2" />
+                      Change Password
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Change Password</DialogTitle>
+                      <DialogDescription>
+                        Enter your new password below. Make sure it's at least 6 characters long.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handlePasswordUpdate} className="space-y-4 pt-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="new-password-account">New Password</Label>
+                        <Input
+                          id="new-password-account"
+                          type="password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Enter new password"
+                          minLength={6}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="confirm-password-account">Confirm New Password</Label>
+                        <Input
+                          id="confirm-password-account"
+                          type="password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          placeholder="Confirm new password"
+                          minLength={6}
+                          required
+                        />
+                      </div>
+                      <Button type="submit" disabled={isUpdatingPassword} className="w-full">
+                        {isUpdatingPassword ? 'Updating...' : 'Update Password'}
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </CardContent>
           </Card>
 
