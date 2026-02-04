@@ -1,14 +1,23 @@
 import {
-  Card, CardContent, CardDescription, CardHeader, CardTitle
+  Card, CardContent
 } from "@/components/ui/card";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Zap } from "lucide-react";
+import { FileText, Pencil, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import InfoButton from "@/components/InfoButton";
+import { Link } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 
 type Props = {
@@ -23,6 +32,42 @@ export default function ProjectInformationSection({
   setSelections,
   validationErrors,
 }: Props) {
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [company, setCompany] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select(`
+            *,
+            company:companies(*)
+          `)
+          .eq('id', user.id)
+          .single();
+
+        if (profile) {
+          setUserProfile(profile);
+          if (profile.company) {
+            setCompany(profile.company);
+          }
+          
+          setSelections(prev => ({
+            ...prev,
+            firstName: profile.first_name || '',
+            lastName: profile.last_name || '',
+            company: profile.company?.name || '',
+            phoneNumber: profile.company?.phone_number || '',
+            companyAddress: profile.company?.address || ''
+          }));
+        }
+      }
+    };
+
+    fetchProfile();
+  }, [setSelections]);
 
   return (
     <>
@@ -49,45 +94,100 @@ export default function ProjectInformationSection({
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <div id="firstName" className="space-y-2">
                    <label className="text-sm font-medium text-foreground">First Name</label>
-                   <Input type="text" placeholder="Enter first name" value={selections.firstName} onChange={e => setSelections(prev => ({
-                  ...prev,
-                  firstName: e.target.value
-                }))} className={cn(validationErrors.firstName && "border-red-500 ring-2 ring-red-500")} />
+                   <div className="flex items-center gap-2">
+                    <Input type="text" placeholder="Enter first name" value={selections.firstName} disabled className={cn(validationErrors.firstName && "border-red-500 ring-2 ring-red-500")} />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Link to="/profile">
+                            <Pencil className="h-5 w-5 text-muted-foreground cursor-pointer" />
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>To change this, please edit your profile.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                   </div>
                  </div>
                  
                  <div id="lastName" className="space-y-2">
                    <label className="text-sm font-medium text-foreground">Last Name</label>
-                   <Input type="text" placeholder="Enter last name" value={selections.lastName} onChange={e => setSelections(prev => ({
-                  ...prev,
-                  lastName: e.target.value
-                }))} className={cn(validationErrors.lastName && "border-red-500 ring-2 ring-red-500")} />
+                   <div className="flex items-center gap-2">
+                    <Input type="text" placeholder="Enter last name" value={selections.lastName} disabled className={cn(validationErrors.lastName && "border-red-500 ring-2 ring-red-500")} />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Link to="/profile">
+                            <Pencil className="h-5 w-5 text-muted-foreground cursor-pointer" />
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>To change this, please edit your profile.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                   </div>
                  </div>
                </div>
 
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <div id="company" className="space-y-2">
                    <label className="text-sm font-medium text-foreground">Company</label>
-                   <Input type="text" placeholder="Enter company name" value={selections.company} onChange={e => setSelections(prev => ({
-                  ...prev,
-                  company: e.target.value
-                }))} className={cn(validationErrors.company && "border-red-500 ring-2 ring-red-500")} />
+                   <div className="flex items-center gap-2">
+                    <Input type="text" placeholder="Enter company name" value={selections.company} disabled className={cn(validationErrors.company && "border-red-500 ring-2 ring-red-500")} />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Link to="/profile">
+                            <Pencil className="h-5 w-5 text-muted-foreground cursor-pointer" />
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>To change this, please edit your profile.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                   </div>
                  </div>
 
                  <div id="phoneNumber" className="space-y-2">
                    <label className="text-sm font-medium text-foreground">Phone Number</label>
-                   <Input type="tel" placeholder="Enter phone number" value={selections.phoneNumber} onChange={e => setSelections(prev => ({
-                  ...prev,
-                  phoneNumber: e.target.value
-                }))} className={cn(validationErrors.phoneNumber && "border-red-500 ring-2 ring-red-500")} />
+                   <div className="flex items-center gap-2">
+                    <Input type="tel" placeholder="Enter phone number" value={selections.phoneNumber} disabled className={cn(validationErrors.phoneNumber && "border-red-500 ring-2 ring-red-500")} />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Link to="/profile">
+                            <Pencil className="h-5 w-5 text-muted-foreground cursor-pointer" />
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>To change this, please edit your profile.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                   </div>
                  </div>
                </div>
 
                <div id="companyAddress" className="space-y-2">
                  <label className="text-sm font-medium text-foreground">Company Address</label>
-                 <Input type="text" placeholder="Enter company address" value={selections.companyAddress} onChange={e => setSelections(prev => ({
-                ...prev,
-                companyAddress: e.target.value
-              }))} className={cn(validationErrors.companyAddress && "border-red-500 ring-2 ring-red-500")} />
+                 <div className="flex items-center gap-2">
+                  <Input type="text" placeholder="Enter company address" value={selections.companyAddress} disabled className={cn(validationErrors.companyAddress && "border-red-500 ring-2 ring-red-500")} />
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link to="/profile">
+                          <Pencil className="h-5 w-5 text-muted-foreground cursor-pointer" />
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>To change this, please edit your profile.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                 </div>
                </div>
              </div>
 
@@ -154,7 +254,7 @@ export default function ProjectInformationSection({
                       <label className="text-sm font-medium text-foreground">Occupancy Class</label>
                       <InfoButton title="Understanding Occupancy Class">
                         <p>Homebuilders need to understand building occupancy classifications because it determines whether a project falls under Part 9 of the National Building Code (NBC), which governs small buildings like houses, row homes, small apartments, and similar low-rise structures. These rules apply only to certain building types, mainly residential (Group C) or home-type care (Group B, Division 4) with fewer than 10 residents.</p>
-                        <p>If your building includes commercial uses (like a shop, office, or workshop), it might still fall under Part 9, but if you combine unrelated uses (like residential and a school or restaurant), or if it’s an assembly space (Group A), detention/care facility (Group B), or high-hazard industrial (Group F, Div. 1), then you’re out of scope and must follow the much more complex Part 3. Understanding this early avoids costly missteps in design, fire safety, and permit approval. For most new homes, the occupancy is Group C, unless there’s a unique mixed-use or care component.</p>
+                        <p>If your building includes commercial uses (like a shop, office, or workshop), it might still fall under Part 9, but if you combine unrelated uses (like residential and a school or restaurant), or if it's an assembly space (Group A), detention/care facility (Group B), or high-hazard industrial (Group F, Div. 1), then you're out of scope and must follow the much more complex Part 3. Understanding this early avoids costly missteps in design, fire safety, and permit approval. For most new homes, the occupancy is Group C, unless there's a unique mixed-use or care component.</p>
                         <img src="/assets/img/occupancies-table91B-91C.png" alt="Occupancy classifications table" className="mt-4 rounded-md border mx-auto block" />
                       </InfoButton>
                     </div>
