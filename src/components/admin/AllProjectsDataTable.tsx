@@ -81,6 +81,11 @@ const AllProjectsDataTable = ({ projects, sortBy, setSortBy }: any) => {
                   </Button>
                 </TableHead>
                 <TableHead>
+                  <Button variant="ghost" onClick={() => handleSort('company_name')}>
+                    Builder {renderSortIcon('company_name')}
+                  </Button>
+                </TableHead>
+                <TableHead>
                   <Button variant="ghost" onClick={() => handleSort('province')}>
                     Province {renderSortIcon('province')}
                   </Button>
@@ -172,6 +177,9 @@ const AllProjectsDataTable = ({ projects, sortBy, setSortBy }: any) => {
                     <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer">
                       <div className="font-medium text-foreground">{p.project_name}</div>
                       <div className="text-sm text-muted-foreground">{p.location}</div>
+                    </TableCell>
+                    <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">
+                      {p.company_name}
                     </TableCell>
                     <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">{formatProvince(p.province)}</TableCell>
                     <TableCell onClick={() => navigate(`/project/${p.id}`)} className="cursor-pointer text-muted-foreground">{formatBuildingType(p.building_type)}</TableCell>

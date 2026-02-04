@@ -47,6 +47,7 @@ const AllProjectsTab = () => {
     pathway: 'all',
     status: 'all',
     buildingType: 'all',
+    builder: 'all',
   });
   const [sortBy, setSortBy] = useState({ field: 'created_at', direction: 'desc' });
 
@@ -61,6 +62,7 @@ const AllProjectsTab = () => {
 
       if (filters.searchTerm && !nameMatch && !locationMatch && !builderMatch) return false;
       if (filters.location !== 'all' && p.city?.toLowerCase() !== filters.location.toLowerCase()) return false;
+      if (filters.builder !== 'all' && p.company_name !== filters.builder) return false;
       if (filters.pathway !== 'all' && p.selected_pathway !== filters.pathway) return false;
       if (filters.status !== 'all' && p.compliance_status !== filters.status) return false;
       if (filters.buildingType !== 'all' && p.building_type !== filters.buildingType) return false;
@@ -86,6 +88,11 @@ const AllProjectsTab = () => {
   const uniqueLocations = useMemo(() => {
     if (!projects) return [];
     return [...new Set(projects.map(p => p.city).filter(Boolean))];
+  }, [projects]);
+
+  const uniqueBuilders = useMemo(() => {
+    if (!projects) return [];
+    return [...new Set(projects.map(p => p.company_name).filter(Boolean))].sort();
   }, [projects]);
 
   const uniqueBuildingTypes = useMemo(() => {
@@ -116,7 +123,7 @@ const AllProjectsTab = () => {
       <AllProjectsFilterBar 
         filters={filters}
         setFilters={setFilters}
-        uniqueBuilders={[]}
+        uniqueBuilders={uniqueBuilders}
         uniqueLocations={uniqueLocations}
         uniqueBuildingTypes={uniqueBuildingTypes}
       />
