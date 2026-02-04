@@ -346,12 +346,12 @@ const NBCCalculator = () => {
           .from('profiles')
           .select('first_name, last_name')
           .eq('id', user.id)
-          .single(),
+          .single() as any,
         supabase
           .from('companies')
           .select('company_name, phone, address')
           .eq('user_id', user.id)
-          .single()
+          .single() as any
       ]);
 
       if (profileError && profileError.code !== 'PGRST116') throw profileError;
@@ -401,11 +401,11 @@ const NBCCalculator = () => {
       }
 
       // Fetch the latest profile data regardless of what is in the project
-      const { data: profileData, error: profileError } = await supabase
+      const { data: profileData, error: profileError } = await (supabase
         .from('profiles')
         .select('first_name, last_name')
         .eq('id', user?.id)
-        .single();
+        .single() as any);
 
       if (profileError && profileError.code !== 'PGRST116') {
         console.error('Error loading profile data:', profileError);
