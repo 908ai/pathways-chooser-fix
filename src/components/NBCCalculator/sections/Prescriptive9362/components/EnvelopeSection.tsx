@@ -1194,6 +1194,7 @@ export function EnvelopeSection({
                                             <p className="ml-4">Useful for comparing attached units or small zones.</p>
                                         </div>
                                         <p className="font-medium text-primary">Lower values = tighter home = better performance</p>
+                                        <p className="font-medium text-primary">“Typical New Home” is being constructed at 2.5 ACH or lower.</p>
                                     </div>
                                 </div>
 
@@ -1237,6 +1238,7 @@ export function EnvelopeSection({
                                             <p className="font-medium">Unguarded Test</p>
                                             <div className="ml-4 space-y-1">
                                                 <p>• Tests one unit at a time, while neighbours are at normal pressure.</p>
+                                                <p>• Unguarded Test required for EnerGuide rated (ERS) projects.</p>
                                                 <p>• Includes leakage between units.</p>
                                                 <p>• Easier to do (especially as units are completed and occupied), but can overestimate leakage.</p>
                                             </div>
@@ -1246,7 +1248,8 @@ export function EnvelopeSection({
                                             <div className="ml-4 space-y-1">
                                                 <p>• All adjacent units are depressurized (or pressurized) at the same time.</p>
                                                 <p>• Blocks airflow between units, giving a more accurate picture of leakage to the outside.</p>
-                                                <p>• Ideal for multi-unit buildings, but more complex.</p>
+                                                <p>• Ideal for multi-unit buildings not requiring EnerGuide (ERS) labelling.</p>
+                                                <p>• More complex & costly process.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -1272,7 +1275,10 @@ export function EnvelopeSection({
                                     <div className="text-base text-muted-foreground ml-4 space-y-1">
                                         <p>• For energy modelling, a multi-point test is required, reporting ACH₅₀, pressure exponent, and leakage area.</p>
                                         <p>• For basic code compliance, single- or two-point tests are fine — except NLA₁₀, which needs multi-point.</p>
-                                        <p>• Combining zones? You must test each one. Use the lowest Airtightness Level for scoring if they're different. Reference the Illustrated Guide for the image above.</p>
+                                        <p>• Combining zones? You must test each one. Use the lowest Airtightness Level for scoring if they're different. Reference the Illustrated Guide for the image below.</p>
+                                        <div className="mb-3">
+                                            <img src="assets/img/figure-9.36.-18-example-of-attached-zones.png" alt="Figure 9.36-18 Example of attached zones" className="w-full h-auto border border-border rounded" />
+                                        </div>
                                     </div>
                                 </div>
 

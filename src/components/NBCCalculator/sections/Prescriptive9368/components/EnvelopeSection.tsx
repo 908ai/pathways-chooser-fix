@@ -281,15 +281,15 @@ export default function EnvelopeSection({
                     <InfoButton title="What's a Blower Door Test?">
                         <div className="space-y-4">
                             <div>
-                                <p className="text-sm text-muted-foreground">A blower door test measures air leakage in a home. A fan is placed in an exterior door to pressurize or depressurize the building, and sensors track how much air is needed to maintain a pressure difference (usually 50 Pascals). This tells us how "leaky" the building is.</p>
+                                <p className="text-base text-muted-foreground">A blower door test measures air leakage in a home. A fan is placed in an exterior door to pressurize or depressurize the building, and sensors track how much air is needed to maintain a pressure difference (usually 50 Pascals). This tells us how "leaky" the building is.</p>
                             </div>
 
                             <div className="w-full h-px bg-muted"></div>
 
                             <div className="space-y-4">
                                 <div>
-                                    <h5 className="font-medium text-sm mb-2">What Do the Numbers Mean?</h5>
-                                    <div className="space-y-3 text-sm text-muted-foreground">
+                                    <h5 className="font-medium text-base mb-2">What Do the Numbers Mean?</h5>
+                                    <div className="space-y-3 text-base text-muted-foreground">
                                         <div>
                                             <p className="font-medium">• ACH₅₀ (Air Changes per Hour @ 50 Pa):</p>
                                             <p className="ml-4">How many times the air inside the home is replaced in one hour.</p>
@@ -305,21 +305,22 @@ export default function EnvelopeSection({
                                             <p className="ml-4">Volume of air leaking per second per m² of surface at 50 Pa.</p>
                                             <p className="ml-4">Useful for comparing attached units or small zones.</p>
                                         </div>
-                                        <p className="font-medium text-primary">Lower values = tighter home = better performance</p>
+                                        <p className="font-medium text-primary">Lower values = tighter home = better performance.</p>
+                                        <p className="font-medium text-primary">“Typical New Home” is being constructed at 2.5 ACH or lower.</p>
                                     </div>
                                 </div>
 
                                 <div className="w-full h-px bg-muted"></div>
 
                                 <div>
-                                    <h5 className="font-medium text-sm mb-2">What's a Zone?</h5>
-                                    <p className="text-sm text-muted-foreground mb-2">A zone is any part of a building tested for air leakage. It could be:</p>
-                                    <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                    <h5 className="font-medium text-base mb-2">What's a Zone?</h5>
+                                    <p className="text-base text-muted-foreground mb-2">A zone is any part of a building tested for air leakage. It could be:</p>
+                                    <div className="text-base text-muted-foreground ml-4 space-y-1">
                                         <p>• A full detached house</p>
                                         <p>• A single unit in a row house or duplex</p>
                                         <p>• A section of a large home or multi-unit building</p>
                                     </div>
-                                    <p className="text-sm text-muted-foreground mt-2">Each zone is tested separately because leakage patterns vary.</p>
+                                    <p className="text-base text-muted-foreground mt-2">Each zone is tested separately because leakage patterns vary.</p>
                                 </div>
 
                                 <div className="w-full h-px bg-muted"></div>
@@ -332,8 +333,8 @@ export default function EnvelopeSection({
                                 <div className="w-full h-px bg-muted"></div>
 
                                 <div>
-                                    <h5 className="font-medium text-sm mb-2">Why Small Units Often Show Higher Leakage</h5>
-                                    <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                    <h5 className="font-medium text-base mb-2">Why Small Units Often Show Higher Leakage</h5>
+                                    <div className="text-base text-muted-foreground ml-4 space-y-1">
                                         <p>• Small homes have more corners and connections relative to their size.</p>
                                         <p>• Mechanical equipment leaks the same amount — but it's a bigger deal in a small space.</p>
                                         <p>• As a result, ACH₅₀ values tend to look worse in smaller units.</p>
@@ -343,12 +344,13 @@ export default function EnvelopeSection({
                                 <div className="w-full h-px bg-muted"></div>
 
                                 <div>
-                                    <h5 className="font-medium text-sm mb-2">Guarded vs. Unguarded Testing</h5>
-                                    <div className="space-y-3 text-sm text-muted-foreground">
+                                    <h5 className="font-medium text-base mb-2">Guarded vs. Unguarded Testing</h5>
+                                    <div className="space-y-3 text-base text-muted-foreground">
                                         <div>
                                             <p className="font-medium">Unguarded Test</p>
                                             <div className="ml-4 space-y-1">
                                                 <p>• Tests one unit at a time, while neighbours are at normal pressure.</p>
+                                                <p>• Unguarded Test required for EnerGuide rated (ERS) projects.</p>
                                                 <p>• Includes leakage between units.</p>
                                                 <p>• Easier to do (especially as units are completed and occupied), but can overestimate leakage.</p>
                                             </div>
@@ -358,7 +360,8 @@ export default function EnvelopeSection({
                                             <div className="ml-4 space-y-1">
                                                 <p>• All adjacent units are depressurized (or pressurized) at the same time.</p>
                                                 <p>• Blocks airflow between units, giving a more accurate picture of leakage to the outside.</p>
-                                                <p>• Ideal for multi-unit buildings, but more complex.</p>
+                                                <p>• Ideal for multi-unit buildings not requiring EnerGuide (ERS) labelling.</p>
+                                                <p>• More complex & costly process.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -367,31 +370,34 @@ export default function EnvelopeSection({
                                 <div className="w-full h-px bg-muted"></div>
 
                                 <div>
-                                    <h5 className="font-medium text-sm mb-2">How Do You Pass?</h5>
-                                    <p className="text-sm text-muted-foreground mb-2">You can earn energy code points by hitting an Airtightness Level (AL). You only need to meet one of the three metrics (ACH, NLA, or NLR):</p>
-                                    <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                    <h5 className="font-medium text-base mb-2">How Do You Pass?</h5>
+                                    <p className="text-base text-muted-foreground mb-2">You can earn energy code points by hitting an Airtightness Level (AL). You only need to meet one of the three metrics (ACH, NLA, or NLR):</p>
+                                    <div className="text-base text-muted-foreground ml-4 space-y-1">
                                         <p>• Use Table 9.36.-A for guarded tests (stricter limits)</p>
                                         <p>• Use Table 9.36.-B for unguarded tests (more lenient for attached buildings)</p>
                                     </div>
-                                    <p className="text-sm text-muted-foreground mt-2">In multi-unit buildings, the worst-performing zone sets the final score.</p>
+                                    <p className="text-base text-muted-foreground mt-2">In multi-unit buildings, the worst-performing zone sets the final score.</p>
                                 </div>
 
                                 <div className="w-full h-px bg-muted"></div>
 
                                 <div>
-                                    <h5 className="font-medium text-sm mb-2">Other Key Points</h5>
-                                    <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                    <h5 className="font-medium text-base mb-2">Other Key Points</h5>
+                                    <div className="text-base text-muted-foreground ml-4 space-y-1">
                                         <p>• For energy modelling, a multi-point test is required, reporting ACH₅₀, pressure exponent, and leakage area.</p>
                                         <p>• For basic code compliance, single- or two-point tests are fine — except NLA₁₀, which needs multi-point.</p>
-                                        <p>• Combining zones? You must test each one. Use the lowest Airtightness Level for scoring if they're different. Reference the Illustrated Guide for the image above.</p>
+                                        <p>• Combining zones? You must test each one. Use the lowest Airtightness Level for scoring if they're different. Reference the Illustrated Guide for the image below.</p>
+                                        <div className="mb-3">
+                                            <img src="assets/img/figure-9.36.-18-example-of-attached-zones.png" alt="Figure 9.36-18 Example of attached zones" className="w-full h-auto border border-border rounded" />
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div className="w-full h-px bg-muted"></div>
 
                                 <div>
-                                    <h5 className="font-medium text-sm mb-2">Potential Air Leakage Locations</h5>
-                                    <p className="text-sm text-muted-foreground mb-3">Common areas where air leakage occurs in buildings:</p>
+                                    <h5 className="font-medium text-base mb-2">Potential Air Leakage Locations</h5>
+                                    <p className="text-base text-muted-foreground mb-3">Common areas where air leakage occurs in buildings:</p>
                                     <div className="mb-3">
                                         <img src="/lovable-uploads/9d231144-3c4e-430b-9f8c-914698eae23e.png" alt="Figure 9.25-9 Potential air leakage locations in a house showing various points where air can escape including joints at attic hatches, ceiling light fixtures, windows, electrical outlets, around posts and columns, chimney leaks, plumbing stack penetrations, and more" className="w-full h-auto border border-border rounded" onLoad={() => console.log('Air leakage diagram loaded successfully')} onError={e => console.log('Failed to load air leakage diagram:', e)} />
                                     </div>
@@ -403,7 +409,7 @@ export default function EnvelopeSection({
 
                             <div className="space-y-2">
                                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-md space-y-2 dark:bg-blue-900/30 dark:border-blue-500/50">
-                                    <p className="text-sm font-medium text-blue-800 dark:text-blue-300">📋 Helpful Resources:</p>
+                                    <p className="text-base font-medium text-blue-800 dark:text-blue-300">📋 Helpful Resources:</p>
                                     <div className="space-y-1">
                                         <a href="https://static1.squarespace.com/static/5659e586e4b0f60cdbb0acdb/t/6740da3ccee315629895c31b/1732303420707/Blower+Door+Checklist.pdf" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-700 dark:text-blue-400 hover:text-red-800 dark:hover:text-red-400 block">
                                             🔗 View the Blower Door Checklist
@@ -416,6 +422,12 @@ export default function EnvelopeSection({
                             </div>
                         </div>
                     </InfoButton>
+                    <Button asChild variant="secondary" className="h-6 px-2 text-xs">
+                        <a href="/find-a-provider" target="_blank" rel="noopener noreferrer">
+                            <Search className="h-4 w-4" />
+                            Find a service provider
+                        </a>
+                    </Button>
                 </div>
                 <Select value={selections.airtightness} onValueChange={value => setSelections(prev => ({
                     ...prev,
@@ -467,7 +479,7 @@ export default function EnvelopeSection({
                                 Learn more about points allocation for air-townhouse for MURB/Row/Town-homes
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="w-[700px] max-h-[80vh] overflow-y-auto p-4" >
+                        <DialogContent className="max-h-[80vh] overflow-y-auto p-4" >
                             <DialogHeader>
                                 <DialogTitle>Understanding Airtightness Levels & Points: 4-Unit Row House Scenario</DialogTitle>
                             </DialogHeader>
@@ -479,7 +491,7 @@ export default function EnvelopeSection({
 
                                 {/* Diagram */}
                                 <div className="bg-muted/30 p-3 rounded-md">
-                                    <img src="/lovable-uploads/9fef7011-6de1-412c-9331-2c6f86f64d18.png" alt="Figure 9.36.-18: Example of attached zones" className="w-full max-w-md mx-auto" />
+                                    <img src="/lovable-uploads/9fef7011-6de1-412c-9331-2c6f86f64d18.png" alt="Figure 9.36.-18: Example of attached zones" className="w-full mx-auto" />
                                     <p className="text-xs text-muted-foreground text-center mt-2">Figure 9.36.-18: Example of attached zones</p>
                                     <p className="text-xs text-muted-foreground text-center mt-1 italic">Source: Housing and Small Buildings Illustrated User's Guide - National Building Code of Canada 2020 Part 9 of Division B</p>
                                 </div>
@@ -541,13 +553,108 @@ export default function EnvelopeSection({
 
                                 <div>
                                     <h5 className="font-medium text-sm mb-2">This Example:</h5>
+
                                     <div className="text-sm text-muted-foreground ml-4 space-y-1">
                                         <p>• <strong>Project:</strong> 4-unit row house in Prince Albert (Zone 7A)</p>
-                                        <p>• <strong>Goal:</strong> Reach Tier 2 compliance, which needs 10 total points</p>
+
+                                        <p>
+                                            • <strong>Goal:</strong> Reach Tier 2 compliance, which needs 10 total points. Targeting{" "}
+                                            <strong>AL-3B</strong> airtightness to gain <strong>4.6 points</strong>.
+                                        </p>
+
                                         <p>• <strong>Already earned:</strong> 6.7 points from well-insulated above-grade walls</p>
                                         <p>• <strong>Need:</strong> 3.3 more points — aiming to get them from airtightness</p>
                                         <p>• <strong>Test type used:</strong> Unguarded, because units will be occupied at different times</p>
                                     </div>
+                                </div>
+
+                                <div className="w-full h-px bg-muted"></div>
+
+                                {/* Energy Conservation Points & Requirement */}
+                                <div>
+                                    <h5 className="font-medium text-sm mb-3">
+                                        Energy Conservation Points &amp; Requirement
+                                    </h5>
+
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full border-collapse border border-border text-sm">
+                                            <thead>
+                                                <tr className="bg-muted/50">
+                                                    <th className="border border-border p-2 text-left font-medium">
+                                                        Airtightness Level
+                                                    </th>
+                                                    <th className="border border-border p-2 text-center font-medium">
+                                                        Energy Conservation Points<br />
+                                                        <span className="text-xs text-muted-foreground">(Zone 7A)</span>
+                                                    </th>
+                                                    <th className="border border-border p-2 text-center font-medium">
+                                                        Test Method
+                                                    </th>
+                                                    <th className="border border-border p-2 text-center font-medium">
+                                                        ACH50<br />
+                                                        <span className="text-xs text-muted-foreground">(max)</span>
+                                                    </th>
+                                                    <th className="border border-border p-2 text-center font-medium">
+                                                        NLA10<br />
+                                                        <span className="text-xs text-muted-foreground">(max)</span>
+                                                    </th>
+                                                    <th className="border border-border p-2 text-center font-medium">
+                                                        NLR50<br />
+                                                        <span className="text-xs text-muted-foreground">(max)</span>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <tr>
+                                                    <td className="border border-border p-2 font-medium bg-muted/30">
+                                                        AL-2B
+                                                    </td>
+                                                    <td className="border border-border p-2 text-center">
+                                                        0
+                                                    </td>
+                                                    <td className="border border-border p-2 text-center">
+                                                        Unguarded
+                                                    </td>
+                                                    <td className="border border-border p-2 text-center">
+                                                        2.5
+                                                    </td>
+                                                    <td className="border border-border p-2 text-center">
+                                                        1.60
+                                                    </td>
+                                                    <td className="border border-border p-2 text-center">
+                                                        0.98
+                                                    </td>
+                                                </tr>
+
+                                                <tr className="bg-muted/20">
+                                                    <td className="border border-border p-2 font-medium bg-muted/30">
+                                                        AL-3B
+                                                    </td>
+                                                    <td className="border border-border p-2 text-center font-medium">
+                                                        4.6
+                                                    </td>
+                                                    <td className="border border-border p-2 text-center">
+                                                        Unguarded
+                                                    </td>
+                                                    <td className="border border-border p-2 text-center">
+                                                        2.0
+                                                    </td>
+                                                    <td className="border border-border p-2 text-center">
+                                                        1.28
+                                                    </td>
+                                                    <td className="border border-border p-2 text-center">
+                                                        0.78
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <p className="mt-2 text-xs text-muted-foreground">
+                                        Values based on NBC Table 9.36.4.4 (Airtightness Levels) and Table 9.36.4.4-B
+                                        for attached zones tested using the unguarded method.
+                                    </p>
                                 </div>
 
                                 <div className="w-full h-px bg-muted"></div>
@@ -593,15 +700,26 @@ export default function EnvelopeSection({
 
                                 <div>
                                     <h5 className="font-medium text-sm mb-2">Outcome:</h5>
-                                    <div className="text-sm text-muted-foreground ml-4 space-y-2">
-                                        <p>• Builder cannot claim points for AL-3B or higher.</p>
-                                        <p>• Based on AL-2B, they'd earn fewer points (you'd refer to your compliance table for exact value, but likely not enough to hit 10 points total).</p>
-                                        <p>• So if the builder wants to stay on track for Tier 2, they need to:</p>
-                                        <div className="ml-4 space-y-1">
-                                            <p>• Tighten up the leakiest unit(s) (especially Left Middle and Right Middle)</p>
-                                            <p>• To stay on track for Tier 2, they could invest in Aerobarrier (air-sealing system) as well</p>
-                                            <p>• Or look for other upgrades (e.g. better windows, mechanical systems) to make up the missing points</p>
-                                        </div>
+                                    <div className="text-sm text-muted-foreground ml-4 space-y-1">
+                                    <p>
+                                        • <strong>Based on AL-2B,</strong> they&apos;d earn <strong>0 points</strong>.
+                                    </p>
+
+                                    <p className="mt-2">
+                                        So if the builder wants to stay on track for Tier 2, they need to:
+                                    </p>
+
+                                    <div className="ml-4 space-y-1">
+                                        <p>• Tighten up the leakiest unit(s) (especially Left Middle and Right Middle)</p>
+                                        <p>
+                                            • To stay aligned with Tier 2, they could work with their designer, insulator, and energy advisor to plan
+                                            specific air-sealing details, or choose a targeted solution like <strong>Aerobarrier</strong> to meet the
+                                            required airtightness.
+                                        </p>
+                                        <p>
+                                            • Or look for other upgrades (e.g. better windows, mechanical systems) to make up the missing points
+                                        </p>
+                                    </div>
                                     </div>
                                 </div>
 
