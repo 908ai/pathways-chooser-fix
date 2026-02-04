@@ -347,14 +347,24 @@ const NBCCalculator = () => {
         throw profileError;
       }
 
-      if (profile) {
+      const { data: company, error: companyError } = await supabase
+        .from('companies')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (companyError && companyError.code !== 'PGRST116') {
+        throw companyError;
+      }
+
+      if (profile || company) {
         setSelections(prev => ({
           ...prev,
-          firstName: profile.first_name || '',
-          lastName: profile.last_name || '',
-          company: profile.company?.name || '',
-          phoneNumber: profile.company?.phone_number || '',
-          companyAddress: profile.company?.address || ''
+          firstName: profile?.first_name || '',
+          lastName: profile?.last_name || '',
+          company: company?.company_name || '',
+          phoneNumber: company?.phone || '',
+          companyAddress: company?.address || ''
         }));
       }
     } catch (error) {
@@ -419,9 +429,9 @@ const NBCCalculator = () => {
           // Always prioritize fresh data from profile and company tables
           firstName: profileData?.first_name || "",
           lastName: profileData?.last_name || "",
-          company: companyData?.name || "",
+          company: companyData?.company_name || "",
           companyAddress: companyData?.address || "",
-          phoneNumber: companyData?.phone_number || "",
+          phoneNumber: companyData?.phone || "",
 
           // Load project-specific data from the saved project
           streetAddress: p.street_address || p.location || "",
