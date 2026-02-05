@@ -871,7 +871,7 @@ export default function EnvelopeSection({
                 <Input
                     type="text"
                     inputMode="decimal"
-                    placeholder="Min. RSI 5.02 or N/A"
+                    placeholder="Min. RSI 5.02"
                     value={selections.floorsUnheatedRSI}
                     onKeyDown={(e) => {
                         // allow navigation/edit keys
