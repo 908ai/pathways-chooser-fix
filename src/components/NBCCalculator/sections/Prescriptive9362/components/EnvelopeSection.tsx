@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { validateRSI_9362 } from "../../../utils/validation";
 import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/EffectiveRSIWarning";
 import { WarningButton } from "./WarningButton";
+import ThermalInputField from "@/components/NBCCalculator/components/inputs/ThermalInputField";
 
 export function EnvelopeSection({
     selections,
@@ -178,13 +179,28 @@ export function EnvelopeSection({
             </div>}
 
             <div id="ceilingsAtticRSI" className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Ceilings below Attics <span className="text-red-500">*</span></label>
-                <Input
+                <ThermalInputField
+                    id="ceilingsAtticRSI"
+                    label="Ceilings below Attics"
                     required
-                    type="number"
-                    inputMode="decimal"
-                    step="0.01"
-                    min="0"
+                    value={selections.ceilingsAtticRSI || ""}
+                    onChange={(val) =>
+                        setSelections((prev: any) => ({
+                            ...prev,
+                            ceilingsAtticRSI: val,
+                        }))
+                    }
+                    minRSI={
+                        selections.hasHrv === "with_hrv"
+                            ? 8.67
+                            : 10.43
+                    }
+                    fieldName={
+                        `ceilings below attics ${selections.hasHrv === "with_hrv"
+                            ? "with HRV"
+                            : "without HRV"
+                        }`
+                    }
                     placeholder={
                         selections.hasHrv === "with_hrv"
                             ? "Min RSI 8.67 w/ HRV"
@@ -192,59 +208,11 @@ export function EnvelopeSection({
                                 ? "Min RSI 10.43 w/o HRV"
                                 : "Min RSI 8.67 w/ HRV, 10.43 w/o HRV"
                     }
-                    value={selections.ceilingsAtticRSI}
-                    onKeyDown={(e) => {
-                        // Prevent letters/symbols some browsers allow in number inputs
-                        if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
-                    }}
-                    onChange={(e) => {
-                        // Keep ONLY digits + a single dot
-                        let v = e.target.value;
-
-                        // Remove anything that's not digit or dot
-                        v = v.replace(/[^\d.]/g, "");
-
-                        // Allow only one dot
-                        const firstDot = v.indexOf(".");
-                        if (firstDot !== -1) {
-                            v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, "");
-                        }
-
-                        setSelections((prev) => ({
-                            ...prev,
-                            ceilingsAtticRSI: v,
-                        }));
-                    }}
-                    className={cn(
-                        (validationErrors.ceilingsAtticRSI || isMissing("ceilingsAtticRSI")) && missingFieldClass,
-                        validationErrors.ceilingsAtticRSI && "border-red-500 ring-2 ring-red-500"
-                    )}
+                    validationError={validationErrors.ceilingsAtticRSI}
+                    isMissing={isMissing("ceilingsAtticRSI")}
+                    missingFieldClass={missingFieldClass}
+                    InfoCollapsible={WarningButton}
                 />
-                {(() => {
-                    if (selections.compliancePath === "9368") {
-                        const minRSI = 8.67; // For 9368, HRV is mandatory
-                        const validation = validateRSI_9362(selections.ceilingsAtticRSI, minRSI, `ceilings below attics`);
-                        if (!validation.isValid && validation.warning) {
-                            return <WarningButton title="🛑 RSI Value Too Low" variant="destructive" defaultOpen={true}>
-                                <p className="text-xs">
-                                    {`The RSI value must be increased to at least ${minRSI} to meet NBC 9.36.8 requirements.`}
-                                </p>
-                            </WarningButton>;
-                        }
-                        return null;
-                    }
-                    const minRSI = selections.hasHrv === "with_hrv" ? 8.67 : selections.hasHrv === "without_hrv" ? 10.43 : 8.67;
-                    const validation = validateRSI_9362(selections.ceilingsAtticRSI, minRSI, `ceilings below attics ${selections.hasHrv === "with_hrv" ? "with HRV" : "without HRV"}`);
-                    if (!validation.isValid && validation.warning) {
-                        return <WarningButton title={validation.warning.type === "rvalue-suspected" ? "R-Value Detected" : "RSI Value Too Low"} variant={validation.warning.type === "rvalue-suspected" ? "warning" : "destructive"}>
-                            <p className="text-sm">
-                                {validation.warning.message}
-                            </p>
-                        </WarningButton>;
-                    }
-                    return null;
-                })()}
-                <EffectiveRSIWarning />
             </div>
 
             <div id="hasCathedralOrFlatRoof" className="space-y-2">
@@ -267,110 +235,61 @@ export function EnvelopeSection({
                 </Select>
             </div>
 
-            {selections.hasCathedralOrFlatRoof === "yes" && <div id="cathedralFlatRSIValue" className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Cathedral / Flat Roofs - Min. 5.02 RSI <span className="text-red-500">*</span></label>
-                <Input
-                    required
-                    type="text"
-                    inputMode="decimal"
-                    placeholder="Enter RSI value (min. 5.02)"
-                    value={selections.cathedralFlatRSIValue || ""}
-                    onKeyDown={(e) => {
-                        // allow navigation/edit keys
-                        const allowedKeys = [
-                            "Backspace",
-                            "Delete",
-                            "ArrowLeft",
-                            "ArrowRight",
-                            "Tab",
-                            "Home",
-                            "End",
-                        ];
-                        if (allowedKeys.includes(e.key)) return;
+            {selections.hasCathedralOrFlatRoof === "yes" && (
+                <div id="cathedralFlatRSIValue" className="space-y-2">
 
-                        // allow digits + dot
-                        if (/[0-9.]/.test(e.key)) return;
-
-                        // block everything else
-                        e.preventDefault();
-                    }}
-                    onChange={(e) => {
-                        const raw = e.target.value; // no trim here (prevents cursor lag)
-
-                        // numeric-only decimal
-                        let v = raw.replace(/[^\d.]/g, "");
-                        const firstDot = v.indexOf(".");
-                        if (firstDot !== -1) {
-                            v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, "");
-                        }
-
-                        setSelections((prev) => ({
-                            ...prev,
-                            cathedralFlatRSIValue: v,
-                        }));
-                    }}
-                    onBlur={() => {
-                        const v = (selections.cathedralFlatRSIValue || "").trim();
-
-                        // clean trailing dot (e.g. "5.")
-                        if (/^\d+\.$/.test(v)) {
-                            setSelections((prev) => ({
+                    <ThermalInputField
+                        id="cathedralFlatRSIValue"
+                        label="Cathedral / Flat Roofs - Min. 5.02 RSI"
+                        required
+                        value={selections.cathedralFlatRSIValue || ""}
+                        onChange={(val) =>
+                            setSelections((prev: any) => ({
                                 ...prev,
-                                cathedralFlatRSIValue: v.slice(0, -1),
-                            }));
+                                cathedralFlatRSIValue: val,
+                            }))
                         }
-                    }}
-                    className={cn(
-                        (validationErrors.cathedralFlatRSIValue ||
-                            isMissing("cathedralFlatRSIValue")) &&
-                        missingFieldClass,
-                        validationErrors.cathedralFlatRSIValue && "border-red-500 ring-2 ring-red-500"
-                    )}
-                />
+                        minRSI={5.02}
+                        fieldName="cathedral/flat roofs"
+                        placeholder="Enter RSI value (min. 5.02)"
+                        validationError={validationErrors.cathedralFlatRSIValue}
+                        isMissing={isMissing("cathedralFlatRSIValue")}
+                        missingFieldClass={missingFieldClass}
+                        InfoCollapsible={WarningButton}
+                    />
 
-                {(() => {
-                    const minRSI = 5.02;
-                    const validation = validateRSI_9362(
-                        selections.cathedralFlatRSIValue,
-                        minRSI,
-                        `cathedral/flat roofs`
-                    );
-
-                    const showWarning = !validation.isValid && !!validation.warning;
-
-                    return showWarning ? (
-                        <WarningButton
-                            title="🛑 RSI Value Too Low"
-                            variant="destructive"
-                            defaultOpen={true}
-                        >
-                            <p className="text-xs">
-                                The RSI value must be increased to at least 5.02 to meet NBC 9.36.2
-                                requirements for cathedral/flat roofs.
-                            </p>
-                        </WarningButton>
-                    ) : null;
-                })()}
-                <EffectiveRSIWarning />
-            </div>}
+                </div>
+            )}
 
             <div id="wallRSI" className="space-y-2">
-                <div className="flex items-center gap-2">
-                    <label className="text-sm font-medium text-foreground">Above Grade Walls - RSI Value <span className="text-red-400">*</span></label>
-                    <InfoButton title="Above Grade Walls - RSI Value">
-                        <div className="space-y-4">
-                            <p className="text-sm">
-                                Enter the RSI value for your lowest-performing wall assembly, including tall walls.
-                            </p>
-                        </div>
-                    </InfoButton>
-                </div>
-                <Input
+                <ThermalInputField
+                    id="wallRSI"
+                    label={
+                        <>
+                            <span>Above Grade Walls - RSI Value</span>
+                            <InfoButton title="Above Grade Walls - RSI Value">
+                                <div className="space-y-4">
+                                    <p className="text-sm">
+                                        Enter the RSI value for your lowest-performing wall assembly, including tall walls.
+                                    </p>
+                                </div>
+                            </InfoButton>
+                        </>
+                    }
                     required
-                    type="number"
-                    inputMode="decimal"
-                    step="0.01"
-                    min="0"
+                    value={selections.wallRSI || ""}
+                    onChange={(val) =>
+                        setSelections((prev: any) => ({
+                            ...prev,
+                            wallRSI: val,
+                        }))
+                    }
+                    minRSI={
+                        selections.hasHrv === "with_hrv"
+                            ? 2.97
+                            : 3.69
+                    }
+                    fieldName="above grade walls"
                     placeholder={
                         selections.hasHrv === "with_hrv"
                             ? "Min RSI 2.97 w/ HRV"
@@ -378,65 +297,31 @@ export function EnvelopeSection({
                                 ? "Min RSI 3.69 w/o HRV"
                                 : "Min RSI 2.97 w/ HRV, 3.69 w/o HRV"
                     }
-                    value={selections.wallRSI}
-                    onKeyDown={(e) => {
-                        // Prevent letters/symbols some browsers allow in number inputs
-                        if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
-                    }}
-                    onChange={(e) => {
-                        let v = e.target.value;
-
-                        // Remove anything that's not digit or dot
-                        v = v.replace(/[^\d.]/g, "");
-
-                        // Allow only one dot
-                        const firstDot = v.indexOf(".");
-                        if (firstDot !== -1) {
-                            v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, "");
-                        }
-
-                        setSelections((prev) => ({
-                            ...prev,
-                            wallRSI: v,
-                        }));
-                    }}
-                    className={cn(
-                        (validationErrors.wallRSI || isMissing("wallRSI")) && missingFieldClass,
-                        validationErrors.wallRSI && "border-red-500 ring-2 ring-red-500"
-                    )}
+                    validationError={validationErrors.wallRSI}
+                    isMissing={isMissing("wallRSI")}
+                    missingFieldClass={missingFieldClass}
+                    InfoCollapsible={WarningButton}
                 />
-
-                {(() => {
-                    const minRSI = selections.hasHrv === "with_hrv" ? 2.97 : 3.69;
-                    const validation = validateRSI_9362(selections.wallRSI, minRSI, `above grade walls`);
-
-                    const showWarning = !validation.isValid && !!validation.warning;
-
-                    return showWarning ? (
-                        <WarningButton
-                            title="🛑 RSI Value Too Low"
-                            variant="destructive"
-                            defaultOpen={true}
-                        >
-                            <p className="text-xs">
-                                {`The RSI value must be increased to at least ${selections.hasHrv === "with_hrv" ? "2.97 with HRV" : "3.69 without HRV"
-                                    } to meet NBC 9.36.2 requirements for above grade walls.`}
-                            </p>
-                        </WarningButton>
-                    ) : null;
-                })()}
-
-                <EffectiveRSIWarning />
             </div>
 
             <div id="belowGradeRSI" className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Below Grade Walls (Foundation Walls) <span className="text-red-500">*</span></label>
-                <Input
+                <ThermalInputField
+                    id="belowGradeRSI"
+                    label="Below Grade Walls (Foundation Walls)"
                     required
-                    type="number"
-                    inputMode="decimal"
-                    step="0.01"
-                    min="0"
+                    value={selections.belowGradeRSI || ""}
+                    onChange={(val) =>
+                        setSelections((prev: any) => ({
+                            ...prev,
+                            belowGradeRSI: val,
+                        }))
+                    }
+                    minRSI={
+                        selections.hasHrv === "with_hrv"
+                            ? 2.98
+                            : 3.46
+                    }
+                    fieldName="below grade walls"
                     placeholder={
                         selections.hasHrv === "with_hrv"
                             ? "Min RSI 2.98 (with HRV)"
@@ -444,55 +329,11 @@ export function EnvelopeSection({
                                 ? "Min RSI 3.46 (without HRV)"
                                 : "Select HRV option first"
                     }
-                    value={selections.belowGradeRSI}
-                    onKeyDown={(e) => {
-                        // Prevent letters/symbols some browsers allow in number inputs
-                        if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
-                    }}
-                    onChange={(e) => {
-                        let v = e.target.value;
-
-                        // Remove anything that's not digit or dot
-                        v = v.replace(/[^\d.]/g, "");
-
-                        // Allow only one dot
-                        const firstDot = v.indexOf(".");
-                        if (firstDot !== -1) {
-                            v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, "");
-                        }
-
-                        setSelections((prev) => ({
-                            ...prev,
-                            belowGradeRSI: v,
-                        }));
-                    }}
-                    className={cn(
-                        (validationErrors.belowGradeRSI || isMissing("belowGradeRSI")) && missingFieldClass,
-                        validationErrors.belowGradeRSI && "border-red-500 ring-2 ring-red-500"
-                    )}
+                    validationError={validationErrors.belowGradeRSI}
+                    isMissing={isMissing("belowGradeRSI")}
+                    missingFieldClass={missingFieldClass}
+                    InfoCollapsible={WarningButton}
                 />
-
-                {(() => {
-                    const minRSI = selections.hasHrv === "with_hrv" ? 2.98 : 3.46;
-                    const validation = validateRSI_9362(selections.belowGradeRSI, minRSI, `below grade walls`);
-
-                    const showWarning = !validation.isValid && !!validation.warning;
-
-                    return showWarning ? (
-                        <WarningButton
-                            title="🛑 RSI Value Too Low"
-                            variant="destructive"
-                            defaultOpen={true}
-                        >
-                            <p className="text-xs">
-                                {`The RSI value must be increased to at least ${selections.hasHrv === "with_hrv" ? "2.98 with HRV" : "3.46 without HRV"
-                                    } to meet NBC 9.36.2 requirements for below grade walls.`}
-                            </p>
-                        </WarningButton>
-                    ) : null;
-                })()}
-
-                <EffectiveRSIWarning />
             </div>
 
             <div id="floorsSlabsSelected" className={cn(
@@ -608,417 +449,150 @@ export function EnvelopeSection({
                 </div>
             </div>
 
-            {selections.floorsSlabsSelected.includes("heatedFloors") && <div id="inFloorHeatRSI" className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Heated Floors <span className="text-red-500">*</span></label>
-                <Input required type="text"
-                    placeholder={`Min RSI ${selections.province === "saskatchewan" ? "2.84 (R-16.1)" : "1.34"} for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`}
-                    value={selections.inFloorHeatRSI}
-                    onChange={e => setSelections(prev => ({
-                        ...prev,
-                        inFloorHeatRSI: e.target.value
-                    }))}
-                    className={cn(
-                        (validationErrors.inFloorHeatRSI || isMissing("inFloorHeatRSI")) && missingFieldClass,
-                        validationErrors.inFloorHeatRSI && "border-red-500 ring-2 ring-red-500"
-                    )}
-                />
-                {(() => {
-                    const minRSI = selections.province === "saskatchewan" ? 2.84 : 1.34;
-                    const validation = validateRSI_9362(selections.inFloorHeatRSI, minRSI, `heated floors`);
-                    if (!validation.isValid && validation.warning) {
-                        return <WarningButton title="🛑 RSI Value Too Low" variant="destructive" defaultOpen={true}>
-                            <p className="text-xs">
-                                The RSI value must be increased to at least {minRSI} to meet NBC 9.36.2 requirements for heated floors in {selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}.
-                            </p>
-                        </WarningButton>;
-                    }
-                    return null;
-                })()}
-                <EffectiveRSIWarning />
-            </div>}
-
-            {selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting") && <div id="slabOnGradeIntegralFootingRSI" className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Slab on grade with integral Footing <span className="text-red-500">*</span></label>
-                <Input
-                    required
-                    type="text"
-                    inputMode="decimal"
-                    placeholder="Min RSI 2.84 or N/A"
-                    value={selections.slabOnGradeIntegralFootingRSI}
-                    onKeyDown={(e) => {
-                        // allow navigation/edit keys
-                        const allowedKeys = [
-                            "Backspace",
-                            "Delete",
-                            "ArrowLeft",
-                            "ArrowRight",
-                            "Tab",
-                            "Home",
-                            "End",
-                        ];
-                        if (allowedKeys.includes(e.key)) return;
-
-                        // allow digits + dot
-                        if (/[0-9.]/.test(e.key)) return;
-
-                        // allow typing toward N/A only
-                        if (/[a-z]/i.test(e.key) && !["n", "a"].includes(e.key.toLowerCase())) {
-                            e.preventDefault();
-                            return;
-                        }
-                        if (!["/", "n", "N", "a", "A"].includes(e.key)) {
-                            e.preventDefault();
-                        }
-                    }}
-                    onChange={(e) => {
-                        const raw = e.target.value; // no trim here → avoids cursor lag
-
-                        // If user is typing N / N/ / NA / N/A, keep it
-                        if (/^n/i.test(raw)) {
-                            const kept = raw.replace(/[^nNaA/]/g, "");
-                            const firstSlash = kept.indexOf("/");
-                            const finalNA =
-                                firstSlash === -1
-                                    ? kept
-                                    : kept.slice(0, firstSlash + 1) +
-                                    kept.slice(firstSlash + 1).replace(/\//g, "");
-
-                            setSelections((prev) => ({
+            {selections.floorsSlabsSelected.includes("heatedFloors") && (
+                <div id="inFloorHeatRSI" className="space-y-2">
+                    <ThermalInputField
+                        id="inFloorHeatRSI"
+                        label="Heated Floors"
+                        required
+                        value={selections.inFloorHeatRSI || ""}
+                        onChange={(val) =>
+                            setSelections((prev: any) => ({
                                 ...prev,
-                                slabOnGradeIntegralFootingRSI: finalNA,
-                            }));
-                            return;
+                                inFloorHeatRSI: val,
+                            }))
                         }
-
-                        // Otherwise numeric-only decimal
-                        let v = raw.replace(/[^\d.]/g, "");
-                        const firstDot = v.indexOf(".");
-                        if (firstDot !== -1) {
-                            v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, "");
+                        minRSI={
+                            selections.province === "saskatchewan"
+                                ? 2.84
+                                : 1.34
                         }
-
-                        setSelections((prev) => ({
-                            ...prev,
-                            slabOnGradeIntegralFootingRSI: v,
-                        }));
-                    }}
-                    onBlur={() => {
-                        const v = (selections.slabOnGradeIntegralFootingRSI || "").trim();
-
-                        // Normalize N/A on blur
-                        if (/^n\/?a$/i.test(v)) {
-                            setSelections((prev) => ({
-                                ...prev,
-                                slabOnGradeIntegralFootingRSI: "N/A",
-                            }));
-                            return;
-                        }
-
-                        // Clean trailing dot (e.g. "2.")
-                        if (/^\d+\.$/.test(v)) {
-                            setSelections((prev) => ({
-                                ...prev,
-                                slabOnGradeIntegralFootingRSI: v.slice(0, -1),
-                            }));
-                        }
-                    }}
-                    className={cn(
-                        (validationErrors.slabOnGradeIntegralFootingRSI ||
-                            isMissing("slabOnGradeIntegralFootingRSI")) &&
-                        missingFieldClass,
-                        validationErrors.slabOnGradeIntegralFootingRSI &&
-                        "border-red-500 ring-2 ring-red-500"
-                    )}
-                />
-
-                <EffectiveRSIWarning />
-
-                {selections.slabOnGradeIntegralFootingRSI && !isNaN(parseFloat(selections.slabOnGradeIntegralFootingRSI)) && parseFloat(selections.slabOnGradeIntegralFootingRSI) < 2.84 && <WarningButton title="🛑 RSI Value Too Low" variant="destructive" defaultOpen={true}>
-                    <p className="text-xs">
-                        The RSI value must be at least 2.84 to meet NBC 9.36.2 minimum requirements for slab on grade with integral footing.
-                    </p>
-                </WarningButton>}
-            </div>}
-
-            {selections.floorsSlabsSelected.includes("floorsOverUnheatedSpaces") && <div id="floorsOverUnheatedSpacesRSI" className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Floors over Unheated Spaces (Cantilevers or Exposed Floors) <span className="text-red-500">*</span></label>
-                <Input
-                    required
-                    type="text"
-                    inputMode="decimal"
-                    placeholder="Min RSI 5.02"
-                    value={selections.floorsOverUnheatedSpacesRSI}
-                    onKeyDown={(e) => {
-                        // allow navigation/edit keys
-                        const allowedKeys = [
-                            "Backspace",
-                            "Delete",
-                            "ArrowLeft",
-                            "ArrowRight",
-                            "Tab",
-                            "Home",
-                            "End",
-                        ];
-                        if (allowedKeys.includes(e.key)) return;
-
-                        // allow digits + dot
-                        if (/[0-9.]/.test(e.key)) return;
-
-                        // block all letters/symbols
-                        e.preventDefault();
-                    }}
-                    onChange={(e) => {
-                        const raw = e.target.value; // no trim here (prevents cursor lag)
-
-                        // numeric-only decimal
-                        let v = raw.replace(/[^\d.]/g, "");
-                        const firstDot = v.indexOf(".");
-                        if (firstDot !== -1) {
-                            v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, "");
-                        }
-
-                        setSelections((prev) => ({
-                            ...prev,
-                            floorsOverUnheatedSpacesRSI: v,
-                        }));
-                    }}
-                    onBlur={() => {
-                        const v = (selections.floorsOverUnheatedSpacesRSI || "").trim();
-
-                        // clean trailing dot (e.g. "5.")
-                        if (/^\d+\.$/.test(v)) {
-                            setSelections((prev) => ({
-                                ...prev,
-                                floorsOverUnheatedSpacesRSI: v.slice(0, -1),
-                            }));
-                        }
-                    }}
-                    className={cn(
-                        (validationErrors.floorsOverUnheatedSpacesRSI ||
-                            isMissing("floorsOverUnheatedSpacesRSI")) &&
-                        missingFieldClass,
-                        validationErrors.floorsOverUnheatedSpacesRSI &&
-                        "border-red-500 ring-2 ring-red-500"
-                    )}
-                />
-
-                {(() => {
-                    const minRSI = 5.02;
-                    const validation = validateRSI_9362(
-                        selections.floorsOverUnheatedSpacesRSI,
-                        minRSI,
-                        `floors over unheated spaces`
-                    );
-
-                    const showWarning = !validation.isValid && !!validation.warning;
-
-                    return showWarning ? (
-                        <WarningButton
-                            title="🛑 RSI Value Too Low"
-                            variant="destructive"
-                            defaultOpen={true}
-                        >
-                            <p className="text-xs">
-                                The RSI value must be increased to at least 5.02 to meet NBC 9.36.2
-                                requirements for floors over unheated spaces.
-                            </p>
-                        </WarningButton>
-                    ) : null;
-                })()}
-
-                <EffectiveRSIWarning />
-            </div>}
-
-            {selections.floorsSlabsSelected.includes("unheatedBelowFrost") && <div id="unheatedFloorBelowFrostRSI" className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Unheated Floor Below Frost Line <span className="text-red-500">*</span></label>
-                <Input
-                    required
-                    type="text"
-                    inputMode="decimal"
-                    placeholder="Enter RSI value or 'uninsulated'"
-                    value={selections.unheatedFloorBelowFrostRSI}
-                    onKeyDown={(e) => {
-                        const allowedControlKeys = [
-                            "Backspace",
-                            "Delete",
-                            "ArrowLeft",
-                            "ArrowRight",
-                            "Tab",
-                            "Home",
-                            "End",
-                        ];
-                        if (allowedControlKeys.includes(e.key)) return;
-
-                        const current = (selections.unheatedFloorBelowFrostRSI || "").toLowerCase();
-
-                        // --- Numeric path ---
-                        if (/^\d*\.?\d*$/.test(current)) {
-                            if (/[0-9.]/.test(e.key)) return;
-                        }
-
-                        // --- "uninsulated" path ---
-                        const target = "uninsulated";
-                        if (/^[a-z]$/i.test(e.key)) {
-                            const next = (current + e.key.toLowerCase());
-                            if (target.startsWith(next)) return;
-                        }
-
-                        // block everything else
-                        e.preventDefault();
-                    }}
-                    onChange={(e) => {
-                        const raw = e.target.value;
-
-                        // if typing text → restrict strictly to prefix of "uninsulated"
-                        if (/^[a-z]/i.test(raw)) {
-                            const target = "uninsulated";
-                            const lower = raw.toLowerCase();
-
-                            if (target.startsWith(lower)) {
-                                setSelections((prev) => ({
-                                    ...prev,
-                                    unheatedFloorBelowFrostRSI: lower,
-                                }));
-                            }
-                            return;
-                        }
-
-                        // numeric-only decimal
-                        let v = raw.replace(/[^\d.]/g, "");
-                        const firstDot = v.indexOf(".");
-                        if (firstDot !== -1) {
-                            v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, "");
-                        }
-
-                        setSelections((prev) => ({
-                            ...prev,
-                            unheatedFloorBelowFrostRSI: v,
-                        }));
-                    }}
-                    onBlur={() => {
-                        const v = (selections.unheatedFloorBelowFrostRSI || "").trim().toLowerCase();
-
-                        // normalize keyword
-                        if (v === "uninsulated") {
-                            setSelections((prev) => ({
-                                ...prev,
-                                unheatedFloorBelowFrostRSI: "uninsulated",
-                            }));
-                            return;
-                        }
-
-                        // clean trailing dot
-                        if (/^\d+\.$/.test(v)) {
-                            setSelections((prev) => ({
-                                ...prev,
-                                unheatedFloorBelowFrostRSI: v.slice(0, -1),
-                            }));
-                        }
-                    }}
-                    className={cn(
-                        (validationErrors.unheatedFloorBelowFrostRSI ||
-                            isMissing("unheatedFloorBelowFrostRSI")) &&
-                        missingFieldClass,
-                        validationErrors.unheatedFloorBelowFrostRSI &&
-                        "border-red-500 ring-2 ring-red-500"
-                    )}
-                />
-                <div className="p-3 bg-muted border border-border rounded-md">
-                    <p className="text-sm font-medium">
-                        ℹ️ Unheated Floor Below Frost Line
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                        This assembly typically remains uninsulated as per NBC requirements but can be insulated to improve comfort in these areas. Enter 'uninsulated' or specify an RSI value if insulation is provided.
-                    </p>
+                        fieldName="heated floors"
+                        placeholder={`Min RSI ${selections.province === "saskatchewan"
+                            ? "2.84"
+                            : "1.34"
+                            } for ${selections.province === "saskatchewan"
+                                ? "Saskatchewan"
+                                : "Alberta"
+                            }`}
+                        validationError={validationErrors.inFloorHeatRSI}
+                        isMissing={isMissing("inFloorHeatRSI")}
+                        missingFieldClass={missingFieldClass}
+                        InfoCollapsible={WarningButton}
+                    />
                 </div>
-            </div>}
+            )}
 
-            {selections.floorsSlabsSelected.includes("unheatedAboveFrost") && <div id="unheatedFloorAboveFrostRSI" className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Unheated Floor Above Frost Line <span className="text-red-500">*</span></label>
-                <Input
-                    required
-                    type="text"
-                    inputMode="decimal"
-                    placeholder="Minimum RSI 1.96"
-                    value={selections.unheatedFloorAboveFrostRSI}
-                    onKeyDown={(e) => {
-                        // allow navigation/edit keys
-                        const allowedKeys = [
-                            "Backspace",
-                            "Delete",
-                            "ArrowLeft",
-                            "ArrowRight",
-                            "Tab",
-                            "Home",
-                            "End",
-                        ];
-                        if (allowedKeys.includes(e.key)) return;
-
-                        // allow digits + dot
-                        if (/[0-9.]/.test(e.key)) return;
-
-                        // block everything else
-                        e.preventDefault();
-                    }}
-                    onChange={(e) => {
-                        const raw = e.target.value; // no trim here (prevents cursor lag)
-
-                        // numeric-only decimal
-                        let v = raw.replace(/[^\d.]/g, "");
-                        const firstDot = v.indexOf(".");
-                        if (firstDot !== -1) {
-                            v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, "");
-                        }
-
-                        setSelections((prev) => ({
-                            ...prev,
-                            unheatedFloorAboveFrostRSI: v,
-                        }));
-                    }}
-                    onBlur={() => {
-                        const v = (selections.unheatedFloorAboveFrostRSI || "").trim();
-
-                        // clean trailing dot (e.g. "1.")
-                        if (/^\d+\.$/.test(v)) {
-                            setSelections((prev) => ({
+            {selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting") && (
+                <div id="slabOnGradeIntegralFootingRSI" className="space-y-2">
+                    <ThermalInputField
+                        id="slabOnGradeIntegralFootingRSI"
+                        label="Slab on grade with integral Footing"
+                        required
+                        value={selections.slabOnGradeIntegralFootingRSI || ""}
+                        onChange={(val) =>
+                            setSelections((prev: any) => ({
                                 ...prev,
-                                unheatedFloorAboveFrostRSI: v.slice(0, -1),
-                            }));
+                                slabOnGradeIntegralFootingRSI: val,
+                            }))
                         }
-                    }}
-                    className={cn(
-                        (validationErrors.unheatedFloorAboveFrostRSI ||
-                            isMissing("unheatedFloorAboveFrostRSI")) &&
-                        missingFieldClass,
-                        validationErrors.unheatedFloorAboveFrostRSI && "border-red-500 ring-2 ring-red-500"
-                    )}
-                />
+                        minRSI={2.84}
+                        fieldName="slab on grade with integral footing"
+                        placeholder="Min RSI 2.84 or N/A"
+                        allowNA
+                        validationError={validationErrors.slabOnGradeIntegralFootingRSI}
+                        isMissing={isMissing("slabOnGradeIntegralFootingRSI")}
+                        missingFieldClass={missingFieldClass}
+                        InfoCollapsible={WarningButton}
+                    />
+                </div>
+            )}
 
-                {(() => {
-                    const minRSI = 1.96;
-                    const v = (selections.unheatedFloorAboveFrostRSI || "").trim();
+            {selections.floorsSlabsSelected.includes("floorsOverUnheatedSpaces") && (
+                <div id="floorsOverUnheatedSpacesRSI" className="space-y-2">
 
-                    const showWarning =
-                        v !== "" &&
-                        !isNaN(Number(v)) &&
-                        Number(v) < minRSI;
+                    <ThermalInputField
+                        id="floorsOverUnheatedSpacesRSI"
+                        label="Floors over Unheated Spaces (Cantilevers or Exposed Floors)"
+                        required
+                        value={selections.floorsOverUnheatedSpacesRSI || ""}
+                        onChange={(val) =>
+                            setSelections((prev: any) => ({
+                                ...prev,
+                                floorsOverUnheatedSpacesRSI: val,
+                            }))
+                        }
+                        minRSI={5.02}
+                        fieldName="floors over unheated spaces"
+                        placeholder="Min RSI 5.02"
+                        validationError={validationErrors.floorsOverUnheatedSpacesRSI}
+                        isMissing={isMissing("floorsOverUnheatedSpacesRSI")}
+                        missingFieldClass={missingFieldClass}
+                        InfoCollapsible={WarningButton}
+                    />
 
-                    return showWarning ? (
-                        <WarningButton
-                            title="🛑 RSI Value Too Low"
-                            variant="destructive"
-                            defaultOpen={true}
-                        >
-                            <p className="text-xs">
-                                The RSI value must be increased to at least 1.96 to meet NBC
-                                requirements for unheated floor above frost line.
-                            </p>
-                        </WarningButton>
-                    ) : null;
-                })()}
+                </div>
+            )}
 
-                <EffectiveRSIWarning />
-            </div>}
+            {selections.floorsSlabsSelected.includes("unheatedBelowFrost") && (
+                <div id="unheatedFloorBelowFrostRSI" className="space-y-2">
+                    <ThermalInputField
+                        id="unheatedFloorBelowFrostRSI"
+                        label="Unheated Floor Below Frost Line"
+                        required
+                        value={selections.unheatedFloorBelowFrostRSI || ""}
+                        onChange={(val) =>
+                            setSelections((prev: any) => ({
+                                ...prev,
+                                unheatedFloorBelowFrostRSI: val,
+                            }))
+                        }
+                        // minRSI=0 para NÃO gerar warning "too-low",
+                        // mas ainda permitir detectar "R-value detected/possible"
+                        minRSI={0}
+                        fieldName="unheated floor below frost line"
+                        placeholder="Enter RSI value or 'uninsulated'"
+                        keyword="uninsulated"
+                        validationError={validationErrors.unheatedFloorBelowFrostRSI}
+                        isMissing={isMissing("unheatedFloorBelowFrostRSI")}
+                        missingFieldClass={missingFieldClass}
+                        InfoCollapsible={WarningButton}
+                        showEffectiveWarning={false}
+                    />
+
+                    <div className="p-3 bg-muted border border-border rounded-md">
+                        <p className="text-sm font-medium">ℹ️ Unheated Floor Below Frost Line</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            This assembly typically remains uninsulated as per NBC requirements but can be insulated to improve comfort in these areas.
+                            Enter 'uninsulated' or specify an RSI value if insulation is provided.
+                        </p>
+                    </div>
+                </div>
+            )}
+
+            {selections.floorsSlabsSelected.includes("unheatedAboveFrost") && (
+                <div id="unheatedFloorAboveFrostRSI" className="space-y-2">
+                    <ThermalInputField
+                        id="unheatedFloorAboveFrostRSI"
+                        label="Unheated Floor Above Frost Line"
+                        required
+                        value={selections.unheatedFloorAboveFrostRSI || ""}
+                        onChange={(val) =>
+                            setSelections((prev: any) => ({
+                                ...prev,
+                                unheatedFloorAboveFrostRSI: val,
+                            }))
+                        }
+                        minRSI={1.96}
+                        fieldName="unheated floor above frost line"
+                        placeholder="Minimum RSI 1.96"
+                        validationError={validationErrors.unheatedFloorAboveFrostRSI}
+                        isMissing={isMissing("unheatedFloorAboveFrostRSI")}
+                        missingFieldClass={missingFieldClass}
+                        InfoCollapsible={WarningButton}
+                    />
+                </div>
+            )}
 
             <div id="windowUValue" className="space-y-2">
                 <div className="flex items-center gap-3">
