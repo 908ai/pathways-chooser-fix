@@ -57,7 +57,7 @@ export const buildingVolumeOptions: NBCOption[] = [
 ];
 
 export const airtightnessOptions: NBCOption[] = [
-  { value: "AL-1A", label: "AAAAAAAAAAAL-1A (ACH₅₀: 2.5, NLA₁₀: 1.20, NLR₅₀: 0.89)", points: 0 },
+  { value: "AL-1A", label: "AL-1A (ACH₅₀: 2.5, NLA₁₀: 1.20, NLR₅₀: 0.89)", points: 0 },
   { value: "AL-2A", label: "AL-2A (ACH₅₀: 2.0, NLA₁₀: 0.96, NLR₅₀: 0.71)", points: 4.6 },
   { value: "AL-3A", label: "AL-3A (ACH₅₀: 1.5, NLA₁₀: 0.72, NLR₅₀: 0.53)", points: 9.3 },
   { value: "AL-4A", label: "AL-4A (ACH₅₀: 1.0, NLA₁₀: 0.48, NLR₅₀: 0.35)", points: 13.9 },
@@ -126,7 +126,7 @@ export const belowGradeRSIOptions_7B: NBCOption[] = [
 ];
 
 export const airtightnessOptions_7B: NBCOption[] = [
-  { value: "AL-1A", label: "BBBBBBAL-1A (ACH₅₀: 2.5, NLA₁₀: 1.20, NLR₅₀: 0.89)", points: 0 },
+  { value: "AL-1A", label: "AL-1A (ACH₅₀: 2.5, NLA₁₀: 1.20, NLR₅₀: 0.89)", points: 0 },
   { value: "AL-2A", label: "AL-2A (ACH₅₀: 2.0, NLA₁₀: 0.96, NLR₅₀: 0.71)", points: 6.1 },
   { value: "AL-3A", label: "AL-3A (ACH₅₀: 1.5, NLA₁₀: 0.72, NLR₅₀: 0.53)", points: 12.1 },
   { value: "AL-4A", label: "AL-4A (ACH₅₀: 1.0, NLA₁₀: 0.48, NLR₅₀: 0.35)", points: 18.0 },
