@@ -12,14 +12,14 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { validateRSI, validateRSI_9362 } from "../../utils/validation";
 import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/EffectiveRSIWarning";
 
+import { getZoneOptions } from "../../../NBCCalculator/constants/options";
+
 import {
     wallRSIOptions,
     windowUValueOptions,
     belowGradeRSIOptions,
-    airtightnessOptions,
     hrvOptions,
-    waterHeaterOptions,
-    airtightnessOptions_7B
+    waterHeaterOptions
 } from "../../../NBCCalculator/constants/options";
 
 import EnvelopeSection from "./components/EnvelopeSection";
@@ -131,12 +131,12 @@ export default function Prescriptive9368Section({
     }, [isF280RequiredCity]);
 
     const getFilteredAirtightnessOptions = () => {
-        const isZone7B = selections.province === "alberta" && selections.climateZone === "7B";
+        const zoneOptions = getZoneOptions(selections.climateZone);
+        const baseOptions = zoneOptions.airtightness;
+
         const isSingleDetached =
             selections.buildingType === "single-detached" ||
             selections.buildingType === "single-detached-secondary";
-
-        const baseOptions = isZone7B ? airtightnessOptions_7B : airtightnessOptions;
 
         if (isSingleDetached) {
             return baseOptions.filter(option => option.value.includes("B"));

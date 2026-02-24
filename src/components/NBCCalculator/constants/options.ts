@@ -7,12 +7,15 @@ export interface NBCOption {
   points: number;
 }
 
+export type ClimateZone = "6" | "7A" | "7B";
+
+
 /* -------------------------
    Zone 7A Options
 ------------------------- */
 
 export const wallRSIOptions: NBCOption[] = [
-  { value: "2.97", label: "RSI 2.97 / R-16.9 (Not applicable in Zone 7A)", points: 0 },
+  { value: "2.97", label: "RSI 2.97 / R-16.9", points: 0 },
   { value: "3.08", label: "RSI 3.08 / R-17.5", points: 2.1 },
   { value: "3.69", label: "RSI 3.69 / R-21.0", points: 6.7 },
   { value: "3.85", label: "RSI 3.85 / R-21.9", points: 7.4 },
@@ -27,14 +30,14 @@ export const wallRSIOptions: NBCOption[] = [
 ];
 
 export const windowUValueOptions: NBCOption[] = [
-  { value: "1.61", label: "U-Value 1.61 (Not applicable in Zone 7A)", points: 0 },
+  { value: "1.61", label: "U-Value 1.61", points: 0 },
   { value: "1.44", label: "U-Value 1.44", points: 1.8 },
   { value: "1.22", label: "U-Value 1.22", points: 5.5 }
 ];
 
 export const belowGradeRSIOptions: NBCOption[] = [
   { value: "n/a", label: "N/A", points: 0 },
-  { value: "2.98", label: "RSI 2.98 / R-16.9 (Not available for zone 7A or 7B)", points: 0 },
+  { value: "2.98", label: "RSI 2.98 / R-16.9", points: 0 },
   { value: "3.09", label: "RSI 3.09 / R-17.6", points: 0.2 },
   { value: "3.46", label: "RSI 3.46 / R-19.7", points: 0.6 },
   { value: "3.90", label: "RSI 3.90 / R-22.2", points: 1.1 }
@@ -54,7 +57,7 @@ export const buildingVolumeOptions: NBCOption[] = [
 ];
 
 export const airtightnessOptions: NBCOption[] = [
-  { value: "AL-1A", label: "AL-1A (ACH₅₀: 2.5, NLA₁₀: 1.20, NLR₅₀: 0.89)", points: 0 },
+  { value: "AL-1A", label: "AAAAAAAAAAAL-1A (ACH₅₀: 2.5, NLA₁₀: 1.20, NLR₅₀: 0.89)", points: 0 },
   { value: "AL-2A", label: "AL-2A (ACH₅₀: 2.0, NLA₁₀: 0.96, NLR₅₀: 0.71)", points: 4.6 },
   { value: "AL-3A", label: "AL-3A (ACH₅₀: 1.5, NLA₁₀: 0.72, NLR₅₀: 0.53)", points: 9.3 },
   { value: "AL-4A", label: "AL-4A (ACH₅₀: 1.0, NLA₁₀: 0.48, NLR₅₀: 0.35)", points: 13.9 },
@@ -97,8 +100,8 @@ export const atticRSIOptions: NBCOption[] = [
 ------------------------- */
 
 export const wallRSIOptions_7B: NBCOption[] = [
-  { value: "2.97", label: "RSI 2.97 / R-16.9 (Not applicable in Zone 7B)", points: 0 },
-  { value: "3.08", label: "RSI 3.08 / R-17.5 (Not applicable in Zone 7B)", points: 0 },
+  { value: "2.97", label: "RSI 2.97 / R-16.9", points: 0 },
+  { value: "3.08", label: "RSI 3.08 / R-17.5", points: 0 },
   { value: "3.69", label: "RSI 3.69 / R-21.0", points: 5.4 },
   { value: "3.85", label: "RSI 3.85 / R-21.9", points: 6.2 },
   { value: "3.96", label: "RSI 3.96 / R-22.5", points: 7.0 },
@@ -109,21 +112,21 @@ export const wallRSIOptions_7B: NBCOption[] = [
 ];
 
 export const windowUValueOptions_7B: NBCOption[] = [
-  { value: "1.61", label: "U-Value 1.61 (Not applicable in Zone 7B)", points: 0 },
-  { value: "1.44", label: "U-Value 1.44 (Not applicable in Zone 7B)", points: 0 },
+  { value: "1.61", label: "U-Value 1.61", points: 0 },
+  { value: "1.44", label: "U-Value 1.44", points: 0 },
   { value: "1.22", label: "U-Value 1.22", points: 3.2 }
 ];
 
 export const belowGradeRSIOptions_7B: NBCOption[] = [
   { value: "n/a", label: "N/A", points: 0 },
-  { value: "2.98", label: "RSI 2.98 / R-16.9 (Not applicable in Zone 7B)", points: 0 },
+  { value: "2.98", label: "RSI 2.98 / R-16.9", points: 0 },
   { value: "3.09", label: "RSI 3.09 / R-17.6", points: 0.2 },
   { value: "3.46", label: "RSI 3.46 / R-19.7", points: 0.7 },
   { value: "3.90", label: "RSI 3.90 / R-22.2", points: 1.3 }
 ];
 
 export const airtightnessOptions_7B: NBCOption[] = [
-  { value: "AL-1A", label: "AL-1A (ACH₅₀: 2.5, NLA₁₀: 1.20, NLR₅₀: 0.89)", points: 0 },
+  { value: "AL-1A", label: "BBBBBBAL-1A (ACH₅₀: 2.5, NLA₁₀: 1.20, NLR₅₀: 0.89)", points: 0 },
   { value: "AL-2A", label: "AL-2A (ACH₅₀: 2.0, NLA₁₀: 0.96, NLR₅₀: 0.71)", points: 6.1 },
   { value: "AL-3A", label: "AL-3A (ACH₅₀: 1.5, NLA₁₀: 0.72, NLR₅₀: 0.53)", points: 12.1 },
   { value: "AL-4A", label: "AL-4A (ACH₅₀: 1.0, NLA₁₀: 0.48, NLR₅₀: 0.35)", points: 18.0 },
@@ -153,9 +156,9 @@ export const waterHeaterOptions_7B: NBCOption[] = [
   { value: "electric-storage-low", label: "Electric storage tank (under performance targets)", points: 0 }
 ];
 
-/* -------------------------
-   Upgrade Costs
-------------------------- */
+/* ======================================================
+   UPGRADE COSTS (ZONE-INDEPENDENT)
+====================================================== */
 
 export const upgradesData = [
   { upgrade: "Attic - R40 → R50", cost: 400, prescriptiveRequired: true, performanceRequired: false },
@@ -172,3 +175,36 @@ export const upgradesData = [
   { upgrade: "Condensing Hot Water Heater", cost: 1000, prescriptiveRequired: true, performanceRequired: false },
   { upgrade: "96 AFUE Furnace", cost: 0, prescriptiveRequired: false, performanceRequired: false }
 ];
+
+/* ======================================================
+   ZONE MAPPING (SCALABLE STRUCTURE)
+====================================================== */
+
+export const zoneOptions = {
+  "7A": {
+    wall: wallRSIOptions,
+    window: windowUValueOptions,
+    belowGrade: belowGradeRSIOptions,
+    airtightness: airtightnessOptions,
+    hrv: hrvOptions,
+    waterHeater: waterHeaterOptions,
+    attic: atticRSIOptions,
+  },
+  "7B": {
+    wall: wallRSIOptions_7B,
+    window: windowUValueOptions_7B,
+    belowGrade: belowGradeRSIOptions_7B,
+    airtightness: airtightnessOptions_7B,
+    hrv: hrvOptions_7B,
+    waterHeater: waterHeaterOptions_7B,
+    attic: atticRSIOptions,
+  }
+} as const;
+
+/* ======================================================
+   HELPER FUNCTION
+====================================================== */
+
+export function getZoneOptions(zone: ClimateZone) {
+  return zoneOptions[zone] ?? zoneOptions["7A"];
+}

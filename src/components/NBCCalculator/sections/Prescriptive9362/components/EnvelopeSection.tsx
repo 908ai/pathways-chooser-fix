@@ -181,7 +181,7 @@ export function EnvelopeSection({
             <div id="ceilingsAtticRSI" className="space-y-2">
                 <ThermalInputField
                     id="ceilingsAtticRSI"
-                    label="Ceilings below Attics"
+                    label="Ceilings below Attics Insulation"
                     required
                     value={selections.ceilingsAtticRSI || ""}
                     onChange={(val) =>
@@ -240,7 +240,7 @@ export function EnvelopeSection({
 
                     <ThermalInputField
                         id="cathedralFlatRSIValue"
-                        label="Cathedral / Flat Roofs - Min. 5.02 RSI"
+                        label="Cathedral / Flat Roof Insulation"
                         required
                         value={selections.cathedralFlatRSIValue || ""}
                         onChange={(val) =>

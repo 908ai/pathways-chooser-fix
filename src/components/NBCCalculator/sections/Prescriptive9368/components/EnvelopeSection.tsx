@@ -8,21 +8,18 @@ import InfoButton from "@/components/InfoButton";
 import { cn } from "@/lib/utils";
 import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/EffectiveRSIWarning";
 
-import { validateRSI, validateRSI_9362 } from "../../../utils/validation";
+//import { validateRSI, validateRSI_9362 } from "../../../utils/validation";
 
-import {
-    wallRSIOptions,
-    windowUValueOptions,
-    belowGradeRSIOptions,
-} from "../../../../NBCCalculator/constants/options";
+import { getZoneOptions } from "../../../../NBCCalculator/constants/options";
+import { useEffect } from "react";
 
 import WarningButton from "./WarningButton";
 
-import {
-    shouldBlockKeyDown,
-    sanitizeOnChange,
-    sanitizeOnBlur,
-} from "@/components/NBCCalculator/utils/inputSanitizers";
+// import {
+//     shouldBlockKeyDown,
+//     sanitizeOnChange,
+//     sanitizeOnBlur,
+// } from "@/components/NBCCalculator/utils/inputSanitizers";
 
 import ThermalInputField from "@/components/NBCCalculator/components/inputs/ThermalInputField";
 
@@ -37,7 +34,6 @@ export default function EnvelopeSection({
     isMissing,
     missingFieldClass,
     InfoCollapsible,
-    getFilteredAirtightnessOptions,
 }: any) {
 
     /* Ceiling/Attic */
@@ -55,13 +51,44 @@ export default function EnvelopeSection({
                 ? "Min RSI 10.43 without HRV"
                 : "Min RSI 8.67 with HRV, 10.43 without HRV";
 
+    const zoneOptions = getZoneOptions(selections.climateZone);
+
+    const wallOptions = zoneOptions.wall;
+    const windowOptions = zoneOptions.window;
+    const belowGradeOptions = zoneOptions.belowGrade;
+    const airtightnessOptions = zoneOptions.airtightness;   
+    
+    const filteredAirtightnessOptions = (() => {
+        const isSingleDetached =
+            selections.buildingType === "single-detached" ||
+            selections.buildingType === "single-detached-secondary";
+
+        if (isSingleDetached) {
+            return airtightnessOptions.filter(option =>
+                option.value.includes("B")
+            );
+        }
+
+        return airtightnessOptions;
+    })();    
+    
+    useEffect(() => {
+    setSelections((prev: any) => ({
+        ...prev,
+        wallRSI: "",
+        windowUValue: "",
+        belowGradeRSI: "",
+        airtightness: "",
+    }));
+    }, [selections.climateZone]);    
+
     return (
         <div className="space-y-6">
             {/* Ceiling/Attic Insulation */}
             <div id="ceilingsAtticRSI" className="space-y-2">
                 <ThermalInputField
                     id="ceilingsAtticRSI"
-                    label="Effective RSI - Ceilings below Attics"
+                    label="Ceilings below Attics Insulation (RSI/R-Value)"
                     required
                     value={selections.ceilingsAtticRSI}
                     onChange={(value) =>
@@ -72,8 +99,8 @@ export default function EnvelopeSection({
                     }
                     minRSI={minRSI}
                     fieldName={`ceilings below attics ${selections.hasHrv === "with_hrv"
-                            ? "with HRV"
-                            : "without HRV"
+                        ? "with HRV"
+                        : "without HRV"
                         }`}
                     compliancePath={selections.compliancePath}
                     placeholder={placeholder}
@@ -87,8 +114,8 @@ export default function EnvelopeSection({
             {/* Wall Insulation */}
             <div id="wallRSI" className="space-y-2">
                 <div className="flex items-center gap-2">
-                    <label className="text-sm font-medium text-foreground">Above Grade Walls - RSI Value <span className="text-red-400">*</span></label>
-                    <InfoButton title="Above Grade Walls - RSI Value">
+                    <label className="text-sm font-medium text-foreground">Above Grade Walls Insulation (RSI/R-Value) <span className="text-red-400">*</span></label>
+                    <InfoButton title="Above Grade Walls Insulation">
                         <div className="space-y-4">
                             <p className="text-sm">
                                 Enter the RSI value for your lowest-performing wall assembly, including tall walls.
@@ -107,7 +134,7 @@ export default function EnvelopeSection({
                         <SelectValue placeholder="Select wall insulation level" />
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px] overflow-y-auto">
-                        {wallRSIOptions.map(option => <SelectItem key={option.value} value={option.value}>
+                        {wallOptions.map(option => <SelectItem key={option.value} value={option.value}>
                             {option.label} ({option.points} points)
                         </SelectItem>)}
                     </SelectContent>
@@ -117,7 +144,7 @@ export default function EnvelopeSection({
 
             {/* Below Grade Walls */}
             <div id="belowGradeRSI" className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Below Grade Walls - RSI Value <span className="text-red-400">*</span></label>
+                <label className="text-sm font-medium text-foreground">Below Grade Walls Insulation (RSI/R-Value) <span className="text-red-400">*</span></label>
                 <Select value={selections.belowGradeRSI} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     belowGradeRSI: value
@@ -129,7 +156,7 @@ export default function EnvelopeSection({
                         <SelectValue placeholder="Select below grade insulation" />
                     </SelectTrigger>
                     <SelectContent>
-                        {belowGradeRSIOptions.map(option => <SelectItem key={option.value} value={option.value}>
+                        {belowGradeOptions.map(option => <SelectItem key={option.value} value={option.value}>
                             {option.label} ({option.points} points)
                         </SelectItem>)}
                     </SelectContent>
@@ -190,7 +217,7 @@ export default function EnvelopeSection({
                         <SelectValue placeholder="Select window performance" />
                     </SelectTrigger>
                     <SelectContent>
-                        {windowUValueOptions.map(option => <SelectItem key={option.value} value={option.value}>
+                        {windowOptions.map(option => <SelectItem key={option.value} value={option.value}>
                             {option.label} ({option.points} points)
                         </SelectItem>)}
                     </SelectContent>
@@ -413,7 +440,7 @@ export default function EnvelopeSection({
                         <SelectValue placeholder="Select air-tightness level" />
                     </SelectTrigger>
                     <SelectContent>
-                        {getFilteredAirtightnessOptions().map(option => <SelectItem key={option.value} value={option.value}>
+                        {filteredAirtightnessOptions.map(option => <SelectItem key={option.value} value={option.value}>
                             {option.label} ({option.points} points)
                         </SelectItem>)}
                     </SelectContent>
@@ -762,7 +789,7 @@ export default function EnvelopeSection({
 
             {/* Cathedral / Flat Roof */}
             <div id="hasCathedralOrFlatRoof" className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Is there any cathedral ceilings or flat roof?</label>
+                <label className="text-sm font-medium text-foreground">Are there any cathedral ceilings or flat roofs?</label>
                 <Select value={selections.hasCathedralOrFlatRoof} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     hasCathedralOrFlatRoof: value,
@@ -779,35 +806,35 @@ export default function EnvelopeSection({
                 </Select>
             </div>
 
-{selections.hasCathedralOrFlatRoof === "yes" && (
-    <div id="cathedralFlatRSIValue" className="space-y-2">
-        <ThermalInputField
-            id="cathedralFlatRSIValue"
-            label="Cathedral / Flat Roofs - Min. 5.02 RSI"
-            required
-            value={selections.cathedralFlatRSIValue || ""}
-            onChange={(val) =>
-                setSelections((prev: any) => ({
-                    ...prev,
-                    cathedralFlatRSIValue: val,
-                }))
-            }
-            minRSI={5.02}
-            fieldName="cathedral/flat roofs"
-            placeholder="Enter RSI value (min. 5.02)"
-            validationError={validationErrors.cathedralFlatRSIValue}
-            isMissing={isMissing("cathedralFlatRSIValue")}
-            missingFieldClass={missingFieldClass}
-            InfoCollapsible={WarningButton}
-        />
-    </div>
-)}
+            {selections.hasCathedralOrFlatRoof === "yes" && (
+                <div id="cathedralFlatRSIValue" className="space-y-2">
+                    <ThermalInputField
+                        id="cathedralFlatRSIValue"
+                        label="Cathedral / Flat Roof Insulation (RSI/R-Value)"
+                        required
+                        value={selections.cathedralFlatRSIValue || ""}
+                        onChange={(val) =>
+                            setSelections((prev: any) => ({
+                                ...prev,
+                                cathedralFlatRSIValue: val,
+                            }))
+                        }
+                        minRSI={5.02}
+                        fieldName="cathedral/flat roofs"
+                        placeholder="Enter RSI value (min. 5.02)"
+                        validationError={validationErrors.cathedralFlatRSIValue}
+                        isMissing={isMissing("cathedralFlatRSIValue")}
+                        missingFieldClass={missingFieldClass}
+                        InfoCollapsible={WarningButton}
+                    />
+                </div>
+            )}
 
             {/* Floors over Unheated Spaces */}
             <div id="floorsUnheatedRSI" className="space-y-2">
                 <ThermalInputField
                     id="floorsUnheatedRSI"
-                    label="Floors over Unheated Spaces (Cantilevers or Exposed Floors)"
+                    label="Floors over Unheated Spaces (Cantilevers or Exposed Floors) Insulation (RSI/R-Value)"
                     value={selections.floorsUnheatedRSI}
                     onChange={(value) =>
                         setSelections((prev: any) => ({
@@ -831,7 +858,7 @@ export default function EnvelopeSection({
             <div id="floorsGarageRSI" className="space-y-2">
                 <ThermalInputField
                     id="floorsGarageRSI"
-                    label="Floors over Garage (Bonus Floor)"
+                    label="Floors over Garage (Bonus Floor) Insulation (RSI/R-Value)"
                     value={selections.floorsGarageRSI}
                     onChange={(value) =>
                         setSelections((prev: any) => ({
@@ -956,17 +983,15 @@ export default function EnvelopeSection({
                                     minRSI={
                                         selections.province === "saskatchewan" ? 2.84 : 1.34
                                     }
-                                    fieldName={`heated floors in ${
-                                        selections.province === "saskatchewan"
+                                    fieldName={`heated floors in ${selections.province === "saskatchewan"
                                             ? "Saskatchewan"
                                             : "Alberta"
-                                    }`}
+                                        }`}
                                     compliancePath={selections.compliancePath}
-                                    placeholder={`Minimum ${
-                                        selections.province === "saskatchewan"
+                                    placeholder={`Minimum ${selections.province === "saskatchewan"
                                             ? "2.84"
                                             : "1.34"
-                                    } RSI`}
+                                        } RSI`}
                                     validationError={validationErrors.heatedFloorsRSI}
                                     isMissing={false}
                                     missingFieldClass={missingFieldClass}
@@ -982,7 +1007,7 @@ export default function EnvelopeSection({
                         <div id="unheatedFloorBelowFrostRSI" className="space-y-2">
                             <ThermalInputField
                                 id="unheatedFloorBelowFrostRSI"
-                                label="Unheated Floor Below Frost Line"
+                                label="Unheated Floor Below Frost Line Insulation (RSI/R-Value) - if applicable"
                                 value={selections.unheatedFloorBelowFrostRSI}
                                 onChange={(value) =>
                                     setSelections((prev: any) => ({
@@ -1003,7 +1028,7 @@ export default function EnvelopeSection({
                         <div id="unheatedFloorAboveFrostRSI" className="space-y-2">
                             <ThermalInputField
                                 id="unheatedFloorAboveFrostRSI"
-                                label="Unheated Floor Above Frost Line"
+                                label="Unheated Floor Above Frost Line Insulation (RSI/R-Value)"
                                 value={selections.unheatedFloorAboveFrostRSI}
                                 onChange={(value) =>
                                     setSelections((prev: any) => ({
@@ -1035,7 +1060,7 @@ export default function EnvelopeSection({
                         <SelectValue placeholder="Select window U-value" />
                     </SelectTrigger>
                     <SelectContent>
-                        {windowUValueOptions.map(option => <SelectItem key={option.value} value={option.value}>
+                        {windowOptions.map(option => <SelectItem key={option.value} value={option.value}>
                             <div className="flex justify-between items-center w-full">
                                 <span>{option.label}</span>
                                 <Badge variant={option.points > 0 ? "default" : "secondary"}>
