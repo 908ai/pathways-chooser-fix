@@ -896,12 +896,11 @@ export default function EnvelopeSection({
                         }))
                     }
                     minRSI={4.86}
-
                     fieldName="floors over garage"
                     compliancePath={selections.compliancePath}
                     placeholder="Min RSI 4.86 or N/A"
                     validationError={validationErrors.floorsGarageRSI}
-                    isMissing={false}
+                    isMissing={isMissing("floorsGarageRSI")}
                     missingFieldClass={missingFieldClass}
                     InfoCollapsible={InfoCollapsible}
                     allowNA
