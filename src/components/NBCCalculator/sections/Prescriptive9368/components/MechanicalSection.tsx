@@ -8,10 +8,7 @@ import InfoButton from "@/components/InfoButton";
 import { cn } from "@/lib/utils";
 import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/EffectiveRSIWarning";
 
-import {
-    hrvOptions,
-    waterHeaterOptions,
-} from "../../../../NBCCalculator/constants/options";
+import { getZoneOptions } from "../../../../NBCCalculator/constants/options";
 
 export default function MechanicalSection({
     selections,
@@ -25,6 +22,12 @@ export default function MechanicalSection({
     missingFieldClass,
     isF280RequiredCity,
 }: any) {
+
+    const zoneOptions = getZoneOptions(selections.climateZone);
+
+    const hrvOptions = zoneOptions.hrv;
+    const waterHeaterOptions = zoneOptions.waterHeater;
+
     return (
         <div className="space-y-6">
             {/* HRV/ERV Section for 9368 - Mandatory */}
@@ -62,7 +65,12 @@ export default function MechanicalSection({
                     <SelectContent className="bg-background border shadow-lg z-50">
                         {hrvOptions.slice(1).map((option) => (
                             <SelectItem key={option.value} value={option.value}>
-                                {option.label} ({option.points} points)
+                                <div className="flex justify-between items-center gap-3 w-full">
+                                <span>{option.label}</span>
+                                <Badge variant={option.points > 0 ? "default" : "secondary"}>
+                                    {option.points} pts
+                                </Badge>
+                            </div>
                             </SelectItem>
                         ))}
                     </SelectContent>
@@ -159,7 +167,12 @@ export default function MechanicalSection({
                     </SelectTrigger>
                     <SelectContent>
                         {waterHeaterOptions.map(option => <SelectItem key={option.value} value={option.value}>
-                            {option.label} ({option.points} points)
+                            <div className="flex justify-between items-center gap-3 w-full">
+                                <span>{option.label}</span>
+                                <Badge variant={option.points > 0 ? "default" : "secondary"}>
+                                    {option.points} pts
+                                </Badge>
+                            </div>
                         </SelectItem>)}
                     </SelectContent>
                 </Select>

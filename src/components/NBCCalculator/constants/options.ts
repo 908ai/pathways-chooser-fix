@@ -7,8 +7,78 @@ export interface NBCOption {
   points: number;
 }
 
+export interface NBCAirtightnessOption {
+  value: string;
+  level: string;
+  type: "Guarded" | "Unguarded";
+  ach50: number;
+  nla10: number;
+  nlr50: number;
+  points: number;
+}
+
 export type ClimateZone = "6" | "7A" | "7B";
 
+/* -------------------------
+   Zone 6 Options
+------------------------- */
+
+export const wallRSIOptions_6: NBCOption[] = [
+  { value: "2.97", label: "RSI 2.97 / R-16.9", points: 0 },
+  { value: "3.08", label: "RSI 3.08 / R-17.5", points: 1.6 },
+  { value: "3.69", label: "RSI 3.69 / R-21.0", points: 6.2 },
+  { value: "3.85", label: "RSI 3.85 / R-21.9", points: 6.9 },
+  { value: "3.96", label: "RSI 3.96 / R-22.5", points: 7.7 },
+  { value: "4.29", label: "RSI 4.29 / R-24.4", points: 9.2 },
+  { value: "4.40", label: "RSI 4.40 / R-25.0", points: 9.9 },
+  { value: "4.57", label: "RSI 4.57 / R-26.0", points: 10.6 },
+  { value: "4.73", label: "RSI 4.73 / R-26.9", points: 11.1 }
+];
+
+export const windowUValueOptions_6: NBCOption[] = [
+  { value: "1.61", label: "U-Value 1.61", points: 0 },
+  { value: "1.44", label: "U-Value 1.44", points: 1.6 },
+  { value: "1.22", label: "U-Value 1.22", points: 4.6 }
+];
+
+export const belowGradeRSIOptions_6: NBCOption[] = [
+  { value: "n/a", label: "N/A", points: 0 },
+  { value: "2.98", label: "RSI 2.98 / R-16.9", points: 0 },
+  { value: "3.09", label: "RSI 3.09 / R-17.6", points: 0.2 },
+  { value: "3.46", label: "RSI 3.46 / R-19.7", points: 0.8 },
+  { value: "3.90", label: "RSI 3.90 / R-22.2", points: 1.4 }
+];
+
+export const airtightnessOptions_6: NBCAirtightnessOption[] = [
+  { value: "AL-1A", level: "AL-1A", type: "Guarded", ach50: 2.5, nla10: 1.20, nlr50: 0.89, points: 0 },
+  { value: "AL-2A", level: "AL-2A", type: "Guarded", ach50: 2.0, nla10: 0.96, nlr50: 0.71, points: 3.5 },
+  { value: "AL-3A", level: "AL-3A", type: "Guarded", ach50: 1.5, nla10: 0.72, nlr50: 0.53, points: 7.0 },
+  { value: "AL-4A", level: "AL-4A", type: "Guarded", ach50: 1.0, nla10: 0.48, nlr50: 0.35, points: 10.5 },
+  { value: "AL-5A", level: "AL-5A", type: "Guarded", ach50: 0.6, nla10: 0.29, nlr50: 0.21, points: 13.4 },
+  { value: "AL-1B", level: "AL-1B", type: "Unguarded", ach50: 3.0, nla10: 1.92, nlr50: 1.17, points: 0 },
+  { value: "AL-2B", level: "AL-2B", type: "Unguarded", ach50: 2.5, nla10: 1.6, nlr50: 0.98, points: 0 },
+  { value: "AL-3B", level: "AL-3B", type: "Unguarded", ach50: 2.0, nla10: 1.28, nlr50: 0.78, points: 3.5 },
+  { value: "AL-4B", level: "AL-4B", type: "Unguarded", ach50: 1.5, nla10: 0.96, nlr50: 0.59, points: 6.9 },
+  { value: "AL-5B", level: "AL-5B", type: "Unguarded", ach50: 1.0, nla10: 0.64, nlr50: 0.39, points: 10.4 },
+  { value: "AL-6B", level: "AL-6B", type: "Unguarded", ach50: 0.6, nla10: 0.38, nlr50: 0.23, points: 13.3 }
+];
+
+export const hrvOptions_6: NBCOption[] = [
+  { value: "none", label: "None - Not Applicable", points: 0 },
+  { value: "60-65", label: "60% ≤ SRE < 65%", points: 0.7 },
+  { value: "65-75", label: "65% ≤ SRE < 75%", points: 2.2 },
+  { value: "75-84", label: "75% ≤ SRE < 84%", points: 3.5 }
+];
+
+export const waterHeaterOptions_6: NBCOption[] = [
+  { value: "residential-duty-079", label: "Gas-fired residential-duty commercial storage-type (UEF ≥ 0.79)", points: 2.4 },
+  { value: "residential-duty-085", label: "Gas-fired residential-duty commercial storage-type (UEF ≥ 0.85)", points: 3.2 },
+  { value: "heat-pump", label: "Heat pump water heater (EF ≥ 2.35)", points: 3.8 },
+  { value: "tankless-condensing", label: "Gas-fired tankless condensing water heater (EF ≥ 0.95 or UEF ≥ 0.92)", points: 4.9 },
+  { value: "residential-storage", label: "Gas-fired residential storage-type service water heater (EF ≥ 0.80 or UEF ≥ 0.83)", points: 4.9 },
+  { value: "gas-storage-low", label: "Gas-fired storage tank (under performance targets)", points: 0 },
+  { value: "electric-storage-low", label: "Electric storage tank (under performance targets)", points: 0 }
+];
 
 /* -------------------------
    Zone 7A Options
@@ -56,18 +126,18 @@ export const buildingVolumeOptions: NBCOption[] = [
   { value: "under-300", label: "V ≤ 300 m³", points: 10 }
 ];
 
-export const airtightnessOptions: NBCOption[] = [
-  { value: "AL-1A", label: "AL-1A (ACH₅₀: 2.5, NLA₁₀: 1.20, NLR₅₀: 0.89)", points: 0 },
-  { value: "AL-2A", label: "AL-2A (ACH₅₀: 2.0, NLA₁₀: 0.96, NLR₅₀: 0.71)", points: 4.6 },
-  { value: "AL-3A", label: "AL-3A (ACH₅₀: 1.5, NLA₁₀: 0.72, NLR₅₀: 0.53)", points: 9.3 },
-  { value: "AL-4A", label: "AL-4A (ACH₅₀: 1.0, NLA₁₀: 0.48, NLR₅₀: 0.35)", points: 13.9 },
-  { value: "AL-5A", label: "AL-5A (ACH₅₀: 0.6, NLA₁₀: 0.29, NLR₅₀: 0.21)", points: 17.8 },
-  { value: "AL-1B", label: "AL-1B (ACH₅₀: 3.0, NLA₁₀: 1.92, NLR₅₀: 1.17)", points: 0 },
-  { value: "AL-2B", label: "AL-2B (ACH₅₀: 2.5, NLA₁₀: 1.6, NLR₅₀: 0.98)", points: 0 },
-  { value: "AL-3B", label: "AL-3B (ACH₅₀: 2.0, NLA₁₀: 1.28, NLR₅₀: 0.78)", points: 4.6 },
-  { value: "AL-4B", label: "AL-4B (ACH₅₀: 1.5, NLA₁₀: 0.96, NLR₅₀: 0.59)", points: 9.1 },
-  { value: "AL-5B", label: "AL-5B (ACH₅₀: 1.0, NLA₁₀: 0.64, NLR₅₀: 0.39)", points: 13.6 },
-  { value: "AL-6B", label: "AL-6B (ACH₅₀: 0.6, NLA₁₀: 0.38, NLR₅₀: 0.23)", points: 17.4 }
+export const airtightnessOptions: NBCAirtightnessOption[] = [
+  { value: "AL-1A", level: "AL-1A", type: "Guarded", ach50: 2.5, nla10: 1.20, nlr50: 0.89, points: 0 },
+  { value: "AL-2A", level: "AL-2A", type: "Guarded", ach50: 2.0, nla10: 0.96, nlr50: 0.71, points: 4.6 },
+  { value: "AL-3A", level: "AL-3A", type: "Guarded", ach50: 1.5, nla10: 0.72, nlr50: 0.53, points: 9.3 },
+  { value: "AL-4A", level: "AL-4A", type: "Guarded", ach50: 1.0, nla10: 0.48, nlr50: 0.35, points: 13.9 },
+  { value: "AL-5A", level: "AL-5A", type: "Guarded", ach50: 0.6, nla10: 0.29, nlr50: 0.21, points: 17.8 },
+  { value: "AL-1B", level: "AL-1B", type: "Unguarded", ach50: 3.0, nla10: 1.92, nlr50: 1.17, points: 0 },
+  { value: "AL-2B", level: "AL-2B", type: "Unguarded", ach50: 2.5, nla10: 1.6, nlr50: 0.98, points: 0 },
+  { value: "AL-3B", level: "AL-3B", type: "Unguarded", ach50: 2.0, nla10: 1.28, nlr50: 0.78, points: 4.6 },
+  { value: "AL-4B", level: "AL-4B", type: "Unguarded", ach50: 1.5, nla10: 0.96, nlr50: 0.59, points: 9.1 },
+  { value: "AL-5B", level: "AL-5B", type: "Unguarded", ach50: 1.0, nla10: 0.64, nlr50: 0.39, points: 13.6 },
+  { value: "AL-6B", level: "AL-6B", type: "Unguarded", ach50: 0.6, nla10: 0.38, nlr50: 0.23, points: 17.4 }
 ];
 
 export const hrvOptions: NBCOption[] = [
@@ -125,18 +195,18 @@ export const belowGradeRSIOptions_7B: NBCOption[] = [
   { value: "3.90", label: "RSI 3.90 / R-22.2", points: 1.3 }
 ];
 
-export const airtightnessOptions_7B: NBCOption[] = [
-  { value: "AL-1A", label: "AL-1A (ACH₅₀: 2.5, NLA₁₀: 1.20, NLR₅₀: 0.89)", points: 0 },
-  { value: "AL-2A", label: "AL-2A (ACH₅₀: 2.0, NLA₁₀: 0.96, NLR₅₀: 0.71)", points: 6.1 },
-  { value: "AL-3A", label: "AL-3A (ACH₅₀: 1.5, NLA₁₀: 0.72, NLR₅₀: 0.53)", points: 12.1 },
-  { value: "AL-4A", label: "AL-4A (ACH₅₀: 1.0, NLA₁₀: 0.48, NLR₅₀: 0.35)", points: 18.0 },
-  { value: "AL-5A", label: "AL-5A (ACH₅₀: 0.6, NLA₁₀: 0.29, NLR₅₀: 0.21)", points: 22.7 },
-  { value: "AL-1B", label: "AL-1B (ACH₅₀: 3.0, NLA₁₀: 1.92, NLR₅₀: 1.17)", points: 0 },
-  { value: "AL-2B", label: "AL-2B (ACH₅₀: 2.5, NLA₁₀: 1.6, NLR₅₀: 0.98)", points: 0 },
-  { value: "AL-3B", label: "AL-3B (ACH₅₀: 2.0, NLA₁₀: 1.28, NLR₅₀: 0.78)", points: 4.1 },
-  { value: "AL-4B", label: "AL-4B (ACH₅₀: 1.5, NLA₁₀: 0.96, NLR₅₀: 0.59)", points: 8.2 },
-  { value: "AL-5B", label: "AL-5B (ACH₅₀: 1.0, NLA₁₀: 0.64, NLR₅₀: 0.39)", points: 12.3 },
-  { value: "AL-6B", label: "AL-6B (ACH₅₀: 0.6, NLA₁₀: 0.38, NLR₅₀: 0.23)", points: 15.6 }
+export const airtightnessOptions_7B: NBCAirtightnessOption[] = [
+  { value: "AL-1A", level: "AL-1A", type: "Guarded", ach50: 2.5, nla10: 1.20, nlr50: 0.89, points: 0 },
+  { value: "AL-2A", level: "AL-2A", type: "Guarded", ach50: 2.0, nla10: 0.96, nlr50: 0.71, points: 6.1 },
+  { value: "AL-3A", level: "AL-3A", type: "Guarded", ach50: 1.5, nla10: 0.72, nlr50: 0.53, points: 12.1 },
+  { value: "AL-4A", level: "AL-4A", type: "Guarded", ach50: 1.0, nla10: 0.48, nlr50: 0.35, points: 18.0 },
+  { value: "AL-5A", level: "AL-5A", type: "Guarded", ach50: 0.6, nla10: 0.29, nlr50: 0.21, points: 22.7 },
+  { value: "AL-1B", level: "AL-1B", type: "Unguarded", ach50: 3.0, nla10: 1.92, nlr50: 1.17, points: 0 },
+  { value: "AL-2B", level: "AL-2B", type: "Unguarded", ach50: 2.5, nla10: 1.6, nlr50: 0.98, points: 0 },
+  { value: "AL-3B", level: "AL-3B", type: "Unguarded", ach50: 2.0, nla10: 1.28, nlr50: 0.78, points: 4.1 },
+  { value: "AL-4B", level: "AL-4B", type: "Unguarded", ach50: 1.5, nla10: 0.96, nlr50: 0.59, points: 8.2 },
+  { value: "AL-5B", level: "AL-5B", type: "Unguarded", ach50: 1.0, nla10: 0.64, nlr50: 0.39, points: 12.3 },
+  { value: "AL-6B", level: "AL-6B", type: "Unguarded", ach50: 0.6, nla10: 0.38, nlr50: 0.23, points: 15.6 }
 ];
 
 export const hrvOptions_7B: NBCOption[] = [
@@ -181,6 +251,15 @@ export const upgradesData = [
 ====================================================== */
 
 export const zoneOptions = {
+  "6": {
+    wall: wallRSIOptions_6,
+    window: windowUValueOptions_6,
+    belowGrade: belowGradeRSIOptions_6,
+    airtightness: airtightnessOptions_6,
+    hrv: hrvOptions_6,
+    waterHeater: waterHeaterOptions_6,
+    attic: atticRSIOptions,
+  },  
   "7A": {
     wall: wallRSIOptions,
     window: windowUValueOptions,

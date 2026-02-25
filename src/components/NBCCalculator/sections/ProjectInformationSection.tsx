@@ -187,6 +187,7 @@ export default function ProjectInformationSection({
                           <SelectValue placeholder="Select climate zone" />
                         </SelectTrigger>
                         <SelectContent>
+                          <SelectItem value="6">Zone 6 (4000-4999 HDD)</SelectItem>
                           <SelectItem value="7A">Zone 7A (6000+ HDD)</SelectItem>
                           <SelectItem value="7B">Zone 7B (6000-6999 HDD)</SelectItem>
                         </SelectContent>

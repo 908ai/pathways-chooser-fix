@@ -28,6 +28,12 @@ import {
   airtightnessOptions_7B,
   hrvOptions_7B,
   waterHeaterOptions_7B,
+  wallRSIOptions_6,
+  windowUValueOptions_6,
+  belowGradeRSIOptions_6,
+  airtightnessOptions_6,
+  hrvOptions_6,
+  waterHeaterOptions_6,
 } from "./NBCCalculator/constants/options";
 
 import { useFileUploads } from "./NBCCalculator/hooks/useFileUploads";
@@ -746,22 +752,47 @@ const NBCCalculator = () => {
     }
 
     const getOptionsForCategory = (cat: string) => {
-      const isZone7B = selections.province === "alberta" && selections.climateZone === "7B";
+      const zone = selections.climateZone;
       switch (cat) {
         case "wallRSI":
-          return isZone7B ? wallRSIOptions_7B : wallRSIOptions;
+          if (zone === "7B") return wallRSIOptions_7B;
+          if (zone === "7A") return wallRSIOptions;
+          if (zone === "6") return wallRSIOptions_6;
+          return wallRSIOptions;
+
         case "windowUValue":
-          return isZone7B ? windowUValueOptions_7B : windowUValueOptions;
+          if (zone === "7B") return windowUValueOptions_7B;
+          if (zone === "7A") return windowUValueOptions;
+          if (zone === "6") return windowUValueOptions_6;
+          return windowUValueOptions;
+
         case "belowGradeRSI":
-          return isZone7B ? belowGradeRSIOptions_7B : belowGradeRSIOptions;
+          if (zone === "7B") return belowGradeRSIOptions_7B;
+          if (zone === "7A") return belowGradeRSIOptions;
+          if (zone === "6") return belowGradeRSIOptions_6;
+          return belowGradeRSIOptions;
+
         case "airtightness":
-          return isZone7B ? airtightnessOptions_7B : airtightnessOptions;
+          if (zone === "7B") return airtightnessOptions_7B;
+          if (zone === "7A") return airtightnessOptions;
+          if (zone === "6") return airtightnessOptions_6;
+          return airtightnessOptions;
+
         case "hrv":
-          return isZone7B ? hrvOptions_7B : hrvOptions;
+          if (zone === "7B") return hrvOptions_7B;
+          if (zone === "7A") return hrvOptions;
+          if (zone === "6") return hrvOptions_6;
+          return hrvOptions;
+
         case "waterHeater":
-          return isZone7B ? waterHeaterOptions_7B : waterHeaterOptions;
+          if (zone === "7B") return waterHeaterOptions_7B;
+          if (zone === "7A") return waterHeaterOptions;
+          if (zone === "6") return waterHeaterOptions_6;
+          return waterHeaterOptions;
+
         case "atticRSI":
           return atticRSIOptions;
+
         default:
           return [];
       }

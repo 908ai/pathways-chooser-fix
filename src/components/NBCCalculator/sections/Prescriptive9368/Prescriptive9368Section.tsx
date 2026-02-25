@@ -14,14 +14,6 @@ import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/Effec
 
 import { getZoneOptions } from "../../../NBCCalculator/constants/options";
 
-import {
-    wallRSIOptions,
-    windowUValueOptions,
-    belowGradeRSIOptions,
-    hrvOptions,
-    waterHeaterOptions
-} from "../../../NBCCalculator/constants/options";
-
 import EnvelopeSection from "./components/EnvelopeSection";
 import MechanicalSection from "./components/MechanicalSection";
 
@@ -135,8 +127,7 @@ export default function Prescriptive9368Section({
         const baseOptions = zoneOptions.airtightness;
 
         const isSingleDetached =
-            selections.buildingType === "single-detached" ||
-            selections.buildingType === "single-detached-secondary";
+            selections.buildingType === "single-detached";
 
         if (isSingleDetached) {
             return baseOptions.filter(option => option.value.includes("B"));

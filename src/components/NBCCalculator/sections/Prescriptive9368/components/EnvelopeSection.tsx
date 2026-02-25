@@ -56,12 +56,11 @@ export default function EnvelopeSection({
     const wallOptions = zoneOptions.wall;
     const windowOptions = zoneOptions.window;
     const belowGradeOptions = zoneOptions.belowGrade;
-    const airtightnessOptions = zoneOptions.airtightness;   
-    
+    const airtightnessOptions = zoneOptions.airtightness;
+
     const filteredAirtightnessOptions = (() => {
         const isSingleDetached =
-            selections.buildingType === "single-detached" ||
-            selections.buildingType === "single-detached-secondary";
+            selections.buildingType === "single-detached";
 
         if (isSingleDetached) {
             return airtightnessOptions.filter(option =>
@@ -70,17 +69,17 @@ export default function EnvelopeSection({
         }
 
         return airtightnessOptions;
-    })();    
-    
+    })();
+
     useEffect(() => {
-    setSelections((prev: any) => ({
-        ...prev,
-        wallRSI: "",
-        windowUValue: "",
-        belowGradeRSI: "",
-        airtightness: "",
-    }));
-    }, [selections.climateZone]);    
+        setSelections((prev: any) => ({
+            ...prev,
+            wallRSI: "",
+            windowUValue: "",
+            belowGradeRSI: "",
+            airtightness: "",
+        }));
+    }, [selections.climateZone]);
 
     return (
         <div className="space-y-6">
@@ -135,7 +134,12 @@ export default function EnvelopeSection({
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px] overflow-y-auto">
                         {wallOptions.map(option => <SelectItem key={option.value} value={option.value}>
-                            {option.label} ({option.points} points)
+                            <div className="flex justify-between items-center gap-3 w-full">
+                                <span>{option.label}</span>
+                                <Badge variant={option.points > 0 ? "default" : "secondary"}>
+                                    {option.points} pts
+                                </Badge>
+                            </div>
                         </SelectItem>)}
                     </SelectContent>
                 </Select>
@@ -157,7 +161,12 @@ export default function EnvelopeSection({
                     </SelectTrigger>
                     <SelectContent>
                         {belowGradeOptions.map(option => <SelectItem key={option.value} value={option.value}>
-                            {option.label} ({option.points} points)
+                            <div className="flex justify-between items-center gap-3 w-full">
+                                <span>{option.label}</span>
+                                <Badge variant={option.points > 0 ? "default" : "secondary"}>
+                                    {option.points} pts
+                                </Badge>
+                            </div>
                         </SelectItem>)}
                     </SelectContent>
                 </Select>
@@ -218,7 +227,12 @@ export default function EnvelopeSection({
                     </SelectTrigger>
                     <SelectContent>
                         {windowOptions.map(option => <SelectItem key={option.value} value={option.value}>
-                            {option.label} ({option.points} points)
+                            <div className="flex justify-between items-center gap-3 w-full">
+                                <span>{option.label}</span>
+                                <Badge variant={option.points > 0 ? "default" : "secondary"}>
+                                    {option.points} pts
+                                </Badge>
+                            </div>
                         </SelectItem>)}
                     </SelectContent>
                 </Select>
@@ -441,7 +455,19 @@ export default function EnvelopeSection({
                     </SelectTrigger>
                     <SelectContent>
                         {filteredAirtightnessOptions.map(option => <SelectItem key={option.value} value={option.value}>
-                            {option.label} ({option.points} points)
+                            <div className="flex items-center justify-between gap-3 w-full">
+                                <span>
+                                    {option.level} ({option.type}) (
+                                    <span className="font-semibold">
+                                        ACH₅₀: {option.ach50}
+                                    </span>
+                                    , NLA₁₀: {option.nla10}, NLR₅₀: {option.nlr50})
+                                </span>
+
+                                <Badge variant={option.points > 0 ? "default" : "secondary"}>
+                                    {option.points} pts
+                                </Badge>
+                            </div>
                         </SelectItem>)}
                     </SelectContent>
                 </Select>
@@ -984,13 +1010,13 @@ export default function EnvelopeSection({
                                         selections.province === "saskatchewan" ? 2.84 : 1.34
                                     }
                                     fieldName={`heated floors in ${selections.province === "saskatchewan"
-                                            ? "Saskatchewan"
-                                            : "Alberta"
+                                        ? "Saskatchewan"
+                                        : "Alberta"
                                         }`}
                                     compliancePath={selections.compliancePath}
                                     placeholder={`Minimum ${selections.province === "saskatchewan"
-                                            ? "2.84"
-                                            : "1.34"
+                                        ? "2.84"
+                                        : "1.34"
                                         } RSI`}
                                     validationError={validationErrors.heatedFloorsRSI}
                                     isMissing={false}
@@ -1049,7 +1075,8 @@ export default function EnvelopeSection({
                     </>
                 )}
             </div>
-
+            
+            {/* Window & Door U-Value */}
             <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Window & Door U-Value (W/(m²·K))</label>
                 <Select value={selections.windowUValue} onValueChange={value => setSelections(prev => ({
@@ -1061,7 +1088,7 @@ export default function EnvelopeSection({
                     </SelectTrigger>
                     <SelectContent>
                         {windowOptions.map(option => <SelectItem key={option.value} value={option.value}>
-                            <div className="flex justify-between items-center w-full">
+                            <div className="flex justify-between items-center gap-3 w-full">
                                 <span>{option.label}</span>
                                 <Badge variant={option.points > 0 ? "default" : "secondary"}>
                                     {option.points} pts
