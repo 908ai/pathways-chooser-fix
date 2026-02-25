@@ -167,7 +167,7 @@ const ProjectSummaryForm = ({
         has_cathedral_or_flat_roof_selection: selections.hasCathedralOrFlatRoof || selections.hasCathedralOrFlatRoofSelection,
         cathedral_flat_rsi: selections.cathedralFlatRSIValue || selections.cathedralFlatRSI,
         has_skylights: selections.hasSkylights,
-        skylight_u_value: parseFloat(selections.skylightUValue) || null,
+        skylight_u_value: selections.skylightUValue ? String(selections.skylightUValue) : null,
         floors_slabs_selected: selections.floorsSlabsSelected,
         has_in_floor_heat: selections.hasInFloorHeat || selections.hasInFloorHeat9365,
         has_dwhr: selections.hasDWHR,
@@ -240,12 +240,12 @@ const ProjectSummaryForm = ({
           eventType = 'project_submitted';
         }
 
-        const { data, error } = await supabase.from('project_summaries').update(projectData).eq('id', editingProjectId).select().single();
+        const { data, error } = await supabase.from('project_summaries').update(projectData as any).eq('id', editingProjectId).select().single();
         if (error) throw error;
         savedProject = data;
       } else {
         eventType = 'project_submitted';
-        const { data, error } = await supabase.from('project_summaries').insert({ ...projectData, user_id: user.id }).select().single();
+        const { data, error } = await supabase.from('project_summaries').insert({ ...projectData, user_id: user.id } as any).select().single();
         if (error) throw error;
         savedProject = data;
       }
