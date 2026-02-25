@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRole } from '@/hooks/useUserRole';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const fetchUsers = async () => {
   const { data, error } = await supabase.rpc('get_all_users_with_details');
@@ -31,7 +32,7 @@ const UserManager = () => {
   });
 
   const manageUserMutation = useMutation({
-    mutationFn: async ({ action, userId, role }: { action: 'delete' | 'block' | 'unblock' | 'approve' | 'reject', userId: string, role?: 'municipal' | 'agency' | 'energy_advisor' }) => {
+    mutationFn: async ({ action, userId, role }: { action: 'delete' | 'block' | 'unblock' | 'approve' | 'reject' | 'pending', userId: string, role?: 'municipal' | 'agency' | 'energy_advisor' }) => {
       const { data, error } = await supabase.functions.invoke('manage-user', {
         body: { action, user_id: userId, role },
       });
@@ -217,14 +218,36 @@ const UserManager = () => {
                           <RoleSelector userId={user.user_id} currentRole={user.role as UserRole} />
                         </TableCell>
                         <TableCell>
-                          {user.verification_status && (
-                            <Badge variant={
-                              user.verification_status === 'approved' ? 'default' : 
-                              user.verification_status === 'pending' ? 'secondary' : 
-                              user.verification_status === 'rejected' ? 'destructive' : 'outline'
-                            } className="capitalize font-normal">
-                              {user.verification_status}
-                            </Badge>
+                          {(user.verification_status || isBuildingOfficial || isEnergyAdvisor) ? (
+                            <Select
+                              value={user.verification_status || 'pending'}
+                              onValueChange={(value) => {
+                                let action = 'pending';
+                                if (value === 'approved') action = 'approve';
+                                if (value === 'rejected') action = 'reject';
+                                
+                                manageUserMutation.mutate({ 
+                                  action: action as any, 
+                                  userId: user.user_id 
+                                });
+                              }}
+                              disabled={manageUserMutation.isPending}
+                            >
+                              <SelectTrigger className={`w-[130px] h-8 ${
+                                user.verification_status === 'approved' ? 'text-green-600 border-green-200 bg-green-50' :
+                                user.verification_status === 'rejected' ? 'text-red-600 border-red-200 bg-red-50' :
+                                'text-yellow-600 border-yellow-200 bg-yellow-50'
+                              }`}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="pending" className="text-yellow-600">Pending</SelectItem>
+                                <SelectItem value="approved" className="text-green-600">Approved</SelectItem>
+                                <SelectItem value="rejected" className="text-red-600">Rejected</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">-</span>
                           )}
                         </TableCell>
                         <TableCell>

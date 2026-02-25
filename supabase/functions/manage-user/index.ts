@@ -9,7 +9,7 @@ const corsHeaders = {
 };
 
 interface RequestBody {
-  action: 'delete' | 'block' | 'unblock' | 'approve' | 'reject';
+  action: 'delete' | 'block' | 'unblock' | 'approve' | 'reject' | 'pending';
   user_id: string;
   role?: 'municipal' | 'agency' | 'energy_advisor'; // Required for 'approve' action ONLY if changing role
   notes?: string;
@@ -135,6 +135,23 @@ serve(async (req) => {
         if (rejectError) throw rejectError;
 
         responseData = { message: `User ${user_id} verification rejected.` };
+        break;
+
+      case 'pending':
+        // Update profiles verification status to pending
+        const { error: pendingError } = await supabaseAdmin
+          .from('profiles')
+          .update({
+            verification_status: 'pending',
+            verification_reviewed_at: null,
+            verification_reviewed_by: null,
+            verification_notes: notes || null
+          })
+          .eq('id', user_id);
+
+        if (pendingError) throw pendingError;
+
+        responseData = { message: `User ${user_id} verification status reset to pending.` };
         break;
 
       default:
