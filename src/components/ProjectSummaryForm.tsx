@@ -163,6 +163,7 @@ const ProjectSummaryForm = ({
         mid_construction_blower_door_planned: selections.midConstructionBlowerDoorPlanned,
 
         // New fields
+        has_cathedral_or_flat_roof_selection: selections.hasCathedralOrFlatRoof,
         has_cathedral_or_flat_roof: selections.hasCathedralOrFlatRoof,
         cathedral_flat_rsi: selections.cathedralFlatRSIValue,
         has_skylights: selections.hasSkylights,
@@ -200,6 +201,7 @@ const ProjectSummaryForm = ({
         ceilings_attic_other_type: selections.ceilingsAtticOtherType,
         cathedral_flat_other_type: selections.cathedralFlatOtherType,
         floors_garage_rsi: parseFloat(selections.floorsGarageRSI) || null,
+        floors_over_garage_rsi: parseFloat(selections.floorsGarageRSI) || null,
         slab_insulation_type: selections.slabInsulation,
         slab_insulation_value: parseFloat(selections.slabInsulationValue) || null,
         in_floor_heat_rsi: parseFloat(selections.inFloorHeatRSI) || null,
@@ -378,13 +380,15 @@ const ProjectSummaryForm = ({
               <AccordionTrigger className="text-lg font-semibold"><Thermometer className="h-5 w-5 mr-2" />Building Envelope</AccordionTrigger>
               <AccordionContent className="pt-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                  {/* Use fallbacks for legacy/new naming consistency */}
                   {renderField('Ceilings/Attic', selections.ceilingsAtticRSI, 'RSI')}
                   {renderField('Cathedral/Flat Roof', selections.cathedralFlatRSIValue || selections.cathedralFlatRSI, 'RSI')}
                   {renderField('Above Grade Walls', selections.wallRSI, 'RSI')}
                   {renderField('Below Grade Walls', selections.belowGradeRSI || selections.foundationWallsRSI, 'RSI')}
                   {renderField('Floors over Unheated Spaces', selections.floorsUnheatedRSI || selections.floorsOverUnheatedSpacesRSI, 'RSI')}
-                  {renderField('Floors over Garages', selections.floorsGarageRSI, 'RSI')}
+                  {renderField('Floors over Garages', selections.floorsOverGarageRSI || selections.floorsGarageRSI, 'RSI')}
                   {renderField('Heated Floors', selections.heatedFloorsRSI || selections.inFloorHeatRSI, 'RSI')}
+
                   {renderField('Slab on Grade', selections.slabOnGradeRSI || selections.slabOnGradeIntegralFootingRSI, 'RSI')}
                   {renderField('Unheated Floor Below Frostline', selections.unheatedFloorBelowFrostRSI)}
                   {renderField('Unheated Floor Above Frostline', selections.unheatedFloorAboveFrostRSI, 'RSI')}

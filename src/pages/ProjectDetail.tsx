@@ -1228,13 +1228,13 @@ const ProjectDetail = () => {
                 <CardContent className="space-y-1">
                   <DetailItem label="Attic/Ceiling RSI" value={project.attic_rsi} unit="RSI" />
                   <DetailItem label="Other Attic Type" value={project.ceilings_attic_other_type} />
-                  <DetailItem label="Cathedral/Flat Roof" value={project.has_cathedral_or_flat_roof} />
+                  <DetailItem label="Cathedral/Flat Roof" value={project.has_cathedral_or_flat_roof_selection || project.has_cathedral_or_flat_roof} />
                   <DetailItem label="Cathedral/Flat Roof RSI" value={project.cathedral_flat_rsi} unit="RSI" />
                   <DetailItem label="Other Cathedral/Flat Roof Type" value={project.cathedral_flat_other_type} />
                   <DetailItem label="Above-Grade Wall RSI" value={project.wall_rsi} unit="RSI" />
                   <DetailItem label="Below-Grade Wall RSI" value={project.below_grade_rsi} unit="RSI" />
                   <DetailItem label="Exposed Floor RSI" value={project.floor_rsi} unit="RSI" />
-                  <DetailItem label="Floors over Garage RSI" value={project.floors_garage_rsi} unit="RSI" />
+                  <DetailItem label="Floors over Garage RSI" value={project.floors_over_garage_rsi || project.floors_garage_rsi} unit="RSI" />
                   <DetailItem label="Slab Insulation Type" value={project.slab_insulation_type} />
                   <DetailItem label="Slab Insulation Value" value={project.slab_insulation_value} unit="RSI" />
                   <DetailItem label="In-Floor Heat RSI" value={project.in_floor_heat_rsi} unit="RSI" />

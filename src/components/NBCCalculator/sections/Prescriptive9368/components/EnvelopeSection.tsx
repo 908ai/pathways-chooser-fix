@@ -816,9 +816,10 @@ export default function EnvelopeSection({
             {/* Cathedral / Flat Roof */}
             <div id="hasCathedralOrFlatRoof" className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Are there any cathedral ceilings or flat roofs?</label>
-                <Select value={selections.hasCathedralOrFlatRoof} onValueChange={value => setSelections(prev => ({
+                <Select value={selections.hasCathedralOrFlatRoof || selections.hasCathedralOrFlatRoofSelection} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     hasCathedralOrFlatRoof: value,
+                    hasCathedralOrFlatRoofSelection: value,
                     cathedralFlatRSI: "",
                     cathedralFlatRSIValue: ""
                 }))}>
@@ -832,8 +833,9 @@ export default function EnvelopeSection({
                 </Select>
             </div>
 
-            {selections.hasCathedralOrFlatRoof === "yes" && (
+            {(selections.hasCathedralOrFlatRoof === "yes" || selections.hasCathedralOrFlatRoofSelection === "yes") && (
                 <div id="cathedralFlatRSIValue" className="space-y-2">
+
                     <ThermalInputField
                         id="cathedralFlatRSIValue"
                         label="Cathedral / Flat Roof Insulation (RSI/R-Value)"
@@ -885,14 +887,16 @@ export default function EnvelopeSection({
                 <ThermalInputField
                     id="floorsGarageRSI"
                     label="Floors over Garage (Bonus Floor) Insulation (RSI/R-Value)"
-                    value={selections.floorsGarageRSI}
+                    value={selections.floorsOverGarageRSI || selections.floorsGarageRSI}
                     onChange={(value) =>
                         setSelections((prev: any) => ({
                             ...prev,
                             floorsGarageRSI: value,
+                            floorsOverGarageRSI: value,
                         }))
                     }
                     minRSI={4.86}
+
                     fieldName="floors over garage"
                     compliancePath={selections.compliancePath}
                     placeholder="Min RSI 4.86 or N/A"
