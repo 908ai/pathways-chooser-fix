@@ -468,7 +468,7 @@ const NBCCalculator = () => {
           slabInsulationValue: p.slab_insulation_value ? String(p.slab_insulation_value) : "",
           hasInFloorHeat: p.has_in_floor_heat ? "yes" : "no",
           hasInFloorHeat9365: p.has_in_floor_heat || "",
-          floorsSlabsSelected: Array.isArray(p.floors_slabs_selected) ? p.floors_slabs_selected : (p.floors_slabs_selected ? [p.floors_slabs_selected] : []),
+          floorsSlabsSelected: p.floors_slabs_selected ?? [],
           inFloorHeatRSI: p.in_floor_heat_rsi ? String(p.in_floor_heat_rsi) : "",
           foundationWallsRSI: "",
           slabOnGradeRSI: p.slab_on_grade_rsi ? String(p.slab_on_grade_rsi) : "",

@@ -1165,16 +1165,16 @@ export default function EnvelopeSection({
                         Heated Slabs / Floors (Select which applies)
                     </label>
                     <Select
-                        value={selections.floorsSlabsSelected}
+                        value={selections.floorsSlabsSelected?.[0] ?? ""}
                         onValueChange={(value) =>
                             setSelections((prev) => ({
-                                ...prev,
-                                floorsSlabsSelected: value,
-                                unheatedFloorAboveFrostRSI: "",
-                                unheatedFloorBelowFrostRSI: "",
+                            ...prev,
+                            floorsSlabsSelected: [value],
+                            unheatedFloorAboveFrostRSI: "",
+                            unheatedFloorBelowFrostRSI: "",
                             }))
                         }
-                    >
+                        >
                         <SelectTrigger className={cn(
                             (isMissing("floorsSlabsSelected")) && missingFieldClass
                         )}>
@@ -1186,7 +1186,7 @@ export default function EnvelopeSection({
                         </SelectContent>
                     </Select>
 
-                    {selections.floorsSlabsSelected === "above-frost" && (
+                    {selections.floorsSlabsSelected?.[0] === "above-frost" && (
                         <div id="unheatedFloorAboveFrostRSI" className="space-y-2 mt-3">
                             <label className="text-sm font-medium text-foreground">
                                 Unheated Floor / Slab Above Frost (RSI)
@@ -1211,7 +1211,7 @@ export default function EnvelopeSection({
                         </div>
                     )}
 
-                    {selections.floorsSlabsSelected === "below-frost" && (
+                    {selections.floorsSlabsSelected?.[0] === "below-frost" && (
                         <div id="unheatedFloorBelowFrostRSI" className="space-y-2 mt-3">
                             <label className="text-sm font-medium text-foreground">
                                 Unheated Floor / Slab Below Frost (RSI)
