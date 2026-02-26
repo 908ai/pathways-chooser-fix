@@ -789,7 +789,7 @@ const NBCCalculator = () => {
           if (zone === "6") return airtightnessOptions_6;
           return airtightnessOptions;
 
-        case "hrv":
+        case "hrvEfficiency":
           if (zone === "7B") return hrvOptions_7B;
           if (zone === "7A") return hrvOptions;
           if (zone === "6") return hrvOptions_6;

@@ -64,7 +64,7 @@ export default function FloatingPointsSummary({
                 key: 'airtightness',
                 label: 'Airtightness'
               }, {
-                key: 'hrvSystem',
+                key: 'hrvEfficiency',
                 label: 'HRV/ERV'
               }, {
                 key: 'waterHeater',
