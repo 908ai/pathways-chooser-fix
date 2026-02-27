@@ -287,7 +287,7 @@ export type Database = {
       }
       project_summaries: {
         Row: {
-          airtightness_al: number | null
+          airtightness_al: string | null
           airtightness_points: number | null
           annual_energy_consumption: number | null
           attic_points: number | null
@@ -332,7 +332,7 @@ export type Database = {
           heating_make_model: string | null
           heating_points: number | null
           heating_system_type: string | null
-          hrv_erv_efficiency: number | null
+          hrv_erv_efficiency: string | null
           hrv_erv_points: number | null
           hrv_erv_type: string | null
           hrv_make_model: string | null
@@ -396,7 +396,7 @@ export type Database = {
           window_u_value: number | null
         }
         Insert: {
-          airtightness_al?: number | null
+          airtightness_al?: string | null
           airtightness_points?: number | null
           annual_energy_consumption?: number | null
           attic_points?: number | null
@@ -441,7 +441,7 @@ export type Database = {
           heating_make_model?: string | null
           heating_points?: number | null
           heating_system_type?: string | null
-          hrv_erv_efficiency?: number | null
+          hrv_erv_efficiency?: string | null
           hrv_erv_points?: number | null
           hrv_erv_type?: string | null
           hrv_make_model?: string | null
@@ -505,7 +505,7 @@ export type Database = {
           window_u_value?: number | null
         }
         Update: {
-          airtightness_al?: number | null
+          airtightness_al?: string | null
           airtightness_points?: number | null
           annual_energy_consumption?: number | null
           attic_points?: number | null
@@ -550,7 +550,7 @@ export type Database = {
           heating_make_model?: string | null
           heating_points?: number | null
           heating_system_type?: string | null
-          hrv_erv_efficiency?: number | null
+          hrv_erv_efficiency?: string | null
           hrv_erv_points?: number | null
           hrv_erv_type?: string | null
           hrv_make_model?: string | null

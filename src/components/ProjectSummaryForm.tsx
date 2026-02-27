@@ -151,10 +151,10 @@ const ProjectSummaryForm = ({
         cooling_efficiency: parseFloat(selections.coolingEfficiency) || null,
         water_heating_type: selections.waterHeaterType || selections.waterHeater,
         hrv_erv_type: selections.hasHrv === 'with_hrv' ? 'HRV/ERV' : 'None',
-        hrv_erv_efficiency: parseFloat(selections.hrvEfficiency) || null,
+        hrv_erv_efficiency: selections.hrvEfficiency || null,
         
         // Performance
-        airtightness_al: parseFloat(selections.airtightness || selections.customAirtightness) || null,
+        airtightness_al: selections.airtightness || selections.customAirtightness || null,
         building_volume: parseFloat(selections.buildingVolume) || null,
         
         // Status & Files
