@@ -16,7 +16,27 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
-const getAirtightnessIcon = (score: number | null) => {
+const getAirtightnessScore = (val: string | number | null): number | null => {
+  if (val === null) return null;
+  if (typeof val === 'number') return val;
+  const s = val.toUpperCase();
+  if (s.includes('AL-1A')) return 2.5;
+  if (s.includes('AL-2A')) return 2.0;
+  if (s.includes('AL-3A')) return 1.5;
+  if (s.includes('AL-4A')) return 1.0;
+  if (s.includes('AL-5A')) return 0.6;
+  if (s.includes('AL-1B')) return 3.0;
+  if (s.includes('AL-2B')) return 2.5;
+  if (s.includes('AL-3B')) return 2.0;
+  if (s.includes('AL-4B')) return 1.5;
+  if (s.includes('AL-5B')) return 1.0;
+  if (s.includes('AL-6B')) return 0.6;
+  const num = parseFloat(val);
+  return isNaN(num) ? null : num;
+};
+
+const getAirtightnessIcon = (scoreStr: string | number | null) => {
+  const score = getAirtightnessScore(scoreStr);
   let color = '#808080'; // Grey for unknown
   if (score !== null) {
     if (score <= 1.5) color = '#22c55e'; // Green
@@ -128,7 +148,7 @@ const ProjectMap = () => {
                   <Popup>
                     <div className="font-semibold">{project.project_name}</div>
                     <div className="text-xs text-muted-foreground">{project.location}</div>
-                    <div className="text-xs mt-1">Airtightness: <span className="font-medium">{project.airtightness_al?.toFixed(2) || 'N/A'} ACH₅₀</span></div>
+                    <div className="text-xs mt-1">Airtightness: <span className="font-medium">{project.airtightness_al || 'N/A'}</span></div>
                     <Link to={`/project/${project.id}`} className="text-xs text-primary hover:underline mt-2 block">
                       View Details
                     </Link>

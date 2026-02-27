@@ -29,6 +29,25 @@ import WwrHistogram from '@/components/municipal/WwrHistogram';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import ProjectMap from '@/components/municipal/ProjectMap';
 
+const getAirtightnessScore = (val: string | number | null): number | null => {
+  if (val === null) return null;
+  if (typeof val === 'number') return val;
+  const s = val.toUpperCase();
+  if (s.includes('AL-1A')) return 2.5;
+  if (s.includes('AL-2A')) return 2.0;
+  if (s.includes('AL-3A')) return 1.5;
+  if (s.includes('AL-4A')) return 1.0;
+  if (s.includes('AL-5A')) return 0.6;
+  if (s.includes('AL-1B')) return 3.0;
+  if (s.includes('AL-2B')) return 2.5;
+  if (s.includes('AL-3B')) return 2.0;
+  if (s.includes('AL-4B')) return 1.5;
+  if (s.includes('AL-5B')) return 1.0;
+  if (s.includes('AL-6B')) return 0.6;
+  const num = parseFloat(val);
+  return isNaN(num) ? null : num;
+};
+
 const fetchAllProjects = async () => {
   const { data: projects, error: projectsError } = await supabase
     .from('project_summaries')
@@ -123,8 +142,12 @@ const MunicipalDashboard = () => {
     }
     const prescriptiveCount = filteredProjects.filter(p => p.selected_pathway === '9362' || p.selected_pathway === '9368').length;
     const performanceCount = filteredProjects.filter(p => p.selected_pathway === '9365' || p.selected_pathway === '9367').length;
-    const projectsWithAirtightness = filteredProjects.filter(p => typeof p.airtightness_al === 'number' && p.airtightness_al > 0);
-    const meetingTargetCount = projectsWithAirtightness.filter(p => p.airtightness_al <= 2.5).length;
+    
+    const projectsWithAirtightness = filteredProjects
+      .map(p => ({ score: getAirtightnessScore(p.airtightness_al) }))
+      .filter(p => p.score !== null && p.score > 0);
+      
+    const meetingTargetCount = projectsWithAirtightness.filter(p => p.score! <= 2.5).length;
     const airtightnessTargetRate = projectsWithAirtightness.length > 0 ? (meetingTargetCount / projectsWithAirtightness.length) * 100 : 0;
     return { totalApplications: filteredProjects.length, prescriptiveCount, performanceCount, airtightnessTargetRate };
   }, [filteredProjects]);

@@ -75,7 +75,7 @@ const ProjectMap = () => {
                   <Popup>
                     <div className="font-semibold">{project.project_name}</div>
                     <div className="text-xs text-muted-foreground">{project.location}</div>
-                    <div className="text-xs mt-1">Airtightness: <span className="font-medium">{project.airtightness_al?.toFixed(2) || 'N/A'} ACH₅₀</span></div>
+                    <div className="text-xs mt-1">Airtightness: <span className="font-medium">{project.airtightness_al || 'N/A'}</span></div>
                     <Link to={`/project/${project.id}`} className="text-xs text-primary hover:underline mt-2 block">
                       View Details
                     </Link>
