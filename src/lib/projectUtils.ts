@@ -1,7 +1,7 @@
 export const mapProjectToSelections = (project: any) => {
   if (!project) return {};
   return {
-    firstName: 'filled', // Assume filled as project exists
+    firstName: 'filled',
     lastName: 'filled',
     company: 'filled',
     phoneNumber: 'filled',
@@ -39,7 +39,7 @@ export const mapProjectToSelections = (project: any) => {
     hasDWHR: project.has_dwhr,
     wantsCertifications: project.wants_certifications,
     midConstructionBlowerDoorPlanned: project.mid_construction_blower_door_planned,
-    notes: project.notes, // Added notes mapping
+    notes: project.notes,
   };
 };
 
