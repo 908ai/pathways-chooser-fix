@@ -30,6 +30,18 @@ export default function MechanicalSection({
 
     return (
         <div className="space-y-6">
+            {/* Auto-set HRV to required for 9368 and show notification */}
+            {selections.compliancePath === "9368" && (
+                <div className="rounded-lg border border-green-200 bg-green-50 px-2 py-1 dark:bg-green-950/20 dark:border-green-500/30">
+                    <div className="flex items-center gap-2">
+                        <span className="text-lg">✅</span>
+                        <p className="text-sm text-green-800 dark:text-green-300">
+                            HRV/ERV is mandatory for Path 9.36.8. Your selection is locked to “With HRV”.
+                        </p>
+                    </div>
+                </div>
+            )}
+
             {/* HRV/ERV Section for 9368 - Mandatory */}
             <div className="space-y-3">
                 <div className="flex items-center gap-3">
@@ -76,18 +88,6 @@ export default function MechanicalSection({
                     </SelectContent>
                 </Select>
             </div>
-
-            {/* Auto-set HRV to required for 9368 and show notification */}
-            {selections.compliancePath === "9368" && (
-                <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:bg-green-950/20 dark:border-green-500/30">
-                    <div className="flex items-center gap-2">
-                        <span className="text-lg">✅</span>
-                        <p className="text-sm text-green-800 dark:text-green-300">
-                            HRV/ERV is mandatory for Path 9.36.8. Your selection is locked to “With HRV”.
-                        </p>
-                    </div>
-                </div>
-            )}
 
             {/* Secondary Suite HRV - Show for buildings with multiple units */}
             {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv" && <div className="space-y-4 p-4 bg-muted/50 border rounded-md">

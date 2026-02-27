@@ -237,7 +237,7 @@ export default function EnvelopeSection({
                     </SelectContent>
                 </Select>
 
-                <InfoCollapsible title="ℹ️ Window & Door Performance Verification">
+                <InfoCollapsible title={<span className="text-[11px]">ℹ️ Window & Door Performance Verification</span>}>
                     <p className="text-muted-foreground">
                         Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value’s (ie, U-value W/(m²×).
                     </p>
@@ -450,7 +450,10 @@ export default function EnvelopeSection({
                     ...prev,
                     airtightness: value
                 }))}>
-                    <SelectTrigger className={cn(validationErrors.airtightness && "border-red-500 ring-2 ring-red-500")}>
+                    <SelectTrigger className={cn(
+                        (validationErrors.airtightness || isMissing("airtightness")) && missingFieldClass,
+                        validationErrors.airtightness && "border-red-500 ring-2 ring-red-500"
+                    )}>
                         <SelectValue placeholder="Select air-tightness level" />
                     </SelectTrigger>
                     <SelectContent>
@@ -471,8 +474,7 @@ export default function EnvelopeSection({
                         </SelectItem>)}
                     </SelectContent>
                 </Select>
-
-                <InfoCollapsible title="⚠️ Caution: Air-Tightness Targets Without Testing History">
+                <InfoCollapsible title={<span className="text-[11px]">⚠️ Caution: Air-Tightness Targets Without Testing History</span>} defaultOpen={false}>
                     <div className="text-xs text-muted-foreground space-y-2">
                         <p>
                             Choosing an air-tightness target lower than prescribed by NBC2020 without prior test results is risky.
@@ -785,9 +787,9 @@ export default function EnvelopeSection({
                         </Button>
                     </div>
 
-                    <InfoCollapsible title="ℹ️ Benefits of Mid-Construction Blower Door Testing">
+                    <InfoCollapsible title={<span className="text-[11px]">ℹ️ Benefits of Mid-Construction Blower Door Testing</span>}>
                         <div className="text-xs text-muted-foreground space-y-2">
-                            <p className="font-medium">Benefits of a mid-construction (misconstruction) blower door test:</p>
+                            <p className="font-medium ">Benefits of a mid-construction (misconstruction) blower door test:</p>
                             <ul className="list-disc ml-4 space-y-1">
                                 <li>Identifies air leaks early so they can be sealed before drywall.</li>
                                 <li>Reduces costly rework later in the build.</li>
@@ -823,9 +825,12 @@ export default function EnvelopeSection({
                     cathedralFlatRSI: "",
                     cathedralFlatRSIValue: ""
                 }))}>
-                    <SelectTrigger>
+                    <SelectTrigger className={cn(
+                        (isMissing("hasCathedralOrFlatRoof")) && missingFieldClass
+                    )}>
                         <SelectValue placeholder="Select option" />
                     </SelectTrigger>
+                    
                     <SelectContent className="bg-background border shadow-lg z-50">
                         <SelectItem value="no">No</SelectItem>
                         <SelectItem value="yes">Yes</SelectItem>
@@ -835,7 +840,6 @@ export default function EnvelopeSection({
 
             {(selections.hasCathedralOrFlatRoof === "yes" || selections.hasCathedralOrFlatRoofSelection === "yes") && (
                 <div id="cathedralFlatRSIValue" className="space-y-2">
-
                     <ThermalInputField
                         id="cathedralFlatRSIValue"
                         label="Cathedral / Flat Roof Insulation (RSI/R-Value)"
@@ -875,7 +879,7 @@ export default function EnvelopeSection({
                     compliancePath={selections.compliancePath}
                     placeholder="Min RSI 5.02 or N/A"
                     validationError={validationErrors.floorsUnheatedRSI}
-                    isMissing={false}
+                    isMissing={isMissing("floorsUnheatedRSI")}
                     missingFieldClass={missingFieldClass}
                     InfoCollapsible={InfoCollapsible}
                     allowNA
@@ -918,9 +922,11 @@ export default function EnvelopeSection({
                             slabOnGradeRSI: ""
                         }));
                     }}>
-                        <SelectTrigger>
+                        <SelectTrigger className={cn(
+                            (isMissing("hasSlabOnGrade")) && missingFieldClass
+                        )}>
                             <SelectValue placeholder="Select yes or no" />
-                        </SelectTrigger>
+                        </SelectTrigger>                        
                         <SelectContent>
                             <SelectItem value="yes">Yes</SelectItem>
                             <SelectItem value="no">No</SelectItem>
@@ -978,9 +984,11 @@ export default function EnvelopeSection({
                             heatedFloorsRSI: ""
                         }));
                     }}>
-                        <SelectTrigger>
+                        <SelectTrigger className={cn(
+                            (isMissing("hasInFloorHeat")) && missingFieldClass
+                        )}>
                             <SelectValue placeholder="Select yes or no" />
-                        </SelectTrigger>
+                        </SelectTrigger>                         
                         <SelectContent>
                             <SelectItem value="yes">Yes</SelectItem>
                             <SelectItem value="no">No</SelectItem>
@@ -991,7 +999,7 @@ export default function EnvelopeSection({
                 {(selections.hasInFloorHeat === "yes" ||
                     selections.floorsSlabsSelected.includes("heatedFloors")) && (
                         <>
-                            <InfoCollapsible title="ℹ️ In-Floor Heating Requirements" defaultOpen={false}>
+                            <InfoCollapsible title={<span className="text-[11px]">ℹ️ In-Floor Heating Requirements</span>} defaultOpen={false}>
                                 <p className="text-xs text-foreground">
                                     Since the house has in-floor heating, all floors must be insulated to
                                     meet NBC requirements.
@@ -1022,7 +1030,7 @@ export default function EnvelopeSection({
                                         : "1.34"
                                         } RSI`}
                                     validationError={validationErrors.heatedFloorsRSI}
-                                    isMissing={false}
+                                    isMissing={isMissing("heatedFloorsRSI")}
                                     missingFieldClass={missingFieldClass}
                                     InfoCollapsible={InfoCollapsible}
                                 />
@@ -1048,7 +1056,7 @@ export default function EnvelopeSection({
                                 fieldName="unheated floor below frost line"
                                 placeholder="Min RSI 1.96 or 'uninsulated'"
                                 validationError={validationErrors.unheatedFloorBelowFrostRSI}
-                                isMissing={false}
+                                isMissing={isMissing("unheatedFloorBelowFrostRSI")}
                                 missingFieldClass={missingFieldClass}
                                 InfoCollapsible={InfoCollapsible}
                                 keyword="uninsulated"
@@ -1086,9 +1094,12 @@ export default function EnvelopeSection({
                     ...prev,
                     windowUValue: value
                 }))}>
-                    <SelectTrigger>
+                    <SelectTrigger className={cn(
+                        (isMissing("windowUValue")) && missingFieldClass
+                    )}>
                         <SelectValue placeholder="Select window U-value" />
                     </SelectTrigger>
+
                     <SelectContent>
                         {windowOptions.map(option => <SelectItem key={option.value} value={option.value}>
                             <div className="flex justify-between items-center gap-3 w-full">
@@ -1101,14 +1112,8 @@ export default function EnvelopeSection({
                     </SelectContent>
                 </Select>
                 {selections.windowUValue && <>
-                    <InfoCollapsible title="ℹ️ ">
-                        <p className="text-xs text-foreground">
-                            Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please only record the lowest performing window and door (U-Value (ie, highest U-value W/(m²×K)).
-                        </p>
-                    </InfoCollapsible>
-
                     <div className="flex items-center gap-2">
-                        <label className="text-sm font-medium text-foreground">Energy Efficiency Points for Windows & Doors</label>
+                        <label className="text-xs font-medium text-foreground">Energy Efficiency Points for Windows & Doors</label>
                         <InfoButton title="Energy Efficiency Points for Windows & Doors">
                             <div className="space-y-4">
                                 <p className="text-sm text-foreground/80">
@@ -1150,7 +1155,7 @@ export default function EnvelopeSection({
                 </>}
 
                 <div className="p-3 bg-muted border border-border rounded-md">
-                    <p className="text-sm text-foreground font-medium">
+                    <p className="text-xs text-foreground font-medium">
                         ℹ️ One Door Exception
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
@@ -1187,51 +1192,51 @@ export default function EnvelopeSection({
                     </Select>
 
                     {selections.floorsSlabsSelected?.[0] === "above-frost" && (
-                        <div id="unheatedFloorAboveFrostRSI" className="space-y-2 mt-3">
-                            <label className="text-sm font-medium text-foreground">
-                                Unheated Floor / Slab Above Frost (RSI)
-                            </label>
-                            <Input
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                placeholder="Enter RSI value"
+                        <div id="unheatedFloorAboveFrostRSI-div" className="space-y-2 mt-3">
+                            <ThermalInputField
+                                id="unheatedFloorAboveFrostRSI"
+                                label="Unheated Floor / Slab Above Frost (RSI)"
                                 value={selections.unheatedFloorAboveFrostRSI}
-                                onChange={(e) =>
-                                    setSelections((prev) => ({
+                                onChange={(value) =>
+                                    setSelections((prev: any) => ({
                                         ...prev,
-                                        unheatedFloorAboveFrostRSI: e.target.value,
+                                        unheatedFloorAboveFrostRSI: value,
                                     }))
                                 }
-                                className={cn(
-                                    (validationErrors.unheatedFloorAboveFrostRSI || isMissing("unheatedFloorAboveFrostRSI")) && missingFieldClass,
-                                    validationErrors.unheatedFloorAboveFrostRSI && "border-red-500 ring-2 ring-red-500"
-                                )}
+                                minRSI={0}
+                                fieldName="unheated floor below frost line"
+                                compliancePath={selections.compliancePath}
+                                placeholder="Enter RSI value"
+                                validationError={validationErrors.unheatedFloorAboveFrostRSI}
+                                isMissing={isMissing("unheatedFloorAboveFrostRSI")}
+                                missingFieldClass={missingFieldClass}
+                                InfoCollapsible={InfoCollapsible}
+                                showEffectiveWarning={false}
                             />
                         </div>
                     )}
 
                     {selections.floorsSlabsSelected?.[0] === "below-frost" && (
-                        <div id="unheatedFloorBelowFrostRSI" className="space-y-2 mt-3">
-                            <label className="text-sm font-medium text-foreground">
-                                Unheated Floor / Slab Below Frost (RSI)
-                            </label>
-                            <Input
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                placeholder="Enter RSI value"
+                        <div id="unheatedFloorBelowFrostRSI-div" className="space-y-2 mt-3">
+                            <ThermalInputField
+                                id="unheatedFloorBelowFrostRSI"
+                                label="Unheated Floor / Slab Below Frost (RSI)"
                                 value={selections.unheatedFloorBelowFrostRSI}
-                                onChange={(e) =>
-                                    setSelections((prev) => ({
+                                onChange={(value) =>
+                                    setSelections((prev: any) => ({
                                         ...prev,
-                                        unheatedFloorBelowFrostRSI: e.target.value,
+                                        unheatedFloorBelowFrostRSI: value,
                                     }))
                                 }
-                                className={cn(
-                                    (validationErrors.unheatedFloorBelowFrostRSI || isMissing("unheatedFloorBelowFrostRSI")) && missingFieldClass,
-                                    validationErrors.unheatedFloorBelowFrostRSI && "border-red-500 ring-2 ring-red-500"
-                                )}
+                                minRSI={0}
+                                fieldName="unheated floor below frost line"
+                                compliancePath={selections.compliancePath}
+                                placeholder="Enter RSI value"
+                                validationError={validationErrors.unheatedFloorBelowFrostRSI}
+                                isMissing={isMissing("unheatedFloorBelowFrostRSI")}
+                                missingFieldClass={missingFieldClass}
+                                InfoCollapsible={InfoCollapsible}
+                                showEffectiveWarning={false}
                             />
                         </div>
                     )}
@@ -1281,7 +1286,7 @@ export default function EnvelopeSection({
                 })()}
             </div>}
 
-            {selections.hasSkylights === "yes" && <InfoCollapsible title="ℹ️ Important: Skylight Shaft Insulation">
+            {selections.hasSkylights === "yes" && <InfoCollapsible title={<span className="text-[11px]">ℹ️ Important: Skylight Shaft Insulation</span>} defaultOpen={false}>
                 <p className="text-xs text-foreground">
                     Skylight shafts must be insulated. Be prepared to provide further details upon request.
                 </p>
