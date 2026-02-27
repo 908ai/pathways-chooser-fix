@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,7 @@ export default function Prescriptive9368Section({
     removeFile,
     showMissingFields = false,
 }: Props) {
+    const [searchParams] = useSearchParams();
 
     const InfoCollapsible = ({
         title,
@@ -237,6 +239,52 @@ export default function Prescriptive9368Section({
 
     const hasMissingEnvelope = envelopeKeys.some(key => !isComplete(key));
     const hasMissingMechanical = mechanicalKeys.some(key => !isComplete(key));
+
+    // Effect to expand sections based on focused field from URL
+    useEffect(() => {
+        const focusField = searchParams.get('focus');
+        if (focusField) {
+            const newOpenSections: string[] = [];
+            
+            // Check if the focused field belongs to envelope section
+            // We check against both the calculated keys and some common variations or hardcoded keys
+            // to ensure we catch all relevant fields
+            const allEnvelopeKeys = [
+                ...envelopeKeys, 
+                "ceilingsAtticRSI", "wallRSI", "belowGradeRSI", "windowUValue", "airtightness", 
+                "hasCathedralOrFlatRoof", "cathedralFlatRSI", "cathedralFlatRSIValue",
+                "floorsUnheatedRSI", "floorsGarageRSI", "hasSlabOnGrade", "slabOnGradeRSI",
+                "hasInFloorHeat", "heatedFloorsRSI", "floorsSlabsSelected", 
+                "unheatedFloorAboveFrostRSI", "unheatedFloorBelowFrostRSI", 
+                "hasSkylights", "skylightUValue"
+            ];
+            
+            if (allEnvelopeKeys.includes(focusField)) {
+                newOpenSections.push("envelope");
+            }
+
+            // Check if the focused field belongs to mechanical section
+            const allMechanicalKeys = [
+                ...mechanicalKeys,
+                "hrvEfficiency", "waterHeater", "waterHeaterType", "hasF280Calculation",
+                "hasSecondaryHrv", "secondaryHrvEfficiency",
+                "hasMurbMultipleHeating", "murbSecondHeatingType", "murbSecondHeatingEfficiency",
+                "murbSecondIndirectTank", "murbSecondIndirectTankSize",
+                "hasMurbMultipleWaterHeaters", "murbSecondWaterHeaterType", "murbSecondWaterHeater"
+            ];
+
+            if (allMechanicalKeys.includes(focusField)) {
+                newOpenSections.push("mechanical");
+            }
+
+            if (newOpenSections.length > 0) {
+                setOpenSections(prev => {
+                    const unique = Array.from(new Set([...prev, ...newOpenSections]));
+                    return unique.length !== prev.length ? unique : prev;
+                });
+            }
+        }
+    }, [searchParams, selections]); // Depend on selections to re-evaluate keys if they change
 
     useEffect(() => {
         if (showMissingFields) {

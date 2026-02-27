@@ -36,14 +36,14 @@ export default function MechanicalSection({
                     <div className="flex items-center gap-2">
                         <span className="text-lg">✅</span>
                         <p className="text-sm text-green-800 dark:text-green-300">
-                            HRV/ERV is mandatory for Path 9.36.8. Your selection is locked to “With HRV”.
+                            HRV/ERV is mandatory for Path 9.36.8. Your selection is locked to "With HRV".
                         </p>
                     </div>
                 </div>
             )}
 
             {/* HRV/ERV Section for 9368 - Mandatory */}
-            <div className="space-y-3">
+            <div className="space-y-3" id="hrvEfficiency">
                 <div className="flex items-center gap-3">
                     <label className="text-sm font-medium text-foreground">HRV/ERV System (Required for 9.36.8)</label>
                     <InfoButton title="HRV/ERV Required for 9.36.8 Path">
@@ -90,10 +90,10 @@ export default function MechanicalSection({
             </div>
 
             {/* Secondary Suite HRV - Show for buildings with multiple units */}
-            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv" && <div className="space-y-4 p-4 bg-muted/50 border rounded-md">
+            {(selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && selections.hasHrv === "with_hrv" && <div id="hasSecondaryHrv" className="space-y-4 p-4 bg-muted/50 border rounded-md">
                 <h5 className="font-medium text-foreground">Secondary Suite HRV/ERV</h5>
 
-                <div id="hasSecondaryHrv" className="space-y-2">
+                <div className="space-y-2">
                     <div className="flex items-center gap-3">
                         <label className="text-sm font-medium text-foreground">Will there be a second HRV/ERV for the secondary suite?</label>
                         <InfoButton title="Secondary Suite HRV/ERV Information">
@@ -155,7 +155,7 @@ export default function MechanicalSection({
             {/* Service Water Heater */}
             {!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes') && <div id="waterHeater" className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Service Water Heater <span className="text-red-400">*</span></label>
-                <Select value={selections.waterHeater} onValueChange={value => setSelections(prev => ({
+                <Select value={selections.waterHeater} onValueChange={value => setSelections((prev: any) => ({
                     ...prev,
                     waterHeater: value
                 }))}>

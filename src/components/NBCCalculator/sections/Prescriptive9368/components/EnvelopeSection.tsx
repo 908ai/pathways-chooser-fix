@@ -1,10 +1,10 @@
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import InfoButton from "@/components/InfoButton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Info, Search } from "lucide-react";
-import InfoButton from "@/components/InfoButton";
 import { cn } from "@/lib/utils";
 import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/EffectiveRSIWarning";
 
