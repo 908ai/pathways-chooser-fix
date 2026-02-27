@@ -225,10 +225,12 @@ export default function MechanicalSection({
                         hasF280Calculation: value
                     }))}>
                         <SelectTrigger className={cn(
-                            (isMissing("hasF280Calculation")) && missingFieldClass
+                            (validationErrors.hasF280Calculation || isMissing("hasF280Calculation")) && missingFieldClass,
+                            validationErrors.hasF280Calculation && "border-red-500 ring-2 ring-red-500"
                         )}>
                             <SelectValue placeholder="Select option" />
                         </SelectTrigger>
+
                         <SelectContent className="bg-background border shadow-lg z-50">
                             <SelectItem value="completed">✓ Yes, I have completed the F280 calculation</SelectItem>
                             <SelectItem value="request-quote">Request a quote for F280 calculation</SelectItem>
