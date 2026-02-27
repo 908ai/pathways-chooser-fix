@@ -71,16 +71,6 @@ export default function EnvelopeSection({
         return airtightnessOptions;
     })();
 
-    useEffect(() => {
-        setSelections((prev: any) => ({
-            ...prev,
-            wallRSI: "",
-            windowUValue: "",
-            belowGradeRSI: "",
-            airtightness: "",
-        }));
-    }, [selections.climateZone]);
-
     return (
         <div className="space-y-6">
             {/* Ceiling/Attic Insulation */}
@@ -237,9 +227,9 @@ export default function EnvelopeSection({
                     </SelectContent>
                 </Select>
 
-                <InfoCollapsible title={<span className="text-[11px]">ℹ️ Window & Door Performance Verification</span>}>
+                <InfoCollapsible title={<span className="text-[11px]">ℹ️ Window & Door Performance Verification</span>} >
                     <p className="text-muted-foreground">
-                        Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value’s (ie, U-value W/(m²×).
+                        Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value's (ie, U-value W/(m²×).
                     </p>
                     <p className="text-muted-foreground mt-2">
                         See below an illustrative example of a window unit showing the performance values that must be recorded in the Window & Door Schedule.
@@ -289,6 +279,7 @@ export default function EnvelopeSection({
                         </InfoButton>
                     </div>
                 </>}
+
             </div>
 
             {/* Airtightness */}
@@ -323,7 +314,7 @@ export default function EnvelopeSection({
                                             <p className="ml-4">Useful for comparing attached units or small zones.</p>
                                         </div>
                                         <p className="font-medium text-primary">Lower values = tighter home = better performance.</p>
-                                        <p className="font-medium text-primary">“Typical New Home” is being constructed at 2.5 ACH or lower.</p>
+                                        <p className="font-medium text-primary">"Typical New Home" is being constructed at 2.5 ACH or lower.</p>
                                     </div>
                                 </div>
 
@@ -787,7 +778,7 @@ export default function EnvelopeSection({
                         </Button>
                     </div>
 
-                    <InfoCollapsible title={<span className="text-[11px]">ℹ️ Benefits of Mid-Construction Blower Door Testing</span>}>
+                    <InfoCollapsible title={<span className="text-[11px]">ℹ️ Benefits of Mid-Construction Blower Door Testing</span>} >
                         <div className="text-xs text-muted-foreground space-y-2">
                             <p className="font-medium ">Benefits of a mid-construction (misconstruction) blower door test:</p>
                             <ul className="list-disc ml-4 space-y-1">
@@ -1017,9 +1008,7 @@ export default function EnvelopeSection({
                                             heatedFloorsRSI: value,
                                         }))
                                     }
-                                    minRSI={
-                                        selections.province === "saskatchewan" ? 2.84 : 1.34
-                                    }
+                                    minRSI={selections.province === "saskatchewan" ? 2.84 : 1.34}
                                     fieldName={`heated floors in ${selections.province === "saskatchewan"
                                         ? "Saskatchewan"
                                         : "Alberta"
@@ -1173,13 +1162,13 @@ export default function EnvelopeSection({
                         value={selections.floorsSlabsSelected?.[0] ?? ""}
                         onValueChange={(value) =>
                             setSelections((prev) => ({
-                            ...prev,
-                            floorsSlabsSelected: [value],
-                            unheatedFloorAboveFrostRSI: "",
-                            unheatedFloorBelowFrostRSI: "",
+                                ...prev,
+                                floorsSlabsSelected: [value],
+                                unheatedFloorAboveFrostRSI: "",
+                                unheatedFloorBelowFrostRSI: "",
                             }))
                         }
-                        >
+                    >
                         <SelectTrigger className={cn(
                             (isMissing("floorsSlabsSelected")) && missingFieldClass
                         )}>

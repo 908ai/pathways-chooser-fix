@@ -118,10 +118,14 @@ export default function ProjectInformationSection({
                   <div id="province" className="space-y-2">
                     <label className="text-sm font-medium text-foreground">Province</label>
                     <Select value={selections.province} onValueChange={value => {
-                      setSelections(prev => ({
+                      setSelections((prev: any) => ({
                         ...prev,
                         province: value,
                         climateZone: "", // Reset climate zone when province changes
+                        wallRSI: "",
+                        windowUValue: "",
+                        belowGradeRSI: "",
+                        airtightness: "",
                       }));
                     }}>
                       <SelectTrigger className={cn(validationErrors.province && "border-red-500 ring-2 ring-red-500")}>
@@ -182,7 +186,14 @@ export default function ProjectInformationSection({
                           </div>
                         </InfoButton>
                       </div>
-                      <Select value={selections.climateZone} onValueChange={value => setSelections(prev => ({ ...prev, climateZone: value }))}>
+                      <Select value={selections.climateZone} onValueChange={value => setSelections((prev: any) => ({ 
+                        ...prev, 
+                        climateZone: value,
+                        wallRSI: "",
+                        windowUValue: "",
+                        belowGradeRSI: "",
+                        airtightness: "",
+                      }))}>
                         <SelectTrigger className={cn(validationErrors.climateZone && "border-red-500 ring-2 ring-red-500")}>
                           <SelectValue placeholder="Select climate zone" />
                         </SelectTrigger>
