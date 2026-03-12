@@ -35,39 +35,40 @@ export function MechanicalSection({
             {/* F280 Calculation (only when required by city/jurisdiction) */}
             {isF280RequiredCity && (
                 <div id="hasF280Calculation" className="space-y-2">
-                    <div className="flex items-center gap-3">
-                        <label className="text-sm font-medium text-foreground">
-                            Have you completed the required CSA-F280 Calculation for heating and cooling loads?
-                            <span className="text-red-500"> *</span>
-                        </label>
-
-                        <InfoButton title="What is an F280 Calculation?">
-                            <div className="space-y-4">
-                                <p className="text-sm text-foreground">
-                                    An F280 calculation is a heating and cooling load calculation based on CSA Standard F280.
-                                    It helps size HVAC equipment properly based on insulation, windows, air leakage, and climate.
-                                </p>
-
-                                <div>
-                                    <p className="text-sm font-medium mb-2">Why it's beneficial:</p>
-                                    <ul className="list-disc list-inside space-y-1 text-sm">
-                                        <li>Ensures equipment is properly sized (not too big or too small).</li>
-                                        <li>Improves comfort and efficiency.</li>
-                                        <li>Can reduce costs by avoiding oversized systems.</li>
-                                        <li>Often required for permits in some jurisdictions.</li>
-                                    </ul>
-                                </div>
-
-                                <div className="p-3 bg-blue-100 rounded-md">
-                                    <p className="text-sm font-medium mb-1">💡 Pro Tip:</p>
-                                    <p className="text-sm text-foreground">
-                                        F280 is especially helpful in energy-efficient homes where heating loads are much lower.
-                                    </p>
-                                </div>
-                            </div>
-                        </InfoButton>
+                    <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 dark:bg-blue-950/20 dark:border-blue-500/30">
+                        <div className="flex items-center gap-2">
+                            <span className="text-lg">ℹ️</span>
+                            <p className="text-sm text-blue-800 dark:text-blue-300">
+                                <strong>CSA-F280 Calculation Required:</strong> This calculation is mandatory for applications in {selections.city}.
+                            </p>
+                        </div>
                     </div>
+                    <label className="text-sm font-medium text-foreground">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
+                    <InfoButton title="What is an F280 Calculation?">
+                        <div className="space-y-4">
+                            <p className="text-sm text-foreground">
+                                An F280 calculation is a heating and cooling load calculation based on CSA Standard F280.
+                                It helps size HVAC equipment properly based on insulation, windows, air leakage, and climate.
+                            </p>
 
+                            <div>
+                                <p className="text-sm font-medium mb-2">Why it's beneficial:</p>
+                                <ul className="list-disc list-inside space-y-1 text-sm">
+                                    <li>Ensures equipment is properly sized (not too big or too small).</li>
+                                    <li>Improves comfort and efficiency.</li>
+                                    <li>Can reduce costs by avoiding oversized systems.</li>
+                                    <li>Often required for permits in some jurisdictions.</li>
+                                </ul>
+                            </div>
+
+                            <div className="p-3 bg-blue-100 rounded-md">
+                                <p className="text-sm font-medium mb-1">💡 Pro Tip:</p>
+                                <p className="text-sm text-foreground">
+                                    F280 is especially helpful in energy-efficient homes where heating loads are much lower.
+                                </p>
+                            </div>
+                        </div>
+                    </InfoButton>
                     <Select
                         required
                         value={selections.hasF280Calculation}
@@ -96,11 +97,11 @@ export function MechanicalSection({
                     <InfoButton title="CAN/CSA F280-12 - Room by Room Heat Loss/Gain Calculation">
                         <div className="space-y-4">
                             <div>
-                                <h5 className="font-medium text-base mb-2">What’s the Benefit of an F280 Calculation?</h5>
+                                <h5 className="font-medium text-base mb-2">What's the Benefit of an F280 Calculation?</h5>
                                 <p className="text-base text-muted-foreground">
                                     An F280 is a room-by-room heat loss and gain calculation that ensures your heating and cooling
                                     system is sized exactly right for your home — not based on guesses or whole-house averages.
-                                    It’s especially useful for energy-efficient homes, where oversized systems waste energy, cost more,
+                                    It's especially useful for energy-efficient homes, where oversized systems waste energy, cost more,
                                     and perform poorly.
                                 </p>
                             </div>
@@ -440,8 +441,6 @@ export function MechanicalSection({
                                     </AlertDescription>
                                 </Alert>
                             ) : null;
-
-
                         })()}
                     </div>}
 

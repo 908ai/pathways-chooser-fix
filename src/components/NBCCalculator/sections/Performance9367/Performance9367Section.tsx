@@ -50,7 +50,7 @@ export default function Performance9367Section({
         return showMissingFields && !isSet(selections[key]);
     };
 
-    const isF280RequiredCity = getIsF280RequiredCity(selections?.city);
+    const isF280RequiredCity = getIsF280RequiredCity(selections?.city, selections?.province);
 
     useEffect(() => {
         if (!isF280RequiredCity && selections.hasF280Calculation) {

@@ -1,3 +1,5 @@
+import { isF280Required } from "@/lib/complianceUtils";
+
 export const isSet = (value: any) => {
   if (Array.isArray(value)) return value.length > 0;
   if (typeof value === "string") return value.trim() !== "";
@@ -36,7 +38,7 @@ export const getMechanicalKeys = (selections: any) => {
     "hasDWHR",
   ];
 
-  if (selections.city && (selections.city.toLowerCase().trim() === "red deer" || selections.city.toLowerCase().trim() === "innisfail") && selections.province === "alberta") {
+  if (isF280Required(selections.city, selections.province)) {
     keys.push("hasF280Calculation");
   }
 

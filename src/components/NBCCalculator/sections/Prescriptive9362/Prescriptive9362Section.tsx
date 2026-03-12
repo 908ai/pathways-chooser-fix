@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { isSet, getEnvelopeKeys, getMechanicalKeys } from "./helpers";
 import { EnvelopeSection } from "./components/EnvelopeSection";
 import { MechanicalSection } from "./components/MechanicalSection";
+import { isF280Required } from "@/lib/complianceUtils";
 
 export default function Prescriptive9362Section({
     selections,
@@ -72,7 +73,7 @@ export default function Prescriptive9362Section({
         return isSet(val) && !validationErrors[key];
     };
 
-    const isF280RequiredCity = ["red deer", "innisfail"].includes((selections?.city || "").toLowerCase().trim());
+    const isF280RequiredCity = isF280Required(selections?.city, selections?.province);
 
     useEffect(() => {
         if (!isF280RequiredCity && selections.hasF280Calculation) {
@@ -107,10 +108,10 @@ export default function Prescriptive9362Section({
     return (
         <div className="space-y-3">
             <div className="flex justify-center gap-2">
-                <Button variant="outline" size="sm" className="text-sm px-2" onClick={() => setOpenSections(["envelope", "mechanical"])}>
+                <Button variant="outline" size="sm" className="text-sm px-2" onClick={() => setOpenSections(["envelope", "mechanical"])} >
                     Expand All
                 </Button>
-                <Button variant="outline" size="sm" className="text-sm px-2" onClick={() => setOpenSections([])}>
+                <Button variant="outline" size="sm" className="text-sm px-2" onClick={() => setOpenSections([])} >
                     Collapse All
                 </Button>
             </div>

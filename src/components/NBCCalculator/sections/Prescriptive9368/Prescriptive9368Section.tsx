@@ -17,6 +17,7 @@ import { getZoneOptions } from "../../../NBCCalculator/constants/options";
 
 import EnvelopeSection from "./components/EnvelopeSection";
 import MechanicalSection from "./components/MechanicalSection";
+import { isF280Required } from "@/lib/complianceUtils";
 
 interface Props {
     selections: any;
@@ -112,8 +113,7 @@ export default function Prescriptive9368Section({
         }
     }, [selections.compliancePath]);
 
-    const isF280RequiredCity =
-        ["red deer", "innisfail"].includes((selections?.city || "").toLowerCase().trim());
+    const isF280RequiredCity = isF280Required(selections?.city, selections?.province);
 
     useEffect(() => {
         if (!isF280RequiredCity && selections.hasF280Calculation) {

@@ -185,7 +185,7 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
             addIfMissing(optional, 'waterHeater', 'Water Heater Make/Model');
           }
         }
-        if ((selections.city?.toLowerCase().trim() === "red deer" || selections.city?.toLowerCase().trim() === "innisfail") && selections.province === "alberta") {
+        if (isF280Required(selections.city, selections.province)) {
           addIfMissing(optional, 'hasF280Calculation', 'F280 Calculation status');
         }
         
@@ -287,3 +287,5 @@ export const formatProvince = (province: string | null): string => {
   if (lowerProvince === 'alberta') return 'AB';
   return province;
 };
+
+import { isF280Required } from "@/lib/complianceUtils";

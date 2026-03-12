@@ -1,4 +1,5 @@
 import { F280_REQUIRED_CITIES } from "./constants";
+import { isF280Required } from "@/lib/complianceUtils";
 
 export const isSet = (value: any) => {
   if (Array.isArray(value)) return value.length > 0;
@@ -7,8 +8,8 @@ export const isSet = (value: any) => {
   return value !== null && value !== undefined;
 };
 
-export const getIsF280RequiredCity = (city: any) => {
-  return F280_REQUIRED_CITIES.includes((city || "").toLowerCase().trim());
+export const getIsF280RequiredCity = (city: any, province: any = "alberta") => {
+  return isF280Required(city, province);
 };
 
 export const getEnvelopeKeys = (selections: any) => {

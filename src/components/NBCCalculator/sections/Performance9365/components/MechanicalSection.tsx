@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import WarningButton from "./WarningButton";
+import { isF280Required } from "@/lib/complianceUtils";
 
 export default function MechanicalSection({
   selections,
@@ -45,7 +46,15 @@ export default function MechanicalSection({
       </AccordionTrigger>
       <AccordionContent className="px-4 pt-4">
         <div className="space-y-4">
-          {selections.city && (selections.city.toLowerCase().trim() === "red deer" || selections.city.toLowerCase().trim() === "innisfail") && selections.province === "alberta" && <div id="hasF280Calculation" className="space-y-2">
+          {isF280Required(selections.city, selections.province) && <div id="hasF280Calculation" className="space-y-2">
+            <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 dark:bg-blue-950/20 dark:border-blue-500/30">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">ℹ️</span>
+                <p className="text-sm text-blue-800 dark:text-blue-300">
+                  <strong>CSA-F280 Calculation Required:</strong> This calculation is mandatory for applications in {selections.city}.
+                </p>
+              </div>
+            </div>
             <div className="flex items-center gap-3">
               <label className="text-sm font-medium text-foreground">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
               <InfoButton title="What is an F280 Calculation?">
@@ -107,11 +116,11 @@ export default function MechanicalSection({
               <InfoButton title="CAN/CSA F280-12 - Room by Room Heat Loss/Gain Calculation">
                 <div className="space-y-4">
                   <div>
-                    <h5 className="font-medium text-base mb-2">What’s the Benefit of an F280 Calculation?</h5>
+                    <h5 className="font-medium text-base mb-2">What's the Benefit of an F280 Calculation?</h5>
                     <p className="text-base text-muted-foreground">
                       An F280 is a room-by-room heat loss and gain calculation that ensures your heating and cooling
                       system is sized exactly right for your home — not based on guesses or whole-house averages.
-                      It’s especially useful for energy-efficient homes, where oversized systems waste energy, cost more,
+                      It's especially useful for energy-efficient homes, where oversized systems waste energy, cost more,
                       and perform poorly.
                     </p>
                   </div>

@@ -178,9 +178,17 @@ export default function MechanicalSection({
                 </Select>
             </div>}
 
-            {/* F280 Calculation */}
+            {/* F280 Calculation (only when required by city/jurisdiction) */}
             {isF280RequiredCity && (
                 <div id="hasF280Calculation" className="space-y-2">
+                    <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 dark:bg-blue-950/20 dark:border-blue-500/30">
+                        <div className="flex items-center gap-2">
+                            <span className="text-lg">ℹ️</span>
+                            <p className="text-sm text-blue-800 dark:text-blue-300">
+                                <strong>CSA-F280 Calculation Required:</strong> This calculation is mandatory for applications in {selections.city}.
+                            </p>
+                        </div>
+                    </div>
                     <label className="text-sm font-medium text-foreground">Have you completed the required CSA-F280 Calculation for heating and cooling loads?</label>
                     <InfoButton title="What is an F280 Calculation?">
                         <div className="space-y-4">
