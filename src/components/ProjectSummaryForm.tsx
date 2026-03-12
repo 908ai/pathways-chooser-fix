@@ -173,7 +173,7 @@ const ProjectSummaryForm = ({
         has_dwhr: selections.hasDWHR,
         energuide_pathway: selections.energuidePathway,
         front_door_orientation: selections.frontDoorOrientation,
-        has_f280_calculation: selections.hasF280Calculation,
+        has_f280_calculation: String(selections.hasF280Calculation || ""),
         hrv_make_model: selections.hrvMakeModel,
         has_secondary_hrv: selections.hasSecondaryHrv,
         secondary_hrv_efficiency: selections.secondaryHrvEfficiency,
@@ -276,10 +276,19 @@ const ProjectSummaryForm = ({
       return null;
     }
     const displayValue = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value);
+    
+    // Mapping for F280 Calculation display
+    let finalDisplayValue = displayValue;
+    if (label === 'F280 Calculation Completed' || label === 'CSA-F280 Calculation Required') {
+      if (value === 'completed') finalDisplayValue = 'Yes, completed';
+      if (value === 'request-quote') finalDisplayValue = 'Request a quote';
+      if (value === 'in-progress-or-na') finalDisplayValue = 'F280 in Progress or N/A';
+    }
+
     return (
       <div className="flex justify-between items-start text-sm py-2 border-b border-border md:border-none">
         <span className="text-muted-foreground mr-2">{label}:</span>
-        <span className="font-medium text-foreground text-right break-words">{displayValue} {unit}</span>
+        <span className="font-medium text-foreground text-right break-words">{finalDisplayValue} {unit}</span>
       </div>
     );
   };
