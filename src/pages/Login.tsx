@@ -225,7 +225,18 @@ const Login = () => {
         <div className="w-full max-w-2xl space-y-6">
           <Card className="shadow-sm rounded-lg">
             <CardHeader className="text-center pb-4">
-              <CardTitle className="text-2xl font-bold text-foreground">Energy Navigator 9.36</CardTitle>
+              <div className="flex justify-center mb-4">
+                <img
+                  src="/assets/energy-navigator-logo.png"
+                  alt="Energy Navigator 9.36 Logo"
+                  className="h-20 dark:hidden"
+                />
+                <img
+                  src="/assets/energy-navigator-logo-w.png"
+                  alt="Energy Navigator 9.36 Logo"
+                  className="h-20 hidden dark:block"
+                />
+              </div>
               <CardDescription className="text-muted-foreground leading-relaxed pt-2 px-6">
                 A specialized tool for energy professionals and building owners to navigate NBC 9.36 compliance pathways. Quickly determine the most cost-effective approach for your building project while ensuring regulatory compliance and optimizing energy performance outcomes.
               </CardDescription>
