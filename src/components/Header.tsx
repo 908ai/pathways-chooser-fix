@@ -97,7 +97,13 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
   ];
 
   return (
-    <header className="bg-white dark:bg-slate-800 border-b dark:border-slate-700 sticky top-0 z-40">
+    <header
+      className="bg-white dark:bg-slate-800 sticky top-0 z-40"
+      style={{
+        borderBottom: '2px solid #10315E',
+        borderTop: '5px solid #F5A623'
+      }}
+    >
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center">
           <Link to={isLoginVariant ? "/login" : dashboardPath}>
