@@ -701,6 +701,37 @@ const NBCCalculator = () => {
         interested_certifications: selections.interestedCertifications,
         wants_certifications: selections.wantsCertifications,
         mid_construction_blower_door_planned: selections.midConstructionBlowerDoorPlanned,
+        has_f280_calculation: String(selections.hasF280Calculation || ""),
+        energuide_pathway: selections.energuidePathway,
+        front_door_orientation: selections.frontDoorOrientation,
+        hrv_make_model: selections.hrvMakeModel,
+        has_secondary_hrv: selections.hasSecondaryHrv,
+        secondary_hrv_efficiency: selections.secondaryHrvEfficiency,
+        heating_make_model: selections.heatingMakeModel,
+        other_heating_make_model: selections.otherHeatingMakeModel,
+        other_heating_efficiency: selections.otherHeatingEfficiency,
+        has_secondary_heating: selections.hasSecondaryHeating,
+        secondary_heating_make_model: selections.secondaryHeatingEfficiency,
+        other_secondary_heating_efficiency: selections.otherSecondaryHeatingEfficiency,
+        indirect_tank: selections.indirectTank,
+        indirect_tank_size: selections.indirectTankSize,
+        secondary_indirect_tank: selections.secondaryIndirectTank,
+        secondary_indirect_tank_size: selections.secondaryIndirectTankSize,
+        cooling_make_model: selections.coolingMakeModel,
+        water_heater_make_model: selections.waterHeaterMakeModel,
+        other_water_heater_type: selections.otherWaterHeaterType,
+        has_secondary_water_heater: selections.hasSecondaryWaterHeater,
+        secondary_water_heater_same_as_main: selections.secondaryWaterHeaterSameAsMain,
+        secondary_water_heater_type: selections.secondaryWaterHeaterType,
+        secondary_water_heater: selections.secondaryWaterHeater,
+        has_murb_multiple_heating: selections.hasMurbMultipleHeating === 'yes',
+        murb_second_heating_type: selections.murbSecondHeatingType,
+        murb_second_heating_efficiency: selections.murbSecondHeatingEfficiency,
+        murb_second_indirect_tank: selections.murbSecondIndirectTank,
+        murb_second_indirect_tank_size: selections.murbSecondIndirectTankSize,
+        has_murb_multiple_water_heaters: selections.hasMurbMultipleWaterHeaters === 'yes',
+        murb_second_water_heater_type: selections.murbSecondWaterHeaterType,
+        murb_second_water_heater: selections.murbSecondWaterHeater,
         notes: selections.notes
       };
 
@@ -1076,10 +1107,7 @@ const NBCCalculator = () => {
       }
     }
 
-    const isEditing = !!searchParams.get('edit');
-    if (isEditing) {
-      await handleSaveDraft(true);
-    }
+    await handleSaveDraft(true);
 
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
