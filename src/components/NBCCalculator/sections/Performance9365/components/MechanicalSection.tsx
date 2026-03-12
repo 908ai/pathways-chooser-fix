@@ -46,7 +46,7 @@ export default function MechanicalSection({
       </AccordionTrigger>
       <AccordionContent className="px-4 pt-4">
         <div className="space-y-4">
-          {isF280Required(selections.city, selections.province) && <div id="hasF280Calculation" className="space-y-2">
+          {isF280Required(selections.city, selections.province, "9365") && <div id="hasF280Calculation" className="space-y-2">
             <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 dark:bg-blue-950/20 dark:border-blue-500/30">
               <div className="flex items-center gap-2">
                 <span className="text-lg">ℹ️</span>

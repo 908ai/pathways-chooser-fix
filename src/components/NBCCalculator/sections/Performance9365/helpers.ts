@@ -38,7 +38,7 @@ export const getMechanicalKeys = (selections: any) => {
     "hasDWHR",
   ];
 
-  if (isF280Required(selections.city, selections.province)) {
+  if (isF280Required(selections.city, selections.province, "9365")) {
     keys.push("hasF280Calculation");
   }
 

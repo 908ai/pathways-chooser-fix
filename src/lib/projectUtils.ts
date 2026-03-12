@@ -185,7 +185,7 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
             addIfMissing(optional, 'waterHeater', 'Water Heater Make/Model');
           }
         }
-        if (isF280Required(selections.city, selections.province)) {
+        if (isF280Required(selections.city, selections.province, selections.compliancePath)) {
           addIfMissing(optional, 'hasF280Calculation', 'F280 Calculation status');
         }
         

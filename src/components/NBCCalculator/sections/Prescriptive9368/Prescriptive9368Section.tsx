@@ -113,7 +113,7 @@ export default function Prescriptive9368Section({
         }
     }, [selections.compliancePath]);
 
-    const isF280RequiredCity = isF280Required(selections?.city, selections?.province);
+    const isF280RequiredCity = isF280Required(selections?.city, selections?.province, "9368");
 
     useEffect(() => {
         if (!isF280RequiredCity && selections.hasF280Calculation) {

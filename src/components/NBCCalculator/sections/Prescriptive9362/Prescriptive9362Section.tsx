@@ -73,7 +73,7 @@ export default function Prescriptive9362Section({
         return isSet(val) && !validationErrors[key];
     };
 
-    const isF280RequiredCity = isF280Required(selections?.city, selections?.province);
+    const isF280RequiredCity = isF280Required(selections?.city, selections?.province, "9362");
 
     useEffect(() => {
         if (!isF280RequiredCity && selections.hasF280Calculation) {

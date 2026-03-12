@@ -9,7 +9,7 @@ export const isSet = (value: any) => {
 };
 
 export const getIsF280RequiredCity = (city: any, province: any = "alberta") => {
-  return isF280Required(city, province);
+  return isF280Required(city, province, "9367");
 };
 
 export const getEnvelopeKeys = (selections: any) => {
