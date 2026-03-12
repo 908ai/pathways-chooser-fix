@@ -94,6 +94,7 @@ export default function MechanicalSection({
                         <SelectContent className="bg-background border shadow-lg z-50">
                             <SelectItem value="completed">✓ Yes, I have completed the F280 calculation</SelectItem>
                             <SelectItem value="request-quote">Request a quote for F280 calculation</SelectItem>
+                            <SelectItem value="in-progress-or-na">F280 in Progress or N/A</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
