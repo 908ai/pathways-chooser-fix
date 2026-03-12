@@ -31,6 +31,7 @@ import { RevisionRequestModal } from '@/components/admin/RevisionRequestModal';
 import ProjectTimeline from '@/components/ProjectTimeline';
 import ProjectHistory from '@/components/ProjectHistory';
 import { ActionCommentModal } from '@/components/admin/ActionCommentModal';
+import { getZoneOptions, ClimateZone } from '@/components/NBCCalculator/constants/options';
 
 const DetailItem = ({ label, value, unit = '' }: { label: string; value: any; unit?: string }) => {
   if (value === null || value === undefined || value === '') return null;
@@ -60,6 +61,19 @@ const ProjectDetail = () => {
   const [uploading, setUploading] = useState(false);
   const [generatingPdf, setGeneratingPdf] = useState(false);
   const [projectEvents, setProjectEvents] = useState<any[]>([]);
+
+  const getAirtightnessDisplay = (value: string, zone: string | null) => {
+    if (!value) return null;
+    
+    // Default to 7A if zone is not provided or invalid
+    const climateZone = (zone || '7A') as ClimateZone;
+    const options = getZoneOptions(climateZone).airtightness;
+    const option = options.find(opt => opt.value === value);
+    
+    if (!option) return value;
+    
+    return `${option.level} (${option.type}) (ACH₅₀: ${option.ach50}, NLA₁₀: ${option.nla10}, NLR₅₀: ${option.nlr50})`;
+  };
 
   const getPathwayDisplay = (pathway: string | null) => {
     if (!pathway) return null;
@@ -1291,7 +1305,10 @@ const ProjectDetail = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-1">
-                  <DetailItem label="Airtightness Level" value={project.airtightness_al} unit="ACH₅₀" />
+                  <DetailItem 
+                    label="Airtightness Level" 
+                    value={getAirtightnessDisplay(project.airtightness_al, project.climate_zone)} 
+                  />
                   <DetailItem label="Building Volume" value={project.building_volume} unit="m³" />
                   <DetailItem label="Annual Energy Consumption" value={project.annual_energy_consumption} unit="GJ/year" />
                 </CardContent>
