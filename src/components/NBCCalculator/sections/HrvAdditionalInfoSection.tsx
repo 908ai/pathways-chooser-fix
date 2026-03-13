@@ -46,43 +46,43 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
         {
             id: "energuide",
             label: "EnerGuide",
-            imageUrl: "/lovable-uploads/7eafc507-a263-4914-a980-9adb84046e56.png",
+            imageUrl: "/assets/certifications/energuide.png",
             url: "https://natural-resources.canada.ca/energy-efficiency/home-energy-efficiency/energuide-rated-new-homes",
             description: "Official home energy rating system for Canada"
         },
         {
             id: "chba-net-zero",
             label: "CHBA Net Zero",
-            imageUrl: "/lovable-uploads/1aa4ac59-9662-45fa-8013-06a725025afa.png",
-            url: "https://www.chba.ca/net-zero/",
+            imageUrl: "/assets/certifications/chba_net_zero.png",
+            url: "https://www.chba.ca/about-the-net-zero-home-labelling-program/",
             description: "Canadian Home Builders' Association Net Zero certification"
         },
         {
             id: "built-green",
             label: "Built Green",
-            imageUrl: "/lovable-uploads/ccb67952-2457-4aeb-806a-e595f87d6fe0.png",
+            imageUrl: "/assets/certifications/built_green.png",
             url: "https://builtgreencanada.ca",
             description: "National green building certification program"
         },
         {
             id: "energy-star",
             label: "ENERGY STAR",
-            imageUrl: "/lovable-uploads/4e1d3921-9d37-4dfa-85a3-8db2e13d50fb.png",
+            imageUrl: "/assets/certifications/energy_star.png",
             url: "https://natural-resources.canada.ca/energy-efficiency/energy-star/new-homes",
             description: "High-efficiency homes certification"
         },
         ...(selections.province === "saskatchewan" ? [{
             id: "sask-energy-beyond-codes",
             label: "SaskEnergy Beyond Codes Rebate",
-            imageUrl: "/lovable-uploads/d890e038-24fc-4885-a732-d0055f89ff2e.png",
+            imageUrl: "/assets/certifications/saskenergy.png",
             url: "https://www.saskenergy.com/homes-beyond-code-program",
             description: "Saskatchewan-specific energy efficiency rebate program"
         }] : []),
         {
             id: "solar-ready",
             label: "Solar Ready",
-            imageUrl: "/lovable-uploads/solar-ready-sun-bw.png",
-            url: "https://natural-resources.canada.ca/sites/nrcan/files/canmetenergy/files/pubs/SolarReadyGuidelines_en.pdf",
+            imageUrl: "/assets/certifications/solar_ready.png",
+            url: "https://natural-resources.canada.ca/energy-efficiency/solar-ready-guidelines",
             description: "Home design prepared for future solar panel installation"
         }
     ];
