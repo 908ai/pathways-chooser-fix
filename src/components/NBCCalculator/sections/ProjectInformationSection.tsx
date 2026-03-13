@@ -138,7 +138,7 @@ export default function ProjectInformationSection({
                     </Select>
                   </div>
                   <div id="postalCode" className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">Postal Code</label>
+                    <label className="text-sm font-medium text-foreground">Postal Code <span className="text-muted-foreground font-normal">(Optional)</span></label>
                     <Input type="text" placeholder="Enter postal code" value={selections.postalCode} onChange={e => setSelections(prev => ({ ...prev, postalCode: e.target.value }))} className={cn(validationErrors.postalCode && "border-red-500 ring-2 ring-red-500")} />
                   </div>
                 </div>

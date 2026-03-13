@@ -887,7 +887,7 @@ const NBCCalculator = () => {
   };
 
   const validateStep1 = () => {
-    const { firstName, lastName, company, phoneNumber, streetAddress, city, postalCode, buildingType, province, climateZone, companyAddress } = selections;
+    const { firstName, lastName, company, phoneNumber, streetAddress, city, buildingType, province, climateZone, companyAddress } = selections;
     const errors: Record<string, boolean> = {};
 
     if (!firstName) errors.firstName = true;
@@ -897,7 +897,6 @@ const NBCCalculator = () => {
     if (!phoneNumber) errors.phoneNumber = true;
     if (!streetAddress) errors.streetAddress = true;
     if (!city) errors.city = true;
-    if (!postalCode) errors.postalCode = true;
     if (!buildingType) errors.buildingType = true;
     if (!province) errors.province = true;
     if (province === 'alberta' && !climateZone) errors.climateZone = true;
