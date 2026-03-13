@@ -301,24 +301,44 @@ export default function MechanicalSection({
                                 <h4 className="font-medium text-base">ℹ️ Drain Water Heat Recovery (DWHR)</h4>
                             </div>
 
-                            <div className="space-y-3">
-                                <p className="text-base text-muted-foreground">
-                                    DWHR systems capture heat from shower drain water and use it to preheat incoming cold water, reducing hot water energy use by 20–40%.
-                                </p>
+                            <div className="flex flex-col gap-6 md:flex-row md:items-start">
+                                <div className="space-y-3 flex-1">
+                                    <p className="text-base text-muted-foreground">
+                                        DWHR systems capture heat from shower drain water and use it to preheat incoming cold water, reducing hot water energy use by 20–40%.
+                                    </p>
 
-                                <div className="space-y-2">
-                                    <h5 className="font-medium text-base">How it works:</h5>
-                                    <p className="text-base text-muted-foreground">When hot water goes down the drain (like from a shower), the DWHR unit uses a heat exchanger to transfer that thermal energy to the incoming cold water supply before it reaches your water heater.</p>
+                                    <div className="space-y-2">
+                                        <h5 className="font-medium text-base">How it works:</h5>
+                                        <p className="text-base text-muted-foreground">
+                                            When hot water goes down the drain (like from a shower), the DWHR unit uses a heat exchanger to transfer that thermal energy to the incoming cold water supply before it reaches your water heater.
+                                        </p>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <h5 className="font-medium text-base">Benefits:</h5>
+                                        <div className="text-base text-muted-foreground space-y-1">
+                                            <p>• Reduces water heating energy consumption</p>
+                                            <p>• Lowers utility bills</p>
+                                            <p>• Contributes to overall building energy efficiency</p>
+                                            <p>• Works continuously with no maintenance required</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <div className="text-xs text-muted-foreground space-y-1 py-4 italic">
+                                            <p><a href="https://natural-resources.canada.ca/energy-efficiency/drain-water-heat-recovery" target="_blank" rel="noopener noreferrer">Source: NRCan</a></p>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <h5 className="font-medium text-base">Benefits:</h5>
-                                    <div className="text-base text-muted-foreground space-y-1">
-                                        <p>• Reduces water heating energy consumption</p>
-                                        <p>• Lowers utility bills</p>
-                                        <p>• Contributes to overall building energy efficiency</p>
-                                        <p>• Works continuously with no maintenance required</p>
-                                    </div>
+                                <div className="md:w-[180px] md:flex-shrink-0">
+                                    <a href="https://natural-resources.canada.ca/energy-efficiency/drain-water-heat-recovery" target="_blank" rel="noopener noreferrer">
+                                        <img
+                                            src="/assets/img/drain_water_heat_recovery_pipes.png"
+                                            alt=""
+                                            className="w-full max-h-[420px] object-contain rounded-md"
+                                        />
+                                    </a>
                                 </div>
                             </div>
                         </div>

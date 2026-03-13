@@ -601,121 +601,121 @@ export function MechanicalSection({
 
             {/* Secondary Suite Water Heater - Show for single-detached with secondary suite AND multi-unit buildings for performance path */}
             {((selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit") && ["9362", "9365", "9367"].includes(selections.compliancePath)) &&
-             <div className="space-y-4 p-4 bg-muted/50 border rounded-md">
-                <h5 className="font-medium text-foreground">Secondary Suite Water Heating</h5>
+                <div className="space-y-4 p-4 bg-muted/50 border rounded-md">
+                    <h5 className="font-medium text-foreground">Secondary Suite Water Heating</h5>
 
-                <div id="hasSecondaryWaterHeater" className={cn(
-                    "space-y-2",
-                    (validationErrors.hasSecondaryWaterHeater || isMissing("hasSecondaryWaterHeater")) && "p-2 border-2 border-red-500 rounded-md bg-red-50"
-                )}>
-                    <label className="text-sm font-medium text-foreground">Will there be a second hot water system for the secondary suite? <span className="text-red-500">*</span></label>
-                    <div className="flex gap-4">
-                        <label className="flex items-center gap-2">
-                            <input required type="radio" name="hasSecondaryWaterHeater" value="yes" checked={selections.hasSecondaryWaterHeater === "yes"} onChange={e => setSelections(prev => ({
-                                ...prev,
-                                hasSecondaryWaterHeater: e.target.value,
-                                secondaryWaterHeaterSameAsMain: "",
-                                // Reset when changing
-                                secondaryWaterHeater: "",
-                                secondaryWaterHeaterType: ""
-                            }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm text-foreground">Yes</span>
-                        </label>
-                        <label className="flex items-center gap-2">
-                            <input required type="radio" name="hasSecondaryWaterHeater" value="no" checked={selections.hasSecondaryWaterHeater === "no"} onChange={e => setSelections(prev => ({
-                                ...prev,
-                                hasSecondaryWaterHeater: e.target.value,
-                                secondaryWaterHeaterSameAsMain: "",
-                                secondaryWaterHeater: "",
-                                secondaryWaterHeaterType: ""
-                            }))} className="w-4 h-4 text-primary" />
-                            <span className="text-sm text-foreground">No</span>
-                        </label>
-                    </div>
-                </div>
-
-                {selections.hasSecondaryWaterHeater === "yes" && <>
-                    <div id="secondaryWaterHeaterSameAsMain" className={cn(
+                    <div id="hasSecondaryWaterHeater" className={cn(
                         "space-y-2",
-                        (validationErrors.secondaryWaterHeaterSameAsMain || isMissing("secondaryWaterHeaterSameAsMain")) && "p-2 border-2 border-red-500 rounded-md bg-red-50"
+                        (validationErrors.hasSecondaryWaterHeater || isMissing("hasSecondaryWaterHeater")) && "p-2 border-2 border-red-500 rounded-md bg-red-50"
                     )}>
-                        <label className="text-sm font-medium text-foreground">Will it be the same as the main water heater system? <span className="text-red-500">*</span></label>
+                        <label className="text-sm font-medium text-foreground">Will there be a second hot water system for the secondary suite? <span className="text-red-500">*</span></label>
                         <div className="flex gap-4">
                             <label className="flex items-center gap-2">
-                                <input required type="radio" name="secondaryWaterHeaterSameAsMain" value="yes" checked={selections.secondaryWaterHeaterSameAsMain === "yes"} onChange={e => setSelections(prev => ({
+                                <input required type="radio" name="hasSecondaryWaterHeater" value="yes" checked={selections.hasSecondaryWaterHeater === "yes"} onChange={e => setSelections(prev => ({
                                     ...prev,
-                                    secondaryWaterHeaterSameAsMain: e.target.value,
+                                    hasSecondaryWaterHeater: e.target.value,
+                                    secondaryWaterHeaterSameAsMain: "",
+                                    // Reset when changing
                                     secondaryWaterHeater: "",
                                     secondaryWaterHeaterType: ""
                                 }))} className="w-4 h-4 text-primary" />
                                 <span className="text-sm text-foreground">Yes</span>
                             </label>
                             <label className="flex items-center gap-2">
-                                <input required type="radio" name="secondaryWaterHeaterSameAsMain" value="no" checked={selections.secondaryWaterHeaterSameAsMain === "no"} onChange={e => setSelections(prev => ({
+                                <input required type="radio" name="hasSecondaryWaterHeater" value="no" checked={selections.hasSecondaryWaterHeater === "no"} onChange={e => setSelections(prev => ({
                                     ...prev,
-                                    secondaryWaterHeaterSameAsMain: e.target.value
+                                    hasSecondaryWaterHeater: e.target.value,
+                                    secondaryWaterHeaterSameAsMain: "",
+                                    secondaryWaterHeater: "",
+                                    secondaryWaterHeaterType: ""
                                 }))} className="w-4 h-4 text-primary" />
                                 <span className="text-sm text-foreground">No</span>
                             </label>
                         </div>
                     </div>
 
-                    {selections.secondaryWaterHeaterSameAsMain === "no" && <>
-                        <div id="secondaryWaterHeaterType" className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">Secondary Suite Water Heater Type <span className="text-red-500">*</span></label>
-                            <Select required value={selections.secondaryWaterHeaterType} onValueChange={value => {
-                                setSelections(prev => ({
-                                    ...prev,
-                                    secondaryWaterHeaterType: value,
-                                    secondaryWaterHeater: "" // Reset efficiency when type changes
-                                }));
-                            }} disabled={isSecondaryWaterHeaterBoiler}>
-                                <SelectTrigger className={cn(
-                                    (validationErrors.secondaryWaterHeaterType || isMissing("secondaryWaterHeaterType")) && missingFieldClass,
-                                    validationErrors.secondaryWaterHeaterType && "border-red-500 ring-2 ring-red-500"
-                                )}>
-                                    <SelectValue placeholder="Select water heater type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="boiler">Boiler</SelectItem>
-                                    <SelectItem value="gas-storage">Gas Storage Tank</SelectItem>
-                                    <SelectItem value="gas-tankless">Gas Tankless</SelectItem>
-                                    <SelectItem value="electric-storage">Electric Storage Tank</SelectItem>
-                                    <SelectItem value="other">Other</SelectItem>
-                                </SelectContent>
-                            </Select>
+                    {selections.hasSecondaryWaterHeater === "yes" && <>
+                        <div id="secondaryWaterHeaterSameAsMain" className={cn(
+                            "space-y-2",
+                            (validationErrors.secondaryWaterHeaterSameAsMain || isMissing("secondaryWaterHeaterSameAsMain")) && "p-2 border-2 border-red-500 rounded-md bg-red-50"
+                        )}>
+                            <label className="text-sm font-medium text-foreground">Will it be the same as the main water heater system? <span className="text-red-500">*</span></label>
+                            <div className="flex gap-4">
+                                <label className="flex items-center gap-2">
+                                    <input required type="radio" name="secondaryWaterHeaterSameAsMain" value="yes" checked={selections.secondaryWaterHeaterSameAsMain === "yes"} onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        secondaryWaterHeaterSameAsMain: e.target.value,
+                                        secondaryWaterHeater: "",
+                                        secondaryWaterHeaterType: ""
+                                    }))} className="w-4 h-4 text-primary" />
+                                    <span className="text-sm text-foreground">Yes</span>
+                                </label>
+                                <label className="flex items-center gap-2">
+                                    <input required type="radio" name="secondaryWaterHeaterSameAsMain" value="no" checked={selections.secondaryWaterHeaterSameAsMain === "no"} onChange={e => setSelections(prev => ({
+                                        ...prev,
+                                        secondaryWaterHeaterSameAsMain: e.target.value
+                                    }))} className="w-4 h-4 text-primary" />
+                                    <span className="text-sm text-foreground">No</span>
+                                </label>
+                            </div>
                         </div>
 
-                        {selections.secondaryWaterHeaterType && selections.secondaryWaterHeaterType !== 'boiler' && <div id="secondaryWaterHeater" className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">Secondary Suite Water Heater Efficiency <span className="text-red-500">*</span></label>
-                            <Input required type="text" placeholder={(() => {
-                                switch (selections.secondaryWaterHeaterType) {
-                                    case "gas-storage":
-                                        return "Enter efficiency for Gas Storage Tank (UEF ≥0.60-0.81)";
-                                    case "gas-tankless":
-                                        return "Enter efficiency for Gas Tankless (UEF ≥0.86)";
-                                    case "electric-storage":
-                                        return "Enter efficiency for Electric Storage Tank (UEF ≥0.35-0.69)";
-                                    case "heat-pump":
-                                        return "Enter efficiency for Heat Pump Water Heater (EF ≥2.1)";
-                                    case "other":
-                                        return "Enter efficiency for water heater";
-                                    default:
-                                        return "Enter water heater efficiency";
-                                }
-                            })()} value={selections.secondaryWaterHeater} onChange={e => setSelections(prev => ({
-                                ...prev,
-                                secondaryWaterHeater: e.target.value
-                            }))}
-                                className={cn(
-                                    (validationErrors.secondaryWaterHeater || isMissing("secondaryWaterHeater")) && missingFieldClass,
-                                    validationErrors.secondaryWaterHeater && "border-red-500 ring-2 ring-red-500"
-                                )}
-                            />
-                        </div>}
+                        {selections.secondaryWaterHeaterSameAsMain === "no" && <>
+                            <div id="secondaryWaterHeaterType" className="space-y-2">
+                                <label className="text-sm font-medium text-foreground">Secondary Suite Water Heater Type <span className="text-red-500">*</span></label>
+                                <Select required value={selections.secondaryWaterHeaterType} onValueChange={value => {
+                                    setSelections(prev => ({
+                                        ...prev,
+                                        secondaryWaterHeaterType: value,
+                                        secondaryWaterHeater: "" // Reset efficiency when type changes
+                                    }));
+                                }} disabled={isSecondaryWaterHeaterBoiler}>
+                                    <SelectTrigger className={cn(
+                                        (validationErrors.secondaryWaterHeaterType || isMissing("secondaryWaterHeaterType")) && missingFieldClass,
+                                        validationErrors.secondaryWaterHeaterType && "border-red-500 ring-2 ring-red-500"
+                                    )}>
+                                        <SelectValue placeholder="Select water heater type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="boiler">Boiler</SelectItem>
+                                        <SelectItem value="gas-storage">Gas Storage Tank</SelectItem>
+                                        <SelectItem value="gas-tankless">Gas Tankless</SelectItem>
+                                        <SelectItem value="electric-storage">Electric Storage Tank</SelectItem>
+                                        <SelectItem value="other">Other</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {selections.secondaryWaterHeaterType && selections.secondaryWaterHeaterType !== 'boiler' && <div id="secondaryWaterHeater" className="space-y-2">
+                                <label className="text-sm font-medium text-foreground">Secondary Suite Water Heater Efficiency <span className="text-red-500">*</span></label>
+                                <Input required type="text" placeholder={(() => {
+                                    switch (selections.secondaryWaterHeaterType) {
+                                        case "gas-storage":
+                                            return "Enter efficiency for Gas Storage Tank (UEF ≥0.60-0.81)";
+                                        case "gas-tankless":
+                                            return "Enter efficiency for Gas Tankless (UEF ≥0.86)";
+                                        case "electric-storage":
+                                            return "Enter efficiency for Electric Storage Tank (UEF ≥0.35-0.69)";
+                                        case "heat-pump":
+                                            return "Enter efficiency for Heat Pump Water Heater (EF ≥2.1)";
+                                        case "other":
+                                            return "Enter efficiency for water heater";
+                                        default:
+                                            return "Enter water heater efficiency";
+                                    }
+                                })()} value={selections.secondaryWaterHeater} onChange={e => setSelections(prev => ({
+                                    ...prev,
+                                    secondaryWaterHeater: e.target.value
+                                }))}
+                                    className={cn(
+                                        (validationErrors.secondaryWaterHeater || isMissing("secondaryWaterHeater")) && missingFieldClass,
+                                        validationErrors.secondaryWaterHeater && "border-red-500 ring-2 ring-red-500"
+                                    )}
+                                />
+                            </div>}
+                        </>}
                     </>}
-                </>}
-            </div>}
+                </div>}
 
             <div id="hasDWHR" className="space-y-2">
                 <div className="flex items-center gap-3">
@@ -726,24 +726,44 @@ export function MechanicalSection({
                                 <h4 className="font-medium text-base">ℹ️ Drain Water Heat Recovery (DWHR)</h4>
                             </div>
 
-                            <div className="space-y-3">
-                                <p className="text-base text-muted-foreground">
-                                    DWHR systems capture heat from shower drain water and use it to preheat incoming cold water, reducing hot water energy use by 20–40%.
-                                </p>
+                            <div className="flex flex-col gap-6 md:flex-row md:items-start">
+                                <div className="space-y-3 flex-1">
+                                    <p className="text-base text-muted-foreground">
+                                        DWHR systems capture heat from shower drain water and use it to preheat incoming cold water, reducing hot water energy use by 20–40%.
+                                    </p>
 
-                                <div className="space-y-2">
-                                    <h5 className="font-medium text-base">How it works:</h5>
-                                    <p className="text-base text-muted-foreground">When hot water goes down the drain (like from a shower), the DWHR unit uses a heat exchanger to transfer that thermal energy to the incoming cold water supply before it reaches your water heater.</p>
+                                    <div className="space-y-2">
+                                        <h5 className="font-medium text-base">How it works:</h5>
+                                        <p className="text-base text-muted-foreground">
+                                            When hot water goes down the drain (like from a shower), the DWHR unit uses a heat exchanger to transfer that thermal energy to the incoming cold water supply before it reaches your water heater.
+                                        </p>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <h5 className="font-medium text-base">Benefits:</h5>
+                                        <div className="text-base text-muted-foreground space-y-1">
+                                            <p>• Reduces water heating energy consumption</p>
+                                            <p>• Lowers utility bills</p>
+                                            <p>• Contributes to overall building energy efficiency</p>
+                                            <p>• Works continuously with no maintenance required</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <div className="text-xs text-muted-foreground space-y-1 py-4 italic">
+                                            <p><a href="https://natural-resources.canada.ca/energy-efficiency/drain-water-heat-recovery" target="_blank" rel="noopener noreferrer">Source: NRCan</a></p>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <h5 className="font-medium text-base">Benefits:</h5>
-                                    <div className="text-base text-muted-foreground space-y-1">
-                                        <p>• Reduces water heating energy consumption</p>
-                                        <p>• Lowers utility bills</p>
-                                        <p>• Contributes to overall building energy efficiency</p>
-                                        <p>• Works continuously with no maintenance required</p>
-                                    </div>
+                                <div className="md:w-[180px] md:flex-shrink-0">
+                                    <a href="https://natural-resources.canada.ca/energy-efficiency/drain-water-heat-recovery" target="_blank" rel="noopener noreferrer">
+                                        <img
+                                            src="/assets/img/drain_water_heat_recovery_pipes.png"
+                                            alt=""
+                                            className="w-full max-h-[420px] object-contain rounded-md"
+                                        />
+                                    </a>
                                 </div>
                             </div>
                         </div>

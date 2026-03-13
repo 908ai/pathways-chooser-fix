@@ -349,7 +349,7 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                             {/* Alert for certification interests */}
                             {selections.interestedCertifications.length > 0 && (<InfoCollapsible title="Performance Modelling Required">
                                 <div className="text-xs text-muted-foreground space-y-2">
-                                    <p>
+                                    <p className="font-medium text-foreground">
                                         Since you're interested in certifications, performance modelling (NBC 9.36.5 or 9.36.7) is required.
                                         Performance modelling provides greater design flexibility, can reduce construction costs, and is often
                                         required for certification programs. It also helps optimize your home's energy performance and ensures
@@ -362,6 +362,12 @@ const HrvAdditionalInfoSection: React.FC<Props> = ({ selections, setSelections }
                                         Contact us to discuss how performance modelling can help achieve your certification goals.
                                     </p>
                                 </div>
+                                <Button asChild variant="secondary" className="h-6 px-2 mt-2 text-xs">
+                                    <a href="/find-a-provider" target="_blank" rel="noopener noreferrer">
+                                        <Search className="h-4 w-4" />
+                                        Find a service provider
+                                    </a>
+                                </Button>
                             </InfoCollapsible>
                             )}
                         </>
