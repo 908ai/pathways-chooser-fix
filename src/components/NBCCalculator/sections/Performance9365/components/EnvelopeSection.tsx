@@ -72,7 +72,7 @@ export default function EnvelopeSection({
           </div>
 
           <div id="hasCathedralOrFlatRoof" className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Is there any cathedral ceilings or flat roof?</label>
+            <label className="text-sm font-medium text-foreground">Are there any cathedral ceilings or flat roof?</label>
             <Select value={selections.hasCathedralOrFlatRoof} onValueChange={value => setSelections(prev => ({
               ...prev,
               hasCathedralOrFlatRoof: value,
