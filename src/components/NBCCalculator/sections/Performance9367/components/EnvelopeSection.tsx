@@ -224,7 +224,7 @@ export default function EnvelopeSection({
             {selections.floorsSlabsSelected.includes("floorsUnheated") && <div id="floorsUnheatedRSI" className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Floors over Unheated Spaces (Cantilevers or Exposed Floors)</label>
                 <Input type="text"
-                    placeholder="Enter insulation type &/or RSI/R-value, or N/A"
+                    placeholder="Enter insulation type &/or RSI/R-value"
                     value={selections.floorsUnheatedRSI}
                     onChange={e => setSelections(prev => ({
                         ...prev,
@@ -237,7 +237,7 @@ export default function EnvelopeSection({
             {selections.floorsSlabsSelected.includes("floorsGarage") && <div id="floorsGarageRSI" className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Floors above Garages</label>
                 <Input type="text"
-                    placeholder="Enter insulation type &/or RSI/R-value, or N/A"
+                    placeholder="Enter insulation type &/or RSI/R-value"
                     value={selections.floorsGarageRSI}
                     onChange={e => setSelections(prev => ({
                         ...prev,
