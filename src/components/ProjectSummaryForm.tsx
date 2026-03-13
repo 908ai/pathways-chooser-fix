@@ -311,12 +311,14 @@ const ProjectSummaryForm = ({
               <CardDescription>Please review all information before submitting.</CardDescription>
             </div>
             {selections.compliancePath === "9368" && pointsData && (
-              <div className="flex flex-col items-end gap-1 p-3 bg-primary/5 rounded-lg border border-primary/10">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Points</span>
-                  <span className="text-2xl font-bold text-primary">{pointsData.totalPoints.toFixed(1)}</span>
-                </div>
-                <div className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+              <div className="flex items-center gap-3 px-4 py-2 bg-orange-50/50 dark:bg-orange-950/20 rounded-xl border border-orange-200/50 dark:border-orange-800/30 shadow-sm">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest whitespace-nowrap">
+                  Total Points
+                </span>
+                <span className="text-3xl font-black text-orange-600 dark:text-orange-400 leading-none">
+                  {pointsData.totalPoints.toFixed(1)}
+                </span>
+                <div className={`text-xs font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${
                   pointsData.compliance.status === "success" 
                     ? "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300" 
                     : pointsData.compliance.status === "warning"
