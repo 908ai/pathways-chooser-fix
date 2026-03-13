@@ -738,7 +738,7 @@ export function EnvelopeSection({
             </WarningButton>}
 
             <div id="airtightness" className="space-y-2">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1">
                     <label className="text-sm font-medium text-foreground">Airtightness Level (Unguarded Testing) <span className="text-red-500">*</span></label>
                     <InfoButton title="What's a Blower Door Test?">
                         <div className="space-y-4">
@@ -885,6 +885,12 @@ export function EnvelopeSection({
                             </div>
                         </div>
                     </InfoButton>
+                    <Button asChild variant="secondary" className="h-6 px-2 text-xs ml-2">
+                        <a href="/find-a-provider" target="_blank" rel="noopener noreferrer">
+                            <Search className="h-4 w-4" />
+                            Find a service provider
+                        </a>
+                    </Button>
                 </div>
                 <Input
                     type="text"
@@ -924,11 +930,11 @@ export function EnvelopeSection({
 
                 {/* Mid-Construction Blower Door Test Checkbox */}
                 <div id="midConstructionBlowerDoorPlanned" className="space-y-3 pt-4 border-t border-border/20">
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-center gap-1">
                         <input type="checkbox" id="midConstructionBlowerDoor-9362" checked={selections.midConstructionBlowerDoorPlanned} onChange={e => setSelections(prev => ({
                             ...prev,
                             midConstructionBlowerDoorPlanned: e.target.checked
-                        }))} className="w-4 h-4 text-primary mt-1" />
+                        }))} className="w-4 h-4 text-primary" />
                         <div className="flex-1">
                             <label htmlFor="midConstructionBlowerDoor-9362" className="text-sm font-medium cursor-pointer text-foreground">
                                 Mid-Construction Blower Door Test Planned (Optional)

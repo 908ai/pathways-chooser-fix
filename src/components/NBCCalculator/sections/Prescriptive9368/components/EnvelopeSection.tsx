@@ -284,7 +284,7 @@ export default function EnvelopeSection({
 
             {/* Airtightness */}
             <div id="airtightness" className="space-y-2">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1">
                     <label className="text-sm font-medium text-foreground">Airtightness Level <span className="text-red-400">*</span></label>
                     <InfoButton title="What's a Blower Door Test?">
                         <div className="space-y-4">
@@ -760,11 +760,11 @@ export default function EnvelopeSection({
 
                 {/* Mid-Construction Blower Door Test Checkbox */}
                 <div className="space-y-3 pt-4 border-t border-border/20">
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-center gap-1">
                         <input type="checkbox" id="midConstructionBlowerDoor-9368" checked={selections.midConstructionBlowerDoorPlanned} onChange={e => setSelections(prev => ({
                             ...prev,
                             midConstructionBlowerDoorPlanned: e.target.checked
-                        }))} className="w-4 h-4 text-primary mt-1" />
+                        }))} className="w-4 h-4 text-primary" />
                         <div className="flex-1">
                             <label htmlFor="midConstructionBlowerDoor-9368" className="text-sm font-medium cursor-pointer text-foreground">
                                 Mid-Construction Blower Door Test Planned (Optional)

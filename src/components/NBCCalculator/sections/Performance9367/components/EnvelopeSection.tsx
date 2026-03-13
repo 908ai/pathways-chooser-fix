@@ -401,7 +401,7 @@ export default function EnvelopeSection({
             </WarningButton>}
 
             <div id="airtightness" className="space-y-2">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1">
                     <label className="text-sm font-medium text-foreground">Airtightness Level</label>
                     <InfoButton title="What's a Blower Door Test?">
                         <div className="space-y-4">
@@ -542,6 +542,12 @@ export default function EnvelopeSection({
                             </div>
                         </div>
                     </InfoButton>
+                    <Button asChild variant="secondary" className="h-6 px-2 text-xs ml-2">
+                        <a href="/find-a-provider" target="_blank" rel="noopener noreferrer">
+                            <Search className="h-4 w-4" />
+                            Find a service provider
+                        </a>
+                    </Button>
                 </div>
                 <Input type="text"
                     placeholder={`Min ${selections.province === "saskatchewan" ? "3.2" : "3.0"} ACH50 for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`}
@@ -580,29 +586,31 @@ export default function EnvelopeSection({
 
                 {/* Mid-Construction Blower Door Test Checkbox */}
                 <div id="midConstructionBlowerDoorPlanned" className="space-y-3 pt-4 border-t border-border/20">
-                    <Checkbox
-                        id="midConstructionBlowerDoor-9367-3"
-                        checked={selections.midConstructionBlowerDoorPlanned}
-                        onCheckedChange={(checked) => {
-                            setSelections((prev) => ({
-                                ...prev,
-                                midConstructionBlowerDoorPlanned: checked === true, // `checked` pode ser true | false | "indeterminate"
-                            }));
-                        }}
-                        className="h-4 w-4 text-primary border-2 border-slate-400"
-                    />
-                    <label
-                        htmlFor="midConstructionBlowerDoor-9367-3"
-                        className="ml-2 text-sm font-medium cursor-pointer text-foreground"
-                    >
-                        Mid-Construction Blower Door Test Planned (Optional)
-                    </label>
-                    <Button asChild variant="secondary" className="h-6 px-2 text-xs ml-2">
-                        <a href="/find-a-provider" target="_blank" rel="noopener noreferrer">
-                            <Search className="h-4 w-4" />
-                            Find a service provider
-                        </a>
-                    </Button>
+                    <div className="flex items-center gap-1">
+                        <Checkbox
+                            id="midConstructionBlowerDoor-9367-3"
+                            checked={selections.midConstructionBlowerDoorPlanned}
+                            onCheckedChange={(checked) => {
+                                setSelections((prev) => ({
+                                    ...prev,
+                                    midConstructionBlowerDoorPlanned: checked === true, // `checked` pode ser true | false | "indeterminate"
+                                }));
+                            }}
+                            className="h-4 w-4 text-primary border-2 border-slate-400"
+                        />
+                        <label
+                            htmlFor="midConstructionBlowerDoor-9367-3"
+                            className="ml-2 text-sm font-medium cursor-pointer text-foreground"
+                        >
+                            Mid-Construction Blower Door Test Planned (Optional)
+                        </label>
+                        <Button asChild variant="secondary" className="h-6 px-2 text-xs ml-2">
+                            <a href="/find-a-provider" target="_blank" rel="noopener noreferrer">
+                                <Search className="h-4 w-4" />
+                                Find a service provider
+                            </a>
+                        </Button>
+                    </div>
                     <WarningButton warningId="mid-construction-blower-door-info-9367-3" title="ℹ️ Benefits of Mid-Construction Blower Door Testing">
                         <div className="text-xs space-y-2">
                             <p className="font-medium">Benefits of a mid-construction (misconstruction) blower door test:</p>
