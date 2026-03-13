@@ -52,6 +52,7 @@ import HelpDrawer from "@/components/HelpDrawer";
 import { cn } from "@/lib/utils";
 import { getPathwayDisplayName, normalizeProvince } from "./NBCCalculator/utils/helpers";
 import { getPendingItems } from "@/lib/projectUtils";
+import { getTierCompliance } from "@/lib/complianceUtils";
 
 const getStepForField = (fieldId: string) => {
   const step1Fields = ['firstName', 'lastName', 'company', 'phoneNumber', 'companyAddress', 'streetAddress', 'unitNumber', 'city', 'postalCode', 'buildingType', 'province', 'climateZone', 'occupancyClass'];
@@ -860,14 +861,14 @@ const NBCCalculator = () => {
   }, 0);
 
   const calculatePrescriptiveCost = () => {
-    const tier = getTierCompliance();
+    const tier = getTierCompliance(totalPoints, selections.hasHrv);
     if (tier.tier === "Tier 2") {
       return 13550;
     }
     return 6888;
   };
   const calculatePerformanceCost = () => {
-    const tier = getTierCompliance();
+    const tier = getTierCompliance(totalPoints, selections.hasHrv);
     if (tier.tier === "Tier 2") {
       return 8150;
     }
@@ -878,41 +879,8 @@ const NBCCalculator = () => {
     const performanceCost = calculatePerformanceCost();
     return prescriptiveCost - performanceCost;
   };
-  const getTierCompliance = () => {
-    if (selections.hasHrv === "no_hrv") {
-      return {
-        tier: "Not Applicable",
-        status: "destructive",
-        description: "Prescriptive path requires HRV/ERV"
-      };
-    }
-    if (totalPoints >= 75) return {
-      tier: "Tier 5",
-      status: "success",
-      description: "75+ points + 15 envelope points"
-    };
-    if (totalPoints >= 40) return {
-      tier: "Tier 4",
-      status: "success",
-      description: "40+ points + 10 envelope points"
-    };
-    if (totalPoints >= 20) return {
-      tier: "Tier 3",
-      status: "success",
-      description: "20+ points + 5 envelope points"
-    };
-    if (totalPoints >= 10) return {
-      tier: "Tier 2",
-      status: "success",
-      description: "10+ points"
-    };
-    return {
-      tier: "Tier 1",
-      status: "warning",
-      description: "Baseline compliance (0 points required)"
-    };
-  };
-  const compliance = getTierCompliance();
+  
+  const compliance = getTierCompliance(totalPoints, selections.hasHrv);
 
   const scrollToTop = () => {
     formContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });

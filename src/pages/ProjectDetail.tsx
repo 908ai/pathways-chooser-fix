@@ -5,6 +5,7 @@ import { useUserRole } from '@/hooks/useUserRole';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -32,6 +33,8 @@ import ProjectTimeline from '@/components/ProjectTimeline';
 import ProjectHistory from '@/components/ProjectHistory';
 import { ActionCommentModal } from '@/components/admin/ActionCommentModal';
 import { getZoneOptions, ClimateZone } from '@/components/NBCCalculator/constants/options';
+import { getPendingItems } from "@/lib/projectUtils";
+import { getTierCompliance } from "@/lib/complianceUtils";
 
 const DetailItem = ({ label, value, unit = '' }: { label: string; value: any; unit?: string }) => {
   if (value === null || value === undefined || value === '') return null;
@@ -1190,6 +1193,29 @@ const ProjectDetail = () => {
                     <Label className="text-muted-foreground">Total Points</Label>
                     <p className="font-medium text-card-foreground">{project.total_points || 'TBD'}</p>
                   </div>
+                  {project.selected_pathway === '9368' && project.total_points !== null && (
+                    <div>
+                      <Label className="text-muted-foreground">Tier level</Label>
+                      <div className="mt-1">
+                        {(() => {
+                          const compliance = getTierCompliance(Number(project.total_points), project.hrv_erv_type);
+                          return (
+                            <Badge 
+                              variant={compliance.status as "default" | "secondary" | "destructive" | "outline"}
+                              className={cn(
+                                "text-xs font-bold px-2 py-0.5 rounded-full",
+                                compliance.status === "success" && "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300",
+                                compliance.status === "warning" && "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300",
+                                compliance.status === "destructive" && "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300"
+                              )}
+                            >
+                              {compliance.tier}
+                            </Badge>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  )}
                   <div>
                     <Label className="text-muted-foreground">Upgrade Costs</Label>
                     <p className="font-medium text-card-foreground">{project.upgrade_costs ? `$${project.upgrade_costs.toLocaleString()}` : 'TBD'}</p>
