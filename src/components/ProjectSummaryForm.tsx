@@ -30,6 +30,10 @@ interface ProjectSummaryFormProps {
   onFixItem: (fieldId: string) => void;
   requiredPendingItems: { label: string; fieldId: string }[];
   optionalPendingItems: { label: string; fieldId: string }[];
+  pointsData?: {
+    totalPoints: number;
+    compliance: any;
+  };
 }
 
 const ProjectSummaryForm = ({ 
@@ -40,7 +44,8 @@ const ProjectSummaryForm = ({
   autoSave = false, 
   onFixItem,
   requiredPendingItems,
-  optionalPendingItems
+  optionalPendingItems,
+  pointsData
 }: ProjectSummaryFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -297,11 +302,32 @@ const ProjectSummaryForm = ({
     <>
       <Card className="w-full max-w-4xl mx-auto">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl">
-            <FileText className="h-5 w-5" />
-            {getPathwayDisplayName()}
-          </CardTitle>
-          <CardDescription>Please review all information before submitting.</CardDescription>
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <FileText className="h-5 w-5" />
+                {getPathwayDisplayName()}
+              </CardTitle>
+              <CardDescription>Please review all information before submitting.</CardDescription>
+            </div>
+            {selections.compliancePath === "9368" && pointsData && (
+              <div className="flex flex-col items-end gap-1 p-3 bg-primary/5 rounded-lg border border-primary/10">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Points</span>
+                  <span className="text-2xl font-bold text-primary">{pointsData.totalPoints.toFixed(1)}</span>
+                </div>
+                <div className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                  pointsData.compliance.status === "success" 
+                    ? "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300" 
+                    : pointsData.compliance.status === "warning"
+                    ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300"
+                    : "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300"
+                }`}>
+                  {pointsData.compliance.tier}
+                </div>
+              </div>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">

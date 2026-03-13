@@ -1525,6 +1525,10 @@ const NBCCalculator = () => {
                 requiredPendingItems={pendingItems}
                 optionalPendingItems={optionalPendingItems}
                 onFixItem={handleFixItem}
+                pointsData={selections.compliancePath === "9368" ? {
+                  totalPoints: totalPoints,
+                  compliance: compliance
+                } : undefined}
               />
             </div>
           </div>
