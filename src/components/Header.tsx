@@ -107,8 +107,8 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center">
           <Link to={isLoginVariant ? "/login" : dashboardPath}>
-            <img src="/assets/energy-navigator-logo.png" alt="Energy Navigator 9.36 Logo" className="h-[75px] dark:hidden" />
-            <img src="/assets/energy-navigator-logo-w.png" alt="Energy Navigator 9.36 Logo" className="h-[75px] hidden dark:block" />
+            <img src="/assets/energy-navigator-logo.png" alt="Energy Navigator 9.36 Logo" className="h-[70px] dark:hidden" />
+            <img src="/assets/energy-navigator-logo-w.png" alt="Energy Navigator 9.36 Logo" className="h-[70px] hidden dark:block" />
           </Link>
         </div>
 
