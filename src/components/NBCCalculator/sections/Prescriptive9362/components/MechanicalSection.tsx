@@ -504,6 +504,9 @@ export function MechanicalSection({
                             <SelectItem value="no">No</SelectItem>
                         </SelectContent>
                     </Select>
+                    {selections.heatingType === 'heat-pump' && selections.heatingEfficiency && selections.heatingEfficiency !== 'Other' && (
+                        <p className="text-xs text-muted-foreground mt-1">Automatically set to Yes for the selected heat pump.</p>
+                    )}
                 </div>
             ) : (
                 <div id="coolingApplicable" className="space-y-2 opacity-60">
