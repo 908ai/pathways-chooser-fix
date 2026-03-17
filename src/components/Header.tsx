@@ -100,7 +100,7 @@ const Header = ({ showSignOut = false, onSignOut, variant = 'default' }: HeaderP
     <header
       className="bg-white dark:bg-slate-800 sticky top-0 z-40"
       style={{
-        borderBottom: '2px solid #10315E',
+        borderBottom: '1px solid #929db2',
         borderTop: '5px solid #F5A623'
       }}
     >
