@@ -56,7 +56,7 @@ export const getMechanicalKeys = (selections: any, isF280RequiredCity: boolean) 
     if (selections.indirectTank === "yes") keys.push("indirectTankSize");
   }
 
-  if ((selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit" && ["9362", "9365", "9367"].includes(selections.compliancePath))) {
+  if ((selections.buildingType === "single-detached-secondary" || (selections.buildingType === "multi-unit" && ["9362", "9365", "9367"].includes(selections.compliancePath)))) {
     keys.push("hasSecondaryHeating");
     if (selections.hasSecondaryHeating === "yes") {
       keys.push("secondaryHeatingType");
@@ -73,8 +73,8 @@ export const getMechanicalKeys = (selections: any, isF280RequiredCity: boolean) 
     }
   }
 
+  // Cooling logic: coolingEfficiency is only required if NOT a standard heat pump
   if (selections.coolingApplicable === "yes") {
-    // If a standard heat pump is selected, cooling efficiency is already included in the heat pump spec
     const isStandardHeatPump = selections.heatingType === "heat-pump" && 
                               selections.heatingEfficiency && 
                               selections.heatingEfficiency !== "Other";
@@ -84,23 +84,10 @@ export const getMechanicalKeys = (selections: any, isF280RequiredCity: boolean) 
     }
   }
 
-  // Update coolingApplicable requirement: hidden and not required if standard heat pump
-  const isStandardHeatPump = selections.heatingType === "heat-pump" && 
-                            selections.heatingEfficiency && 
-                            selections.heatingEfficiency !== "Other";
-
-  if (isStandardHeatPump) {
-    // Filter out coolingApplicable from keys as it's automatically "yes" and hidden
-    const coolingIndex = keys.indexOf("coolingApplicable");
-    if (coolingIndex !== -1) {
-      keys.splice(coolingIndex, 1);
-    }
-  }
-
   if (selections.waterHeaterType === "other") keys.push("otherWaterHeaterType");
   if (selections.waterHeaterType && selections.waterHeaterType !== "boiler") keys.push("waterHeater");
 
-  if ((selections.buildingType === "single-detached-secondary" || selections.buildingType === "multi-unit" && ["9362", "9365", "9367"].includes(selections.compliancePath))) {
+  if ((selections.buildingType === "single-detached-secondary" || (selections.buildingType === "multi-unit" && ["9362", "9365", "9367"].includes(selections.compliancePath)))) {
     keys.push("hasSecondaryWaterHeater");
     if (selections.hasSecondaryWaterHeater === "yes") {
       keys.push("secondaryWaterHeaterSameAsMain");
