@@ -505,7 +505,7 @@ export function MechanicalSection({
                         </SelectContent>
                     </Select>
                     {selections.heatingType === 'heat-pump' && selections.heatingEfficiency && selections.heatingEfficiency !== 'Other' && (
-                        <p className="text-xs text-muted-foreground mt-1">Automatically set to Yes for the selected heat pump.</p>
+                        <p className="text-xs text-muted-foreground mt-1">Automatically included with selected heat pump.</p>
                     )}
                 </div>
             ) : (
