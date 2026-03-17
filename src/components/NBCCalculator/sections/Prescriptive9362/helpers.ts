@@ -93,5 +93,14 @@ export const getMechanicalKeys = (selections: any, isF280RequiredCity: boolean) 
 
   if (isF280RequiredCity) keys.push("hasF280Calculation");
 
+  // Filter out cooling keys if a standard heat pump is selected (efficiency is included)
+  const isStandardHeatPump = selections.heatingType === "heat-pump" && 
+                            selections.heatingEfficiency && 
+                            selections.heatingEfficiency !== "Other";
+
+  if (isStandardHeatPump) {
+      return keys.filter(key => key !== "coolingApplicable" && key !== "coolingEfficiency");
+  }
+
   return keys;
 };

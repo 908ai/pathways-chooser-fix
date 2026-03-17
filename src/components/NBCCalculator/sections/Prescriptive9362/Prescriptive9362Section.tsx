@@ -57,6 +57,23 @@ export default function Prescriptive9362Section({
         }
     }, [selections.secondaryHeatingType, selections.secondaryIndirectTank, selections.secondaryWaterHeaterType, setSelections]);
 
+    // Heat pump cooling logic
+    useEffect(() => {
+        const isStandardHeatPump = selections.heatingType === "heat-pump" && 
+                                  selections.heatingEfficiency && 
+                                  selections.heatingEfficiency !== "Other";
+        
+        if (isStandardHeatPump) {
+            if (selections.coolingApplicable !== "yes" || selections.coolingEfficiency !== "") {
+                setSelections((prev: any) => ({
+                    ...prev,
+                    coolingApplicable: "yes",
+                    coolingEfficiency: "" // Clear manual efficiency as it's included in heat pump spec
+                }));
+            }
+        }
+    }, [selections.heatingType, selections.heatingEfficiency, setSelections]);
+
     const isWaterHeaterBoiler = selections.heatingType === "boiler" && selections.indirectTank === "yes";
     const isSecondaryWaterHeaterBoiler = selections.secondaryHeatingType === "boiler" && selections.secondaryIndirectTank === "yes";
 

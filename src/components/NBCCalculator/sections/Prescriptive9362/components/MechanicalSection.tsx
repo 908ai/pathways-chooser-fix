@@ -485,44 +485,48 @@ export function MechanicalSection({
                 </>}
             </div>}
 
-            <div id="coolingApplicable" className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Are you installing cooling/air conditioning? <span className="text-red-500">*</span></label>
-                <Select required value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
-                    ...prev,
-                    coolingApplicable: value,
-                    coolingEfficiency: value === 'no' ? '' : prev.coolingEfficiency,
-                }))}>
-                    <SelectTrigger className={cn(
-                        (validationErrors.coolingApplicable || isMissing("coolingApplicable")) && missingFieldClass,
-                        validationErrors.coolingApplicable && "border-red-500 ring-2 ring-red-500"
-                    )}>
-                        <SelectValue placeholder="Select if cooling is applicable" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="yes">Yes</SelectItem>
-                        <SelectItem value="no">No</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-
-            {selections.coolingApplicable === "yes" && (
-                <div id="coolingEfficiency" className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">Cooling System Efficiency <span className="text-red-500">*</span></label>
-                    <Input
-                        required
-                        type="text"
-                        placeholder="Enter SEER (min 14.5) or SEER2 (min 14.3) value"
-                        value={selections.coolingEfficiency}
-                        onChange={e => setSelections(prev => ({
+            {!(selections.heatingType === 'heat-pump' && selections.heatingEfficiency && selections.heatingEfficiency !== 'Other') && (
+                <>
+                    <div id="coolingApplicable" className="space-y-2">
+                        <label className="text-sm font-medium text-foreground">Are you installing cooling/air conditioning? <span className="text-red-500">*</span></label>
+                        <Select required value={selections.coolingApplicable} onValueChange={value => setSelections(prev => ({
                             ...prev,
-                            coolingEfficiency: e.target.value
-                        }))}
-                        className={cn(
-                            (validationErrors.coolingEfficiency || isMissing("coolingEfficiency")) && missingFieldClass,
-                            validationErrors.coolingEfficiency && "border-red-500 ring-2 ring-red-500"
-                        )}
-                    />
-                </div>
+                            coolingApplicable: value,
+                            coolingEfficiency: value === 'no' ? '' : prev.coolingEfficiency,
+                        }))}>
+                            <SelectTrigger className={cn(
+                                (validationErrors.coolingApplicable || isMissing("coolingApplicable")) && missingFieldClass,
+                                validationErrors.coolingApplicable && "border-red-500 ring-2 ring-red-500"
+                            )}>
+                                <SelectValue placeholder="Select if cooling is applicable" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="yes">Yes</SelectItem>
+                                <SelectItem value="no">No</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {selections.coolingApplicable === "yes" && (
+                        <div id="coolingEfficiency" className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Cooling System Efficiency <span className="text-red-500">*</span></label>
+                            <Input
+                                required
+                                type="text"
+                                placeholder="Enter SEER (min 14.5) or SEER2 (min 14.3) value"
+                                value={selections.coolingEfficiency}
+                                onChange={e => setSelections(prev => ({
+                                    ...prev,
+                                    coolingEfficiency: e.target.value
+                                }))}
+                                className={cn(
+                                    (validationErrors.coolingEfficiency || isMissing("coolingEfficiency")) && missingFieldClass,
+                                    validationErrors.coolingEfficiency && "border-red-500 ring-2 ring-red-500"
+                                )}
+                            />
+                        </div>
+                    )}
+                </>
             )}
 
             <div id="waterHeaterType" className="space-y-2">
