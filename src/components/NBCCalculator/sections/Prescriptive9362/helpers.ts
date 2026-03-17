@@ -73,7 +73,29 @@ export const getMechanicalKeys = (selections: any, isF280RequiredCity: boolean) 
     }
   }
 
-  if (selections.coolingApplicable === "yes") keys.push("coolingEfficiency");
+  if (selections.coolingApplicable === "yes") {
+    // If a standard heat pump is selected, cooling efficiency is already included in the heat pump spec
+    const isStandardHeatPump = selections.heatingType === "heat-pump" && 
+                              selections.heatingEfficiency && 
+                              selections.heatingEfficiency !== "Other";
+    
+    if (!isStandardHeatPump) {
+      keys.push("coolingEfficiency");
+    }
+  }
+
+  // Update coolingApplicable requirement: hidden and not required if standard heat pump
+  const isStandardHeatPump = selections.heatingType === "heat-pump" && 
+                            selections.heatingEfficiency && 
+                            selections.heatingEfficiency !== "Other";
+
+  if (isStandardHeatPump) {
+    // Filter out coolingApplicable from keys as it's automatically "yes" and hidden
+    const coolingIndex = keys.indexOf("coolingApplicable");
+    if (coolingIndex !== -1) {
+      keys.splice(coolingIndex, 1);
+    }
+  }
 
   if (selections.waterHeaterType === "other") keys.push("otherWaterHeaterType");
   if (selections.waterHeaterType && selections.waterHeaterType !== "boiler") keys.push("waterHeater");
@@ -92,15 +114,6 @@ export const getMechanicalKeys = (selections: any, isF280RequiredCity: boolean) 
   }
 
   if (isF280RequiredCity) keys.push("hasF280Calculation");
-
-  // Filter out cooling keys if a standard heat pump is selected (efficiency is included)
-  const isStandardHeatPump = selections.heatingType === "heat-pump" && 
-                            selections.heatingEfficiency && 
-                            selections.heatingEfficiency !== "Other";
-
-  if (isStandardHeatPump) {
-      return keys.filter(key => key !== "coolingApplicable" && key !== "coolingEfficiency");
-  }
 
   return keys;
 };
