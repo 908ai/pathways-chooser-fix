@@ -305,13 +305,14 @@ export default function MechanicalSection({
                                 <SelectItem value="furnace">Furnace</SelectItem>
                                 <SelectItem value="boiler">Boiler</SelectItem>
                                 <SelectItem value="heat-pump">Heat Pump</SelectItem>
+                                <SelectItem value="hot-water-tank">Hot Water Tank serving in-floor heat</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
 
                     {selections.murbSecondHeatingType && <div id="murbSecondHeatingEfficiency" className="space-y-2">
                         <label className="text-sm font-medium text-green-800 dark:text-green-300">Second Heating System Efficiency <span className="text-red-400">*</span></label>
-                        <Input type="text" placeholder={selections.murbSecondHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.murbSecondHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.murbSecondHeatingEfficiency} onChange={e => setSelections(prev => ({
+                        <Input type="text" placeholder={selections.murbSecondHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.murbSecondHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : selections.murbSecondHeatingType === 'hot-water-tank' ? "Enter efficiency (e.g. 0.82 UEF)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.murbSecondHeatingEfficiency} onChange={e => setSelections(prev => ({
                             ...prev,
                             murbSecondHeatingEfficiency: e.target.value
                         }))}
@@ -320,7 +321,7 @@ export default function MechanicalSection({
                                 validationErrors.murbSecondHeatingEfficiency && "border-red-500 ring-2 ring-red-500"
                             )}
                         />
-                        {selections.murbSecondHeatingEfficiency && selections.murbSecondHeatingType !== 'heat-pump' && (() => {
+                        {selections.murbSecondHeatingEfficiency && !['heat-pump', 'hot-water-tank'].includes(selections.murbSecondHeatingType) && (() => {
                             const inputValue = parseFloat(selections.murbSecondHeatingEfficiency);
                             let minValue = 0;
                             let systemType = "";
