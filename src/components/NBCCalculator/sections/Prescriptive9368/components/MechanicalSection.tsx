@@ -309,7 +309,16 @@ export default function MechanicalSection({
                             </SelectContent>
                         </Select>
                     </div>
-
+    
+                    {(selections.murbSecondHeatingType === 'boiler' || selections.murbSecondHeatingType === 'hot-water-tank') && selections.hasInFloorHeat !== 'yes' && (
+                        <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md flex items-start gap-3">
+                            <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                            <p className="text-sm text-destructive font-medium">
+                                You selected a boiler / DHW in-floor system, but “Heated floors” is not selected. Please add “Heated floors” as a under “Is the house installing or roughing in in-floor heat?” type or pick a different system.
+                            </p>
+                        </div>
+                    )}
+    
                     {selections.murbSecondHeatingType && <div id="murbSecondHeatingEfficiency" className="space-y-2">
                         <label className="text-sm font-medium text-green-800 dark:text-green-300">Second Heating System Efficiency <span className="text-red-400">*</span></label>
                         <Input type="text" placeholder={selections.murbSecondHeatingType === 'boiler' ? "Enter heating efficiency (e.g. 90 AFUE)" : selections.murbSecondHeatingType === 'heat-pump' ? "Enter heating efficiency (e.g. 18 SEER, 3.5 COP, 4.5 COP for cooling)" : selections.murbSecondHeatingType === 'hot-water-tank' ? "Enter efficiency (e.g. 0.82 UEF)" : "Enter heating efficiency (e.g. 95% AFUE)"} value={selections.murbSecondHeatingEfficiency} onChange={e => setSelections(prev => ({
