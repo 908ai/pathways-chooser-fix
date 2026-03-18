@@ -483,6 +483,48 @@ export default function MechanicalSection({
                                 validationErrors.murbSecondWaterHeater && "border-red-500 ring-2 ring-red-500"
                             )}
                         />
+                        {selections.murbSecondWaterHeater && (() => {
+                            const inputValue = parseFloat(selections.murbSecondWaterHeater);
+                            if (isNaN(inputValue)) return null;
+
+                            let minValue = 0;
+                            let systemType = "";
+
+                            switch (selections.murbSecondWaterHeaterType) {
+                                case "gas-storage":
+                                    minValue = 0.60;
+                                    systemType = "Gas Storage Tank (UEF ≥0.60 minimum)";
+                                    break;
+                                case "gas-tankless":
+                                    minValue = 0.86;
+                                    systemType = "Gas Tankless (UEF ≥0.86 minimum)";
+                                    break;
+                                case "electric-storage":
+                                    minValue = 0.35;
+                                    systemType = "Electric Storage Tank (UEF ≥0.35 minimum)";
+                                    break;
+                                case "heat-pump":
+                                    minValue = 2.1;
+                                    systemType = "Heat Pump Water Heater (EF ≥2.1 minimum)";
+                                    break;
+                                default:
+                                    return null;
+                            }
+
+                            if (inputValue < minValue) {
+                                return (
+                                    <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+                                        <p className="text-sm text-destructive font-medium">
+                                            ⚠️ Second Water Heater Efficiency Too Low
+                                        </p>
+                                        <p className="text-sm text-destructive/80 mt-1">
+                                            {systemType} - Your input of {inputValue} is below the minimum requirement.
+                                        </p>
+                                    </div>
+                                );
+                            }
+                            return null;
+                        })()}
                     </div>}
                 </div>}
             </div>}
