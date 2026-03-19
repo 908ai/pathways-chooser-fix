@@ -73,7 +73,7 @@ export default function EnvelopeSection({
         }
 
         if (selections.airtightnessTestType) {
-            options = options.filter(option => 
+            options = options.filter(option =>
                 option.type.toLowerCase() === selections.airtightnessTestType.toLowerCase()
             );
         }
@@ -292,6 +292,32 @@ export default function EnvelopeSection({
 
             </div>
 
+            <div className="space-y-3 pb-2">
+                <label className="text-sm font-medium text-foreground">Airtightness Test Type <span className="text-red-400">*</span></label>
+                <RadioGroup
+                    value={selections.airtightnessTestType || ""}
+                    onValueChange={value => {
+                        setSelections(prev => ({
+                            ...prev,
+                            airtightnessTestType: value,
+                            airtightness: "" // Reset airtightness level when type changes
+                        }));
+                    }}
+                    className="flex flex-col space-y-1"
+                >
+                    <div className="flex items-center space-x-6">
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="Guarded" id="guarded" />
+                        <Label htmlFor="guarded" className="font-normal cursor-pointer">Guarded Test</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="Unguarded" id="unguarded" />
+                        <Label htmlFor="unguarded" className="font-normal cursor-pointer">Unguarded Test</Label>
+                    </div>
+                    </div>
+                </RadioGroup>
+            </div>
+
             {/* Airtightness */}
             <div id="airtightness" className="space-y-2">
                 <div className="flex items-center gap-1">
@@ -448,33 +474,9 @@ export default function EnvelopeSection({
                     </Button>
                 </div>
 
-                <div className="space-y-3 pb-2">
-                    <label className="text-sm font-medium text-foreground">Airtightness Test Type <span className="text-red-400">*</span></label>
-                    <RadioGroup 
-                        value={selections.airtightnessTestType || ""} 
-                        onValueChange={value => {
-                            setSelections(prev => ({
-                                ...prev,
-                                airtightnessTestType: value,
-                                airtightness: "" // Reset airtightness level when type changes
-                            }));
-                        }}
-                        className="flex flex-col space-y-1"
-                    >
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="Guarded" id="guarded" />
-                            <Label htmlFor="guarded" className="font-normal cursor-pointer">Guarded Test</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="Unguarded" id="unguarded" />
-                            <Label htmlFor="unguarded" className="font-normal cursor-pointer">Unguarded Test</Label>
-                        </div>
-                    </RadioGroup>
-                </div>
-
-                <Select 
+                <Select
                     disabled={!selections.airtightnessTestType}
-                    value={selections.airtightness} 
+                    value={selections.airtightness}
                     onValueChange={value => setSelections(prev => ({
                         ...prev,
                         airtightness: value
@@ -860,7 +862,7 @@ export default function EnvelopeSection({
                     )}>
                         <SelectValue placeholder="Select option" />
                     </SelectTrigger>
-                    
+
                     <SelectContent className="bg-background border shadow-lg z-50">
                         <SelectItem value="no">No</SelectItem>
                         <SelectItem value="yes">Yes</SelectItem>
@@ -956,7 +958,7 @@ export default function EnvelopeSection({
                             (isMissing("hasSlabOnGrade")) && missingFieldClass
                         )}>
                             <SelectValue placeholder="Select yes or no" />
-                        </SelectTrigger>                        
+                        </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="yes">Yes</SelectItem>
                             <SelectItem value="no">No</SelectItem>
@@ -1018,7 +1020,7 @@ export default function EnvelopeSection({
                             (isMissing("hasInFloorHeat")) && missingFieldClass
                         )}>
                             <SelectValue placeholder="Select yes or no" />
-                        </SelectTrigger>                         
+                        </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="yes">Yes</SelectItem>
                             <SelectItem value="no">No</SelectItem>
@@ -1114,7 +1116,7 @@ export default function EnvelopeSection({
                     </>
                 )}
             </div>
-            
+
             {/* Window & Door U-Value */}
             <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Window & Door U-Value (W/(m²·K))</label>
