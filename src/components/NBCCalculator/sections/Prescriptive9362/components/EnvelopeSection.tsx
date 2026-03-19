@@ -34,6 +34,33 @@ export function EnvelopeSection({
 
     return (
         <div className="space-y-4">
+            <div id="buildingVolume" className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Building Volume Range (m³) <span className="text-red-500">*</span></label>
+                <Select required value={selections.buildingVolume} onValueChange={value => setSelections(prev => ({
+                    ...prev,
+                    buildingVolume: value
+                }))}>
+                    <SelectTrigger className={cn(
+                        (validationErrors.buildingVolume || isMissing("buildingVolume")) && missingFieldClass,
+                        validationErrors.buildingVolume && "border-red-500 ring-2 ring-red-500"
+                    )}>
+                        <SelectValue placeholder="Select building volume range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="385">380 &lt; V ≤ 390</SelectItem>
+                        <SelectItem value="375">370 &lt; V ≤ 380</SelectItem>
+                        <SelectItem value="365">360 &lt; V ≤ 370</SelectItem>
+                        <SelectItem value="355">350 &lt; V ≤ 360</SelectItem>
+                        <SelectItem value="345">340 &lt; V ≤ 350</SelectItem>
+                        <SelectItem value="335">330 &lt; V ≤ 340</SelectItem>
+                        <SelectItem value="325">320 &lt; V ≤ 330</SelectItem>
+                        <SelectItem value="315">310 &lt; V ≤ 320</SelectItem>
+                        <SelectItem value="305">300 &lt; V ≤ 310</SelectItem>
+                        <SelectItem value="300">V ≤ 300</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
             {/* HRV/ERV Section for 9362 */}
             <div id="hasHrv" className="space-y-2">
                 <div className="flex items-center gap-3">
@@ -736,33 +763,6 @@ export function EnvelopeSection({
                     Skylight shafts must be insulated to at least the same RSI value required for above‑grade exterior walls.
                 </p>
             </WarningButton>}
-
-            <div id="buildingVolume" className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Building Volume Range (m³) <span className="text-red-500">*</span></label>
-                <Select required value={selections.buildingVolume} onValueChange={value => setSelections(prev => ({
-                    ...prev,
-                    buildingVolume: value
-                }))}>
-                    <SelectTrigger className={cn(
-                        (validationErrors.buildingVolume || isMissing("buildingVolume")) && missingFieldClass,
-                        validationErrors.buildingVolume && "border-red-500 ring-2 ring-red-500"
-                    )}>
-                        <SelectValue placeholder="Select building volume range" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="385">380 &lt; V ≤ 390</SelectItem>
-                        <SelectItem value="375">370 &lt; V ≤ 380</SelectItem>
-                        <SelectItem value="365">360 &lt; V ≤ 370</SelectItem>
-                        <SelectItem value="355">350 &lt; V ≤ 360</SelectItem>
-                        <SelectItem value="345">340 &lt; V ≤ 350</SelectItem>
-                        <SelectItem value="335">330 &lt; V ≤ 340</SelectItem>
-                        <SelectItem value="325">320 &lt; V ≤ 330</SelectItem>
-                        <SelectItem value="315">310 &lt; V ≤ 320</SelectItem>
-                        <SelectItem value="305">300 &lt; V ≤ 310</SelectItem>
-                        <SelectItem value="300">V ≤ 300</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
 
             <div id="airtightness" className="space-y-2">
                 <div className="flex items-center gap-1">
