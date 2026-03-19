@@ -1304,14 +1304,14 @@ export default function EnvelopeSection({
                     </div>
                 </>}
 
-                <div className="p-3 bg-muted border border-border rounded-md">
+                {/* <div className="p-3 bg-muted border border-border rounded-md">
                     <p className="text-xs text-foreground font-medium">
                         ℹ️ One Door Exception
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                         Note: There is a "One door exception" that may apply to your project. Please consult the NBC requirements for specific details on this exception.
                     </p>
-                </div>
+                </div> */}
             </div>
 
             {selections.hasInFloorHeat === "yes" && (
