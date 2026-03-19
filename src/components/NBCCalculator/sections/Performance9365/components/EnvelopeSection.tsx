@@ -306,7 +306,7 @@ export default function EnvelopeSection({
 
           {(selections.hasInFloorHeat9365 === "fully-installed" || selections.hasInFloorHeat9365 === "roughing-in") && <WarningButton warningId="inFloorHeating-9365-info" title="ℹ️ In-Floor Heating Requirements">
             <p className="text-xs">
-              Since the house has in-floor heating, all floors must be insulated to meet NBC requirements.
+              Since the house has in-floor heating, all heated floors must be insulated to meet NBC requirements.
             </p>
           </WarningButton>}
 

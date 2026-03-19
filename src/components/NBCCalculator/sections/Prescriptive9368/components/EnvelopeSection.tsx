@@ -1079,8 +1079,7 @@ export default function EnvelopeSection({
                         <>
                             <InfoCollapsible title={<span className="text-[11px]">ℹ️ In-Floor Heating Requirements</span>} defaultOpen={false}>
                                 <p className="text-xs text-foreground">
-                                    Since the house has in-floor heating, all floors must be insulated to
-                                    meet NBC requirements.
+                                    Since the house has in-floor heating, all heated floors must be insulated to meet NBC requirements.
                                 </p>
                             </InfoCollapsible>
 
@@ -1165,7 +1164,46 @@ export default function EnvelopeSection({
 
             {/* Window & Door U-Value */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Window & Door U-Value (W/(m²·K))</label>
+                <div className="flex items-center gap-3">
+                    <label className="text-sm font-medium text-foreground">Window & Door U-Value (W/(m²·K))</label>
+                    <InfoButton title="Energy Efficiency Points for Windows & Doors">
+                        <div className="space-y-4">
+                            <p className="text-sm">
+                                You can get extra energy efficiency points in the code if your windows and doors perform better than the minimum required by the building code (NBC 9.36). This means they either keep heat in better (low U-value) or let in helpful sunlight to reduce heating needs (high Energy Rating or ER).
+                            </p>
+
+                            <p className="text-sm">
+                                But to use the Energy Rating (ER) method for windows or doors, the total glass/opening area on that wall must be less than 17% of the wall's area. The example in the image shows how to calculate that percentage:
+                            </p>
+
+                            <ul className="list-disc ml-5 space-y-1 text-sm">
+                                <li>The wall is 48 m²</li>
+                                <li>The total area of the windows and doors is 7.75 m²</li>
+                                <li>7.75 ÷ 48 × 100 = 16%, so this wall qualifies for ER-based compliance.</li>
+                            </ul>
+
+                            <p className="text-sm">
+                                If the openings are over 17%, you usually have to use U-values instead and follow a trade-off approach.
+                            </p>
+
+                            <div className="border-t pt-4">
+                                <h5 className="font-medium mb-2">Why this matters:</h5>
+                                <ul className="list-disc ml-5 space-y-1 text-sm">
+                                    <li>ER is good for cold climates – it considers how much sun a window lets in to help heat the home, along with how well it insulates and how airtight it is.</li>
+                                    <li>U-value only looks at insulation, not sun or air leaks.</li>
+                                    <li>Using ER lets you use things like patio doors or south-facing windows that bring in sun, even if their U-value isn't great—as long as they don't make up too much of the wall.</li>
+                                </ul>
+                            </div>
+
+                            <div className="border-t pt-4">
+                                <img src="/lovable-uploads/7665f3ac-355b-4715-9121-ae5d822bc1f0.png" alt="Figure 9.36-20: Example of how to calculate the percent fenestration area" className="w-full h-auto border rounded" />
+                                <p className="text-xs text-muted-foreground mt-2 italic">
+                                    Source: Housing and Small Buildings Illustrated User's Guide National Building Code of Canada 2020
+                                </p>
+                            </div>
+                        </div>
+                    </InfoButton>
+                </div>
                 <Select value={selections.windowUValue} onValueChange={value => setSelections(prev => ({
                     ...prev,
                     windowUValue: value
@@ -1187,6 +1225,15 @@ export default function EnvelopeSection({
                         </SelectItem>)}
                     </SelectContent>
                 </Select>
+                <InfoCollapsible title={<span className="text-[11px]">ℹ️ Window & Door Performance Verification</span>} >
+                    <p className="text-muted-foreground">
+                        Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value's (ie, U-value W/(m²×).
+                    </p>
+                    <p className="text-muted-foreground mt-2">
+                        See below an illustrative example of a window unit showing the performance values that must be recorded in the Window & Door Schedule.
+                    </p>
+                    <img src="/assets/img/window-door-uvalue-example.png" alt="Window & Door Performance Example" className="mt-4 rounded-md border mx-auto block" />
+                </InfoCollapsible>
                 {selections.windowUValue && <>
                     <div className="flex items-center gap-2">
                         <label className="text-xs font-medium text-foreground">Energy Efficiency Points for Windows & Doors</label>

@@ -898,7 +898,7 @@ export function EnvelopeSection({
                     disabled
                     className="disabled:opacity-75 disabled:cursor-not-allowed"
                 />
-                <p className="text-xs text-muted-foreground">Target air-leakage rate is automatically assigned based on location.</p>
+                <p className="text-xs text-muted-foreground">Target air-leakage rate is automatically assigned based on location and pathway.</p>
 
                 <WarningButton title="⚠️ Caution: Air-Tightness Targets Without Testing History">
                     <div className="text-xs space-y-2">
