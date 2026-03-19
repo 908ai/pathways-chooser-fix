@@ -1085,6 +1085,10 @@ const NBCCalculator = () => {
 
       if (!hasBuildingPlans) errors.building_plans = true;
       if (!hasWindowSchedule) errors.window_schedule = true;
+    } else if (compliancePath === '9365' || compliancePath === '9367') {
+      const hasBuildingPlans = uploadedFiles.some(f => (f as any).category === 'building_plans');
+      if (!hasBuildingPlans) errors.building_plans = true;
+      // Window schedule is handled in EnvelopeSection for performance paths
     }
 
     setValidationErrors(errors);
@@ -1092,7 +1096,9 @@ const NBCCalculator = () => {
     if (Object.keys(errors).length > 0) {
       toast({ 
         title: "Missing Documents", 
-        description: "Please upload the mandatory Building Plans and Window Schedule.", 
+        description: compliancePath === '9365' || compliancePath === '9367' 
+          ? "Please upload the mandatory Building Plans."
+          : "Please upload the mandatory Building Plans and Window Schedule.", 
         variant: "destructive" 
       });
       return { isValid: false, errors };
@@ -1314,6 +1320,7 @@ const NBCCalculator = () => {
                         isUploading={isUploading}
                         removeFile={removeFile}
                         validationErrors={validationErrors}
+                        compliancePath={selections.compliancePath}
                       />
                     </div>
 

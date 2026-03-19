@@ -9,6 +9,7 @@ type Props = {
   isUploading: boolean;
   removeFile: (file: any) => void;
   validationErrors?: Record<string, boolean>;
+  compliancePath?: string;
 };
 
 const FileUploadSection = ({
@@ -17,12 +18,18 @@ const FileUploadSection = ({
   isUploading,
   removeFile,
   validationErrors,
+  compliancePath,
 }: Props) => {
-  const categories = [
-    { id: 'building_plans', label: 'Building Plans', required: true, info: 'Mandatory upload for building plans.' },
-    { id: 'window_schedule', label: 'Window and Door Schedule / Supplier Quote', required: true, info: 'Must include performance specifications for each unit e.g., "All Weather, Plygem, etc."' },
-    { id: 'other_docs', label: 'Other Supporting Documents', required: false, info: 'Optional: Envelope Performance/RSI Calculations, CSA F-280 Heat Loss/Gain Calculations, etc.' }
-  ];
+  const categories = compliancePath === '9365' || compliancePath === '9367'
+    ? [
+        { id: 'building_plans', label: 'Building Plans', required: true, info: 'Mandatory upload for building plans.' },
+        { id: 'other_docs', label: 'Other Supporting Documents', required: false, info: 'Optional: Envelope Performance/RSI Calculations, CSA F-280 Heat Loss/Gain Calculations, etc.' }
+      ]
+    : [
+        { id: 'building_plans', label: 'Building Plans', required: true, info: 'Mandatory upload for building plans.' },
+        { id: 'window_schedule', label: 'Window and Door Schedule / Supplier Quote', required: true, info: 'Must include performance specifications for each unit e.g., "All Weather, Plygem, etc."' },
+        { id: 'other_docs', label: 'Other Supporting Documents', required: false, info: 'Optional: Envelope Performance/RSI Calculations, CSA F-280 Heat Loss/Gain Calculations, etc.' }
+      ];
 
   return (
     <div id="fileUploadSection" className="space-y-6">
