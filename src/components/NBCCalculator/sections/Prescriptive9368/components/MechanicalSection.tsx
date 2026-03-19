@@ -160,9 +160,6 @@ export default function MechanicalSection({
                                 <SelectItem key={option.value} value={option.value}>
                                     <div className="flex justify-between items-center gap-3 w-full">
                                         <span>{option.label}</span>
-                                        <Badge variant={option.points > 0 ? "default" : "secondary"}>
-                                            {option.points} pts
-                                        </Badge>
                                     </div>
                                 </SelectItem>
                             ))}
