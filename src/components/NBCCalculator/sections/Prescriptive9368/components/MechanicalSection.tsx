@@ -140,15 +140,34 @@ export default function MechanicalSection({
                 </div>
 
                 {selections.hasSecondaryHrv === "separate" && <div id="secondaryHrvEfficiency" className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">Secondary Suite HRV/ERV Make/Model</label>
-                    <Input type="text" placeholder="Input secondary HRV/ERV make/model" value={selections.secondaryHrvEfficiency || ""} onChange={e => setSelections(prev => ({
-                        ...prev,
-                        secondaryHrvEfficiency: e.target.value
-                    }))}
-                        className={cn(
+                    <label className="text-sm font-medium text-foreground">Secondary Suite HRV/ERV Efficiency</label>
+                    <Select
+                        value={selections.secondaryHrvEfficiency}
+                        onValueChange={(value) =>
+                            setSelections((prev: any) => ({
+                                ...prev,
+                                secondaryHrvEfficiency: value,
+                            }))
+                        }
+                    >
+                        <SelectTrigger className={cn(
                             (isMissing("secondaryHrvEfficiency")) && missingFieldClass
-                        )}
-                    />
+                        )}>
+                            <SelectValue placeholder="Select HRV/ERV option" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background border shadow-lg z-50">
+                            {hrvOptions.slice(1).map((option: any) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                    <div className="flex justify-between items-center gap-3 w-full">
+                                        <span>{option.label}</span>
+                                        <Badge variant={option.points > 0 ? "default" : "secondary"}>
+                                            {option.points} pts
+                                        </Badge>
+                                    </div>
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>}
             </div>}
 
@@ -314,7 +333,7 @@ export default function MechanicalSection({
                         <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md flex items-start gap-3">
                             <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
                             <p className="text-sm text-destructive font-medium">
-                                You selected a boiler / DHW in-floor system, but “Heated floors” is not selected. Please add “Heated floors” as a under “Is the house installing or roughing in in-floor heat?” type or pick a different system.
+                                You selected a boiler / DHW in-floor system, but "Heated floors" is not selected. Please add "Heated floors" as a under "Is the house installing or roughing in in-floor heat?" type or pick a different system.
                             </p>
                         </div>
                     )}
