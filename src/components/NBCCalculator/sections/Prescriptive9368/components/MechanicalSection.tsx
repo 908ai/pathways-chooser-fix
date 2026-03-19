@@ -533,7 +533,7 @@ export default function MechanicalSection({
                                         <p className="text-sm text-destructive font-medium">
                                             ⚠️ Second Water Heater Efficiency Too Low
                                         </p>
-                                        <p className="text-sm text-destructive/80 mt-1">
+                                        <p className="text-xs text-destructive/80 mt-1">
                                             {systemType} - Your input of {inputValue} is below the minimum requirement.
                                         </p>
                                     </div>
