@@ -45,6 +45,9 @@ const FileUploadSection = ({
                   ? 'Upload window/door schedule from your supplier e.g., "All Weather, Plygem, etc."' 
                   : category.label} {category.required && <span className="text-red-500">*</span>}
               </label>
+              <p className="text-xs text-muted-foreground mb-2">
+                {category.info}
+              </p>
               <div className="flex items-center space-x-4">
                 <Input
                   type="file"
