@@ -293,7 +293,49 @@ export default function EnvelopeSection({
             </div>
 
             <div className="space-y-3 pb-2">
-                <label className="text-sm font-medium text-foreground">Airtightness Test Type <span className="text-red-400">*</span></label>
+                <div className="flex items-center gap-2">
+                    <label className="text-sm font-medium text-foreground">Airtightness Test Type <span className="text-red-400">*</span></label>
+                    <InfoButton title="Guarded vs. Unguarded Testing">
+                        <div className="space-y-4">
+                            <div className="space-y-4">
+                                <div>
+                                    <div className="space-y-3 text-base text-muted-foreground">
+                                        <div>
+                                            <p className="font-medium">Unguarded Test</p>
+                                            <div className="ml-4 space-y-1">
+                                                <p>• Tests one unit at a time, while neighbours are at normal pressure.</p>
+                                                <p>• Unguarded Test required for EnerGuide rated (ERS) projects.</p>
+                                                <p>• Includes leakage between units.</p>
+                                                <p>• Easier to do (especially as units are completed and occupied), but can overestimate leakage.</p>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p className="font-medium">Guarded Test</p>
+                                            <div className="ml-4 space-y-1">
+                                                <p>• All adjacent units are depressurized (or pressurized) at the same time.</p>
+                                                <p>• Blocks airflow between units, giving a more accurate picture of leakage to the outside.</p>
+                                                <p>• Ideal for multi-unit buildings not requiring EnerGuide (ERS) labelling.</p>
+                                                <p>• More complex & costly process.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="w-full h-px bg-muted"></div>
+
+                                <div>
+                                    <h5 className="font-medium text-base mb-2">How Do You Pass?</h5>
+                                    <p className="text-base text-muted-foreground mb-2">You can earn energy code points by hitting an Airtightness Level (AL). You only need to meet one of the three metrics (ACH, NLA, or NLR):</p>
+                                    <div className="text-base text-muted-foreground ml-4 space-y-1">
+                                        <p>• Use Table 9.36.-A for guarded tests (stricter limits)</p>
+                                        <p>• Use Table 9.36.-B for unguarded tests (more lenient for attached buildings)</p>
+                                    </div>
+                                    <p className="text-base text-muted-foreground mt-2">In multi-unit buildings, the worst-performing zone sets the final score.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </InfoButton>
+                </div>
                 <RadioGroup
                     value={selections.airtightnessTestType || ""}
                     onValueChange={value => {
@@ -306,16 +348,21 @@ export default function EnvelopeSection({
                     className="flex flex-col space-y-1"
                 >
                     <div className="flex items-center space-x-6">
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="Guarded" id="guarded" />
-                        <Label htmlFor="guarded" className="font-normal cursor-pointer">Guarded Test</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="Unguarded" id="unguarded" />
-                        <Label htmlFor="unguarded" className="font-normal cursor-pointer">Unguarded Test</Label>
-                    </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="Guarded" id="guarded" />
+                            <Label htmlFor="guarded" className="font-normal cursor-pointer">Guarded Test</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="Unguarded" id="unguarded" />
+                            <Label htmlFor="unguarded" className="font-normal cursor-pointer">Unguarded Test</Label>
+                        </div>
                     </div>
                 </RadioGroup>
+                <div className="px-2 py-1 bg-muted border border-border rounded-md">
+                    <p className="text-xs text-muted-foreground">
+                        ℹ️ Most builders use unguarded testing because it is simpler and lower cost.
+                    </p>
+                </div>
             </div>
 
             {/* Airtightness */}
@@ -535,7 +582,7 @@ export default function EnvelopeSection({
                 </InfoCollapsible>
 
                 {/* Multi-Unit Exercise */}
-                <div className="space-y-3 pt-4 border-t border-border/20">
+                <div className="space-y-3 pt-0 pb-3 border-t border-border/20">
                     <Dialog>
                         <DialogTrigger asChild>
                             <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-medium bg-emerald-50/80 border-emerald-300/50 hover:bg-emerald-100/80 hover:border-emerald-400/60 backdrop-blur-sm dark:bg-emerald-900/30 dark:border-emerald-500/50 dark:hover:bg-emerald-900/50">
