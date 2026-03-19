@@ -1029,12 +1029,11 @@ export default function EnvelopeSection({
                                 minRSI={2.84}
                                 fieldName="slab on grade with integral footing"
                                 compliancePath={selections.compliancePath}
-                                placeholder="Min RSI 2.84 or N/A"
+                                placeholder="Min RSI 2.84"
                                 validationError={validationErrors.slabOnGradeRSI}
                                 isMissing={false}
                                 missingFieldClass={missingFieldClass}
                                 InfoCollapsible={InfoCollapsible}
-                                allowNA
                             />
                         </div>
                     </div>
