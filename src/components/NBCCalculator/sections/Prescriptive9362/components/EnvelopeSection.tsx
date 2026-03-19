@@ -32,6 +32,19 @@ export function EnvelopeSection({
         selections.floorsSlabsSelected.includes("unheatedAboveFrost");
     const isSlabOnGradeChecked = selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting");
 
+    const buildingVolumeOptions = [
+        { value: "385", label: "380 < V ≤ 390" },
+        { value: "375", label: "370 < V ≤ 380" },
+        { value: "365", label: "360 < V ≤ 370" },
+        { value: "355", label: "350 < V ≤ 360" },
+        { value: "345", label: "340 < V ≤ 350" },
+        { value: "335", label: "330 < V ≤ 340" },
+        { value: "325", label: "320 < V ≤ 330" },
+        { value: "315", label: "310 < V ≤ 320" },
+        { value: "305", label: "300 < V ≤ 310" },
+        { value: "300", label: "V ≤ 300" },
+    ];
+
     return (
         <div className="space-y-4">
             <div id="buildingVolume" className="space-y-2">
@@ -47,16 +60,11 @@ export function EnvelopeSection({
                         <SelectValue placeholder="Select building volume range" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="385">380 &lt; V ≤ 390</SelectItem>
-                        <SelectItem value="375">370 &lt; V ≤ 380</SelectItem>
-                        <SelectItem value="365">360 &lt; V ≤ 370</SelectItem>
-                        <SelectItem value="355">350 &lt; V ≤ 360</SelectItem>
-                        <SelectItem value="345">340 &lt; V ≤ 350</SelectItem>
-                        <SelectItem value="335">330 &lt; V ≤ 340</SelectItem>
-                        <SelectItem value="325">320 &lt; V ≤ 330</SelectItem>
-                        <SelectItem value="315">310 &lt; V ≤ 320</SelectItem>
-                        <SelectItem value="305">300 &lt; V ≤ 310</SelectItem>
-                        <SelectItem value="300">V ≤ 300</SelectItem>
+                        {buildingVolumeOptions.map(option => (
+                            <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                            </SelectItem>
+                        ))}
                     </SelectContent>
                 </Select>
             </div>

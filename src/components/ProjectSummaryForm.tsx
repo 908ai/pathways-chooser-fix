@@ -155,12 +155,23 @@ const ProjectSummaryForm = ({
         cooling_system_type: selections.coolingApplicable === 'yes' ? 'Central AC' : 'None',
         cooling_efficiency: parseFloat(selections.coolingEfficiency) || null,
         water_heating_type: selections.waterHeaterType || selections.waterHeater,
-        hrv_erv_type: selections.hasHrv === 'with_hrv' ? 'HRV/ERV' : 'None',
+        hrv_erv_type: selections.hasHrv === 'with_hrv' ? selections.hrv || 'HRV' : 'None',
         hrv_erv_efficiency: selections.hrvEfficiency || null,
         
         // Performance
         airtightness_al: selections.airtightness || selections.customAirtightness || null,
-        building_volume: parseFloat(selections.buildingVolume) || null,
+        building_volume: selections.buildingVolume ? (
+          selections.buildingVolume === '380-390' ? 385 : 
+          selections.buildingVolume === '370-380' ? 375 : 
+          selections.buildingVolume === '360-370' ? 365 : 
+          selections.buildingVolume === '350-360' ? 355 : 
+          selections.buildingVolume === '340-350' ? 345 : 
+          selections.buildingVolume === '330-340' ? 335 : 
+          selections.buildingVolume === '320-330' ? 325 : 
+          selections.buildingVolume === '310-320' ? 315 : 
+          selections.buildingVolume === '300-310' ? 305 : 
+          selections.buildingVolume === 'under-300' ? 300 : null
+        ) : null,
         
         // Status & Files
         compliance_status: 'submitted',

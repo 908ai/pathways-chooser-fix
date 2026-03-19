@@ -12,7 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 //import { validateRSI, validateRSI_9362 } from "../../../utils/validation";
 
-import { getZoneOptions } from "../../../../NBCCalculator/constants/options";
+import { getZoneOptions, buildingVolumeOptions } from "../../../../NBCCalculator/constants/options";
 import { useEffect } from "react";
 
 import WarningButton from "./WarningButton";
@@ -96,16 +96,16 @@ export default function EnvelopeSection({
                         <SelectValue placeholder="Select building volume range" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="385">380 &lt; V ≤ 390</SelectItem>
-                        <SelectItem value="375">370 &lt; V ≤ 380</SelectItem>
-                        <SelectItem value="365">360 &lt; V ≤ 370</SelectItem>
-                        <SelectItem value="355">350 &lt; V ≤ 360</SelectItem>
-                        <SelectItem value="345">340 &lt; V ≤ 350</SelectItem>
-                        <SelectItem value="335">330 &lt; V ≤ 340</SelectItem>
-                        <SelectItem value="325">320 &lt; V ≤ 330</SelectItem>
-                        <SelectItem value="315">310 &lt; V ≤ 320</SelectItem>
-                        <SelectItem value="305">300 &lt; V ≤ 310</SelectItem>
-                        <SelectItem value="300">V ≤ 300</SelectItem>
+                        {buildingVolumeOptions.map(option => (
+                            <SelectItem key={option.value} value={option.value}>
+                                <div className="flex justify-between items-center gap-3 w-full">
+                                    <span>{option.label}</span>
+                                    <Badge variant={option.points > 0 ? "default" : "secondary"}>
+                                        {option.points} pts
+                                    </Badge>
+                                </div>
+                            </SelectItem>
+                        ))}
                     </SelectContent>
                 </Select>
             </div>

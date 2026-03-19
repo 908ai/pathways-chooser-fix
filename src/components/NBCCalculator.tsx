@@ -452,7 +452,18 @@ const NBCCalculator = () => {
           occupancyClass: p.occupancy_class || "",
           compliancePath: loadedCompliancePath,
           isVolumeOver380: p.building_volume && p.building_volume > 380 ? "yes" : "no",
-          buildingVolume: p.building_volume && p.building_volume !== 0 ? p.building_volume.toString() : "",
+          buildingVolume: p.building_volume ? (
+            p.building_volume > 380 && p.building_volume <= 390 ? "380-390" :
+            p.building_volume > 370 && p.building_volume <= 380 ? "370-380" :
+            p.building_volume > 360 && p.building_volume <= 370 ? "360-370" :
+            p.building_volume > 350 && p.building_volume <= 360 ? "350-360" :
+            p.building_volume > 340 && p.building_volume <= 350 ? "340-350" :
+            p.building_volume > 330 && p.building_volume <= 340 ? "330-340" :
+            p.building_volume > 320 && p.building_volume <= 330 ? "320-330" :
+            p.building_volume > 310 && p.building_volume <= 320 ? "310-320" :
+            p.building_volume > 300 && p.building_volume <= 310 ? "300-310" :
+            p.building_volume <= 300 ? "under-300" : ""
+          ) : "",
           ceilingsAtticRSI: p.attic_rsi && p.attic_rsi !== 0 ? p.attic_rsi.toString() : "",
           ceilingsAtticOtherType: p.ceilings_attic_other_type || "",
           hasCathedralOrFlatRoof: p.has_cathedral_or_flat_roof || "",
@@ -699,7 +710,18 @@ const NBCCalculator = () => {
         hrv_erv_efficiency: selections.hrvEfficiency || null,
         airtightness_al: selections.airtightness || selections.customAirtightness || null,
         airtightness_test_type: selections.airtightnessTestType || null,
-        building_volume: parseFloat(selections.buildingVolume) || null,
+        building_volume: selections.buildingVolume ? (
+          selections.buildingVolume === '380-390' ? 385 : 
+          selections.buildingVolume === '370-380' ? 375 : 
+          selections.buildingVolume === '360-370' ? 365 : 
+          selections.buildingVolume === '350-360' ? 355 : 
+          selections.buildingVolume === '340-350' ? 345 : 
+          selections.buildingVolume === '330-340' ? 335 : 
+          selections.buildingVolume === '320-330' ? 325 : 
+          selections.buildingVolume === '310-320' ? 315 : 
+          selections.buildingVolume === '300-310' ? 305 : 
+          selections.buildingVolume === 'under-300' ? 300 : null
+        ) : null,
         compliance_status: (editingProjectStatus === 'needs_revision' || editingProjectStatus === 'update_allowed') ? editingProjectStatus : 'draft',
         total_points: totalPoints,
         interested_certifications: selections.interestedCertifications,
