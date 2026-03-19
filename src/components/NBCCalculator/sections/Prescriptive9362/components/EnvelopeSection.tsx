@@ -601,7 +601,7 @@ export function EnvelopeSection({
                         <div className="space-y-4">
                             <div>
                                 <p className="text-base text-muted-foreground">
-                                    Part 9.36 of the building code allows limited trade-offs in your above-ground building envelope design so you can keep flexibility while still meeting energy efficiency rules. If you’re a builder or designer trying to tweak R-values without triggering performance modelling, you’ve got three basic options:
+                                    Part 9.36 of the building code allows limited trade-offs in your above-ground building envelope design so you can keep flexibility while still meeting energy efficiency rules. If you're a builder or designer trying to tweak R-values without triggering performance modelling, you've got three basic options:
                                 </p>
                             </div>
 
@@ -622,13 +622,13 @@ export function EnvelopeSection({
                             <div>
                                 <h5 className="font-medium text-base mb-1">3. Window Area for Attic Insulation (Modular Homes Only)</h5>
                                 <p className="text-base text-muted-foreground">
-                                    Factory-built homes with low rooflines (due to transport limits) might not fit the required attic insulation. If your home has fewer windows (less than 15% of the wall area), that reduced heat loss gives you an “energy credit” to offset the missing attic insulation.
+                                    Factory-built homes with low rooflines (due to transport limits) might not fit the required attic insulation. If your home has fewer windows (less than 15% of the wall area), that reduced heat loss gives you an "energy credit" to offset the missing attic insulation.
                                 </p>
                             </div>
 
                             <div>
                                 <p className="text-base text-muted-foreground">
-                                    These are simple, cost-saving tools that let you stay code-compliant without full performance modelling — but they only apply to above-grade assemblies, and you’ll need to follow specific rules for area, orientation, and limits on how much you can trade.
+                                    These are simple, cost-saving tools that let you stay code-compliant without full performance modelling — but they only apply to above-grade assemblies, and you'll need to follow specific rules for area, orientation, and limits on how much you can trade.
                                 </p>
                             </div>
 
@@ -675,7 +675,7 @@ export function EnvelopeSection({
                 })()}
                 <WarningButton title="ℹ️ Window & Door Performance Verification">
                     <p>
-                        Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value’s (ie, U-value W/(m²×).
+                        Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value's (ie, U-value W/(m²×).
                     </p>
                     <p className="mt-2">
                         See below an illustrative example of a window unit showing the performance values that must be recorded in the Window & Door Schedule.
@@ -737,6 +737,33 @@ export function EnvelopeSection({
                 </p>
             </WarningButton>}
 
+            <div id="buildingVolume" className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Building Volume Range (m³) <span className="text-red-500">*</span></label>
+                <Select required value={selections.buildingVolume} onValueChange={value => setSelections(prev => ({
+                    ...prev,
+                    buildingVolume: value
+                }))}>
+                    <SelectTrigger className={cn(
+                        (validationErrors.buildingVolume || isMissing("buildingVolume")) && missingFieldClass,
+                        validationErrors.buildingVolume && "border-red-500 ring-2 ring-red-500"
+                    )}>
+                        <SelectValue placeholder="Select building volume range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="385">380 &lt; V ≤ 390</SelectItem>
+                        <SelectItem value="375">370 &lt; V ≤ 380</SelectItem>
+                        <SelectItem value="365">360 &lt; V ≤ 370</SelectItem>
+                        <SelectItem value="355">350 &lt; V ≤ 360</SelectItem>
+                        <SelectItem value="345">340 &lt; V ≤ 350</SelectItem>
+                        <SelectItem value="335">330 &lt; V ≤ 340</SelectItem>
+                        <SelectItem value="325">320 &lt; V ≤ 330</SelectItem>
+                        <SelectItem value="315">310 &lt; V ≤ 320</SelectItem>
+                        <SelectItem value="305">300 &lt; V ≤ 310</SelectItem>
+                        <SelectItem value="300">V ≤ 300</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
             <div id="airtightness" className="space-y-2">
                 <div className="flex items-center gap-1">
                     <label className="text-sm font-medium text-foreground">Airtightness Level (Unguarded Testing) <span className="text-red-500">*</span></label>
@@ -768,7 +795,7 @@ export function EnvelopeSection({
                                             <p className="ml-4">Useful for comparing attached units or small zones.</p>
                                         </div>
                                         <p className="font-medium text-primary">Lower values = tighter home = better performance</p>
-                                        <p className="font-medium text-primary">“Typical New Home” is being constructed at 2.5 ACH or lower.</p>
+                                        <p className="font-medium text-primary">"Typical New Home" is being constructed at 2.5 ACH or lower.</p>
                                     </div>
                                 </div>
 

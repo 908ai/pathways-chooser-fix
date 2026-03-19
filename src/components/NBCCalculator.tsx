@@ -932,7 +932,7 @@ const NBCCalculator = () => {
       const requiredFields: (keyof typeof selections)[] = [
         'hasHrv', 'ceilingsAtticRSI', 'hasCathedralOrFlatRoof', 'wallRSI',
         'belowGradeRSI', 'floorsSlabsSelected', 'windowUValue', 'hasSkylights',
-        'airtightness', 'heatingType', 'coolingApplicable', 'hasDWHR'
+        'airtightness', 'heatingType', 'coolingApplicable', 'hasDWHR', 'buildingVolume'
       ];
 
       requiredFields.forEach(field => {
@@ -992,7 +992,7 @@ const NBCCalculator = () => {
     if (compliancePath === '9368') {
       const requiredFields: (keyof typeof selections)[] = [
         'ceilingsAtticRSI', 'wallRSI', 'belowGradeRSI', 'windowUValue',
-        'airtightness', 'hrvEfficiency'
+        'airtightness', 'hrvEfficiency', 'buildingVolume'
       ];
 
       if (!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes')) {
@@ -1060,7 +1060,7 @@ const NBCCalculator = () => {
           'hasHrv', 'hrvEfficiency', 'hasSecondaryHrv', 'secondaryHrvEfficiency',
           'ceilingsAtticRSI', 'hasCathedralOrFlatRoof', 'cathedralFlatRSIValue',
           'wallRSI', 'belowGradeRSI', 'floorsSlabsSelected', 'windowUValue',
-          'hasSkylights', 'skylightUValue', 'airtightness', 'midConstructionBlowerDoorPlanned',
+          'hasSkylights', 'skylightUValue', 'buildingVolume', 'airtightness', 'midConstructionBlowerDoorPlanned',
           'heatingType', 'heatingEfficiency', 'coolingApplicable', 'waterHeaterType',
           'waterHeater', 'hasDWHR', 'hasSecondaryHeating', 'secondaryHeatingType', 'secondaryHeatingEfficiency',
           'secondaryIndirectTank', 'secondaryIndirectTankSize', 'hasSecondaryWaterHeater', 'secondaryWaterHeaterSameAsMain',
