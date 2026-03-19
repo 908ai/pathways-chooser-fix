@@ -666,20 +666,12 @@ const ProjectDetail = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  const getFileCategory = (fileName: string) => {
-    const name = fileName.toLowerCase();
-    if (name.includes('plan') || name.includes('blueprint') || name.includes('drawing')) {
-      return 'Building Plans';
-    } else if (name.includes('window') || name.includes('door')) {
-      return 'Window/Door Schedule';
-    } else if (name.includes('spec') || name.includes('technical') || name.includes('system')) {
-      return 'Technical Specifications';
-    } else if (name.includes('photo') || name.includes('image') || name.includes('picture')) {
-      return 'Photos';
-    } else if (name.includes('report') || name.includes('compliance') || name.includes('assessment')) {
-      return 'Reports';
-    } else {
-      return 'General Documents';
+  const getFileCategoryLabel = (category?: string) => {
+    switch (category) {
+      case 'building_plans': return 'Building Plans';
+      case 'window_schedule': return 'Window/Door Schedule';
+      case 'other_docs': return 'Other Supporting Documents';
+      default: return 'General Documents';
     }
   };
 
@@ -1407,18 +1399,18 @@ const ProjectDetail = () => {
 
                 {project.uploaded_files && project.uploaded_files.length > 0 ? (
                   <div className="space-y-6">
-                    {['Building Plans', 'Window/Door Schedule', 'Technical Specifications', 'Reports', 'Photos', 'General Documents'].map((category) => {
+                    {['building_plans', 'window_schedule', 'other_docs', 'general'].map((categoryKey) => {
                       const categoryFiles = (project.uploaded_files || []).filter((file: any) => 
-                        file && file.name && getFileCategory(file.name) === category
+                        file && (file.category === categoryKey || (!file.category && categoryKey === 'general'))
                       );
                       
                       if (categoryFiles.length === 0) return null;
                       
                       return (
-                        <div key={category}>
+                        <div key={categoryKey}>
                           <h4 className="font-semibold mb-3 flex items-center gap-2 text-card-foreground">
                             <FolderOpen className="h-4 w-4" />
-                            {category} ({categoryFiles.length})
+                            {getFileCategoryLabel(categoryKey)} ({categoryFiles.length})
                           </h4>
                           <div className="space-y-2">
                             {categoryFiles.map((file: any, index: number) => (

@@ -3,13 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 import { User } from "@supabase/supabase-js";
 
-export type UploadedFile = File & { url?: string; path?: string };
+export type UploadedFile = File & { url?: string; path?: string; category?: string };
 
 export const useFileUploads = (user: User | null) => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
-  const uploadFile = async (file: File, projectId: string): Promise<UploadedFile | null> => {
+  const uploadFile = async (file: File, projectId: string, category?: string): Promise<UploadedFile | null> => {
     if (!user) {
       toast({ title: "Authentication Error", description: "You must be logged in to upload files.", variant: "destructive" });
       return null;
@@ -42,6 +42,7 @@ export const useFileUploads = (user: User | null) => {
       const newFile: UploadedFile = Object.assign(file, {
         url: urlData.publicUrl,
         path: data.path,
+        category: category,
       });
 
       setUploadedFiles((prev) => [...prev, newFile]);

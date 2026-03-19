@@ -646,10 +646,10 @@ const NBCCalculator = () => {
     }
   };
 
-  const handleFileUploadRequest = async (file: File) => {
+  const handleFileUploadRequest = async (file: File, category?: string) => {
     const currentProjectId = await ensureProjectExists();
     if (currentProjectId) {
-      await uploadFile(file, currentProjectId);
+      await uploadFile(file, currentProjectId, category);
     }
   };
 
@@ -722,7 +722,15 @@ const NBCCalculator = () => {
           selections.buildingVolume === '300-310' ? 305 : 
           selections.buildingVolume === 'under-300' ? 300 : null
         ) : null,
-        compliance_status: (editingProjectStatus === 'needs_revision' || editingProjectStatus === 'update_allowed') ? editingProjectStatus : 'draft',
+        compliance_status: selections.compliancePath === '9368' ? compliance.status : 'draft',
+        uploaded_files: uploadedFiles.map(file => ({
+          name: file.name,
+          url: (file as any).url,
+          path: (file as any).path,
+          category: (file as any).category,
+        })),
+        energy_insights: {},
+        recommendations: [],
         total_points: totalPoints,
         interested_certifications: selections.interestedCertifications,
         wants_certifications: selections.wantsCertifications,
@@ -1066,6 +1074,33 @@ const NBCCalculator = () => {
     return { isValid: true, errors: {} };
   };
 
+  const validateStep4 = () => {
+    const errors: Record<string, boolean> = {};
+    const { compliancePath } = selections;
+
+    // Categorized file validation for 9362 and 9368
+    if (compliancePath === '9362' || compliancePath === '9368') {
+      const hasBuildingPlans = uploadedFiles.some(f => (f as any).category === 'building_plans');
+      const hasWindowSchedule = uploadedFiles.some(f => (f as any).category === 'window_schedule');
+
+      if (!hasBuildingPlans) errors.building_plans = true;
+      if (!hasWindowSchedule) errors.window_schedule = true;
+    }
+
+    setValidationErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      toast({ 
+        title: "Missing Documents", 
+        description: "Please upload the mandatory Building Plans and Window Schedule.", 
+        variant: "destructive" 
+      });
+      return { isValid: false, errors };
+    }
+
+    return { isValid: true, errors: {} };
+  };
+
   const nextStep = async () => {
     let validationResult = { isValid: true, errors: {} as Record<string, boolean> };
     if (currentStep === 1) {
@@ -1097,6 +1132,10 @@ const NBCCalculator = () => {
         }
         return;
       }
+    }
+    if (currentStep === 4) {
+      validationResult = validateStep4();
+      if (!validationResult.isValid) return;
     }
 
     await handleSaveDraft(true);
@@ -1274,6 +1313,7 @@ const NBCCalculator = () => {
                         onFileUploadRequest={handleFileUploadRequest}
                         isUploading={isUploading}
                         removeFile={removeFile}
+                        validationErrors={validationErrors}
                       />
                     </div>
 
