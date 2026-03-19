@@ -33,6 +33,29 @@ export default function MechanicalSection({
 }) {
     return (
         <div className="space-y-4">
+            {/* MURB/Secondary Suite Mechanical Systems Warning */}
+            {(selections.buildingType === "multi-unit" || selections.buildingType === "single-detached-secondary") && <div className="p-4 bg-orange-50 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-500/50 rounded-lg">
+                <div className="flex items-start gap-2">
+                    <span className="text-orange-600 dark:text-orange-400 text-lg">⚠️</span>
+                    <div className="space-y-2">
+                        <h4 className="font-medium text-orange-800 dark:text-orange-300">MURB/Secondary Suite Mechanical Systems</h4>
+                        <p className="text-base text-orange-700 dark:text-orange-300">
+                            For {selections.buildingType === "multi-unit" ? "multi-unit residential buildings (MURBs)" : "homes with secondary suites"},
+                            please ensure you list all mechanical system types, make/models, and any other relevant information
+                            in the comments section below. This includes:
+                        </p>
+                        <ul className="list-disc ml-4 text-base text-orange-700 dark:text-orange-300 space-y-1">
+                            <li>Secondary heating system type and make/model (if applicable)</li>
+                            <li>Secondary/multiple service water heating systems</li>
+                            <li>Secondary HRV/ERV systems</li>
+                            <li>Any additional heating equipment specifications</li>
+                            <li>Special installation requirements or configurations</li>
+                            <li>Zone-specific heating arrangements</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>}
+
             {/* F280 Calculation (only when required by city/jurisdiction) */}
             {isF280RequiredCity && (
                 <div id="hasF280Calculation" className="space-y-2">
@@ -483,29 +506,6 @@ export default function MechanicalSection({
                             className={cn(isMissing("secondaryHrvEfficiency") && missingFieldClass)}
                         />
                     </div>}
-                </div>}
-
-                {/* MURB/Secondary Suite Mechanical Systems Warning */}
-                {(selections.buildingType === "multi-unit" || selections.buildingType === "single-detached-secondary") && <div className="p-4 bg-orange-50 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-500/50 rounded-lg">
-                    <div className="flex items-start gap-2">
-                        <span className="text-orange-600 dark:text-orange-400 text-lg">⚠️</span>
-                        <div className="space-y-2">
-                            <h4 className="font-medium text-orange-800 dark:text-orange-300">MURB/Secondary Suite Mechanical Systems</h4>
-                            <p className="text-base text-orange-700 dark:text-orange-300">
-                                For {selections.buildingType === "multi-unit" ? "multi-unit residential buildings (MURBs)" : "homes with secondary suites"},
-                                please ensure you list all mechanical system types, make/models, and any other relevant information
-                                in the comments section below. This includes:
-                            </p>
-                            <ul className="list-disc ml-4 text-base text-orange-700 dark:text-orange-300 space-y-1">
-                                <li>Secondary heating system type and make/model (if applicable)</li>
-                                <li>Secondary/multiple service water heating systems</li>
-                                <li>Secondary HRV/ERV systems</li>
-                                <li>Any additional heating equipment specifications</li>
-                                <li>Special installation requirements or configurations</li>
-                                <li>Zone-specific heating arrangements</li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>}
             </div>
         </div>
