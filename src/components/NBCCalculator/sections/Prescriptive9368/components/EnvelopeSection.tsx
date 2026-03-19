@@ -7,6 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Info, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EffectiveRSIWarning } from "@/components/NBCCalculator/components/EffectiveRSIWarning";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 //import { validateRSI, validateRSI_9362 } from "../../../utils/validation";
 
@@ -62,13 +64,21 @@ export default function EnvelopeSection({
         const isSingleDetached =
             selections.buildingType === "single-detached";
 
+        let options = airtightnessOptions;
+
         if (isSingleDetached) {
-            return airtightnessOptions.filter(option =>
+            options = options.filter(option =>
                 option.value.includes("B")
             );
         }
 
-        return airtightnessOptions;
+        if (selections.airtightnessTestType) {
+            options = options.filter(option => 
+                option.type.toLowerCase() === selections.airtightnessTestType.toLowerCase()
+            );
+        }
+
+        return options;
     })();
 
     return (
@@ -437,15 +447,44 @@ export default function EnvelopeSection({
                         </a>
                     </Button>
                 </div>
-                <Select value={selections.airtightness} onValueChange={value => setSelections(prev => ({
-                    ...prev,
-                    airtightness: value
-                }))}>
+
+                <div className="space-y-3 pb-2">
+                    <label className="text-sm font-medium text-foreground">Airtightness Test Type <span className="text-red-400">*</span></label>
+                    <RadioGroup 
+                        value={selections.airtightnessTestType || ""} 
+                        onValueChange={value => {
+                            setSelections(prev => ({
+                                ...prev,
+                                airtightnessTestType: value,
+                                airtightness: "" // Reset airtightness level when type changes
+                            }));
+                        }}
+                        className="flex flex-col space-y-1"
+                    >
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="Guarded" id="guarded" />
+                            <Label htmlFor="guarded" className="font-normal cursor-pointer">Guarded Test</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="Unguarded" id="unguarded" />
+                            <Label htmlFor="unguarded" className="font-normal cursor-pointer">Unguarded Test</Label>
+                        </div>
+                    </RadioGroup>
+                </div>
+
+                <Select 
+                    disabled={!selections.airtightnessTestType}
+                    value={selections.airtightness} 
+                    onValueChange={value => setSelections(prev => ({
+                        ...prev,
+                        airtightness: value
+                    }))}
+                >
                     <SelectTrigger className={cn(
                         (validationErrors.airtightness || isMissing("airtightness")) && missingFieldClass,
                         validationErrors.airtightness && "border-red-500 ring-2 ring-red-500"
                     )}>
-                        <SelectValue placeholder="Select air-tightness level" />
+                        <SelectValue placeholder={selections.airtightnessTestType ? "Select air-tightness level" : "Select test type first"} />
                     </SelectTrigger>
                     <SelectContent>
                         {filteredAirtightnessOptions.map(option => <SelectItem key={option.value} value={option.value}>
