@@ -381,6 +381,7 @@ const ProjectSummaryForm = ({
     const is9368 = selections.compliancePath === '9368';
     const is9365 = selections.compliancePath === '9365';
     const is9367 = selections.compliancePath === '9367';
+    const isMURB = selections.buildingType === 'multi-unit' || selections.buildingType === 'single-detached-secondary';
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
@@ -407,16 +408,40 @@ const ProjectSummaryForm = ({
         {renderField('Water Heater Model', selections.waterHeaterMakeModel || 'Not provided')}
         
         {renderField('HRV/ERV', selections.hasHrv || selections.hasHrvErv9365 || 'No')}
-        {(selections.hasHrv === 'with_hrv' || selections.hasHrvErv9365 === 'with_hrv') && 
-          renderField('HRV/ERV Efficiency/Model', selections.hrvEfficiency || selections.hrvMakeModel || 'Not provided')}
+        {(selections.hasHrv === 'with_hrv' || selections.hasHrvErv9365 === 'with_hrv') && (
+          <>
+            {renderField('HRV/ERV Efficiency/Model', selections.hrvEfficiency || selections.hrvMakeModel || 'Not provided')}
+            
+            {/* Secondary Suite HRV - Only for MURB/Secondary Suites */}
+            {isMURB && (
+              <>
+                {renderField('Secondary Suite HRV/ERV', selections.hasSecondaryHrv || 'No')}
+                {selections.hasSecondaryHrv === 'yes' && 
+                  renderField('Secondary Suite HRV/ERV Efficiency', selections.secondaryHrvEfficiency || 'Not provided')}
+              </>
+            )}
+          </>
+        )}
 
         {renderField('Drain Water Heat Recovery', selections.hasDWHR || 'No')}
         
-        {/* MURB Specifics */}
-        {(selections.buildingType === 'multi-unit' || selections.buildingType === 'single-detached-secondary') && (
+        {/* MURB Specifics - Only show if building type is MURB/Secondary */}
+        {isMURB && (
           <>
-            {renderField('Multiple MURB Heating Systems', selections.hasMurbMultipleHeating || 'No')}
-            {renderField('Multiple MURB Water Heaters', selections.hasMurbMultipleWaterHeaters || 'No')}
+            {renderField('Multiple MURB Heating Systems', selections.hasMurbMultipleHeating || 'no')}
+            {selections.hasMurbMultipleHeating === 'yes' && (
+              <>
+                {renderField('MURB Second Heating Type', selections.murbSecondHeatingType || 'Not provided')}
+                {renderField('MURB Second Heating Efficiency', selections.murbSecondHeatingEfficiency || 'Not provided')}
+              </>
+            )}
+            {renderField('Multiple MURB Water Heaters', selections.hasMurbMultipleWaterHeaters || 'no')}
+            {selections.hasMurbMultipleWaterHeaters === 'yes' && (
+              <>
+                {renderField('MURB Second Water Heater Type', selections.murbSecondWaterHeaterType || 'Not provided')}
+                {renderField('MURB Second Water Heater Efficiency', selections.murbSecondWaterHeater || 'Not provided')}
+              </>
+            )}
           </>
         )}
       </div>
