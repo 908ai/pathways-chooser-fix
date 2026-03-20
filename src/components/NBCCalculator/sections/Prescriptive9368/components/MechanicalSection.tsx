@@ -113,6 +113,44 @@ export default function MechanicalSection({
                 </div>
             )}
 
+            {selections.heatingType === 'boiler' && <div className="space-y-4">
+                <div id="indirectTank" className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">Are you installing an indirect tank? <span className="text-red-500">*</span></label>
+                    <Select required value={selections.indirectTank} onValueChange={value => setSelections(prev => ({
+                        ...prev,
+                        indirectTank: value,
+                        indirectTankSize: value === 'no' ? '' : prev.indirectTankSize
+                    }))}>
+                        <SelectTrigger className={cn(
+                            (validationErrors.indirectTank || isMissing("indirectTank")) && missingFieldClass,
+                            validationErrors.indirectTank && "border-red-500 ring-2 ring-red-500"
+                        )}>
+                            <SelectValue placeholder="Select if installing indirect tank" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="yes">Yes</SelectItem>
+                            <SelectItem value="no">No</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {selections.indirectTank === 'yes' && <div id="indirectTankSize" className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">Primary System Indirect Tank Size (gallons) <span className="text-red-500">*</span></label>
+                    <Input required type="number"
+                        placeholder="Enter tank size in gallons"
+                        value={selections.indirectTankSize}
+                        onChange={e => setSelections(prev => ({
+                            ...prev,
+                            indirectTankSize: e.target.value
+                        }))}
+                        className={cn(
+                            (validationErrors.indirectTankSize || isMissing("indirectTankSize")) && missingFieldClass,
+                            validationErrors.indirectTankSize && "border-red-500 ring-2 ring-red-500"
+                        )}
+                    />
+                </div>}
+            </div>}
+
             {/* HRV/ERV Section for 9368 - Mandatory */}
             <div className="space-y-3" id="hrvEfficiency">
                 <div className="flex items-center gap-3">
