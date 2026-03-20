@@ -383,6 +383,8 @@ const ProjectSummaryForm = ({
     const is9367 = selections.compliancePath === '9367';
     const isMURB = selections.buildingType === 'multi-unit' || selections.buildingType === 'single-detached-secondary';
 
+    const hasHrv = selections.hasHrv === 'with_hrv' || selections.hasHrvErv9365 === 'with_hrv';
+
     return (
       <div className="space-y-6">
         {/* Heating Section */}
@@ -391,12 +393,13 @@ const ProjectSummaryForm = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
             {renderField('Heating Type', selections.heatingType || 'Not provided')}
             {renderField('Heating Efficiency/Model', selections.heatingEfficiency || selections.heatingMakeModel || 'Not provided')}
-            {selections.heatingType === 'boiler' && (
+            {(selections.heatingType === 'boiler' || is9365 || is9367) && (
               <>
                 {renderField('Installing Indirect Tank?', selections.indirectTank || 'No')}
                 {selections.indirectTank === 'yes' && renderField('Indirect Tank Size', selections.indirectTankSize, 'gal')}
               </>
             )}
+            {(is9365 || is9367) && renderField('In-Floor Heating Status', selections.hasInFloorHeat9365 || 'No')}
           </div>
         </div>
 
@@ -426,15 +429,15 @@ const ProjectSummaryForm = ({
         <div className="space-y-2">
           <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Ventilation (HRV/ERV)</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            {renderField('Primary HRV/ERV', selections.hasHrv || selections.hasHrvErv9365 || 'No')}
-            {(selections.hasHrv === 'with_hrv' || selections.hasHrvErv9365 === 'with_hrv') && 
+            {renderField('Primary HRV/ERV', hasHrv ? 'Yes' : 'No')}
+            {hasHrv && 
               renderField('Primary Efficiency/Model', selections.hrvEfficiency || selections.hrvMakeModel || 'Not provided')}
             
-            {isMURB && (selections.hasHrv === 'with_hrv' || selections.hasHrvErv9365 === 'with_hrv') && (
+            {isMURB && (is9365 || is9367) && (
               <>
                 {renderField('Secondary Suite HRV/ERV', selections.hasSecondaryHrv || 'No')}
-                {selections.hasSecondaryHrv === 'yes' && 
-                  renderField('Secondary Suite Efficiency', selections.secondaryHrvEfficiency || 'Not provided')}
+                {(selections.hasSecondaryHrv === 'separate' || selections.hasSecondaryHrv === 'yes') && 
+                  renderField('Secondary Suite Efficiency/Model', selections.secondaryHrvEfficiency || 'Not provided')}
               </>
             )}
           </div>
@@ -453,9 +456,9 @@ const ProjectSummaryForm = ({
         <div className="space-y-2">
           <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Domestic Hot Water (DHW)</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            {renderField('Primary DHW Type', selections.waterHeaterType || selections.waterHeater || 'Not provided')}
-            {renderField('Primary DHW Model/Efficiency', selections.waterHeaterMakeModel || 'Not provided')}
-            {renderField('Drain Water Heat Recovery', selections.hasDWHR || 'No')}
+            {renderField('Primary DHW Type', selections.waterHeaterType || (is9365 || is9367 ? 'Not provided' : null))}
+            {renderField('Primary DHW Model/Efficiency', selections.waterHeater || selections.waterHeaterMakeModel || (is9365 || is9367 ? 'Not provided' : null))}
+            {renderField('Drain Water Heat Recovery', selections.hasDWHR || (is9365 || is9367 ? 'No' : null))}
           </div>
         </div>
 
@@ -649,7 +652,7 @@ const ProjectSummaryForm = ({
                   <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Secondary & Specific Assemblies</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                     {/* Cathedral/Flat Roof logic based on pathway */}
-                    {(selections.compliancePath === '9362' || selections.compliancePath === '9368') && (
+                    {(selections.compliancePath === '9362' || selections.compliancePath === '9368' || selections.compliancePath === '9365' || selections.compliancePath === '9367') && (
                       <>
                         {renderField('Cathedral Ceilings/Flat Roofs?', selections.hasCathedralOrFlatRoof || selections.hasCathedralOrFlatRoofSelection || 'no')}
                         {(selections.hasCathedralOrFlatRoof === 'yes' || selections.hasCathedralOrFlatRoofSelection === 'yes') && 
