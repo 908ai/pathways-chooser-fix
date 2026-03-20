@@ -96,7 +96,15 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
         if (selections.floorsSlabsSelected?.includes("heatedFloors")) addIfMissing(required, 'inFloorHeatRSI', 'Heated Floors RSI');
         if (selections.floorsSlabsSelected?.includes("slabOnGradeIntegralFooting")) addIfMissing(required, 'slabOnGradeIntegralFootingRSI', 'Slab on Grade RSI');
         if (selections.floorsSlabsSelected?.includes("floorsOverUnheatedSpaces")) addIfMissing(required, 'floorsOverUnheatedSpacesRSI', 'Floors over Unheated Spaces RSI');
-        if (selections.floorsSlabsSelected?.includes("unheatedBelowFrost")) addIfMissing(required, 'unheatedFloorBelowFrostRSI', 'Unheated Floor Below Frostline');
+        
+        // Only require unheated RSI values if 'uninsulated' is NOT the value
+        const unheatedBelowValue = selections.unheatedFloorBelowFrostRSI;
+        if (selections.floorsSlabsSelected?.includes("unheatedBelowFrost") &&
+            unheatedBelowValue !== 'uninsulated' &&
+            (unheatedBelowValue === null || unheatedBelowValue === undefined || unheatedBelowValue === '')) {
+          required.push({ label: 'Unheated Floor Below Frostline', fieldId: 'unheatedFloorBelowFrostRSI' });
+        }
+
         if (selections.floorsSlabsSelected?.includes("unheatedAboveFrost")) addIfMissing(required, 'unheatedFloorAboveFrostRSI', 'Unheated Floor Above Frostline RSI');
 
         addIfMissing(required, 'windowUValue', 'Window U-Value');
@@ -113,7 +121,11 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
         if (!(selections.heatingType === 'boiler' && selections.indirectTank === 'yes')) {
           addIfMissing(required, 'waterHeaterType', 'Water Heater Type');
           if (selections.waterHeaterType && selections.waterHeaterType !== 'boiler') {
-            addIfMissing(required, 'waterHeater', 'Water Heater Efficiency');
+            // Check both 'waterHeater' and 'waterHeaterEfficiency' as some sections use different keys
+            const whEff = selections.waterHeater || selections.waterHeaterEfficiency;
+            if (whEff === null || whEff === undefined || whEff === '') {
+              required.push({ label: 'Water Heater Efficiency', fieldId: 'waterHeater' });
+            }
           }
           if (selections.waterHeaterType === 'other') {
             addIfMissing(required, 'otherWaterHeaterType', 'Specify Other Water Heater Type');
