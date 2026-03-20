@@ -639,7 +639,7 @@ export default function EnvelopeSection({
               </Button>
             </div>
             <Input type="text"
-              placeholder={`Min ${selections.province === "saskatchewan" ? "3.2" : "3.0"} ACH50 for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`}
+              placeholder={`Min ${selections.province === "saskatchewan" ? "3.2" : "2.5"} ACH50 for ${selections.province === "saskatchewan" ? "Saskatchewan" : "Alberta"}`}
               value={selections.airtightness}
               onChange={e => setSelections(prev => ({
                 ...prev,
