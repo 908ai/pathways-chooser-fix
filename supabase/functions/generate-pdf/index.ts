@@ -691,7 +691,7 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
     // If hrv_erv_type is null or None/no_hrv/without_hrv, it doesn't have it.
     const hasHrv = hrv && hrv !== "None" && hrv !== "no_hrv" && hrv !== "without_hrv";
     if (!hasHrv) return "Not Applicable";
-    
+
     if (points >= 75) return "Tier 5";
     if (points >= 40) return "Tier 4";
     if (points >= 20) return "Tier 3";
@@ -917,7 +917,7 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
     }
 
     currentY -= rowHeight;
-  };  
+  };
 
   const drawFenestrationRow = (col1: string, mergedCol23: string, col4: string) => {
     const baseRowHeight = 18;
@@ -1022,7 +1022,7 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
     }
 
     currentY -= rowHeight;
-  }; 
+  };
 
   // Prescriptive note + conversions + HRV/ERV block
   const topBlockTopY = currentY;
@@ -1205,7 +1205,7 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
   }
 
   // leave only a very small gap before next grey header
-  currentY = hrvY - 8;  
+  currentY = hrvY - 8;
 
   drawChecklistHeader('Effective Thermal Resistance of Above Ground Opaque Building Assemblies (RSI)');
   drawChecklistRow('Assembly', 'w/ HRV', 'w/o HRV', 'Proposed');
@@ -1235,7 +1235,7 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
   drawChecklistRow('Heated Floors', '2.84', '2.84', project.heated_floors_rsi ? String(project.heated_floors_rsi) : '');
 
   currentY -= 20;
-  
+
   const footerY = 20;
   const footerSize = 8;
 
@@ -1340,46 +1340,964 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
     currentY -= rowHeight;
   };
 
-  drawSectionHeader2('HVAC Efficiency Requirements');
-  drawRow2('Equipment', 'Efficiency Required', '', 'Proposed', false);
-  drawRow2('Natural Gas / Propane Furnace', 'AFUE >= 95%', '', project.heating_efficiency ? String(project.heating_efficiency) : '');
-  drawRow2('Electric Storage Tank (DHW)', 'Standby Loss <= 65W', '', project.water_heating_efficiency ? String(project.water_heating_efficiency) : '');
-  drawRow2('Natural Gas Tank (DHW)', 'EF >= 0.67', '', '');
-  drawRow2('Instantaneous Gas (DHW)', 'EF >= 0.80', '', '');
-  drawRow2('Air Source Heat Pump', 'HSPF >= 8.5', '', '');
+  // -----------------------------
+  // PAGE 2 CONTENT
+  // -----------------------------
 
-  currentY -= 20;
+  const drawGreyHeader2 = (title: string) => {
+    page2.drawRectangle({
+      x: margin,
+      y: currentY - 18,
+      width: tableWidth,
+      height: 18,
+      color: { type: 'RGB', red: 0.9, green: 0.9, blue: 0.9 },
+      borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 },
+      borderWidth: 1
+    });
 
-  // Signatures section
-  const sigBoxH = 140;
-  page2.drawRectangle({ x: margin, y: currentY - sigBoxH, width: tableWidth, height: sigBoxH, borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 }, borderWidth: 1 });
-  page2.drawText('Design Professional Declaration', { x: margin + 10, y: currentY - 20, font: boldFont, size: 10 });
-  
-  const declaration = 'I hereby certify that the design of the building project referred to above complies with the tiered prescriptive requirements of Section 9.36 of the National Building Code of Canada as indicated on this form.';
-  const words2 = declaration.split(' ');
-  let line2 = '';
-  let sigY = currentY - 35;
-  words2.forEach(w => {
-    if (font.widthOfTextAtSize(line2 + w, 9) > tableWidth - 20) {
-      page2.drawText(line2, { x: margin + 10, y: sigY, font, size: 9 });
-      line2 = w + ' ';
-      sigY -= 11;
-    } else {
-      line2 += w + ' ';
-    }
+    const safeTitle = sanitize(title);
+    const titleSize = 10;
+    const titleWidth = boldFont.widthOfTextAtSize(safeTitle, titleSize);
+
+    page2.drawText(safeTitle, {
+      x: margin + (tableWidth - titleWidth) / 2,
+      y: currentY - 13,
+      font: boldFont,
+      size: titleSize
+    });
+
+    currentY -= 18;
+  };
+
+  const drawTableRow2 = (
+    cells: {
+      text: string;
+      width: number;
+      align?: 'left' | 'center';
+      fontRef?: any;
+      size?: number;
+      checkbox?: boolean;
+      checked?: boolean;
+    }[],
+    rowHeight: number
+  ) => {
+    let x = margin;
+
+    cells.forEach((cell) => {
+      page2.drawRectangle({
+        x,
+        y: currentY - rowHeight,
+        width: cell.width,
+        height: rowHeight,
+        borderColor: { type: 'RGB', red: 0.6, green: 0.6, blue: 0.6 },
+        borderWidth: 0.5
+      });
+
+      if (cell.checkbox) {
+        const boxSize = 8;
+        const boxX = x + (cell.width - boxSize) / 2;
+        const boxY = currentY - rowHeight + (rowHeight - boxSize) / 2;
+
+        page2.drawRectangle({
+          x: boxX,
+          y: boxY,
+          width: boxSize,
+          height: boxSize,
+          borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 },
+          borderWidth: 1
+        });
+
+        if (cell.checked) {
+          page2.drawLine({
+            start: { x: boxX + 1, y: boxY + 1 },
+            end: { x: boxX + boxSize - 1, y: boxY + boxSize - 1 },
+            thickness: 1,
+            color: { type: 'RGB', red: 0, green: 0, blue: 0 }
+          });
+
+          page2.drawLine({
+            start: { x: boxX + boxSize - 1, y: boxY + 1 },
+            end: { x: boxX + 1, y: boxY + boxSize - 1 },
+            thickness: 1,
+            color: { type: 'RGB', red: 0, green: 0, blue: 0 }
+          });
+        }
+      } else {
+        const safeText = sanitize(cell.text || '');
+        if (safeText) {
+          const fontRef = cell.fontRef || font;
+          const size = cell.size || 8;
+
+          const lines = safeText.split('\n');
+          const lineHeight = size + 1;
+          const totalTextHeight = lines.length * lineHeight;
+          let lineY = currentY - ((rowHeight - totalTextHeight) / 2) - size + 2;
+
+          lines.forEach((line) => {
+            const textWidth = fontRef.widthOfTextAtSize(line, size);
+            let textX = x + 4;
+
+            if ((cell.align || 'left') === 'center') {
+              textX = x + (cell.width - textWidth) / 2;
+            }
+
+            page2.drawText(line, {
+              x: textX,
+              y: lineY,
+              font: fontRef,
+              size
+            });
+
+            lineY -= lineHeight;
+          });
+        }
+      }
+
+      x += cell.width;
+    });
+
+    currentY -= rowHeight;
+  };
+
+  const drawCustomTableRow2 = (
+    cells: {
+      text?: string;
+      x: number;
+      width: number;
+      height: number;
+      align?: 'left' | 'center';
+      fontRef?: any;
+      size?: number;
+      drawText?: boolean;
+    }[],
+    rowTopY: number
+  ) => {
+    cells.forEach((cell) => {
+      page2.drawRectangle({
+        x: cell.x,
+        y: rowTopY - cell.height,
+        width: cell.width,
+        height: cell.height,
+        borderColor: { type: 'RGB', red: 0.6, green: 0.6, blue: 0.6 },
+        borderWidth: 0.5
+      });
+
+      if (cell.drawText === false) return;
+
+      const safeText = sanitize(cell.text || '');
+      if (!safeText) return;
+
+      const fontRef = cell.fontRef || font;
+      const size = cell.size || 8;
+      const lines = safeText.split('\n');
+      const lineHeight = size + 1;
+      const totalTextHeight = lines.length * lineHeight;
+      let lineY = rowTopY - ((cell.height - totalTextHeight) / 2) - size + 2;
+
+      lines.forEach((line) => {
+        const textWidth = fontRef.widthOfTextAtSize(line, size);
+        let textX = cell.x + 4;
+
+        if ((cell.align || 'left') === 'center') {
+          textX = cell.x + (cell.width - textWidth) / 2;
+        }
+
+        page2.drawText(line, {
+          x: textX,
+          y: lineY,
+          font: fontRef,
+          size
+        });
+
+        lineY -= lineHeight;
+      });
+    });
+  };
+
+  const tradeOffLabel = 'Trade Off Compliance Path (9.36.2.11.):';
+  const tradeOffY = currentY;
+
+  page2.drawText(tradeOffLabel, {
+    x: margin,
+    y: tradeOffY,
+    font: boldFont,
+    size: 9
   });
-  page2.drawText(line2, { x: margin + 10, y: sigY, font, size: 9 });
 
-  sigY -= 30;
-  page2.drawLine({ start: { x: margin + 10, y: sigY }, end: { x: margin + 250, y: sigY }, thickness: 0.5 });
-  page2.drawText('Signature of Designer', { x: margin + 10, y: sigY - 12, font, size: 8 });
+  const yesBoxX2 = margin + 235;
+  const noBoxX2 = yesBoxX2 + 78;
+  const smallBox = 9;
 
-  page2.drawLine({ start: { x: margin + 300, y: sigY }, end: { x: margin + tableWidth - 10, y: sigY }, thickness: 0.5 });
-  page2.drawText('Date', { x: margin + 300, y: sigY - 12, font, size: 8 });
+  // ajuste conforme sua lógica real
+  const tradeOffSelected = project.compliance_path === 'trade_off';
 
-  sigY -= 30;
-  page2.drawLine({ start: { x: margin + 10, y: sigY }, end: { x: margin + tableWidth - 10, y: sigY }, thickness: 0.5 });
-  page2.drawText('Name of Design Professional / Firm', { x: margin + 10, y: sigY - 12, font, size: 8 });
+  page2.drawRectangle({
+    x: yesBoxX2,
+    y: tradeOffY - 2,
+    width: smallBox,
+    height: smallBox,
+    borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 },
+    borderWidth: 1
+  });
+
+  page2.drawText('Yes', {
+    x: yesBoxX2 + 16,
+    y: tradeOffY,
+    font,
+    size: 9
+  });
+
+  page2.drawRectangle({
+    x: noBoxX2,
+    y: tradeOffY - 2,
+    width: smallBox,
+    height: smallBox,
+    borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 },
+    borderWidth: 1
+  });
+
+  page2.drawText('No', {
+    x: noBoxX2 + 16,
+    y: tradeOffY,
+    font,
+    size: 9
+  });
+
+  if (tradeOffSelected) {
+    page2.drawText('X', {
+      x: yesBoxX2 + 2,
+      y: tradeOffY,
+      font: boldFont,
+      size: 9
+    });
+  } else {
+    page2.drawText('X', {
+      x: noBoxX2 + 2,
+      y: tradeOffY,
+      font: boldFont,
+      size: 9
+    });
+  }
+
+  currentY -= 16;
+
+  const tradeTextLines = [
+    'Should trade off be proposed, all calculations must be attached to this form to be considered complete and be accepted for review.',
+    'The location and extent of assemblies used in the calculations shall be clearly identified on the drawings by hatch or note.'
+  ];
+
+  tradeTextLines.forEach((line) => {
+    page2.drawText(sanitize(line), {
+      x: margin,
+      y: currentY,
+      font,
+      size: 8
+    });
+    currentY -= 10;
+  });
+
+  currentY -= 4;
+
+  drawGreyHeader2('HVAC Equipment Performance Requirements');
+
+  const hvacW1 = tableWidth * 0.17;
+  const hvacW2 = tableWidth * 0.22;
+  const hvacW3 = tableWidth * 0.20;
+  const hvacW4 = tableWidth * 0.29;
+  const hvacW5 = tableWidth * 0.12;
+
+  const hvacX1 = margin;
+  const hvacX2 = hvacX1 + hvacW1;
+  const hvacX3 = hvacX2 + hvacW2;
+  const hvacX4 = hvacX3 + hvacW3;
+  const hvacX5 = hvacX4 + hvacW4;
+
+  // Header row
+  drawTableRow2([
+    { text: 'Equipment', width: hvacW1, align: 'center', fontRef: boldFont, size: 8 },
+    { text: 'Capacity KW', width: hvacW2, align: 'center', fontRef: boldFont, size: 8 },
+    { text: 'Standard', width: hvacW3, align: 'center', fontRef: boldFont, size: 8 },
+    { text: 'Min. Efficiency', width: hvacW4, align: 'center', fontRef: boldFont, size: 8 },
+    { text: 'Proposed', width: hvacW5, align: 'center', fontRef: boldFont, size: 8 },
+  ], 18);
+
+  // Electric Heat Pump
+  drawTableRow2([
+    { text: 'Electric Heat Pump\n(split & single\npackage)', width: hvacW1, align: 'center' },
+    { text: '>= 19', width: hvacW2, align: 'center' },
+    { text: 'See Tables 5.2.12.1-A to -P of Division B of the NBCB', width: hvacW3 + hvacW4, align: 'center', size: 7 },
+    { text: project.heat_pump_efficiency ? String(project.heat_pump_efficiency) : '', width: hvacW5, align: 'center', fontRef: boldFont },
+  ], 34);
+
+  // -----------------------------
+  // Gas Fired Furnace group
+  // -----------------------------
+  const gfRow1H = 70;
+  const gfRow2H = 18;
+  const gfRow3H = 28;
+  const gfRow4H = 18;
+  const gfTotalH = gfRow1H + gfRow2H + gfRow3H + gfRow4H;
+
+  const gfTopY = currentY;
+
+  // merged Equipment cell
+  drawCustomTableRow2([
+    {
+      text: 'Gas Fired Furnace\nw or w/o A/C',
+      x: hvacX1,
+      width: hvacW1,
+      height: gfTotalH,
+      align: 'center',
+      size: 8
+    }
+  ], gfTopY);
+
+  // row 1
+  drawCustomTableRow2([
+    {
+      text: '<= 66 using single-phase\nelectric current',
+      x: hvacX2,
+      width: hvacW2,
+      height: gfRow1H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'CAN/CSA-P.2',
+      x: hvacX3,
+      width: hvacW3,
+      height: gfRow1H + gfRow2H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'AFUE >= 95% and must be equipped with\na high-efficiency constant torque or\nconstant airflow motor\nEt >= 78.5%\nAFUE >= 90%',
+      x: hvacX4,
+      width: hvacW4,
+      height: gfRow1H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: project.heating_efficiency ? String(project.heating_efficiency) : '',
+      x: hvacX5,
+      width: hvacW5,
+      height: gfRow1H,
+      align: 'center',
+      fontRef: boldFont
+    }
+  ], gfTopY);
+
+  // row 2
+  const gfRow2TopY = gfTopY - gfRow1H;
+  drawCustomTableRow2([
+    {
+      text: '<= 66, through the wall furnace',
+      x: hvacX2,
+      width: hvacW2,
+      height: gfRow2H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'Et >= 78.5%',
+      x: hvacX4,
+      width: hvacW4,
+      height: gfRow2H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: '',
+      x: hvacX5,
+      width: hvacW5,
+      height: gfRow2H,
+      align: 'center'
+    }
+  ], gfRow2TopY);
+
+  // row 3
+  const gfRow3TopY = gfRow2TopY - gfRow2H;
+  drawCustomTableRow2([
+    {
+      text: '<= 66 using three-phase\nelectric current',
+      x: hvacX2,
+      width: hvacW2,
+      height: gfRow3H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'ANSI Z21.47/CSA 2.3',
+      x: hvacX3,
+      width: hvacW3,
+      height: gfRow3H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'AFUE >= 78% or Et >= 80%',
+      x: hvacX4,
+      width: hvacW4,
+      height: gfRow3H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: '',
+      x: hvacX5,
+      width: hvacW5,
+      height: gfRow3H,
+      align: 'center'
+    }
+  ], gfRow3TopY);
+
+  // row 4
+  const gfRow4TopY = gfRow3TopY - gfRow3H;
+  drawCustomTableRow2([
+    {
+      text: '> 66 and < 117.23',
+      x: hvacX2,
+      width: hvacW2,
+      height: gfRow4H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: '',
+      x: hvacX3,
+      width: hvacW3,
+      height: gfRow4H,
+      align: 'center'
+    },
+    {
+      text: 'Et >= 80%',
+      x: hvacX4,
+      width: hvacW4,
+      height: gfRow4H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: '',
+      x: hvacX5,
+      width: hvacW5,
+      height: gfRow4H,
+      align: 'center'
+    }
+  ], gfRow4TopY);
+
+  currentY -= gfTotalH;
+
+  // -----------------------------
+  // Electric Boiler
+  // merge columns 3 + 4 for (1)
+  // -----------------------------
+  const ebRowH = 18;
+  const ebTopY = currentY;
+
+  drawCustomTableRow2([
+    {
+      text: 'Electric Boiler',
+      x: hvacX1,
+      width: hvacW1,
+      height: ebRowH,
+      align: 'center'
+    },
+    {
+      text: '< 88',
+      x: hvacX2,
+      width: hvacW2,
+      height: ebRowH,
+      align: 'center'
+    },
+    {
+      text: '(1)',
+      x: hvacX3,
+      width: hvacW3 + hvacW4,
+      height: ebRowH,
+      align: 'center'
+    },
+    {
+      text: '',
+      x: hvacX5,
+      width: hvacW5,
+      height: ebRowH,
+      align: 'center'
+    }
+  ], ebTopY);
+
+  currentY -= ebRowH;
+
+  // -----------------------------
+  // Gas Fired Boiler group
+  // -----------------------------
+  const gbRow1H = 18;
+  const gbRow2H = 34;
+  const gbTotalH = gbRow1H + gbRow2H;
+  const gbTopY = currentY;
+
+  // merged Equipment cell
+  drawCustomTableRow2([
+    {
+      text: 'Gas Fired Boiler',
+      x: hvacX1,
+      width: hvacW1,
+      height: gbTotalH,
+      align: 'center',
+      size: 8
+    }
+  ], gbTopY);
+
+  // row 1
+  drawCustomTableRow2([
+    {
+      text: '< 88',
+      x: hvacX2,
+      width: hvacW2,
+      height: gbRow1H,
+      align: 'center'
+    },
+    {
+      text: 'CAN/CSA-P.2',
+      x: hvacX3,
+      width: hvacW3,
+      height: gbTotalH,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'AFUE >= 90%',
+      x: hvacX4,
+      width: hvacW4,
+      height: gbRow1H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: '',
+      x: hvacX5,
+      width: hvacW5,
+      height: gbRow1H,
+      align: 'center'
+    }
+  ], gbTopY);
+
+  // row 2
+  const gbRow2TopY = gbTopY - gbRow1H;
+  drawCustomTableRow2([
+    {
+      text: '>= 88 & < 733',
+      x: hvacX2,
+      width: hvacW2,
+      height: gbRow2H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'Et >= 83%',
+      x: hvacX4,
+      width: hvacW4,
+      height: gbRow2H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: '',
+      x: hvacX5,
+      width: hvacW5,
+      height: gbRow2H,
+      align: 'center'
+    }
+  ], gbRow2TopY);
+
+  currentY -= gbTotalH;
+
+  // Other
+  drawTableRow2([
+    { text: 'Other', width: hvacW1, align: 'center' },
+    { text: '', width: hvacW2, align: 'center' },
+    { text: '', width: hvacW3, align: 'center' },
+    { text: '', width: hvacW4, align: 'center' },
+    { text: '', width: hvacW5, align: 'center' },
+  ], 18);
+
+  // Heat Loss / Heat Gain Calculation
+  drawTableRow2([
+    { text: 'Heat Loss/Heat Gain\nCalculation', width: hvacW1, align: 'center', size: 7 },
+    { text: '', width: hvacW2 * 0.25, align: 'center', checkbox: true, checked: false },
+    { text: 'Calculations were prepared in conformance with CSA F280-12', width: hvacW2 * 0.75 + hvacW3 + hvacW4, align: 'left', size: 7 },
+    { text: 'BTU', width: hvacW5, align: 'center' },
+  ], 18);
+
+  // Nomenclature
+  drawTableRow2([
+    { text: 'Nomenclature', width: hvacW1, align: 'center', fontRef: font, size: 7 },
+    { text: 'AFUE= annual fuel utilization efficiency, Et= thermal efficiency', width: hvacW2 + hvacW3 + hvacW4 + hvacW5, align: 'left', size: 7 },
+  ], 16);
+
+  // Note (1)
+  drawTableRow2([
+    { text: '(1)', width: hvacW1, align: 'center', size: 7 },
+    { text: 'Must be equipped with automatic water temperature control. No standard addresses the performance efficiency; however their\nefficiency typically approaches 100%', width: hvacW2 + hvacW3 + hvacW4 + hvacW5, align: 'left', size: 7 },
+  ], 24);
+
+  // -----------------------------
+  // Water Heaters Performance Requirements
+  // -----------------------------
+  drawGreyHeader2('Water Heaters Performance Requirements');
+
+  const whW1 = tableWidth * 0.17;
+  const whW2 = tableWidth * 0.22;
+  const whW3 = tableWidth * 0.20;
+  const whW4 = tableWidth * 0.29;
+  const whW5 = tableWidth * 0.12;
+
+  const whX1 = margin;
+  const whX2 = whX1 + whW1;
+  const whX3 = whX2 + whW2;
+  const whX4 = whX3 + whW3;
+  const whX5 = whX4 + whW4;
+
+  drawTableRow2([
+    { text: 'Equipment', width: whW1, align: 'center', fontRef: boldFont },
+    { text: 'Capacity kW', width: whW2, align: 'center', fontRef: boldFont },
+    { text: 'Standard', width: whW3, align: 'center', fontRef: boldFont },
+    { text: 'Min. Efficiency', width: whW4, align: 'center', fontRef: boldFont },
+    { text: 'Proposed', width: whW5, align: 'center', fontRef: boldFont },
+  ], 18);
+
+  // -----------------------------
+  // Tank Storage Electric group
+  // -----------------------------
+  const tseRow1H = 40;
+  const tseRow2H = 40;
+  const tseRow3H = 32;
+
+  const tseStandardMergedH = tseRow1H + tseRow2H;
+  const tseMinEffMergedH = tseRow1H + tseRow2H;
+  const tseEquipmentMergedH = tseRow1H + tseRow2H + tseRow3H;
+
+  const tseTopY = currentY;
+
+  // merged column 1
+  drawCustomTableRow2([
+    {
+      text: 'Tank Storage\nElectric',
+      x: whX1,
+      width: whW1,
+      height: tseEquipmentMergedH,
+      align: 'center',
+      size: 8
+    }
+  ], tseTopY);
+
+  // row 1
+  drawCustomTableRow2([
+    {
+      text: '=< 12 kW\n(>50 L to =< 270 L capacity)',
+      x: whX2,
+      width: whW2,
+      height: tseRow1H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'CAN/CSA-C191',
+      x: whX3,
+      width: whW3,
+      height: tseStandardMergedH,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'SL =< 35 + 0.20V (top inlet)\nSL =< 40 + 0.20V (bottom inlet)\nSL =< (0.472V) - 38.5 (top inlet)\nSL =< (0.472V) - 33.5 (bottom inlet)',
+      x: whX4,
+      width: whW4,
+      height: tseMinEffMergedH,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: project.water_heating_efficiency ? String(project.water_heating_efficiency) : '',
+      x: whX5,
+      width: whW5,
+      height: tseRow1H,
+      align: 'center',
+      fontRef: boldFont
+    }
+  ], tseTopY);
+
+  // row 2
+  const tseRow2TopY = tseTopY - tseRow1H;
+  drawCustomTableRow2([
+    {
+      text: '=< 12 kW\n(>270 L to =< 454 L capacity)',
+      x: whX2,
+      width: whW2,
+      height: tseRow2H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: '',
+      x: whX5,
+      width: whW5,
+      height: tseRow2H,
+      align: 'center'
+    }
+  ], tseRow2TopY);
+
+  // row 3
+  const tseRow3TopY = tseRow2TopY - tseRow2H;
+  drawCustomTableRow2([
+    {
+      text: '>12 kW',
+      x: whX2,
+      width: whW2,
+      height: tseRow3H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'ANSI Z21.10.3/CSA 4.3 or\nDOE 10 CFR,\nPart 431, Subpart G App B',
+      x: whX3,
+      width: whW3,
+      height: tseRow3H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'SL =< 0.30 + (102.2 Vs)',
+      x: whX4,
+      width: whW4,
+      height: tseRow3H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: '',
+      x: whX5,
+      width: whW5,
+      height: tseRow3H,
+      align: 'center'
+    }
+  ], tseRow3TopY);
+
+  currentY -= tseEquipmentMergedH;
+
+  // Tank Storage Gas Fired group
+  const tsgfRow1H = 28;
+  const tsgfRow2H = 28;
+  const tsgfRow3H = 28;
+  const tsgfRow4H = 28;
+  const tsgfRow5H = 28;
+  const tsgfRow6H = 34;
+
+  const tsgfMergedStandardH =
+    tsgfRow1H + tsgfRow2H + tsgfRow3H + tsgfRow4H + tsgfRow5H;
+
+  const tsgfMergedEquipmentH =
+    tsgfRow1H + tsgfRow2H + tsgfRow3H + tsgfRow4H + tsgfRow5H + tsgfRow6H;
+
+  const tsgfTopY = currentY;
+
+  // merged col 1 = Tank Storage Gas Fired
+  drawCustomTableRow2([
+    {
+      text: 'Tank Storage\nGas Fired',
+      x: whX1,
+      width: whW1,
+      height: tsgfMergedEquipmentH,
+      align: 'center',
+      size: 8
+    }
+  ], tsgfTopY);
+
+  // row 1
+  drawCustomTableRow2([
+    {
+      text: '=< 22 kW and first-hour rating <\n68 L',
+      x: whX2,
+      width: whW2,
+      height: tsgfRow1H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'CAN/CSA-P.3',
+      x: whX3,
+      width: whW3,
+      height: tsgfMergedStandardH, // merged 5 rows
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'UEF >= 0.3456 – (0.00053 Vs)',
+      x: whX4,
+      width: whW4,
+      height: tsgfRow1H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: '',
+      x: whX5,
+      width: whW5,
+      height: tsgfRow1H,
+      align: 'center'
+    }
+  ], tsgfTopY);
+
+  // row 2
+  const tsgfRow2TopY = tsgfTopY - tsgfRow1H;
+  drawCustomTableRow2([
+    {
+      text: '=< 22 kW and first-hour rating >=\n68 L but < 193 L',
+      x: whX2,
+      width: whW2,
+      height: tsgfRow2H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'UEF >= 0.5982 – (0.00050 Vs)',
+      x: whX4,
+      width: whW4,
+      height: tsgfRow2H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: '',
+      x: whX5,
+      width: whW5,
+      height: tsgfRow2H,
+      align: 'center'
+    }
+  ], tsgfRow2TopY);
+
+  // row 3
+  const tsgfRow3TopY = tsgfRow2TopY - tsgfRow2H;
+  drawCustomTableRow2([
+    {
+      text: '=< 22 kW and first-hour rating >=\n193 L but < 284 L',
+      x: whX2,
+      width: whW2,
+      height: tsgfRow3H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'UEF >= 0.6483 – (0.00045 Vs)',
+      x: whX4,
+      width: whW4,
+      height: tsgfRow3H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: '',
+      x: whX5,
+      width: whW5,
+      height: tsgfRow3H,
+      align: 'center'
+    }
+  ], tsgfRow3TopY);
+
+  // row 4
+  const tsgfRow4TopY = tsgfRow3TopY - tsgfRow3H;
+  drawCustomTableRow2([
+    {
+      text: '=< 22 kW and first-hour rating >=\n284 L',
+      x: whX2,
+      width: whW2,
+      height: tsgfRow4H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'UEF >= 0.6920 – (0.00034 Vs)',
+      x: whX4,
+      width: whW4,
+      height: tsgfRow4H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: '',
+      x: whX5,
+      width: whW5,
+      height: tsgfRow4H,
+      align: 'center'
+    }
+  ], tsgfRow4TopY);
+
+  // row 5
+  const tsgfRow5TopY = tsgfRow4TopY - tsgfRow4H;
+  drawCustomTableRow2([
+    {
+      text: '> 22 kW and < 30.5 kW and Vr\n=< 454 L',
+      x: whX2,
+      width: whW2,
+      height: tsgfRow5H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'UEF >= 0.8107 – (0.00021 Vs)',
+      x: whX4,
+      width: whW4,
+      height: tsgfRow5H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: '',
+      x: whX5,
+      width: whW5,
+      height: tsgfRow5H,
+      align: 'center'
+    }
+  ], tsgfRow5TopY);
+
+  // row 6
+  const tsgfRow6TopY = tsgfRow5TopY - tsgfRow5H;
+  drawCustomTableRow2([
+    {
+      text: '> 22 kW',
+      x: whX2,
+      width: whW2,
+      height: tsgfRow6H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'DOE 10 CFR, Part 431,\nSubpart G, Appendix J',
+      x: whX3,
+      width: whW3,
+      height: tsgfRow6H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: 'Et >= 90% and SL =< 0.84\n[(1.25 Q) + (16.57 √Vr)]',
+      x: whX4,
+      width: whW4,
+      height: tsgfRow6H,
+      align: 'center',
+      size: 7
+    },
+    {
+      text: '',
+      x: whX5,
+      width: whW5,
+      height: tsgfRow6H,
+      align: 'center'
+    }
+  ], tsgfRow6TopY);
+
+  currentY -= tsgfMergedEquipmentH;
 
   // Page 2 Footer
   page2.drawText(footerLeft, { x: margin, y: footerY, font, size: footerSize });
