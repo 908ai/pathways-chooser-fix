@@ -666,6 +666,8 @@ const ProjectSummaryForm = ({
                   <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Airtightness & Building Volume</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                     {renderField('Building Volume', selections.buildingVolume || 'Not provided', 'm³')}
+                    <div className="hidden md:block" />
+                    
                     <div className="col-span-full">
                       {renderAirtightnessDetails()}
                     </div>
