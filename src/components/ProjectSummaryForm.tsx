@@ -163,6 +163,7 @@ const ProjectSummaryForm = ({
         // Performance
         airtightness_al: selections.airtightness || selections.customAirtightness || null,
         building_volume: selections.buildingVolume ? (
+          !isNaN(Number(selections.buildingVolume)) ? Number(selections.buildingVolume) :
           selections.buildingVolume === '380-390' ? 385 : 
           selections.buildingVolume === '370-380' ? 375 : 
           selections.buildingVolume === '360-370' ? 365 : 

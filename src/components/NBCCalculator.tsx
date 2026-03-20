@@ -453,6 +453,7 @@ const NBCCalculator = () => {
           compliancePath: loadedCompliancePath,
           isVolumeOver380: p.building_volume && p.building_volume > 380 ? "yes" : "no",
           buildingVolume: p.building_volume ? (
+            p.compliance_path === '9362' ? String(p.building_volume) :
             p.building_volume > 380 && p.building_volume <= 390 ? "380-390" :
             p.building_volume > 370 && p.building_volume <= 380 ? "370-380" :
             p.building_volume > 360 && p.building_volume <= 370 ? "360-370" :
@@ -464,6 +465,7 @@ const NBCCalculator = () => {
             p.building_volume > 300 && p.building_volume <= 310 ? "300-310" :
             p.building_volume <= 300 ? "under-300" : ""
           ) : "",
+          midConstructionBlowerDoorPlanned: p.mid_construction_blower_door_planned || "no",
           ceilingsAtticRSI: p.attic_rsi && p.attic_rsi !== 0 ? p.attic_rsi.toString() : "",
           ceilingsAtticOtherType: p.ceilings_attic_other_type || "",
           hasCathedralOrFlatRoof: p.has_cathedral_or_flat_roof || "",
@@ -540,7 +542,6 @@ const NBCCalculator = () => {
           comments: p.comments || "",
           interestedCertifications: p.interested_certifications || [],
           wantsCertifications: p.wants_certifications || "",
-          midConstructionBlowerDoorPlanned: p.mid_construction_blower_door_planned || false,
           energuidePathway: p.energuide_pathway || "",
           notes: p.notes || ""
         };
@@ -711,6 +712,7 @@ const NBCCalculator = () => {
         airtightness_al: selections.airtightness || selections.customAirtightness || null,
         airtightness_test_type: selections.airtightnessTestType || null,
         building_volume: selections.buildingVolume ? (
+          !isNaN(Number(selections.buildingVolume)) ? Number(selections.buildingVolume) :
           selections.buildingVolume === '380-390' ? 385 : 
           selections.buildingVolume === '370-380' ? 375 : 
           selections.buildingVolume === '360-370' ? 365 : 
