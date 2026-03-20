@@ -688,7 +688,10 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
 
   // Tier Selection
   const getTier = (points: number, hrv: string | null) => {
-    if (hrv === "no_hrv" || hrv === "without_hrv" || hrv === "None") return "Not Applicable";
+    // If hrv_erv_type is null or None/no_hrv/without_hrv, it doesn't have it.
+    const hasHrv = hrv && hrv !== "None" && hrv !== "no_hrv" && hrv !== "without_hrv";
+    if (!hasHrv) return "Not Applicable";
+    
     if (points >= 75) return "Tier 5";
     if (points >= 40) return "Tier 4";
     if (points >= 20) return "Tier 3";
