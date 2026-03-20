@@ -1241,7 +1241,7 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
 
   const footerLeft = 'Updated September 2025';
   const footerCenter = 'Section 9.36 – Tiered Prescriptive / Trade-Off Compliance Form';
-  const footerRight = 'Page 1 of 1';
+  const footerRight = 'Page 1 of 2';
 
   // Left
   page.drawText(footerLeft, {
@@ -1261,13 +1261,131 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
   });
 
   // Right
-  const footerRightWidth = font.widthOfTextAtSize(footerRight, footerSize);
-  page.drawText(footerRight, {
+  const footerRightWidth = font.widthOfTextAtSize('Page 1 of 2', footerSize);
+  page.drawText('Page 1 of 2', {
     x: pageWidth - margin - footerRightWidth,
     y: footerY,
     font,
     size: footerSize,
   });
+
+  // -----------------------------
+  // PAGE 2
+  // -----------------------------
+  const page2 = pdfDoc.addPage([595.28, 841.89]);
+  currentY = pageHeight - margin;
+
+  if (logoImage) {
+    const { width: lw, height: lh } = logoImage.scale(1);
+    const scale = 40 / lh;
+    page2.drawImage(logoImage, { x: margin, y: currentY - 29, width: lw * scale, height: 40 });
+  }
+
+  const headerRightX2 = pageWidth - margin;
+  headerLines.forEach((line, i) => {
+    const size = i === 1 ? 11 : 8;
+    const f = i === 1 ? boldFont : font;
+    const w = f.widthOfTextAtSize(line, size);
+    let y = currentY;
+    if (i === 1) y = currentY - 13;
+    if (i === 2) y = currentY - 22;
+    page2.drawText(line, { x: headerRightX2 - w, y, font: f, size });
+  });
+
+  currentY -= 56;
+
+  const drawSectionHeader2 = (title: string) => {
+    page2.drawRectangle({
+      x: margin,
+      y: currentY - 18,
+      width: tableWidth,
+      height: 18,
+      color: { type: 'RGB', red: 0.9, green: 0.9, blue: 0.9 },
+      borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 },
+      borderWidth: 1
+    });
+    const safeTitle = sanitize(title);
+    const titleSize = 10;
+    const titleWidth = boldFont.widthOfTextAtSize(safeTitle, titleSize);
+    page2.drawText(safeTitle, {
+      x: margin + (tableWidth - titleWidth) / 2,
+      y: currentY - 13,
+      font: boldFont,
+      size: titleSize,
+      color: { type: 'RGB', red: 0, green: 0, blue: 0 }
+    });
+    currentY -= 18;
+  };
+
+  const drawRow2 = (col1: string, col2: string, col3: string, col4: string, boldVal = true) => {
+    const rowHeight = 18;
+    const w1 = tableWidth * 0.35;
+    const w2 = tableWidth * 0.25;
+    const w3 = tableWidth * 0.25;
+    const w4 = tableWidth * 0.15;
+    const cols = [col1, col2, col3, col4];
+    const widths = [w1, w2, w3, w4];
+    let curX = margin;
+    cols.forEach((txt, i) => {
+      page2.drawRectangle({ x: curX, y: currentY - rowHeight, width: widths[i], height: rowHeight, borderColor: { type: 'RGB', red: 0.7, green: 0.7, blue: 0.7 }, borderWidth: 0.5 });
+      if (txt) {
+        const f = (i === 3 && boldVal) ? boldFont : font;
+        const s = 8;
+        const tw = f.widthOfTextAtSize(sanitize(txt), s);
+        const tx = (i === 0) ? curX + 5 : curX + (widths[i] - tw) / 2;
+        page2.drawText(sanitize(txt), { x: tx, y: currentY - 13, font: f, size: s });
+      }
+      curX += widths[i];
+    });
+    currentY -= rowHeight;
+  };
+
+  drawSectionHeader2('HVAC Efficiency Requirements');
+  drawRow2('Equipment', 'Efficiency Required', '', 'Proposed', false);
+  drawRow2('Natural Gas / Propane Furnace', 'AFUE >= 95%', '', project.heating_efficiency ? String(project.heating_efficiency) : '');
+  drawRow2('Electric Storage Tank (DHW)', 'Standby Loss <= 65W', '', project.water_heating_efficiency ? String(project.water_heating_efficiency) : '');
+  drawRow2('Natural Gas Tank (DHW)', 'EF >= 0.67', '', '');
+  drawRow2('Instantaneous Gas (DHW)', 'EF >= 0.80', '', '');
+  drawRow2('Air Source Heat Pump', 'HSPF >= 8.5', '', '');
+
+  currentY -= 20;
+
+  // Signatures section
+  const sigBoxH = 140;
+  page2.drawRectangle({ x: margin, y: currentY - sigBoxH, width: tableWidth, height: sigBoxH, borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 }, borderWidth: 1 });
+  page2.drawText('Design Professional Declaration', { x: margin + 10, y: currentY - 20, font: boldFont, size: 10 });
+  
+  const declaration = 'I hereby certify that the design of the building project referred to above complies with the tiered prescriptive requirements of Section 9.36 of the National Building Code of Canada as indicated on this form.';
+  const words2 = declaration.split(' ');
+  let line2 = '';
+  let sigY = currentY - 35;
+  words2.forEach(w => {
+    if (font.widthOfTextAtSize(line2 + w, 9) > tableWidth - 20) {
+      page2.drawText(line2, { x: margin + 10, y: sigY, font, size: 9 });
+      line2 = w + ' ';
+      sigY -= 11;
+    } else {
+      line2 += w + ' ';
+    }
+  });
+  page2.drawText(line2, { x: margin + 10, y: sigY, font, size: 9 });
+
+  sigY -= 30;
+  page2.drawLine({ start: { x: margin + 10, y: sigY }, end: { x: margin + 250, y: sigY }, thickness: 0.5 });
+  page2.drawText('Signature of Designer', { x: margin + 10, y: sigY - 12, font, size: 8 });
+
+  page2.drawLine({ start: { x: margin + 300, y: sigY }, end: { x: margin + tableWidth - 10, y: sigY }, thickness: 0.5 });
+  page2.drawText('Date', { x: margin + 300, y: sigY - 12, font, size: 8 });
+
+  sigY -= 30;
+  page2.drawLine({ start: { x: margin + 10, y: sigY }, end: { x: margin + tableWidth - 10, y: sigY }, thickness: 0.5 });
+  page2.drawText('Name of Design Professional / Firm', { x: margin + 10, y: sigY - 12, font, size: 8 });
+
+  // Page 2 Footer
+  page2.drawText(footerLeft, { x: margin, y: footerY, font, size: footerSize });
+  page2.drawText(footerCenter, { x: (pageWidth - footerCenterWidth) / 2, y: footerY, font, size: footerSize });
+  const footerRight2Width = font.widthOfTextAtSize('Page 2 of 2', footerSize);
+  page2.drawText('Page 2 of 2', { x: pageWidth - margin - footerRight2Width, y: footerY, font, size: footerSize });
 
   const bytes = await pdfDoc.save();
   return bytes;
