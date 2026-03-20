@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Save, FileText, AlertTriangle, Info, Building, Thermometer, Zap, FolderOpen, ChevronRight } from 'lucide-react';
+import { Save, FileText, AlertTriangle, Info, Building, Thermometer, Zap, FolderOpen, ChevronRight, Wind } from 'lucide-react';
 import FileManager from '@/components/FileManager';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import {
@@ -20,6 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { getZoneOptions, ClimateZone } from './NBCCalculator/constants/options';
 
 interface ProjectSummaryFormProps {
   selections: any;
@@ -309,6 +310,44 @@ const ProjectSummaryForm = ({
     );
   };
 
+  const renderAirtightnessDetails = () => {
+    const airtightnessValue = selections.airtightness || selections.customAirtightness;
+    if (!airtightnessValue) return null;
+
+    const zone = (selections.climateZone || "7A") as ClimateZone;
+    const options = getZoneOptions(zone).airtightness;
+    const selectedOption = options.find(opt => opt.value === airtightnessValue);
+
+    if (!selectedOption) return renderField('Airtightness', airtightnessValue, 'ACH50');
+
+    return (
+      <div className="col-span-full mt-2 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
+        <div className="flex items-center gap-2 mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+          <Wind className="h-4 w-4 text-blue-500" />
+          Airtightness Specifications ({selectedOption.level})
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">ACH @ 50Pa</div>
+            <div className="text-sm font-medium">{selectedOption.ach50}</div>
+          </div>
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">NLA @ 10Pa</div>
+            <div className="text-sm font-medium">{selectedOption.nla10} cm²/m²</div>
+          </div>
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">NLR @ 50Pa</div>
+            <div className="text-sm font-medium">{selectedOption.nlr50} L/(s·m²)</div>
+          </div>
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Type</div>
+            <div className="text-sm font-medium">{selectedOption.type}</div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       <Card className="w-full max-w-4xl mx-auto">
@@ -442,9 +481,9 @@ const ProjectSummaryForm = ({
                   {renderField('Unheated Floor Above Frostline', selections.unheatedFloorAboveFrostRSI, 'RSI')}
                   {renderField('Window U-Value', selections.windowUValue, 'W/(m²·K)')}
                   {renderField('Skylight U-Value', selections.skylightUValue, 'W/(m²·K)')}
-                  {renderField('Airtightness', selections.airtightness || selections.customAirtightness, 'ACH50')}
                   {renderField('Building Volume', selections.buildingVolume, 'm³')}
                   {renderField('Mid-Construction Blower Door Test', selections.midConstructionBlowerDoorPlanned)}
+                  {renderAirtightnessDetails()}
                 </div>
               </AccordionContent>
             </AccordionItem>
