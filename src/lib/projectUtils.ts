@@ -36,8 +36,9 @@ export const mapProjectToSelections = (project: any) => {
     coolingEfficiency: project.cooling_efficiency,
     waterHeaterType: project.water_heating_type,
     waterHeater: project.water_heating_efficiency || project.water_heater_make_model || '',
-    waterHeaterEfficiency: project.water_heating_efficiency,
+    waterHeaterEfficiency: project.water_heating_efficiency || project.water_heater_make_model || '',
     unheatedFloorBelowFrostRSI: project.unheated_floor_below_frost_rsi || '',
+    unheated_floor_below_frost_rsi: project.unheated_floor_below_frost_rsi || '',
     hasDWHR: project.has_dwhr,
     wantsCertifications: project.wants_certifications,
     midConstructionBlowerDoorPlanned: project.mid_construction_blower_door_planned,
@@ -100,7 +101,7 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
         if (selections.floorsSlabsSelected?.includes("floorsOverUnheatedSpaces")) addIfMissing(required, 'floorsOverUnheatedSpacesRSI', 'Floors over Unheated Spaces RSI');
         
         // Only require unheated RSI values if 'uninsulated' is NOT the value
-        const unheatedBelowValue = selections.unheatedFloorBelowFrostRSI;
+        const unheatedBelowValue = selections.unheatedFloorBelowFrostRSI || selections.unheated_floor_below_frost_rsi;
         if (selections.floorsSlabsSelected?.includes("unheatedBelowFrost") &&
             unheatedBelowValue !== 'uninsulated' &&
             (unheatedBelowValue === null || unheatedBelowValue === undefined || unheatedBelowValue === '')) {
@@ -124,7 +125,7 @@ export const getPendingItems = (selections: any, uploadedFiles: any[]) => {
           addIfMissing(required, 'waterHeaterType', 'Water Heater Type');
           if (selections.waterHeaterType && selections.waterHeaterType !== 'boiler') {
             // Check both 'waterHeater' and 'waterHeaterEfficiency' as some sections use different keys
-            const whEff = selections.waterHeater || selections.waterHeaterEfficiency;
+            const whEff = selections.waterHeater || selections.waterHeaterEfficiency || selections.water_heater_make_model;
             if (whEff === null || whEff === undefined || whEff === '') {
               required.push({ label: 'Water Heater Efficiency', fieldId: 'waterHeater' });
             }
