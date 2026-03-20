@@ -156,7 +156,7 @@ const ProjectSummaryForm = ({
         cooling_system_type: selections.coolingApplicable === 'yes' ? 'Central AC' : 'None',
         cooling_efficiency: parseFloat(selections.coolingEfficiency) || null,
         water_heating_type: selections.waterHeaterType,
-        water_heating_efficiency: null,
+        water_heating_efficiency: parseFloat(selections.waterHeaterEfficiency) || null,
         hrv_erv_type: (selections.hasHrv === 'with_hrv' || selections.hasHrvErv9365 === 'with_hrv') ? (selections.hrv || 'HRV') : 'None',
         hrv_erv_efficiency: selections.hrvEfficiency || null,
         
