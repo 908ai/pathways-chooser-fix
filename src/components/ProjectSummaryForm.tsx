@@ -583,7 +583,7 @@ const ProjectSummaryForm = ({
                     'Interested Certifications', 
                     (selections.interestedCertifications && selections.interestedCertifications.length > 0) 
                       ? selections.interestedCertifications.join(', ') 
-                      : 'None selected'
+                      : 'None'
                   )}
                 </div>
               </AccordionContent>
