@@ -331,6 +331,33 @@ const ProjectSummaryForm = ({
   };
 
   const getSlabInsulationDisplay = () => {
+    // If it's 9368, we handle fields differently
+    if (selections.compliancePath === '9368') {
+      return (
+        <>
+          {renderField('Are there any cathedral ceilings or flat roofs?', selections.hasCathedralOrFlatRoof || selections.hasCathedralOrFlatRoofSelection || 'no')}
+          {(selections.hasCathedralOrFlatRoof === 'yes' || selections.hasCathedralOrFlatRoofSelection === 'yes') && 
+            renderField('Cathedral / Flat Roof Insulation', selections.cathedralFlatRSIValue || selections.cathedralFlatRSI, 'RSI')}
+            
+          {renderField('Floors over Unheated Spaces (Cantilevers)', selections.floorsUnheatedRSI, 'RSI')}
+          {renderField('Floors over Garage (Bonus Floor)', selections.floorsOverGarageRSI || selections.floorsGarageRSI, 'RSI')}
+          
+          {renderField('Slab on Grade with Integral Footing?', selections.hasSlabOnGrade || 'no')}
+          {selections.hasSlabOnGrade === 'yes' && renderField('Slab on Grade RSI', selections.slabOnGradeRSI, 'RSI')}
+          
+          {renderField('In-floor heat?', selections.hasInFloorHeat || 'no')}
+          {selections.hasInFloorHeat === 'yes' && renderField('Heated Floors', selections.heatedFloorsRSI, 'RSI')}
+          
+          {selections.hasInFloorHeat === 'no' && (
+            <>
+              {renderField('Unheated Floor Below Frostline', selections.unheatedFloorBelowFrostRSI, 'RSI')}
+              {renderField('Unheated Floor Above Frostline', selections.unheatedFloorAboveFrostRSI, 'RSI')}
+            </>
+          )}
+        </>
+      );
+    }
+
     if (!selections.floorsSlabsSelected || !Array.isArray(selections.floorsSlabsSelected)) return null;
     
     return (
@@ -474,14 +501,18 @@ const ProjectSummaryForm = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                   {/* Use fallbacks for legacy/new naming consistency */}
                   {renderField('Ceilings/Attic', selections.ceilingsAtticRSI, 'RSI')}
-                  {renderField('Cathedral/Flat Roof', selections.hasCathedralOrFlatRoof === 'yes' ? (selections.cathedralFlatRSIValue || selections.cathedralFlatRSI) : null, 'RSI')}
+                  
+                  {/* Cathedral/Flat Roof handled inside getSlabInsulationDisplay for 9368 or here for others */}
+                  {selections.compliancePath !== '9368' && renderField('Cathedral/Flat Roof', selections.hasCathedralOrFlatRoof === 'yes' ? (selections.cathedralFlatRSIValue || selections.cathedralFlatRSI) : null, 'RSI')}
+                  
                   {renderField('Above Grade Walls', selections.wallRSI, 'RSI')}
                   {renderField('Below Grade Walls', selections.belowGradeRSI || selections.foundationWallsRSI, 'RSI')}
                   
                   {getSlabInsulationDisplay()}
 
                   {renderField('Window U-Value', selections.windowUValue, 'W/(m²·K)')}
-                  {renderField('Skylight U-Value', selections.hasSkylights === 'yes' ? selections.skylightUValue : null, 'W/(m²·K)')}
+                  {renderField('Skylights?', selections.hasSkylights || 'no')}
+                  {selections.hasSkylights === 'yes' && renderField('Skylight U-Value', selections.skylightUValue, 'W/(m²·K)')}
                   {renderField('Building Volume', selections.buildingVolume, 'm³')}
                   {renderField('Mid-Construction Blower Door Test', selections.midConstructionBlowerDoorPlanned)}
                   {renderAirtightnessDetails()}
