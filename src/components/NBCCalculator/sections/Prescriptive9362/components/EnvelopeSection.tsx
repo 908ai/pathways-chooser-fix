@@ -47,28 +47,6 @@ export function EnvelopeSection({
 
     return (
         <div className="space-y-4">
-            <div id="buildingVolume" className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Building Volume Range (m³) <span className="text-red-500">*</span></label>
-                <Select required value={selections.buildingVolume} onValueChange={value => setSelections(prev => ({
-                    ...prev,
-                    buildingVolume: value
-                }))}>
-                    <SelectTrigger className={cn(
-                        (validationErrors.buildingVolume || isMissing("buildingVolume")) && missingFieldClass,
-                        validationErrors.buildingVolume && "border-red-500 ring-2 ring-red-500"
-                    )}>
-                        <SelectValue placeholder="Select building volume range" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {buildingVolumeOptions.map(option => (
-                            <SelectItem key={option.value} value={option.value}>
-                                {option.label}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
-
             {/* HRV/ERV Section for 9362 */}
             <div id="hasHrv" className="space-y-2">
                 <div className="flex items-center gap-3">
@@ -212,6 +190,28 @@ export function EnvelopeSection({
                     />
                 </div>}
             </div>}
+
+            <div id="buildingVolume" className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Building Volume Range (m³) <span className="text-red-500">*</span></label>
+                <Select required value={selections.buildingVolume} onValueChange={value => setSelections(prev => ({
+                    ...prev,
+                    buildingVolume: value
+                }))}>
+                    <SelectTrigger className={cn(
+                        (validationErrors.buildingVolume || isMissing("buildingVolume")) && missingFieldClass,
+                        validationErrors.buildingVolume && "border-red-500 ring-2 ring-red-500"
+                    )}>
+                        <SelectValue placeholder="Select building volume range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {buildingVolumeOptions.map(option => (
+                            <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>            
 
             <div id="ceilingsAtticRSI" className="space-y-2">
                 <ThermalInputField
