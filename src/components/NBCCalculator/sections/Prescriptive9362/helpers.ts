@@ -8,6 +8,7 @@ export const isSet = (value: any) => {
 export const getEnvelopeKeys = (selections: any) => {
   const keys: string[] = [
     "hasHrv",
+    "buildingVolume",
     "ceilingsAtticRSI",
     "hasCathedralOrFlatRoof",
     "wallRSI",

@@ -537,6 +537,26 @@ export function MechanicalSection({
                             validationErrors.coolingEfficiency && "border-red-500 ring-2 ring-red-500"
                         )}
                     />
+                    {selections.coolingEfficiency && (() => {
+                        const val = parseFloat(selections.coolingEfficiency);
+                        if (!isNaN(val)) {
+                            // Check if it's SEER or SEER2
+                            const isSEER2 = selections.coolingEfficiency.toLowerCase().includes('seer2');
+                            const minVal = isSEER2 ? 14.3 : 14.5;
+                            if (val < minVal) {
+                                return (
+                                    <Alert variant="destructive" className="mt-2">
+                                        <AlertTriangle className="h-4 w-4" />
+                                        <AlertTitle>Cooling Efficiency Too Low</AlertTitle>
+                                        <AlertDescription>
+                                            Minimum required efficiency is {minVal} {isSEER2 ? 'SEER2' : 'SEER'}.
+                                        </AlertDescription>
+                                    </Alert>
+                                );
+                            }
+                        }
+                        return null;
+                    })()}
                 </div>
             )}
 

@@ -160,10 +160,12 @@ export default function Prescriptive9368Section({
 
     const getEnvelopeKeys = () => {
         const keys: string[] = [
+            "buildingVolume",
             "ceilingsAtticRSI",
             "wallRSI",
             "belowGradeRSI",
             "windowUValue",
+            "airtightnessTestType",
             "airtightness",
             "hasCathedralOrFlatRoof",
             "floorsUnheatedRSI",
@@ -194,11 +196,16 @@ export default function Prescriptive9368Section({
 
     const getMechanicalKeys = () => {
         const keys: string[] = [
+            "heatingType",
+            "heatingEfficiency",
             "hrvEfficiency",
             "waterHeater",
         ];
 
-        if (isF280RequiredCity) keys.push("hasF280Calculation");
+        if (selections.heatingType === "boiler") {
+            keys.push("indirectTank");
+            if (selections.indirectTank === "yes") keys.push("indirectTankSize");
+        }
 
         if (
             selections.buildingType === "single-detached-secondary" ||
