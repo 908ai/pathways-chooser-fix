@@ -384,65 +384,100 @@ const ProjectSummaryForm = ({
     const isMURB = selections.buildingType === 'multi-unit' || selections.buildingType === 'single-detached-secondary';
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-        {renderField('Heating Type', selections.heatingType || 'Not provided')}
-        {renderField('Heating Efficiency/Model', selections.heatingEfficiency || selections.heatingMakeModel || 'Not provided')}
-        
-        {/* Secondary heating info if applicable */}
+      <div className="space-y-6">
+        {/* Heating Section */}
+        <div className="space-y-2">
+          <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Primary Heating System</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            {renderField('Heating Type', selections.heatingType || 'Not provided')}
+            {renderField('Heating Efficiency/Model', selections.heatingEfficiency || selections.heatingMakeModel || 'Not provided')}
+          </div>
+        </div>
+
+        {/* Secondary Heating Section */}
         {(is9365 || is9367 || is9362) && (
-          <>
-            {renderField('Separate Secondary Heating', selections.hasSecondaryHeating || 'No')}
-            {selections.hasSecondaryHeating === 'yes' && (
-              <>
-                {renderField('Secondary Heating Type', selections.secondaryHeatingType || 'Not provided')}
-                {renderField('Secondary Heating Efficiency', selections.secondaryHeatingEfficiency || 'Not provided')}
-              </>
-            )}
-          </>
+          <div className="space-y-2">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Secondary Heating System</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+              {renderField('Separate Secondary Heating', selections.hasSecondaryHeating || 'No')}
+              {selections.hasSecondaryHeating === 'yes' && (
+                <>
+                  {renderField('Secondary Heating Type', selections.secondaryHeatingType || 'Not provided')}
+                  {renderField('Secondary Heating Efficiency', selections.secondaryHeatingEfficiency || 'Not provided')}
+                </>
+              )}
+            </div>
+          </div>
         )}
 
-        {renderField('Cooling', selections.coolingApplicable || 'No')}
-        {selections.coolingApplicable === 'yes' && renderField('Cooling Efficiency/Model', selections.coolingEfficiency || selections.coolingMakeModel || 'Not provided')}
-        
-        {renderField('Water Heater Type', selections.waterHeaterType || selections.waterHeater || 'Not provided')}
-        {renderField('Water Heater Model', selections.waterHeaterMakeModel || 'Not provided')}
-        
-        {renderField('HRV/ERV', selections.hasHrv || selections.hasHrvErv9365 || 'No')}
-        {(selections.hasHrv === 'with_hrv' || selections.hasHrvErv9365 === 'with_hrv') && (
-          <>
-            {renderField('HRV/ERV Efficiency/Model', selections.hrvEfficiency || selections.hrvMakeModel || 'Not provided')}
+        {/* Ventilation Section */}
+        <div className="space-y-2">
+          <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Ventilation (HRV/ERV)</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            {renderField('Primary HRV/ERV', selections.hasHrv || selections.hasHrvErv9365 || 'No')}
+            {(selections.hasHrv === 'with_hrv' || selections.hasHrvErv9365 === 'with_hrv') && 
+              renderField('Primary Efficiency/Model', selections.hrvEfficiency || selections.hrvMakeModel || 'Not provided')}
             
-            {/* Secondary Suite HRV - Only for MURB/Secondary Suites */}
-            {isMURB && (
+            {isMURB && (selections.hasHrv === 'with_hrv' || selections.hasHrvErv9365 === 'with_hrv') && (
               <>
                 {renderField('Secondary Suite HRV/ERV', selections.hasSecondaryHrv || 'No')}
                 {selections.hasSecondaryHrv === 'yes' && 
-                  renderField('Secondary Suite HRV/ERV Efficiency', selections.secondaryHrvEfficiency || 'Not provided')}
+                  renderField('Secondary Suite Efficiency', selections.secondaryHrvEfficiency || 'Not provided')}
               </>
             )}
-          </>
-        )}
+          </div>
+        </div>
 
-        {renderField('Drain Water Heat Recovery', selections.hasDWHR || 'No')}
-        
-        {/* MURB Specifics - Only show if building type is MURB/Secondary */}
+        {/* Cooling Section */}
+        <div className="space-y-2">
+          <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Cooling System</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            {renderField('Cooling Applicable', selections.coolingApplicable || 'No')}
+            {selections.coolingApplicable === 'yes' && renderField('Cooling Efficiency/Model', selections.coolingEfficiency || selections.coolingMakeModel || 'Not provided')}
+          </div>
+        </div>
+
+        {/* Domestic Hot Water Section */}
+        <div className="space-y-2">
+          <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Domestic Hot Water (DHW)</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            {renderField('Primary DHW Type', selections.waterHeaterType || selections.waterHeater || 'Not provided')}
+            {renderField('Primary DHW Model/Efficiency', selections.waterHeaterMakeModel || 'Not provided')}
+            {renderField('Drain Water Heat Recovery', selections.hasDWHR || 'No')}
+          </div>
+        </div>
+
+        {/* MURB Specific Secondary Systems */}
         {isMURB && (
-          <>
-            {renderField('Multiple MURB Heating Systems', selections.hasMurbMultipleHeating || 'no')}
-            {selections.hasMurbMultipleHeating === 'yes' && (
-              <>
-                {renderField('MURB Second Heating Type', selections.murbSecondHeatingType || 'Not provided')}
-                {renderField('MURB Second Heating Efficiency', selections.murbSecondHeatingEfficiency || 'Not provided')}
-              </>
-            )}
-            {renderField('Multiple MURB Water Heaters', selections.hasMurbMultipleWaterHeaters || 'no')}
-            {selections.hasMurbMultipleWaterHeaters === 'yes' && (
-              <>
-                {renderField('MURB Second Water Heater Type', selections.murbSecondWaterHeaterType || 'Not provided')}
-                {renderField('MURB Second Water Heater Efficiency', selections.murbSecondWaterHeater || 'Not provided')}
-              </>
-            )}
-          </>
+          <div className="space-y-4 pt-2 border-t border-dashed">
+            <h4 className="text-sm font-bold text-primary uppercase tracking-tight">Secondary MURB Systems</h4>
+            
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground">Additional Heating</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                {renderField('Multiple Heating Systems', selections.hasMurbMultipleHeating || 'No')}
+                {selections.hasMurbMultipleHeating === 'yes' && (
+                  <>
+                    {renderField('Second Heating Type', selections.murbSecondHeatingType || 'Not provided')}
+                    {renderField('Second Heating Efficiency', selections.murbSecondHeatingEfficiency || 'Not provided')}
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground">Additional Water Heating</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                {renderField('Multiple Water Heaters', selections.hasMurbMultipleWaterHeaters || 'No')}
+                {selections.hasMurbMultipleWaterHeaters === 'yes' && (
+                  <>
+                    {renderField('Second DHW Type', selections.murbSecondWaterHeaterType || 'Not provided')}
+                    {renderField('Second DHW Efficiency/Model', selections.murbSecondWaterHeater || 'Not provided')}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
         )}
       </div>
     );
