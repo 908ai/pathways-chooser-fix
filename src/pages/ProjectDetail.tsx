@@ -726,7 +726,7 @@ const ProjectDetail = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${project.project_name}_Report.pdf`;
+      a.download = `${project.project_name}_Export.pdf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -734,13 +734,55 @@ const ProjectDetail = () => {
 
       toast({
         title: "PDF Generated",
-        description: "Your project report has been downloaded.",
+        description: "Your project export has been downloaded.",
       });
     } catch (error: any) {
       console.error('Error generating PDF:', error);
       toast({
         title: "PDF Generation Failed",
-        description: error.message || "There was an error creating the PDF report.",
+        description: error.message || "There was an error creating the PDF export.",
+        variant: "destructive",
+      });
+    } finally {
+      setGeneratingPdf(false);
+    }
+  };
+
+  const handleGenerateReportPdf = async () => {
+    if (!project) return;
+    setGeneratingPdf(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-pdf', {
+        body: { projectId: project.id, type: 'report' },
+      });
+
+      if (error) throw error;
+
+      if (!data || !data.pdfData) {
+        throw new Error("Report PDF generation failed: No data received from server.");
+      }
+
+      const base64Response = await fetch(`data:application/pdf;base64,${data.pdfData}`);
+      const blob = await base64Response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${project.project_name}_Report.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "Report Generated",
+        description: "Your project report has been downloaded.",
+      });
+    } catch (error: any) {
+      console.error('Error generating Report PDF:', error);
+      toast({
+        title: "Report Generation Failed",
+        description: error.message || "There was an error creating the Report PDF.",
         variant: "destructive",
       });
     } finally {
@@ -996,7 +1038,11 @@ const ProjectDetail = () => {
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={handleGeneratePdf}>
                         <FileText className="h-4 w-4 mr-2" />
-                        PDF
+                        PDF Export
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleGenerateReportPdf}>
+                        <FileText className="h-4 w-4 mr-2" />
+                        PDF Report
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() =>

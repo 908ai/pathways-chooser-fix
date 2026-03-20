@@ -52,6 +52,250 @@ const asList = (val: any): string | null => {
   return String(val);
 };
 
+const buildReportPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
+  const pdfDoc = await PDFDocument.create();
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  const page = pdfDoc.addPage([841.89, 595.28]); // A4 Landscape for better 2-col fit, or wait, standard image looks landscape or wide. No, image looks like landscape, aspect ratio is wide. Wait, 595 x 841 is A4 Portrait. The image has 2 wide columns, so landscape (841.89, 595.28) might be good. Let's do Landscape A4. Actually, the image looks almost square or landscape. We'll use landscape A4: [841.89, 595.28]
+  const { width: pageWidth, height: pageHeight } = page.getSize();
+  const margin = 30;
+  
+  let currentY = pageHeight - margin;
+
+  // Header info
+  const headerFontSize = 10;
+  const projectVal = sanitize(`${project.id || ''} - ${project.project_name || 'Unnamed Project'}`);
+  const companyVal = sanitize(company?.company_name || 'Not specified');
+  const addressVal = sanitize(project.location || 'Not specified');
+  const climateZoneVal = sanitize(project.climate_zone || 'Not specified');
+  const occupancyVal = sanitize(project.occupancy_class || 'Not specified');
+  const pathwayVal = sanitize(displayPathway(project.selected_pathway));
+
+  // Top header block
+  currentY -= 15;
+  const col1X = margin;
+  const col2X = margin + 250;
+  const col3X = margin + 500;
+
+  page.drawText('Project:', { x: col1X, y: currentY, font, size: headerFontSize });
+  page.drawText(projectVal, { x: col1X + 45, y: currentY, font: boldFont, size: headerFontSize, color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.5 } });
+
+  page.drawText('Company:', { x: col2X, y: currentY, font, size: headerFontSize });
+  page.drawText(companyVal, { x: col2X + 55, y: currentY, font: boldFont, size: headerFontSize, color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.5 } });
+
+  page.drawText('Address:', { x: col3X, y: currentY, font, size: headerFontSize });
+  page.drawText(addressVal, { x: col3X + 50, y: currentY, font: boldFont, size: headerFontSize, color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.5 } });
+
+  currentY -= 18;
+
+  page.drawText('Climate Zone:', { x: col1X, y: currentY, font, size: headerFontSize });
+  page.drawText(climateZoneVal, { x: col1X + 70, y: currentY, font: boldFont, size: headerFontSize, color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.5 } });
+
+  page.drawText('Occupancy:', { x: col2X, y: currentY, font, size: headerFontSize });
+  page.drawText(occupancyVal, { x: col2X + 60, y: currentY, font: boldFont, size: headerFontSize, color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.5 } });
+
+  page.drawText('Pathway:', { x: col3X, y: currentY, font, size: headerFontSize });
+  page.drawText(pathwayVal, { x: col3X + 50, y: currentY, font: boldFont, size: headerFontSize, color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.5 } });
+
+  currentY -= 20;
+  // Divider
+  page.drawLine({
+    start: { x: margin, y: currentY },
+    end: { x: pageWidth - margin, y: currentY },
+    thickness: 1,
+    color: { type: 'RGB', red: 0.8, green: 0.8, blue: 0.8 }
+  });
+  currentY -= 15;
+
+  const columnWidth = (pageWidth - margin * 3) / 2;
+  const leftColX = margin;
+  const rightColX = margin * 2 + columnWidth;
+  
+  let leftY = currentY;
+  let rightY = currentY;
+
+  const drawSection = (x: number, startY: number, title: string, items: {label: string, value: string}[]) => {
+    let y = startY;
+    const headerHeight = 20;
+    
+    // Draw background for header
+    page.drawRectangle({
+      x: x,
+      y: y - headerHeight,
+      width: columnWidth,
+      height: headerHeight,
+      color: { type: 'RGB', red: 0.2, green: 0.35, blue: 0.6 },
+    });
+    
+    page.drawText(title, {
+      x: x + 10,
+      y: y - 14,
+      font: boldFont,
+      size: 10,
+      color: { type: 'RGB', red: 1, green: 1, blue: 1 },
+    });
+    
+    y -= headerHeight;
+
+    const rowHeight = 18;
+    const valueOffsetX = columnWidth * 0.45; // 45% of column width for values
+
+    // Draw border around content
+    const contentHeight = items.length * rowHeight;
+    page.drawRectangle({
+      x: x,
+      y: y - contentHeight,
+      width: columnWidth,
+      height: contentHeight,
+      borderColor: { type: 'RGB', red: 0.7, green: 0.7, blue: 0.8 },
+      borderWidth: 1,
+    });
+
+    items.forEach((item, idx) => {
+      // zebra banding
+      if (idx % 2 === 0) {
+        page.drawRectangle({
+          x: x + 1,
+          y: y - rowHeight + 1,
+          width: columnWidth - 2,
+          height: rowHeight - 2,
+          color: { type: 'RGB', red: 0.96, green: 0.97, blue: 0.99 },
+        });
+      }
+
+      page.drawText(sanitize(item.label), {
+        x: x + 10,
+        y: y - 12,
+        font,
+        size: 9,
+        color: { type: 'RGB', red: 0.3, green: 0.3, blue: 0.3 },
+      });
+      
+      const safeVal = sanitize(item.value);
+      page.drawText(safeVal.length > 50 ? safeVal.substring(0, 47) + '...' : safeVal, {
+        x: x + valueOffsetX,
+        y: y - 12,
+        font: boldFont,
+        size: 9,
+        color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.4 },
+      });
+      
+      y -= rowHeight;
+    });
+
+    return y - 15; // return next Y start
+  };
+
+  const getAirtightnessDisplay = (val: any) => val ? String(val) : 'Not specified';
+
+  // Left Column Sections
+  leftY = drawSection(leftColX, leftY, 'CONTACT INFORMATION', [
+    { label: 'Company:', value: company?.company_name || 'Not specified' },
+    { label: 'Phone:', value: company?.phone || 'Not specified' },
+    { label: 'Email:', value: company?.contact_email || 'Not specified' },
+    { label: 'Website:', value: company?.website || 'Not specified' },
+  ]);
+
+  leftY = drawSection(leftColX, leftY, 'BUILDING ENVELOPE', [
+    { label: 'Ceilings / Attic RSI:', value: project.attic_rsi ? `${project.attic_rsi} RSI` : '-' },
+    { label: 'Above-Grade Wall RSI:', value: project.wall_rsi ? `${project.wall_rsi} RSI` : '-' },
+    { label: 'Below-Grade Wall RSI:', value: project.below_grade_rsi ? `${project.below_grade_rsi} RSI` : '-' },
+    { label: 'Exposed Floor RSI:', value: project.floor_rsi ? `${project.floor_rsi} RSI` : '-' },
+    { label: 'Heated Floors RSI:', value: project.heated_floors_rsi ? `${project.heated_floors_rsi} RSI` : '-' },
+    { label: 'In-Floor Heat / Rough-In:', value: project.in_floor_heat_rsi ? `Yes` : 'No' },
+    { label: 'Floor / Slab Type:', value: asList(project.floors_slabs_selected) || '-' },
+    { label: 'Cathedral / Flat Roof:', value: project.has_cathedral_or_flat_roof ? 'Yes' : 'No' },
+    { label: 'Skylights:', value: project.has_skylights ? 'Yes' : 'No' },
+  ]);
+  
+  const uploadStr = project.uploaded_files && Array.isArray(project.uploaded_files) && project.uploaded_files.length > 0 
+    ? project.uploaded_files[0].name : 'No files uploaded';
+
+  leftY = drawSection(leftColX, leftY, 'UPLOADED DOCUMENTS', [
+    { label: 'File:', value: uploadStr },
+  ]);
+
+
+  // Right Column Sections
+  rightY = drawSection(rightColX, rightY, 'COMPLIANCE SUMMARY', [
+    { label: 'Compliance Pathway:', value: pathwayVal },
+    { label: 'Climate Zone:', value: climateZoneVal },
+    { label: 'Front Door Orient.:', value: project.front_door_orientation || '-' },
+    { label: 'Floor Area:', value: project.floor_area ? `${project.floor_area} m²` : '-' },
+    { label: 'EnerGuide Pathway:', value: project.energuide_pathway ? 'Yes' : 'No' },
+    { label: 'Total Points:', value: project.total_points ? String(project.total_points) : '0' },
+  ]);
+
+  rightY = drawSection(rightColX, rightY, 'AIR TIGHTNESS & LEAKAGE', [
+    { label: 'Airtightness Level:', value: getAirtightnessDisplay(project.airtightness_al) },
+    { label: 'Mid-Construction Blower Door:', value: project.mid_construction_blower_door_planned ? 'Yes' : 'No' },
+  ]);
+
+  rightY = drawSection(rightColX, rightY, 'MECHANICAL SYSTEMS', [
+    { label: 'Primary Heating:', value: project.heating_system_type || '-' },
+    { label: 'Heating Efficiency:', value: project.heating_efficiency ? String(project.heating_efficiency) : '-' },
+    { label: 'Cooling System:', value: project.cooling_system_type || '-' },
+    { label: 'Domestic Hot Water:', value: project.water_heating_type || '-' },
+    { label: 'Ventilation (HRV/ERV):', value: project.hrv_erv_type || '-' },
+    { label: 'Secondary HRV:', value: project.has_secondary_hrv ? 'Yes' : 'No' },
+    { label: 'Drain Water Heat Recovery:', value: project.has_dwhr ? 'Yes' : 'No' },
+  ]);
+
+  rightY = drawSection(rightColX, rightY, 'MURB & OPTIONAL', [
+    { label: 'Multiple MURB Heating:', value: project.has_murb_multiple_heating ? 'Yes' : 'No' },
+    { label: 'Multiple MURB Water Heaters:', value: project.has_murb_multiple_water_heaters ? 'Yes' : 'No' },
+  ]);
+
+  rightY = drawSection(rightColX, rightY, 'NOTES', [
+    { label: 'Notes:', value: project.notes || '-' },
+  ]);
+
+  const bottomY = Math.min(leftY, rightY) - 10;
+
+  // Acknowledgement Box
+  const ackHeight = 50;
+  page.drawRectangle({
+    x: margin,
+    y: bottomY - ackHeight,
+    width: pageWidth - 2 * margin,
+    height: ackHeight,
+    borderColor: { type: 'RGB', red: 0.9, green: 0.7, blue: 0.2 },
+    borderWidth: 1,
+    color: { type: 'RGB', red: 0.99, green: 0.97, blue: 0.9 },
+  });
+
+  page.drawText('ACKNOWLEDGEMENT', {
+    x: margin + 10,
+    y: bottomY - 15,
+    font: boldFont,
+    size: 10,
+    color: { type: 'RGB', red: 0.9, green: 0.5, blue: 0 },
+  });
+
+  const ackText1 = 'I agree to notify my energy advisor before making any changes to the design, including envelope components, windows, or mechanical systems. This ensures ongoing compliance during';
+  const ackText2 = 'construction. Design changes may result in additional charges. I commit to ensuring the building plans match the designed energy model and the as-constructed state.';
+
+  page.drawText(ackText1, {
+    x: margin + 10,
+    y: bottomY - 30,
+    font,
+    size: 8,
+    color: { type: 'RGB', red: 0.3, green: 0.3, blue: 0.3 },
+  });
+
+  page.drawText(ackText2, {
+    x: margin + 10,
+    y: bottomY - 42,
+    font,
+    size: 8,
+    color: { type: 'RGB', red: 0.3, green: 0.3, blue: 0.3 },
+  });
+
+  const bytes = await pdfDoc.save();
+  return bytes;
+};
+
 const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
   const pdfDoc = await PDFDocument.create();
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -372,7 +616,7 @@ serve(async (req) => {
   }
 
   try {
-    const { projectId, logoBase64 } = await req.json();
+    const { projectId, logoBase64, type } = await req.json();
     if (!projectId) {
       throw new Error("Project ID is required.");
     }
@@ -402,7 +646,13 @@ serve(async (req) => {
 
     const logoBytes = logoBase64 ? decode(logoBase64) : undefined;
 
-    const pdfBytes = await buildPdf(project, company, logoBytes);
+    let pdfBytes;
+    if (type === 'report') {
+      pdfBytes = await buildReportPdf(project, company, logoBytes);
+    } else {
+      pdfBytes = await buildPdf(project, company, logoBytes);
+    }
+    
     const pdfBase64 = encode(pdfBytes);
 
     return new Response(JSON.stringify({ pdfData: pdfBase64 }), { 
