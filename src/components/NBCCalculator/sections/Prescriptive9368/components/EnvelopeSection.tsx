@@ -204,39 +204,69 @@ export default function EnvelopeSection({
             <div id="windowUValue" className="space-y-2">
                 <div className="flex items-center gap-2">
                     <label className="text-sm font-medium text-foreground">Windows - U-Value <span className="text-red-400">*</span></label>
-                    <InfoButton title="Energy Efficiency Points for Windows & Doors">
-                        <div className="space-y-4">
-                            <p className="text-sm">
-                                You can get extra energy efficiency points in the code if your windows and doors perform better than the minimum required by the building code (NBC 9.36). This means they either keep heat in better (low U-value) or let in helpful sunlight to reduce heating needs (high Energy Rating or ER).
+                    <InfoButton title="Window & Door Performance Verification">
+                        <div className="space-y-3 text-foreground">
+                            <p>
+                                Windows and doors on a home rarely have the same performance rating. To confirm that the specifications used in the energy model or code submission match what will actually be installed, the Authority Having Jurisdiction (AHJ) may request a <strong className="text-foreground">Window and Door Schedule</strong>. This schedule must list the performance values for every unit, including the lowest and highest U-values used on the project.
                             </p>
 
-                            <p className="text-sm">
-                                But to use the Energy Rating (ER) method for windows or doors, the total glass/opening area on that wall must be less than 17% of the wall's area. The example in the image shows how to calculate that percentage:
-                            </p>
+                            <div>
+                                <h4 className="font-bold text-foreground">One Door Exception</h4>
+                                <p className="mt-1">
+                                    There is a possible exception for one exterior door, which may allow a lower performance rating. Check the NBC 9.36 requirements for details before applying it.
+                                </p>
+                            </div>
 
-                            <ul className="list-disc ml-5 space-y-1 text-sm">
-                                <li>The wall is 48 m²</li>
-                                <li>The total area of the windows and doors is 7.75 m²</li>
-                                <li>7.75 ÷ 48 × 100 = 16%, so this wall qualifies for ER-based compliance.</li>
-                            </ul>
+                            <div>
+                                <h4 className="font-bold text-foreground">Recording Window and Door Performance</h4>
+                                <p className="mt-1">
+                                    The schedule should reflect the actual product performance being used on the project. See below an illustrative example of a window unit showing the performance values that must be recorded in the Window & Door Schedule.
+                                </p>
+                                <img
+                                    src="/assets/img/window-door-uvalue-example.png"
+                                    alt="Window and Door Performance Example"
+                                    className="mt-4 rounded-md border mx-auto block"
+                                />
+                            </div>
 
-                            <p className="text-sm">
-                                If the openings are over 17%, you usually have to use U-values instead and follow a trade-off approach.
-                            </p>
-
-                            <div className="border-t pt-4">
-                                <h5 className="font-medium mb-2">Why this matters:</h5>
-                                <ul className="list-disc ml-5 space-y-1 text-sm">
-                                    <li>ER is good for cold climates – it considers how much sun a window lets in to help heat the home, along with how well it insulates and how airtight it is.</li>
-                                    <li>U-value only looks at insulation, not sun or air leaks.</li>
-                                    <li>Using ER lets you use things like patio doors or south-facing windows that bring in sun, even if their U-value isn't great—as long as they don't make up too much of the wall.</li>
+                            <div>
+                                <h4 className="font-bold text-foreground">Energy Efficiency Points for Windows and Doors</h4>
+                                <p className="mt-1">
+                                    Projects can earn additional efficiency points if the installed windows or doors perform better than the minimum code requirements. Higher performance can be shown in two ways:
+                                </p>
+                                <ul className="list-disc pl-5 mt-2 space-y-1">
+                                    <li>Low U-values (better insulation)</li>
+                                    <li>High Energy Rating (ER), which considers insulation, airtightness, and useful solar heat gain</li>
                                 </ul>
                             </div>
 
-                            <div className="border-t pt-4">
-                                <img src="/lovable-uploads/7665f3ac-355b-4715-9121-ae5d822bc1f0.png" alt="Figure 9.36-20: Example of how to calculate the percent fenestration area" className="w-full h-auto border rounded" />
-                                <p className="text-xs text-muted-foreground mt-2 italic">
-                                    Source: Housing and Small Buildings Illustrated User's Guide National Building Code of Canada 2020
+                            <p>
+                                Using ER values can offer an advantage in cold climates, but only if the total window and door area on that wall is less than 17 percent of the wall area.
+                            </p>
+
+                            <div>
+                                <p>
+                                    The example below shows how to calculate the percentage of fenestration area on a wall. In this case, the openings represent 16 percent of the wall area, so ER-based compliance can be used.
+                                </p>
+                                <img
+                                    src="/lovable-uploads/7665f3ac-355b-4715-9121-ae5d822bc1f0.png" alt="Figure 9.36-20: Example of how to calculate the percent fenestration area"
+                                    className="mt-4 rounded-md border mx-auto block"
+                                />
+                            </div>
+
+                            <p>
+                                If the openings exceed 17 percent of the wall area, U-values must typically be used instead, often through a trade-off approach.
+                            </p>
+
+                            <div>
+                                <h4 className="font-bold text-foreground">Why this matters</h4>
+                                <ul className="list-disc pl-5 mt-2 space-y-1">
+                                    <li>ER helps take advantage of useful sunlight, especially for south-facing windows or patio doors.</li>
+                                    <li>U-value only measures insulation, not solar gain or airtightness.</li>
+                                    <li>Using ER can improve performance and compliance as long as window and door area limits are met.</li>
+                                </ul>
+                                <p className="mt-2">
+                                    Alternatively, performance modelling gives you more flexibility by letting you mix and match upgrades across the entire building. It often leads to smarter material choices, more design freedom, and lower overall costs than the prescriptive path, especially for complex or high-performance homes.
                                 </p>
                             </div>
                         </div>
@@ -263,16 +293,73 @@ export default function EnvelopeSection({
                         </SelectItem>)}
                     </SelectContent>
                 </Select>
+                {/* <InfoCollapsible title={<span className="text-[11px]">ℹ️ Window & Door Performance Verification</span>}>
+                    <div className="space-y-3 text-foreground">
+                        <p>
+                            Windows and doors on a home rarely have the same performance rating. To confirm that the specifications used in the energy model or code submission match what will actually be installed, the Authority Having Jurisdiction (AHJ) may request a <strong className="text-foreground">Window and Door Schedule</strong>. This schedule must list the performance values for every unit, including the lowest and highest U-values used on the project.
+                        </p>
 
-                <InfoCollapsible title={<span className="text-[11px]">ℹ️ Window & Door Performance Verification</span>} >
-                    <p className="text-muted-foreground">
-                        Windows and doors in a building often have varying performance values. To verify that the correct specifications have been recorded, the Authority Having Jurisdiction (AHJ) may request a window and door schedule that includes performance details for each unit. Please record the range of lowest-highest performing window and door U-Value's (ie, U-value W/(m²×).
-                    </p>
-                    <p className="text-muted-foreground mt-2">
-                        See below an illustrative example of a window unit showing the performance values that must be recorded in the Window & Door Schedule.
-                    </p>
-                    <img src="/assets/img/window-door-uvalue-example.png" alt="Window & Door Performance Example" className="mt-4 rounded-md border mx-auto block" />
-                </InfoCollapsible>
+                        <div>
+                            <h4 className="font-bold text-foreground">One Door Exception</h4>
+                            <p className="mt-1">
+                                There is a possible exception for one exterior door, which may allow a lower performance rating. Check the NBC 9.36 requirements for details before applying it.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h4 className="font-bold text-foreground">Recording Window and Door Performance</h4>
+                            <p className="mt-1">
+                                The schedule should reflect the actual product performance being used on the project. See below an illustrative example of a window unit showing the performance values that must be recorded in the Window & Door Schedule.
+                            </p>
+                            <img
+                                src="/assets/img/window-door-uvalue-example.png"
+                                alt="Window and Door Performance Example"
+                                className="mt-4 rounded-md border mx-auto block"
+                            />
+                        </div>
+
+                        <div>
+                            <h4 className="font-bold text-foreground">Energy Efficiency Points for Windows and Doors</h4>
+                            <p className="mt-1">
+                                Projects can earn additional efficiency points if the installed windows or doors perform better than the minimum code requirements. Higher performance can be shown in two ways:
+                            </p>
+                            <ul className="list-disc pl-5 mt-2 space-y-1">
+                                <li>Low U-values (better insulation)</li>
+                                <li>High Energy Rating (ER), which considers insulation, airtightness, and useful solar heat gain</li>
+                            </ul>
+                        </div>
+
+                        <p>
+                            Using ER values can offer an advantage in cold climates, but only if the total window and door area on that wall is less than 17 percent of the wall area.
+                        </p>
+
+                        <div>
+                            <p>
+                                The example below shows how to calculate the percentage of fenestration area on a wall. In this case, the openings represent 16 percent of the wall area, so ER-based compliance can be used.
+                            </p>
+                            <img
+                                src="/lovable-uploads/7665f3ac-355b-4715-9121-ae5d822bc1f0.png" alt="Figure 9.36-20: Example of how to calculate the percent fenestration area"
+                                className="mt-4 rounded-md border mx-auto block"
+                            />
+                        </div>
+
+                        <p>
+                            If the openings exceed 17 percent of the wall area, U-values must typically be used instead, often through a trade-off approach.
+                        </p>
+
+                        <div>
+                            <h4 className="font-bold text-foreground">Why this matters</h4>
+                            <ul className="list-disc pl-5 mt-2 space-y-1">
+                                <li>ER helps take advantage of useful sunlight, especially for south-facing windows or patio doors.</li>
+                                <li>U-value only measures insulation, not solar gain or airtightness.</li>
+                                <li>Using ER can improve performance and compliance as long as window and door area limits are met.</li>
+                            </ul>
+                            <p className="mt-2">
+                                Alternatively, performance modelling gives you more flexibility by letting you mix and match upgrades across the entire building. It often leads to smarter material choices, more design freedom, and lower overall costs than the prescriptive path, especially for complex or high-performance homes.
+                            </p>
+                        </div>
+                    </div>
+                </InfoCollapsible> */}
                 {selections.windowUValue && <>
 
                     <div className="flex items-center gap-2">
