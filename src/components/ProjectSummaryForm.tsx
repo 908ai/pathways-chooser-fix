@@ -330,6 +330,29 @@ const ProjectSummaryForm = ({
     );
   };
 
+  const getSlabInsulationDisplay = () => {
+    if (!selections.floorsSlabsSelected || !Array.isArray(selections.floorsSlabsSelected)) return null;
+    
+    return (
+      <>
+        {selections.floorsSlabsSelected.includes("unheatedBelowFrost") && 
+          renderField('Unheated Floor Below Frostline', selections.unheatedFloorBelowFrostRSI, 'RSI')}
+        
+        {selections.floorsSlabsSelected.includes("unheatedAboveFrost") && 
+          renderField('Unheated Floor Above Frostline', selections.unheatedFloorAboveFrostRSI, 'RSI')}
+        
+        {selections.floorsSlabsSelected.includes("heatedFloors") && 
+          renderField('Heated Floors', selections.heatedFloorsRSI || selections.inFloorHeatRSI, 'RSI')}
+          
+        {selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting") && 
+          renderField('Slab on Grade with Integral Footing', selections.slabOnGradeIntegralFootingRSI, 'RSI')}
+          
+        {selections.floorsSlabsSelected.includes("floorsOverUnheatedSpaces") && 
+          renderField('Floors over Unheated Spaces (Cantilevers)', selections.floorsOverUnheatedSpacesRSI, 'RSI')}
+      </>
+    );
+  };
+
   return (
     <>
       <Card className="w-full max-w-4xl mx-auto">
@@ -451,18 +474,14 @@ const ProjectSummaryForm = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                   {/* Use fallbacks for legacy/new naming consistency */}
                   {renderField('Ceilings/Attic', selections.ceilingsAtticRSI, 'RSI')}
-                  {renderField('Cathedral/Flat Roof', selections.cathedralFlatRSIValue || selections.cathedralFlatRSI, 'RSI')}
+                  {renderField('Cathedral/Flat Roof', selections.hasCathedralOrFlatRoof === 'yes' ? (selections.cathedralFlatRSIValue || selections.cathedralFlatRSI) : null, 'RSI')}
                   {renderField('Above Grade Walls', selections.wallRSI, 'RSI')}
                   {renderField('Below Grade Walls', selections.belowGradeRSI || selections.foundationWallsRSI, 'RSI')}
-                  {renderField('Floors over Unheated Spaces', selections.floorsUnheatedRSI || selections.floorsOverUnheatedSpacesRSI, 'RSI')}
-                  {renderField('Floors over Garages', selections.floorsOverGarageRSI || selections.floorsGarageRSI, 'RSI')}
-                  {renderField('Heated Floors', selections.heatedFloorsRSI || selections.inFloorHeatRSI, 'RSI')}
+                  
+                  {getSlabInsulationDisplay()}
 
-                  {renderField('Slab on Grade', selections.slabOnGradeRSI || selections.slabOnGradeIntegralFootingRSI, 'RSI')}
-                  {renderField('Unheated Floor Below Frostline', selections.unheatedFloorBelowFrostRSI)}
-                  {renderField('Unheated Floor Above Frostline', selections.unheatedFloorAboveFrostRSI, 'RSI')}
                   {renderField('Window U-Value', selections.windowUValue, 'W/(m²·K)')}
-                  {renderField('Skylight U-Value', selections.skylightUValue, 'W/(m²·K)')}
+                  {renderField('Skylight U-Value', selections.hasSkylights === 'yes' ? selections.skylightUValue : null, 'W/(m²·K)')}
                   {renderField('Building Volume', selections.buildingVolume, 'm³')}
                   {renderField('Mid-Construction Blower Door Test', selections.midConstructionBlowerDoorPlanned)}
                   {renderAirtightnessDetails()}
