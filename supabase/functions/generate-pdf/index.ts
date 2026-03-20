@@ -687,65 +687,35 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
   drawRow(['Occupancy Class:', 'Conditioned Space Volume (m³):'], [project.occupancy_class || '', project.building_volume ? String(project.building_volume) : ''], [tableWidth * 0.4, tableWidth * 0.6]);
 
   // Tier Selection
-  page.drawRectangle({
-    x: margin,
-    y: currentY - 20,
-    width: tableWidth,
-    height: 20,
-    borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 },
-    borderWidth: 1
-  });
+  const getTier = (points: number, hrv: string | null) => {
+    if (hrv === "no_hrv" || hrv === "without_hrv" || hrv === "None") return "Not Applicable";
+    if (points >= 75) return "Tier 5";
+    if (points >= 40) return "Tier 4";
+    if (points >= 20) return "Tier 3";
+    if (points >= 10) return "Tier 2";
+    return "Tier 1";
+  };
 
-  const tierLabel = 'Select Performance Tier';
-  const tierLabelX = margin + 5;
-  page.drawText(tierLabel, {
-    x: tierLabelX,
-    y: currentY - 14,
-    font,
-    size: 9
-  });
+  const currentTier = getTier(Number(project.total_points || 0), project.hrv_erv_type);
 
+  page.drawRectangle({ x: margin, y: currentY - 20, width: tableWidth, height: 20, borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 }, borderWidth: 1 });
+  page.drawText('Select Performance Tier', { x: margin + 5, y: currentY - 14, font, size: 9 });
+  let tierX = margin + 110;
   const tiers = ['Tier 2', 'Tier 3', 'Tier 4', 'Tier 5'];
-  const boxSize = 8;
-  const tierFontSize = 9;
-  const gapBoxToText = 6;
-  const gapBetweenOptions = 28;
-
-  // mede largura total do grupo de opções
-  const optionWidths = tiers.map(tier => {
-    const textWidth = font.widthOfTextAtSize(tier, tierFontSize);
-    return boxSize + gapBoxToText + textWidth;
+  tiers.forEach(tier => {
+    const isSelected = currentTier === tier;
+    page.drawRectangle({ x: tierX, y: currentY - 15, width: 8, height: 8, borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 }, borderWidth: 1 });
+    if (isSelected) {
+      // Draw an X in the box
+      page.drawLine({ start: { x: tierX, y: currentY - 15 }, end: { x: tierX + 8, y: currentY - 7 }, thickness: 1 });
+      page.drawLine({ start: { x: tierX + 8, y: currentY - 15 }, end: { x: tierX, y: currentY - 7 }, thickness: 1 });
+    }
+    page.drawText(tier, { x: tierX + 12, y: currentY - 14, font, size: 9 });
+    tierX += 60;
   });
-
-  const totalOptionsWidth =
-    optionWidths.reduce((sum, w) => sum + w, 0) + gapBetweenOptions * (tiers.length - 1);
-
-  // centraliza o grupo na linha inteira
-  let tierX = margin + (tableWidth - totalOptionsWidth) / 2;
-
-  tiers.forEach((tier, index) => {
-    const textWidth = font.widthOfTextAtSize(tier, tierFontSize);
-
-    page.drawRectangle({
-      x: tierX,
-      y: currentY - 15,
-      width: boxSize,
-      height: boxSize,
-      borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 },
-      borderWidth: 1
-    });
-
-    page.drawText(tier, {
-      x: tierX + boxSize + gapBoxToText,
-      y: currentY - 14,
-      font,
-      size: tierFontSize
-    });
-
-    tierX += boxSize + gapBoxToText + textWidth + gapBetweenOptions;
-  });
-
   currentY -= 20;
+
+  currentY -= 10;
 
   // Energy prescriptive compliance paths row
   const energyRowHeight = 86;
