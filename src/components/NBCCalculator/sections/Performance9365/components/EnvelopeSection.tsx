@@ -582,13 +582,8 @@ export default function EnvelopeSection({
 
                     <div>
                       <h5 className="font-medium text-base mb-2">How Do You Pass?</h5>
-                      <p className="text-base text-muted-foreground mb-2">You can earn energy code points by hitting an Airtightness Level (AL). You only need to meet one of the three metrics (ACH, NLA, or NLR):</p>
-                      <div className="text-base text-muted-foreground ml-4 space-y-1">
-                        <p>• Use Table 9.36.-A for guarded tests (stricter limits)</p>
-                        <p>• Use Table 9.36.-B for unguarded tests (more lenient for attached buildings)</p>
-                      </div>
+                      <p className="text-base text-muted-foreground mb-2">You can earn energy code points by hitting an Airtightness Level (AL). You only need to meet one of the three metrics (ACH, NLA, or NLR)</p>
                       <p className="text-base text-muted-foreground mt-2">The design air leakage rate, established by the builder and energy modeller, is incorporated into the energy model and later verified through testing at either the mid-construction or final stage. If the measured air changes per hour (ACH, if chosen) exceed the code-specified airtightness level, the building fails; if the measured ACH is lower, it passes.</p>
-                      <p className="text-base text-muted-foreground mt-2">In multi-unit buildings, the worst-performing zone sets the final score.</p>
                     </div>
 
                     <div className="w-full h-px bg-muted"></div>
