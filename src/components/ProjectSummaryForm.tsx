@@ -320,31 +320,13 @@ const ProjectSummaryForm = ({
 
     if (!selectedOption) return renderField('Airtightness', airtightnessValue, 'ACH50');
 
+    const formattedValue = `${selectedOption.level} (ACH₅₀: ${selectedOption.ach50}, NLA₁₀: ${selectedOption.nla10}, NLR₅₀: ${selectedOption.nlr50})`;
+
     return (
-      <div className="col-span-full mt-2 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
-        <div className="flex items-center gap-2 mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-          <Wind className="h-4 w-4 text-blue-500" />
-          Airtightness Specifications ({selectedOption.level})
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">ACH @ 50Pa</div>
-            <div className="text-sm font-medium">{selectedOption.ach50}</div>
-          </div>
-          <div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">NLA @ 10Pa</div>
-            <div className="text-sm font-medium">{selectedOption.nla10} cm²/m²</div>
-          </div>
-          <div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">NLR @ 50Pa</div>
-            <div className="text-sm font-medium">{selectedOption.nlr50} L/(s·m²)</div>
-          </div>
-          <div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Type</div>
-            <div className="text-sm font-medium">{selectedOption.type}</div>
-          </div>
-        </div>
-      </div>
+      <>
+        {renderField('Airtightness Type', selectedOption.type)}
+        {renderField('Airtightness', formattedValue)}
+      </>
     );
   };
 
