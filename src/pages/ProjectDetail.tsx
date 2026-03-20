@@ -1318,10 +1318,12 @@ const ProjectDetail = () => {
                     <Label className="text-muted-foreground">Performance Result</Label>
                     <p className="font-medium text-card-foreground">{project.performance_compliance_result || 'Under review'}</p>
                   </div>
-                  <div>
-                    <Label className="text-muted-foreground">Total Points</Label>
-                    <p className="font-medium text-card-foreground">{project.total_points || 'TBD'}</p>
-                  </div>
+                  {!getPathwayDisplay(project.selected_pathway)?.isPerformance && (
+                    <div>
+                      <Label className="text-muted-foreground">Total Points</Label>
+                      <p className="font-medium text-card-foreground">{project.total_points || 'TBD'}</p>
+                    </div>
+                  )}
                   {project.selected_pathway === '9368' && project.total_points !== null && (
                     <div>
                       <Label className="text-muted-foreground">Tier level</Label>
