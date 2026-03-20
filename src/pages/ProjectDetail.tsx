@@ -813,6 +813,70 @@ const ProjectDetail = () => {
     }
   };
 
+  const handleGenerateChecklistPdf = async () => {
+    if (!project) return;
+    setGeneratingPdf(true);
+    try {
+      // Try to read the logo from public assets and convert to base64
+      const getLogoBase64 = async (): Promise<string | null> => {
+        try {
+          const res = await fetch('/assets/energy-navigator-logo.png');
+          if (!res.ok) return null;
+          const blob = await res.blob();
+          return new Promise<string | null>((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const result = reader.result as string;
+              const base64 = result.split(',')[1] || '';
+              resolve(base64 || null);
+            };
+            reader.readAsDataURL(blob);
+          });
+        } catch {
+          return null;
+        }
+      };
+
+      const logoBase64 = await getLogoBase64();
+
+      const { data, error } = await supabase.functions.invoke('generate-pdf', {
+        body: { projectId: project.id, logoBase64, type: 'checklist' },
+      });
+
+      if (error) throw error;
+
+      if (!data || !data.pdfData) {
+        throw new Error("Checklist PDF generation failed: No data received from server.");
+      }
+
+      const base64Response = await fetch(`data:application/pdf;base64,${data.pdfData}`);
+      const blob = await base64Response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${project.project_name}_Checklist.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "Checklist Generated",
+        description: "Your project checklist has been downloaded.",
+      });
+    } catch (error: any) {
+      console.error('Error generating Checklist PDF:', error);
+      toast({
+        title: "Checklist Generation Failed",
+        description: error.message || "There was an error creating the Checklist PDF.",
+        variant: "destructive",
+      });
+    } finally {
+      setGeneratingPdf(false);
+    }
+  };
+
   if (loading || roleLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
@@ -1066,6 +1130,10 @@ const ProjectDetail = () => {
                       <DropdownMenuItem onClick={handleGenerateReportPdf}>
                         <FileText className="h-4 w-4 mr-2" />
                         PDF Report
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleGenerateChecklistPdf}>
+                        <FileText className="h-4 w-4 mr-2" />
+                        Checklist
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() =>

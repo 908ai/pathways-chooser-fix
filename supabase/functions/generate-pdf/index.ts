@@ -416,6 +416,142 @@ const buildReportPdf = async (project: any, company: any, logoBytes?: Uint8Array
   return bytes;
 };
 
+const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
+  const pdfDoc = await PDFDocument.create();
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  const page = pdfDoc.addPage([595.28, 841.89]);
+  const { width: pageWidth, height: pageHeight } = page.getSize();
+  const margin = 30;
+  let currentY = pageHeight - margin;
+
+  const logoImage = logoBytes && logoBytes.length > 0 ? await pdfDoc.embedPng(logoBytes).catch(() => null) : null;
+  if (logoImage) {
+    const { width: lw, height: lh } = logoImage.scale(1);
+    const scale = 40 / lh;
+    page.drawImage(logoImage, { x: margin, y: currentY - 40, width: lw * scale, height: 40 });
+  }
+
+  // Header Text
+  const headerLines = [
+    'BUILDING & DEVELOPMENT PERMIT APPLICATION',
+    'TIERED PRESCRIPTIVE COMPLIANCE',
+    'Section 9.36 of the National Building Code of Canada'
+  ];
+
+  headerLines.forEach((line, i) => {
+    const size = i === 1 ? 12 : 10;
+    const f = i === 1 ? boldFont : font;
+    const w = f.widthOfTextAtSize(line, size);
+    page.drawText(line, { x: pageWidth / 2 + 20, y: currentY - (i * 15), font: f, size });
+  });
+
+  currentY -= 60;
+
+  // Intro text
+  page.drawText('This form is intended to clarify the compliance with Section 9.36, prescriptive path.', { x: margin, y: currentY, font: boldFont, size: 11 });
+  currentY -= 15;
+  const introSub = 'Must be completed by a competent person who is knowledgeable, experienced, and trained in building\ndesign under Section 9.36 of the NBC and acceptable to the Authority Having Jurisdiction.';
+  introSub.split('\n').forEach(line => {
+    page.drawText(line, { x: margin, y: currentY, font: font, size: 10, italic: true });
+    currentY -= 12;
+  });
+
+  currentY -= 10;
+
+  // Project Information Table
+  const tableWidth = pageWidth - 2 * margin;
+  page.drawRectangle({ x: margin, y: currentY - 18, width: tableWidth, height: 18, color: { type: 'RGB', red: 0.9, green: 0.9, blue: 0.9 }, borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 }, borderWidth: 1 });
+  page.drawText('Project Information', { x: margin + 5, y: currentY - 13, font: boldFont, size: 10 });
+  currentY -= 18;
+
+  const drawRow = (labels: string[], values: string[], colWidths: number[]) => {
+    let x = margin;
+    const rowHeight = 20;
+    labels.forEach((label, i) => {
+      page.drawRectangle({ x, y: currentY - rowHeight, width: colWidths[i], height: rowHeight, borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 }, borderWidth: 1 });
+      page.drawText(label, { x: x + 2, y: currentY - 13, font, size: 9 });
+      const labelW = font.widthOfTextAtSize(label, 9);
+      page.drawText(sanitize(values[i]), { x: x + labelW + 5, y: currentY - 13, font: boldFont, size: 9 });
+      x += colWidths[i];
+    });
+    currentY -= rowHeight;
+  };
+
+  drawRow(['Address:', 'Climate Zone:'], [project.location || '', project.climate_zone || ''], [tableWidth * 0.75, tableWidth * 0.25]);
+  drawRow(['Occupancy Class:', 'Conditioned Space Volume (m³):'], [project.occupancy_class || '', project.building_volume ? String(project.building_volume) : ''], [tableWidth * 0.4, tableWidth * 0.6]);
+
+  // Tier Selection
+  page.drawRectangle({ x: margin, y: currentY - 20, width: tableWidth, height: 20, borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 }, borderWidth: 1 });
+  page.drawText('Select Performance Tier', { x: margin + 5, y: currentY - 14, font, size: 9 });
+  let tierX = margin + 110;
+  const tiers = ['Tier 2', 'Tier 3', 'Tier 4', 'Tier 5'];
+  tiers.forEach(tier => {
+    page.drawRectangle({ x: tierX, y: currentY - 15, width: 8, height: 8, borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 }, borderWidth: 1 });
+    page.drawText(tier, { x: tierX + 12, y: currentY - 14, font, size: 9 });
+    tierX += 60;
+  });
+  currentY -= 20;
+
+  currentY -= 10;
+
+  // Checklist Sections
+  const drawChecklistHeader = (title: string) => {
+    page.drawRectangle({ x: margin, y: currentY - 18, width: tableWidth, height: 18, color: { type: 'RGB', red: 0.9, green: 0.9, blue: 0.9 }, borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 }, borderWidth: 1 });
+    page.drawText(title, { x: margin + 5, y: currentY - 13, font: boldFont, size: 10, color: { type: 'RGB', red: 0, green: 0, blue: 0 } });
+    currentY -= 18;
+  };
+
+  const drawChecklistRow = (col1: string, col2: string, col3: string, col4: string) => {
+    const rowHeight = 18;
+    const w1 = tableWidth * 0.35;
+    const w2 = tableWidth * 0.25;
+    const w3 = tableWidth * 0.25;
+    const w4 = tableWidth * 0.15;
+    
+    [w1, w2, w3, w4].reduce((currX, w, i) => {
+      page.drawRectangle({ x: currX, y: currentY - rowHeight, width: w, height: rowHeight, borderColor: { type: 'RGB', red: 0.7, green: 0.7, blue: 0.7 }, borderWidth: 0.5 });
+      const text = [col1, col2, col3, col4][i];
+      if (text) {
+        page.drawText(sanitize(text), { x: currX + 5, y: currentY - 13, font: i === 0 ? font : boldFont, size: 8 });
+      }
+      return currX + w;
+    }, margin);
+    currentY -= rowHeight;
+  };
+
+  drawChecklistHeader('Effective Thermal Resistance of Above Ground Opaque Building Assemblies (RSI)');
+  drawChecklistRow('Assembly', 'w/ HRV', 'w/o HRV', 'Proposed');
+  drawChecklistRow('Ceilings below attics', '8.67', '10.43', project.attic_rsi ? String(project.attic_rsi) : '');
+  drawChecklistRow('Cathedral / Flat roofs', '5.02', '5.02', project.cathedral_flat_rsi ? String(project.cathedral_flat_rsi) : '');
+  drawChecklistRow('Walls & Rim joists', '2.97', '3.08', project.wall_rsi ? String(project.wall_rsi) : '');
+  drawChecklistRow('Floors over unheated spaces', '5.02', '5.02', project.floor_rsi ? String(project.floor_rsi) : '');
+  drawChecklistRow('Floors within garage', '4.86', '4.86', project.floors_garage_rsi ? String(project.floors_garage_rsi) : '');
+
+  drawChecklistHeader('Thermal Characteristics of Fenestration, Doors and Skylights (U)');
+  drawChecklistRow('Assembly', 'Efficiency', '', 'Proposed');
+  drawChecklistRow('Windows & Doors', 'Max U-Value 1.61', '', project.window_u_value ? String(project.window_u_value) : '');
+  drawChecklistRow('One door exception', 'Max U-Value 2.60', '', '');
+  drawChecklistRow('Attic hatch', 'Min RSI 2.60', '', '');
+  drawChecklistRow('Skylights', 'Max U-Value 2.75', '', project.skylight_u_value ? String(project.skylight_u_value) : '');
+
+  drawChecklistHeader('Effective Thermal Resistance of Below-Grade Opaque Buildings Assemblies (RSI)');
+  drawChecklistRow('Assembly', 'w/ HRV', 'w/o HRV', 'Proposed');
+  drawChecklistRow('Foundation Walls', '2.98', '3.46', project.below_grade_rsi ? String(project.below_grade_rsi) : '');
+  drawChecklistRow('Slab On Grade Integral Footing', '2.84', '3.72', project.slab_on_grade_integral_footing_rsi ? String(project.slab_on_grade_integral_footing_rsi) : '');
+  drawChecklistRow('Unheated Floor Below Frost', 'uninsulated', 'uninsulated', project.unheated_floor_below_frost_rsi ? String(project.unheated_floor_below_frost_rsi) : '');
+  drawChecklistRow('Unheated Floor Above Frost', '1.96', '1.96', project.unheated_floor_above_frost_rsi ? String(project.unheated_floor_above_frost_rsi) : '');
+  drawChecklistRow('Heated Floors', '2.84', '2.84', project.heated_floors_rsi ? String(project.heated_floors_rsi) : '');
+
+  currentY -= 20;
+  const footerText = `Updated September 2025        Section 9.36 – Tiered Prescriptive / Trade-Off Compliance Form        Page 1 of 1`;
+  page.drawText(footerText, { x: margin, y: 20, font, size: 8 });
+
+  const bytes = await pdfDoc.save();
+  return bytes;
+};
+
 const buildPdf = async (project: any, company: any, logoBytes?: Uint8Array) => {
   const pdfDoc = await PDFDocument.create();
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -769,6 +905,8 @@ serve(async (req) => {
     let pdfBytes;
     if (type === 'report') {
       pdfBytes = await buildReportPdf(project, company, logoBytes);
+    } else if (type === 'checklist') {
+      pdfBytes = await buildChecklistPdf(project, company, logoBytes);
     } else {
       pdfBytes = await buildPdf(project, company, logoBytes);
     }
