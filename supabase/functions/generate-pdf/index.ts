@@ -57,359 +57,501 @@ const buildReportPdf = async (project: any, company: any, logoBytes?: Uint8Array
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-  const page = pdfDoc.addPage([595.28, 841.89]); // A4 Portrait
-  const { width: pageWidth, height: pageHeight } = page.getSize();
-  const margin = 30;
-  
-  let currentY = pageHeight - margin;
+  const page = pdfDoc.addPage([595.28, 841.89]); // A4 portrait
+  const { width, height } = page.getSize();
 
-  // 1. Stylized Top Header: Logo (left) and Title (right)
-  const headerHeight = 50;
-  const logoImage = logoBytes && logoBytes.length > 0 ? await pdfDoc.embedPng(logoBytes).catch(() => null) : null;
-  
-  if (logoImage) {
-    const { width: lw, height: lh } = logoImage.scale(1);
-    const scale = (headerHeight - 10) / lh;
-    page.drawImage(logoImage, {
-      x: margin,
-      y: currentY - headerHeight + 5,
-      width: lw * scale,
-      height: lh * scale,
+  const margin = 18;
+  const contentWidth = width - margin * 2;
+
+  const colors = {
+    navy: { type: 'RGB', red: 24 / 255, green: 63 / 255, blue: 122 / 255 },
+    navyDark: { type: 'RGB', red: 17 / 255, green: 45 / 255, blue: 89 / 255 },
+    lightBlue: { type: 'RGB', red: 232 / 255, green: 238 / 255, blue: 247 / 255 },
+    lightGray: { type: 'RGB', red: 242 / 255, green: 244 / 255, blue: 247 / 255 },
+    midGray: { type: 'RGB', red: 220 / 255, green: 224 / 255, blue: 230 / 255 },
+    textDark: { type: 'RGB', red: 55 / 255, green: 65 / 255, blue: 81 / 255 },
+    textMuted: { type: 'RGB', red: 107 / 255, green: 114 / 255, blue: 128 / 255 },
+    orange: { type: 'RGB', red: 232 / 255, green: 145 / 255, blue: 38 / 255 },
+    white: { type: 'RGB', red: 1, green: 1, blue: 1 },
+    border: { type: 'RGB', red: 205 / 255, green: 212 / 255, blue: 222 / 255 },
+  };
+
+  const sanitizeText = (v: any) => sanitize(v || '-');
+
+  const formatDateLong = () => {
+    try {
+      return new Date().toLocaleDateString('en-CA', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    } catch {
+      return new Date().toLocaleDateString();
+    }
+  };
+
+  const formatYesNo = (v: any) => (v ? 'Yes' : 'No');
+
+  const formatNumber = (v: any, suffix = '') => {
+    if (v === null || v === undefined || v === '') return '-';
+    return `${sanitize(v)}${suffix ? ` ${suffix}` : ''}`;
+  };
+
+  const drawText = (
+    text: string,
+    x: number,
+    y: number,
+    options: {
+      size?: number;
+      fontRef?: any;
+      color?: any;
+      maxWidth?: number;
+      lineHeight?: number;
+    } = {}
+  ) => {
+    const size = options.size ?? 9;
+    const fontRef = options.fontRef ?? font;
+    const color = options.color ?? colors.textDark;
+    const maxWidth = options.maxWidth ?? 9999;
+    const lineHeight = options.lineHeight ?? (size + 2);
+
+    const words = sanitizeText(text).split(' ');
+    const lines: string[] = [];
+    let current = '';
+
+    for (const word of words) {
+      const test = current ? `${current} ${word}` : word;
+      const testWidth = fontRef.widthOfTextAtSize(test, size);
+
+      if (testWidth <= maxWidth) {
+        current = test;
+      } else {
+        if (current) lines.push(current);
+        current = word;
+      }
+    }
+    if (current) lines.push(current);
+
+    lines.forEach((line, i) => {
+      page.drawText(line, {
+        x,
+        y: y - i * lineHeight,
+        size,
+        font: fontRef,
+        color,
+      });
     });
-  }
 
-  const titleText = '9.36 PROJECT SUMMARY';
-  const titleSize = 18;
-  const titleWidth = boldFont.widthOfTextAtSize(titleText, titleSize);
-  page.drawText(titleText, {
-    x: pageWidth - margin - titleWidth,
-    y: currentY - 30,
-    font: boldFont,
-    size: titleSize,
-    color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.5 }
-  });
+    return lines.length * lineHeight;
+  };
 
-  currentY -= headerHeight + 10;
-
-  // 2. Project Name (Full Width)
-  const projectName = sanitize(project.project_name || 'Unnamed Project');
-  page.drawText(projectName, {
-    x: margin,
-    y: currentY,
-    font: boldFont,
-    size: 14,
-    color: { type: 'RGB', red: 0, green: 0, blue: 0 }
-  });
-  currentY -= 18;
-
-  // 3. Project Address (Below Name)
-  const projectAddress = sanitize(project.location || 'Not specified');
-  page.drawText(projectAddress, {
-    x: margin,
-    y: currentY,
-    font,
-    size: 10,
-    color: { type: 'RGB', red: 0.4, green: 0.4, blue: 0.4 }
-  });
-  currentY -= 25;
-
-  // Divider
-  page.drawLine({
-    start: { x: margin, y: currentY },
-    end: { x: pageWidth - margin, y: currentY },
-    thickness: 1,
-    color: { type: 'RGB', red: 0.8, green: 0.8, blue: 0.8 }
-  });
-  currentY -= 20;
-
-  const columnWidth = (pageWidth - margin * 3) / 2;
-  const leftColX = margin;
-  const rightColX = margin * 2 + columnWidth;
-  
-  let leftY = currentY;
-  let rightY = currentY;
-
-  // Header info
-  const headerFontSize = 10;
-  const projectVal = sanitize(`${project.id || ''} - ${project.project_name || 'Unnamed Project'}`);
-  const companyVal = sanitize(company?.company_name || 'Not specified');
-  const addressVal = sanitize(project.location || 'Not specified');
-  const climateZoneVal = sanitize(project.climate_zone || 'Not specified');
-  const occupancyVal = sanitize(project.occupancy_class || 'Not specified');
-  const pathwayVal = sanitize(displayPathway(project.selected_pathway));
-
-  // Top header block
-  currentY -= 15;
-  const col1X = margin;
-  const col2X = margin + 250;
-  const col3X = margin + 500;
-
-  page.drawText('Project:', { x: col1X, y: currentY, font, size: headerFontSize });
-  page.drawText(projectVal, { x: col1X + 45, y: currentY, font: boldFont, size: headerFontSize, color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.5 } });
-
-  page.drawText('Company:', { x: col2X, y: currentY, font, size: headerFontSize });
-  page.drawText(companyVal, { x: col2X + 55, y: currentY, font: boldFont, size: headerFontSize, color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.5 } });
-
-  page.drawText('Address:', { x: col3X, y: currentY, font, size: headerFontSize });
-  page.drawText(addressVal, { x: col3X + 50, y: currentY, font: boldFont, size: headerFontSize, color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.5 } });
-
-  currentY -= 18;
-
-  page.drawText('Climate Zone:', { x: col1X, y: currentY, font, size: headerFontSize });
-  page.drawText(climateZoneVal, { x: col1X + 70, y: currentY, font: boldFont, size: headerFontSize, color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.5 } });
-
-  page.drawText('Occupancy:', { x: col2X, y: currentY, font, size: headerFontSize });
-  page.drawText(occupancyVal, { x: col2X + 60, y: currentY, font: boldFont, size: headerFontSize, color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.5 } });
-
-  page.drawText('Pathway:', { x: col3X, y: currentY, font, size: headerFontSize });
-  page.drawText(pathwayVal, { x: col3X + 50, y: currentY, font: boldFont, size: headerFontSize, color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.5 } });
-
-  currentY -= 20;
-  // Divider
-  page.drawLine({
-    start: { x: margin, y: currentY },
-    end: { x: pageWidth - margin, y: currentY },
-    thickness: 1,
-    color: { type: 'RGB', red: 0.8, green: 0.8, blue: 0.8 }
-  });
-  currentY -= 15;
-
-  const drawSection = (x: number, startY: number, title: string, items: {label: string, value: string}[]) => {
-    let y = startY;
-    const headerHeight = 20;
-    
-    // Draw background for header
+  const drawRoundedBox = (
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    opts: { fill?: any; border?: any; borderWidth?: number; radius?: number } = {}
+  ) => {
     page.drawRectangle({
-      x: x,
-      y: y - headerHeight,
-      width: columnWidth,
-      height: headerHeight,
-      color: { type: 'RGB', red: 0.2, green: 0.35, blue: 0.6 },
+      x,
+      y,
+      width: w,
+      height: h,
+      color: opts.fill,
+      borderColor: opts.border,
+      borderWidth: opts.borderWidth ?? 0,
+      borderRadius: opts.radius ?? 6,
     });
-    
-    page.drawText(title, {
-      x: x + 10,
-      y: y - 14,
+  };
+
+  const drawSectionCard = (
+    x: number,
+    topY: number,
+    w: number,
+    title: string,
+    items: { label: string; value: string }[]
+  ) => {
+    const headerH = 16;
+    const rowBaseH = 16;
+    const labelX = x + 8;
+    const valueX = x + w * 0.55;
+    const labelWidth = w * 0.50 - 12;
+    const valueWidth = w - (valueX - x) - 8;
+
+    // calcula altura total antes de desenhar
+    let bodyHeight = 0;
+    const rowHeights: number[] = [];
+
+    for (const item of items) {
+      const labelLines = Math.max(
+        1,
+        Math.ceil(font.widthOfTextAtSize(sanitizeText(item.label), 8) / labelWidth)
+      );
+      const valueLines = Math.max(
+        1,
+        Math.ceil(boldFont.widthOfTextAtSize(sanitizeText(item.value), 8) / valueWidth)
+      );
+      const rowH = Math.max(rowBaseH, Math.max(labelLines, valueLines) * 9 + 5);
+      rowHeights.push(rowH);
+      bodyHeight += rowH;
+    }
+
+    const totalH = headerH + bodyHeight;
+
+    // card externo
+    drawRoundedBox(x, topY - totalH, w, totalH, {
+      fill: colors.white,
+      border: colors.border,
+      borderWidth: 1,
+      radius: 4,
+    });
+
+    page.drawRectangle({
+        x: 0,
+        y: height - 3,
+        width,
+        height: 3,
+        color: colors.orange,
+      });    
+
+    // header azul
+    page.drawRectangle({
+      x,
+      y: topY - headerH,
+      width: w,
+      height: headerH,
+      color: colors.navy,
+      borderRadius: 4,
+    });
+
+    page.drawText(sanitizeText(title).toUpperCase(), {
+      x: x + 8,
+      y: topY - 11,
+      size: 8,
       font: boldFont,
-      size: 10,
-      color: { type: 'RGB', red: 1, green: 1, blue: 1 },
+      color: colors.white,
     });
-    
-    y -= headerHeight;
 
-    const baseRowHeight = 18;
-    const valueOffsetX = columnWidth * 0.45; 
-    const maxValueWidth = columnWidth - valueOffsetX - 10;
-    const maxLabelWidth = valueOffsetX - 15;
-    const sectionTopY = y;
+    let rowTop = topY - headerH;
 
-    items.forEach((item, idx) => {
-      const safeVal = sanitize(item.value);
-      const safeLabel = sanitize(item.label);
-      
-      // Wrap Label
-      const labelWords = safeLabel.split(' ');
-      let labelLines: string[] = [];
-      let currentLabelLine = '';
-      labelWords.forEach(word => {
-        const testLine = currentLabelLine ? `${currentLabelLine} ${word}` : word;
-        if (font.widthOfTextAtSize(testLine, 9) > maxLabelWidth && currentLabelLine !== '') {
-          labelLines.push(currentLabelLine);
-          currentLabelLine = word;
-        } else {
-          currentLabelLine = testLine;
-        }
-      });
-      labelLines.push(currentLabelLine);
+    items.forEach((item, index) => {
+      const rowH = rowHeights[index];
+      const rowY = rowTop - rowH;
 
-      // Wrap Value
-      const valueWords = safeVal.split(' ');
-      let valueLines: string[] = [];
-      let currentValueLine = '';
-      valueWords.forEach(word => {
-        let testLine = currentValueLine ? `${currentValueLine} ${word}` : word;
-        if (boldFont.widthOfTextAtSize(testLine, 9) > maxValueWidth) {
-          if (currentValueLine === '') {
-            while (boldFont.widthOfTextAtSize(testLine + '...', 9) > maxValueWidth && testLine.length > 0) {
-              testLine = testLine.slice(0, -1);
-            }
-            valueLines.push(testLine + '...');
-            currentValueLine = '';
-          } else {
-            valueLines.push(currentValueLine);
-            currentValueLine = word;
-          }
-        } else {
-          currentValueLine = testLine;
-        }
-      });
-      if (currentValueLine) valueLines.push(currentValueLine);
-
-      const itemRowHeight = Math.max(baseRowHeight, (labelLines.length * 10) + 8, (valueLines.length * 10) + 8);
-
-      // zebra banding background
-      if (idx % 2 === 0) {
+      if (index % 2 === 0) {
         page.drawRectangle({
           x: x + 1,
-          y: y - itemRowHeight + 1,
-          width: columnWidth - 2,
-          height: itemRowHeight - 2,
-          color: { type: 'RGB', red: 0.96, green: 0.97, blue: 0.99 },
+          y: rowY + 1,
+          width: w - 2,
+          height: rowH - 2,
+          color: colors.lightGray,
         });
       }
 
-      // Draw wrapped label lines
-      labelLines.forEach((line, lineIdx) => {
-        page.drawText(line, {
-          x: x + 10,
-          y: y - 12 - (lineIdx * 10),
-          font,
-          size: 9,
-          color: { type: 'RGB', red: 0.3, green: 0.3, blue: 0.3 },
-        });
+      drawText(item.label, labelX, rowTop - 11, {
+        size: 8,
+        fontRef: font,
+        color: colors.textMuted,
+        maxWidth: labelWidth,
+        lineHeight: 9,
       });
-      
-      // Draw wrapped value lines
-      valueLines.forEach((line, lineIdx) => {
-        page.drawText(line, {
-          x: x + valueOffsetX,
-          y: y - 12 - (lineIdx * 10),
-          font: boldFont,
-          size: 9,
-          color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.4 },
-        });
+
+      drawText(item.value, valueX, rowTop - 11, {
+        size: 8,
+        fontRef: boldFont,
+        color: colors.navyDark,
+        maxWidth: valueWidth,
+        lineHeight: 9,
       });
-      
-      y -= itemRowHeight;
+
+      // divisória interna
+      page.drawLine({
+        start: { x, y: rowY },
+        end: { x: x + w, y: rowY },
+        thickness: 0.4,
+        color: colors.midGray,
+      });
+
+      rowTop = rowY;
     });
 
-    // Draw full border
-    page.drawRectangle({
-      x: x,
-      y: y,
-      width: columnWidth,
-      height: sectionTopY - y,
-      borderColor: { type: 'RGB', red: 0.7, green: 0.7, blue: 0.8 },
-      borderWidth: 1,
-    });
-
-    return y - 15; 
+    return topY - totalH - 10;
   };
 
-  const getAirtightnessDisplay = (val: any) => val ? String(val) : 'Not specified';
+  // -----------------------------
+  // HEADER
+  // -----------------------------
+  const headerH = 56;
 
-  // Left Column Sections
-  leftY = drawSection(leftColX, leftY, 'CONTACT INFORMATION', [
-    { label: 'Company:', value: company?.company_name || 'Not specified' },
-    { label: 'Phone:', value: company?.phone || 'Not specified' },
-    { label: 'Email:', value: company?.contact_email || 'Not specified' },
-    { label: 'Website:', value: company?.website || 'Not specified' },
-  ]);
-
-  leftY = drawSection(leftColX, leftY, 'BUILDING ENVELOPE', [
-    { label: 'Ceilings / Attic RSI:', value: project.attic_rsi ? `${project.attic_rsi} RSI` : '-' },
-    { label: 'Above-Grade Wall RSI:', value: project.wall_rsi ? `${project.wall_rsi} RSI` : '-' },
-    { label: 'Below-Grade Wall RSI:', value: project.below_grade_rsi ? `${project.below_grade_rsi} RSI` : '-' },
-    { label: 'Exposed Floor RSI:', value: project.floor_rsi ? `${project.floor_rsi} RSI` : '-' },
-    { label: 'Heated Floors RSI:', value: project.heated_floors_rsi ? `${project.heated_floors_rsi} RSI` : '-' },
-    { label: 'In-Floor Heat / Rough-In:', value: project.in_floor_heat_rsi ? `Yes` : 'No' },
-    { label: 'Floor / Slab Type:', value: asList(project.floors_slabs_selected) || '-' },
-    { label: 'Cathedral / Flat Roof:', value: project.has_cathedral_or_flat_roof ? 'Yes' : 'No' },
-    { label: 'Skylights:', value: project.has_skylights ? 'Yes' : 'No' },
-  ]);
-  
-  const uploadStr = project.uploaded_files && Array.isArray(project.uploaded_files) && project.uploaded_files.length > 0 
-    ? project.uploaded_files[0].name : 'No files uploaded';
-
-  leftY = drawSection(leftColX, leftY, 'UPLOADED DOCUMENTS', [
-    { label: 'File:', value: uploadStr },
-  ]);
-
-
-  // Right Column Sections
-  rightY = drawSection(rightColX, rightY, 'COMPLIANCE SUMMARY', [
-    { label: 'Compliance Pathway:', value: pathwayVal },
-    { label: 'Climate Zone:', value: climateZoneVal },
-    { label: 'Front Door Orient.:', value: project.front_door_orientation || '-' },
-    { label: 'Floor Area:', value: project.floor_area ? `${project.floor_area} m²` : '-' },
-    { label: 'EnerGuide Pathway:', value: project.energuide_pathway ? 'Yes' : 'No' },
-    { label: 'Total Points:', value: project.total_points ? String(project.total_points) : '0' },
-  ]);
-
-  rightY = drawSection(rightColX, rightY, 'AIR TIGHTNESS & LEAKAGE', [
-    { label: 'Airtightness Level:', value: getAirtightnessDisplay(project.airtightness_al) },
-    { label: 'Mid-Construction Blower Door:', value: project.mid_construction_blower_door_planned ? 'Yes' : 'No' },
-  ]);
-
-  rightY = drawSection(rightColX, rightY, 'MECHANICAL SYSTEMS', [
-    { label: 'Primary Heating:', value: project.heating_system_type || '-' },
-    { label: 'Heating Efficiency:', value: project.heating_efficiency ? String(project.heating_efficiency) : '-' },
-    { label: 'Cooling System:', value: project.cooling_system_type || '-' },
-    { label: 'Domestic Hot Water:', value: project.water_heating_type || '-' },
-    { label: 'Ventilation (HRV/ERV):', value: project.hrv_erv_type || '-' },
-    { label: 'Secondary HRV:', value: project.has_secondary_hrv ? 'Yes' : 'No' },
-    { label: 'Drain Water Heat Recovery:', value: project.has_dwhr ? 'Yes' : 'No' },
-  ]);
-
-  rightY = drawSection(rightColX, rightY, 'MURB & OPTIONAL', [
-    { label: 'Multiple MURB Heating:', value: project.has_murb_multiple_heating ? 'Yes' : 'No' },
-    { label: 'Multiple MURB Water Heaters:', value: project.has_murb_multiple_water_heaters ? 'Yes' : 'No' },
-  ]);
-
-  rightY = drawSection(rightColX, rightY, 'NOTES', [
-    { label: 'Notes:', value: project.notes || '-' },
-  ]);
-
-  const bottomY = Math.min(leftY, rightY) - 10;
-
-  // Acknowledgement Box Wrapping
-  const ackTitle = 'ACKNOWLEDGEMENT';
-  const ackText1 = 'I agree to notify my energy advisor before making any changes to the design, including envelope components, windows, or mechanical systems. This ensures ongoing compliance during construction. Design changes may result in additional charges. I commit to ensuring the building plans match the designed energy model and the as-constructed state.';
-  
-  const ackMaxWidth = pageWidth - 2 * margin - 20;
-  const ackWords = ackText1.split(' ');
-  let ackLines: string[] = [];
-  let currentAckLine = '';
-  
-  ackWords.forEach(word => {
-    const testLine = currentAckLine ? `${currentAckLine} ${word}` : word;
-    if (font.widthOfTextAtSize(testLine, 8) > ackMaxWidth) {
-      ackLines.push(currentAckLine);
-      currentAckLine = word;
-    } else {
-      currentAckLine = testLine;
-    }
-  });
-  ackLines.push(currentAckLine);
-
-  const ackBoxHeight = 30 + (ackLines.length * 10);
-  
+  // fundo branco + linha inferior
   page.drawRectangle({
-    x: margin,
-    y: bottomY - ackBoxHeight,
-    width: pageWidth - 2 * margin,
-    height: ackBoxHeight,
-    borderColor: { type: 'RGB', red: 0.9, green: 0.7, blue: 0.2 },
-    borderWidth: 1,
-    color: { type: 'RGB', red: 0.99, green: 0.97, blue: 0.9 },
+    x: 0,
+    y: height - headerH,
+    width,
+    height: headerH,
+    color: colors.white,
   });
 
-  page.drawText(ackTitle, {
-    x: margin + 10,
-    y: bottomY - 15,
-    font: boldFont,
-    size: 10,
-    color: { type: 'RGB', red: 0.9, green: 0.5, blue: 0 },
+  page.drawLine({
+    start: { x: 0, y: height - headerH },
+    end: { x: width, y: height - headerH },
+    thickness: 1.2,
+    color: colors.navyDark,
   });
 
-  ackLines.forEach((line, idx) => {
-    page.drawText(line, {
-      x: margin + 10,
-      y: bottomY - 30 - (idx * 10),
-      font,
-      size: 8,
-      color: { type: 'RGB', red: 0.3, green: 0.3, blue: 0.3 },
+  const logoImage = logoBytes?.length
+    ? await pdfDoc.embedPng(logoBytes).catch(() => null)
+    : null;
+
+  if (logoImage) {
+    const dims = logoImage.scale(1);
+    const targetH = 28;
+    const scale = targetH / dims.height;
+    page.drawImage(logoImage, {
+      x: margin,
+      y: height - 42,
+      width: dims.width * scale,
+      height: dims.height * scale,
     });
+  }
+
+  page.drawText('9.36 PROJECT SUMMARY', {
+    x: 215,
+    y: height - 28,
+    size: 13,
+    font: boldFont,
+    color: colors.navyDark,
+  });
+
+  page.drawText('NBC 2020 Division B Section 9.36 Compliance', {
+    x: 215,
+    y: height - 38,
+    size: 7.5,
+    font,
+    color: colors.textMuted,
+  });
+
+  page.drawText(formatDateLong(), {
+    x: width - 100,
+    y: height - 24,
+    size: 6.5,
+    font,
+    color: colors.textMuted,
+  });
+
+  // Opcional: badge azul da direita
+  // Se você NÃO quiser esse elemento, mantenha comentado.
+  /*
+  drawRoundedBox(width - 140, height - 50, 120, 14, {
+    fill: colors.navy,
+    radius: 4,
+  });
+  page.drawText(sanitizeText(displayPathway(project.selected_pathway)), {
+    x: width - 134,
+    y: height - 45,
+    size: 6.5,
+    font: boldFont,
+    color: colors.white,
+  });
+  */
+
+  // -----------------------------
+  // QUICK INFO STRIP
+  // -----------------------------
+  let cursorY = height - headerH - 8;
+  const stripH = 34;
+
+  drawRoundedBox(margin, cursorY - stripH, contentWidth, stripH, {
+    fill: colors.lightGray,
+    border: colors.border,
+    borderWidth: 1,
+    radius: 5,
+  });
+
+  const quickItems = [
+    { label: 'Project:', value: sanitizeText(project.project_name || '-') },
+    { label: 'Builder Company:', value: sanitizeText(company?.company_name || '-') },
+    { label: 'Climate Zone:', value: sanitizeText(project.climate_zone || '-') },
+    { label: 'Compliance:', value: sanitizeText(displayPathway(project.selected_pathway)) },
+  ];
+
+  const quickColW = contentWidth / 4;
+
+  quickItems.forEach((item, i) => {
+    const x = margin + i * quickColW + 8;
+    page.drawText(item.label, {
+      x,
+      y: cursorY - 13,
+      size: 6.5,
+      font,
+      color: colors.textMuted,
+    });
+
+    drawText(item.value, x, cursorY - 23, {
+      size: 7.2,
+      fontRef: boldFont,
+      color: colors.navyDark,
+      maxWidth: quickColW - 16,
+      lineHeight: 8,
+    });
+  });
+
+  cursorY -= stripH + 12;
+
+  // -----------------------------
+  // TWO-COLUMN LAYOUT
+  // -----------------------------
+  const gap = 14;
+  const colW = (contentWidth - gap) / 2;
+  const leftX = margin;
+  const rightX = margin + colW + gap;
+
+  let leftY = cursorY;
+  let rightY = cursorY;
+
+  const uploadStr =
+    project.uploaded_files && Array.isArray(project.uploaded_files) && project.uploaded_files.length > 0
+      ? project.uploaded_files[0]?.name || 'Uploaded file'
+      : 'No files uploaded';
+
+  leftY = drawSectionCard(leftX, leftY, colW, 'Contact Information', [
+    { label: 'Company:', value: sanitizeText(company?.company_name || '-') },
+    { label: 'Phone:', value: sanitizeText(company?.phone || '-') },
+    { label: 'Email:', value: sanitizeText(company?.contact_email || '-') },
+    { label: 'Website:', value: sanitizeText(company?.website || '-') },
+  ]);
+
+  leftY = drawSectionCard(leftX, leftY, colW, 'Building Envelope', [
+    { label: 'Ceilings / Attic RSI:', value: formatNumber(project.attic_rsi, 'RSI') },
+    { label: 'Above-Grade Wall RSI:', value: formatNumber(project.wall_rsi, 'RSI') },
+    { label: 'Below-Grade Wall RSI:', value: formatNumber(project.below_grade_rsi, 'RSI') },
+    { label: 'Heated Floors RSI:', value: formatNumber(project.heated_floors_rsi, 'RSI') },
+    { label: 'In-Floor Heat / Rough-In:', value: project.in_floor_heat_rsi ? 'Yes — Rough-In' : 'No' },
+    { label: 'Floor / Slab Type:', value: asList(project.floors_slabs_selected) || '-' },
+    { label: 'Cathedral / Flat Roof:', value: formatYesNo(project.has_cathedral_or_flat_roof) },
+    { label: 'Skylights:', value: formatYesNo(project.has_skylights) },
+  ]);
+
+  leftY = drawSectionCard(leftX, leftY, colW, 'Uploaded Documents', [
+    { label: 'File:', value: sanitizeText(uploadStr) },
+  ]);
+
+  rightY = drawSectionCard(rightX, rightY, colW, 'Compliance Summary', [
+    { label: 'Compliance Pathway:', value: sanitizeText(displayPathway(project.selected_pathway)) },
+    { label: 'Climate Zone:', value: sanitizeText(project.climate_zone || '-') },
+    { label: 'Front Door Orient.:', value: sanitizeText(project.front_door_orientation || '-') },
+    { label: 'Floor Area:', value: formatNumber(project.floor_area, 'm²') },
+    { label: 'EnerGuide Pathway:', value: formatYesNo(project.energuide_pathway) },
+    { label: 'Total Points:', value: sanitizeText(project.total_points ?? '0') },
+  ]);
+
+  rightY = drawSectionCard(rightX, rightY, colW, 'Air Tightness & Leakage', [
+    { label: 'Air Leakage Rate:', value: formatNumber(project.airtightness_al, 'ACH') },
+    { label: 'Airtightness Level:', value: project.airtightness_al ? `${sanitize(project.airtightness_al)} ACH50` : '-' },
+    { label: 'Mid-Construction Blower Door:', value: formatYesNo(project.mid_construction_blower_door_planned) },
+  ]);
+
+  rightY = drawSectionCard(rightX, rightY, colW, 'Mechanical Systems', [
+    { label: 'Primary Heating:', value: sanitizeText(project.heating_system_type || '-') },
+    { label: 'Heating Efficiency:', value: sanitizeText(project.heating_efficiency || '-') },
+    { label: 'Cooling System:', value: sanitizeText(project.cooling_system_type || '-') },
+    { label: 'Domestic Hot Water:', value: sanitizeText(project.water_heating_type || '-') },
+    { label: 'Ventilation (HRV/ERV):', value: sanitizeText(project.hrv_erv_type || '-') },
+    { label: 'Secondary HRV:', value: formatYesNo(project.has_secondary_hrv) },
+    { label: 'Drain Water Heat Recovery:', value: formatYesNo(project.has_dwhr) },
+  ]);
+
+  rightY = drawSectionCard(rightX, rightY, colW, 'MURB & Optional', [
+    { label: 'Multiple MURB Heating:', value: formatYesNo(project.has_murb_multiple_heating) },
+    { label: 'Multiple MURB Water Heaters:', value: formatYesNo(project.has_murb_multiple_water_heaters) },
+    { label: 'EnerGuide Pathway:', value: formatYesNo(project.energuide_pathway) },
+    { label: 'Total Points (Tiered Path):', value: sanitizeText(project.total_points ?? '0') },
+  ]);
+
+  rightY = drawSectionCard(rightX, rightY, colW, 'Notes', [
+    { label: 'Notes:', value: sanitizeText(project.notes || '-') },
+  ]);
+
+  // -----------------------------
+  // ACKNOWLEDGEMENT
+  // -----------------------------
+  const bottomCardsY = Math.min(leftY, rightY);
+  const ackY = bottomCardsY - 4;
+  const ackH = 54;
+
+  drawRoundedBox(margin, ackY - ackH, contentWidth, ackH, {
+    fill: { type: 'RGB', red: 1, green: 0.985, blue: 0.94 },
+    border: colors.orange,
+    borderWidth: 1,
+    radius: 4,
+  });
+
+  page.drawText('ACKNOWLEDGEMENT', {
+    x: margin + 8,
+    y: ackY - 12,
+    size: 7.5,
+    font: boldFont,
+    color: colors.orange,
+  });
+
+  drawText(
+    'I agree to notify my energy advisor before making any changes to the design, including envelope components, windows, or mechanical systems. This ensures ongoing compliance during construction. Design changes may result in additional charges. I commit to ensuring the building plans match the designed energy model and the as-constructed state.',
+    margin + 8,
+    ackY - 22,
+    {
+      size: 5.8,
+      fontRef: font,
+      color: colors.textMuted,
+      maxWidth: contentWidth - 16,
+      lineHeight: 7,
+    }
+  );
+
+  // -----------------------------
+  // FOOTER
+  // -----------------------------
+  const footerH = 28;
+
+  page.drawRectangle({
+    x: 0,
+    y: 0,
+    width,
+    height: footerH,
+    color: colors.navyDark,
+  });
+
+  page.drawRectangle({
+    x: 0,
+    y: footerH,
+    width,
+    height: 2,
+    color: colors.orange,
+  });
+
+  page.drawText('www.energy-navigator.ca', {
+    x: margin,
+    y: 11,
+    size: 5.8,
+    font,
+    color: colors.white,
+  });
+
+  page.drawText('© 2025 Energy Navigator 9.36. All rights reserved.', {
+    x: margin,
+    y: 4,
+    size: 5.5,
+    font,
+    color: { type: 'RGB', red: 0.8, green: 0.86, blue: 0.95 },
+  });
+
+  const pageText = 'Page 1 of 1';
+  const pageTextWidth = font.widthOfTextAtSize(pageText, 6);
+  page.drawText(pageText, {
+    x: width - margin - pageTextWidth,
+    y: 8,
+    size: 6,
+    font,
+    color: colors.white,
   });
 
   const bytes = await pdfDoc.save();
