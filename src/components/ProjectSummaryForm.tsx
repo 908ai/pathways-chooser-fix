@@ -618,27 +618,58 @@ const ProjectSummaryForm = ({
 
             <AccordionItem value="item-2">
               <AccordionTrigger className="text-lg font-semibold"><Thermometer className="h-5 w-5 mr-2" />Building Envelope</AccordionTrigger>
-              <AccordionContent className="pt-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                  {renderField('Ceilings/Attic', selections.ceilingsAtticRSI || 'Not provided', 'RSI')}
-                  
-                  {renderField('Above Grade Walls', selections.wallRSI || 'Not provided', 'RSI')}
-                  {renderField('Below Grade Walls', selections.belowGradeRSI || selections.foundationWallsRSI || 'Not provided', 'RSI')}
-                  
-                  {getSlabInsulationDisplay()}
+              <AccordionContent className="pt-4 space-y-6">
+                {/* Main Assemblies Group */}
+                <div className="space-y-2">
+                  <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Main Building Assemblies</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                    {renderField('Ceilings/Attic', selections.ceilingsAtticRSI || 'Not provided', 'RSI')}
+                    {renderField('Above Grade Walls', selections.wallRSI || 'Not provided', 'RSI')}
+                    {renderField('Below Grade Walls', selections.belowGradeRSI || selections.foundationWallsRSI || 'Not provided', 'RSI')}
+                  </div>
+                </div>
 
-                  {renderField('Window U-Value', selections.windowUValue || 'Not provided', 'W/(m²·K)')}
-                  
-                  {/* Skylights logic based on pathway */}
-                  {(selections.compliancePath === '9362' || selections.compliancePath === '9368') && (
-                    <>
-                      {renderField('Skylights?', selections.hasSkylights || 'no')}
-                      {selections.hasSkylights === 'yes' && renderField('Skylight U-Value', selections.skylightUValue || 'Not provided', 'W/(m²·K)')}
-                    </>
-                  )}
+                {/* Secondary/Conditional Assemblies Group */}
+                <div className="space-y-2">
+                  <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Secondary & Specific Assemblies</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                    {/* Cathedral/Flat Roof logic based on pathway */}
+                    {(selections.compliancePath === '9362' || selections.compliancePath === '9368') && (
+                      <>
+                        {renderField('Cathedral Ceilings/Flat Roofs?', selections.hasCathedralOrFlatRoof || selections.hasCathedralOrFlatRoofSelection || 'no')}
+                        {(selections.hasCathedralOrFlatRoof === 'yes' || selections.hasCathedralOrFlatRoofSelection === 'yes') && 
+                          renderField('Cathedral/Flat Roof Insulation', selections.cathedralFlatRSIValue || selections.cathedralFlatRSI || 'Not provided', 'RSI')}
+                      </>
+                    )}
+                    {getSlabInsulationDisplay()}
+                  </div>
+                </div>
 
-                  {renderField('Building Volume', selections.buildingVolume || 'Not provided', 'm³')}
-                  {renderAirtightnessDetails()}
+                {/* Fenestration Group */}
+                <div className="space-y-2">
+                  <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Windows, Doors & Skylights</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                    {renderField('Window & Door U-Value', selections.windowUValue || 'Not provided', 'W/(m²·K)')}
+                    
+                    {/* Skylights logic based on pathway */}
+                    {(selections.compliancePath === '9362' || selections.compliancePath === '9368') && (
+                      <>
+                        {renderField('Skylights?', selections.hasSkylights || 'no')}
+                        {selections.hasSkylights === 'yes' && renderField('Skylight U-Value', selections.skylightUValue || 'Not provided', 'W/(m²·K)')}
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Airtightness & Volume Group */}
+                <div className="space-y-2">
+                  <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Airtightness & Building Volume</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                    {renderField('Building Volume', selections.buildingVolume || 'Not provided', 'm³')}
+                    <div className="col-span-full">
+                      {renderAirtightnessDetails()}
+                    </div>
+                  </div>
                 </div>
               </AccordionContent>
             </AccordionItem>
