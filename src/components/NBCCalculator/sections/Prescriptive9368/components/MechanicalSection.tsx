@@ -135,19 +135,25 @@ export default function MechanicalSection({
                 </div>
 
                 {selections.indirectTank === 'yes' && <div id="indirectTankSize" className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">Primary System Indirect Tank Size (gallons) <span className="text-red-500">*</span></label>
-                    <Input required type="number"
-                        placeholder="Enter tank size in gallons"
-                        value={selections.indirectTankSize}
-                        onChange={e => setSelections(prev => ({
-                            ...prev,
-                            indirectTankSize: e.target.value
-                        }))}
-                        className={cn(
+                    <label className="text-sm font-medium text-foreground">Primary System Indirect Tank Size <span className="text-red-500">*</span></label>
+                    <Select value={selections.indirectTankSize} onValueChange={value => setSelections(prev => ({
+                        ...prev,
+                        indirectTankSize: value
+                    }))}>
+                        <SelectTrigger className={cn(
                             (validationErrors.indirectTankSize || isMissing("indirectTankSize")) && missingFieldClass,
                             validationErrors.indirectTankSize && "border-red-500 ring-2 ring-red-500"
-                        )}
-                    />
+                        )}>
+                            <SelectValue placeholder="Select tank size" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background border shadow-lg z-50">
+                            <SelectItem value="40-gal">40 Gallon</SelectItem>
+                            <SelectItem value="50-gal">50 Gallon</SelectItem>
+                            <SelectItem value="60-gal">60 Gallon</SelectItem>
+                            <SelectItem value="80-gal">80 Gallon</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>}
             </div>}
 
