@@ -331,52 +331,96 @@ const ProjectSummaryForm = ({
   };
 
   const getSlabInsulationDisplay = () => {
-    // If it's 9368, we handle fields differently
+    // If it's 9368, we show all specific fields for that pathway
     if (selections.compliancePath === '9368') {
       return (
         <>
           {renderField('Are there any cathedral ceilings or flat roofs?', selections.hasCathedralOrFlatRoof || selections.hasCathedralOrFlatRoofSelection || 'no')}
           {(selections.hasCathedralOrFlatRoof === 'yes' || selections.hasCathedralOrFlatRoofSelection === 'yes') && 
-            renderField('Cathedral / Flat Roof Insulation', selections.cathedralFlatRSIValue || selections.cathedralFlatRSI, 'RSI')}
+            renderField('Cathedral / Flat Roof Insulation', selections.cathedralFlatRSIValue || selections.cathedralFlatRSI || 'Not provided', 'RSI')}
             
-          {renderField('Floors over Unheated Spaces (Cantilevers)', selections.floorsUnheatedRSI, 'RSI')}
-          {renderField('Floors over Garage (Bonus Floor)', selections.floorsOverGarageRSI || selections.floorsGarageRSI, 'RSI')}
+          {renderField('Floors over Unheated Spaces (Cantilevers)', selections.floorsUnheatedRSI || 'Not provided', 'RSI')}
+          {renderField('Floors over Garage (Bonus Floor)', selections.floorsOverGarageRSI || selections.floorsGarageRSI || 'Not provided', 'RSI')}
           
           {renderField('Slab on Grade with Integral Footing?', selections.hasSlabOnGrade || 'no')}
-          {selections.hasSlabOnGrade === 'yes' && renderField('Slab on Grade RSI', selections.slabOnGradeRSI, 'RSI')}
+          {selections.hasSlabOnGrade === 'yes' && renderField('Slab on Grade RSI', selections.slabOnGradeRSI || 'Not provided', 'RSI')}
           
           {renderField('In-floor heat?', selections.hasInFloorHeat || 'no')}
-          {selections.hasInFloorHeat === 'yes' && renderField('Heated Floors', selections.heatedFloorsRSI, 'RSI')}
+          {selections.hasInFloorHeat === 'yes' && renderField('Heated Floors', selections.heatedFloorsRSI || 'Not provided', 'RSI')}
           
           {selections.hasInFloorHeat === 'no' && (
             <>
-              {renderField('Unheated Floor Below Frostline', selections.unheatedFloorBelowFrostRSI, 'RSI')}
-              {renderField('Unheated Floor Above Frostline', selections.unheatedFloorAboveFrostRSI, 'RSI')}
+              {renderField('Unheated Floor Below Frostline', selections.unheatedFloorBelowFrostRSI || 'Not provided', 'RSI')}
+              {renderField('Unheated Floor Above Frostline', selections.unheatedFloorAboveFrostRSI || 'Not provided', 'RSI')}
             </>
           )}
         </>
       );
     }
 
-    if (!selections.floorsSlabsSelected || !Array.isArray(selections.floorsSlabsSelected)) return null;
+    // Default behavior for other pathways (9362, 9365, 9367)
+    const is9362 = selections.compliancePath === '9362';
     
     return (
       <>
-        {selections.floorsSlabsSelected.includes("unheatedBelowFrost") && 
-          renderField('Unheated Floor Below Frostline', selections.unheatedFloorBelowFrostRSI, 'RSI')}
-        
-        {selections.floorsSlabsSelected.includes("unheatedAboveFrost") && 
-          renderField('Unheated Floor Above Frostline', selections.unheatedFloorAboveFrostRSI, 'RSI')}
-        
-        {selections.floorsSlabsSelected.includes("heatedFloors") && 
-          renderField('Heated Floors', selections.heatedFloorsRSI || selections.inFloorHeatRSI, 'RSI')}
-          
-        {selections.floorsSlabsSelected.includes("slabOnGradeIntegralFooting") && 
-          renderField('Slab on Grade with Integral Footing', selections.slabOnGradeIntegralFootingRSI, 'RSI')}
-          
-        {selections.floorsSlabsSelected.includes("floorsOverUnheatedSpaces") && 
-          renderField('Floors over Unheated Spaces (Cantilevers)', selections.floorsOverUnheatedSpacesRSI, 'RSI')}
+        {is9362 && renderField('Are there any cathedral ceilings or flat roofs?', selections.hasCathedralOrFlatRoof || 'no')}
+        {is9362 && selections.hasCathedralOrFlatRoof === 'yes' && 
+          renderField('Cathedral / Flat Roof Insulation', selections.cathedralFlatRSIValue || selections.cathedralFlatRSI || 'Not provided', 'RSI')}
+
+        {renderField('Unheated Floor Below Frostline', selections.unheatedFloorBelowFrostRSI || (selections.floorsSlabsSelected?.includes('unheatedBelowFrost') ? 'Not provided' : null), 'RSI')}
+        {renderField('Unheated Floor Above Frostline', selections.unheatedFloorAboveFrostRSI || (selections.floorsSlabsSelected?.includes('unheatedAboveFrost') ? 'Not provided' : null), 'RSI')}
+        {renderField('Heated Floors', selections.heatedFloorsRSI || selections.inFloorHeatRSI || (selections.floorsSlabsSelected?.includes('heatedFloors') ? 'Not provided' : null), 'RSI')}
+        {renderField('Slab on Grade with Integral Footing', selections.slabOnGradeIntegralFootingRSI || selections.slabOnGradeRSI || (selections.floorsSlabsSelected?.includes('slabOnGradeIntegralFooting') ? 'Not provided' : null), 'RSI')}
+        {renderField('Floors over Unheated Spaces (Cantilevers)', selections.floorsOverUnheatedSpacesRSI || selections.floorsUnheatedRSI || (selections.floorsSlabsSelected?.includes('floorsOverUnheatedSpaces') ? 'Not provided' : null), 'RSI')}
       </>
+    );
+  };
+
+  const renderMechanicalFields = () => {
+    const is9362 = selections.compliancePath === '9362';
+    const is9368 = selections.compliancePath === '9368';
+    const is9365 = selections.compliancePath === '9365';
+    const is9367 = selections.compliancePath === '9367';
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+        {renderField('F280 Calculation Completed', selections.hasF280Calculation || 'No')}
+        {renderField('Heating Type', selections.heatingType || 'Not provided')}
+        {renderField('Heating Efficiency/Model', selections.heatingEfficiency || selections.heatingMakeModel || 'Not provided')}
+        
+        {/* Secondary heating info if applicable */}
+        {(is9365 || is9367 || is9362) && (
+          <>
+            {renderField('Separate Secondary Heating', selections.hasSecondaryHeating || 'No')}
+            {selections.hasSecondaryHeating === 'yes' && (
+              <>
+                {renderField('Secondary Heating Type', selections.secondaryHeatingType || 'Not provided')}
+                {renderField('Secondary Heating Efficiency', selections.secondaryHeatingEfficiency || 'Not provided')}
+              </>
+            )}
+          </>
+        )}
+
+        {renderField('Cooling', selections.coolingApplicable || 'No')}
+        {selections.coolingApplicable === 'yes' && renderField('Cooling Efficiency/Model', selections.coolingEfficiency || selections.coolingMakeModel || 'Not provided')}
+        
+        {renderField('Water Heater Type', selections.waterHeaterType || selections.waterHeater || 'Not provided')}
+        {renderField('Water Heater Model', selections.waterHeaterMakeModel || 'Not provided')}
+        
+        {renderField('HRV/ERV', selections.hasHrv || selections.hasHrvErv9365 || 'No')}
+        {(selections.hasHrv === 'with_hrv' || selections.hasHrvErv9365 === 'with_hrv') && 
+          renderField('HRV/ERV Efficiency/Model', selections.hrvEfficiency || selections.hrvMakeModel || 'Not provided')}
+
+        {renderField('Drain Water Heat Recovery', selections.hasDWHR || 'No')}
+        
+        {/* MURB Specifics */}
+        {(selections.buildingType === 'multi-unit' || selections.buildingType === 'single-detached-secondary') && (
+          <>
+            {renderField('Multiple MURB Heating Systems', selections.hasMurbMultipleHeating || 'No')}
+            {renderField('Multiple MURB Water Heaters', selections.hasMurbMultipleWaterHeaters || 'No')}
+          </>
+        )}
+      </div>
     );
   };
 
@@ -499,22 +543,25 @@ const ProjectSummaryForm = ({
               <AccordionTrigger className="text-lg font-semibold"><Thermometer className="h-5 w-5 mr-2" />Building Envelope</AccordionTrigger>
               <AccordionContent className="pt-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                  {/* Use fallbacks for legacy/new naming consistency */}
-                  {renderField('Ceilings/Attic', selections.ceilingsAtticRSI, 'RSI')}
+                  {renderField('Ceilings/Attic', selections.ceilingsAtticRSI || 'Not provided', 'RSI')}
                   
-                  {/* Cathedral/Flat Roof handled inside getSlabInsulationDisplay for 9368 or here for others */}
-                  {selections.compliancePath !== '9368' && renderField('Cathedral/Flat Roof', selections.hasCathedralOrFlatRoof === 'yes' ? (selections.cathedralFlatRSIValue || selections.cathedralFlatRSI) : null, 'RSI')}
-                  
-                  {renderField('Above Grade Walls', selections.wallRSI, 'RSI')}
-                  {renderField('Below Grade Walls', selections.belowGradeRSI || selections.foundationWallsRSI, 'RSI')}
+                  {renderField('Above Grade Walls', selections.wallRSI || 'Not provided', 'RSI')}
+                  {renderField('Below Grade Walls', selections.belowGradeRSI || selections.foundationWallsRSI || 'Not provided', 'RSI')}
                   
                   {getSlabInsulationDisplay()}
 
-                  {renderField('Window U-Value', selections.windowUValue, 'W/(m²·K)')}
-                  {renderField('Skylights?', selections.hasSkylights || 'no')}
-                  {selections.hasSkylights === 'yes' && renderField('Skylight U-Value', selections.skylightUValue, 'W/(m²·K)')}
-                  {renderField('Building Volume', selections.buildingVolume, 'm³')}
-                  {renderField('Mid-Construction Blower Door Test', selections.midConstructionBlowerDoorPlanned)}
+                  {renderField('Window U-Value', selections.windowUValue || 'Not provided', 'W/(m²·K)')}
+                  
+                  {/* Skylights logic based on pathway */}
+                  {(selections.compliancePath === '9362' || selections.compliancePath === '9368') && (
+                    <>
+                      {renderField('Skylights?', selections.hasSkylights || 'no')}
+                      {selections.hasSkylights === 'yes' && renderField('Skylight U-Value', selections.skylightUValue || 'Not provided', 'W/(m²·K)')}
+                    </>
+                  )}
+
+                  {renderField('Building Volume', selections.buildingVolume || 'Not provided', 'm³')}
+                  {renderField('Mid-Construction Blower Door Test', selections.midConstructionBlowerDoorPlanned ? 'Yes' : 'No')}
                   {renderAirtightnessDetails()}
                 </div>
               </AccordionContent>
@@ -523,33 +570,7 @@ const ProjectSummaryForm = ({
             <AccordionItem value="item-3">
               <AccordionTrigger className="text-lg font-semibold"><Zap className="h-5 w-5 mr-2" />Mechanical Systems</AccordionTrigger>
               <AccordionContent className="pt-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                  {renderField('F280 Calculation Completed', selections.hasF280Calculation)}
-                  {renderField('Heating Type', selections.heatingType)}
-                  {renderField('Heating Efficiency/Model', selections.heatingEfficiency || selections.heatingMakeModel)}
-                  {renderField('Indirect Tank (Main)', selections.indirectTank)}
-                  {renderField('Indirect Tank Size (Main)', selections.indirectTankSize, 'gal')}
-                  {renderField('Cooling', selections.coolingApplicable)}
-                  {renderField('Cooling Efficiency/Model', selections.coolingEfficiency || selections.coolingMakeModel)}
-                  {renderField('Water Heater Type', selections.waterHeaterType || selections.waterHeater)}
-                  {renderField('Water Heater Model', selections.waterHeaterMakeModel)}
-                  {renderField('HRV/ERV', selections.hasHrv || selections.hasHrvErv9365)}
-                  {renderField('HRV/ERV Efficiency/Model', selections.hrvEfficiency || selections.hrvMakeModel)}
-                  {renderField('Drain Water Heat Recovery', selections.hasDWHR)}
-                  {renderField('Separate Secondary Heating', selections.hasSecondaryHeating)}
-                  {renderField('Secondary Heating Type', selections.secondaryHeatingType)}
-                  {renderField('Secondary Heating Efficiency', selections.secondaryHeatingEfficiency)}
-                  {renderField('Indirect Tank (Secondary)', selections.secondaryIndirectTank)}
-                  {renderField('Indirect Tank Size (Secondary)', selections.secondaryIndirectTankSize, 'gal')}
-                  {renderField('Multiple MURB Heating Systems', selections.hasMurbMultipleHeating)}
-                  {renderField('MURB Second Heating Type', selections.murbSecondHeatingType)}
-                  {renderField('MURB Second Heating Efficiency', selections.murbSecondHeatingEfficiency)}
-                  {renderField('MURB Second Indirect Tank', selections.murbSecondIndirectTank)}
-                  {renderField('MURB Second Indirect Tank Size', selections.murbSecondIndirectTankSize, 'gal')}
-                  {renderField('Multiple MURB Water Heaters', selections.hasMurbMultipleWaterHeaters)}
-                  {renderField('MURB Second Water Heater Type', selections.murbSecondWaterHeaterType)}
-                  {renderField('MURB Second Water Heater Efficiency', selections.murbSecondWaterHeater)}
-                </div>
+                {renderMechanicalFields()}
               </AccordionContent>
             </AccordionItem>
             
