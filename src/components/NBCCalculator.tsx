@@ -107,7 +107,7 @@ const NBCCalculator = () => {
     frontDoorOrientation: "",
     province: "",
     climateZone: "",
-    occupancyClass: "",
+    occupancyClass: "C",
     compliancePath: "",
     isVolumeOver380: "",
     buildingVolume: "",
