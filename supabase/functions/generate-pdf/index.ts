@@ -200,40 +200,52 @@ const buildReportPdf = async (project: any, company: any, logoBytes?: Uint8Array
     const baseRowHeight = 18;
     const valueOffsetX = columnWidth * 0.45; 
     const maxValueWidth = columnWidth - valueOffsetX - 10;
+    const maxLabelWidth = valueOffsetX - 15;
     const sectionTopY = y;
 
     items.forEach((item, idx) => {
       const safeVal = sanitize(item.value);
+      const safeLabel = sanitize(item.label);
       
-      // Calculate wrapped text lines
-      const words = safeVal.split(' ');
-      let lines: string[] = [];
-      let currentLine = '';
+      // Wrap Label
+      const labelWords = safeLabel.split(' ');
+      let labelLines: string[] = [];
+      let currentLabelLine = '';
+      labelWords.forEach(word => {
+        const testLine = currentLabelLine ? `${currentLabelLine} ${word}` : word;
+        if (font.widthOfTextAtSize(testLine, 9) > maxLabelWidth && currentLabelLine !== '') {
+          labelLines.push(currentLabelLine);
+          currentLabelLine = word;
+        } else {
+          currentLabelLine = testLine;
+        }
+      });
+      labelLines.push(currentLabelLine);
 
-      words.forEach(word => {
-        let testLine = currentLine ? `${currentLine} ${word}` : word;
-        let testLineWidth = boldFont.widthOfTextAtSize(testLine, 9);
-        
-        if (testLineWidth > maxValueWidth) {
-          // If a single word is wider than the column, we must break it or truncate it
-          if (currentLine === '') {
-            // Very long word case: truncate it to fit
+      // Wrap Value
+      const valueWords = safeVal.split(' ');
+      let valueLines: string[] = [];
+      let currentValueLine = '';
+      valueWords.forEach(word => {
+        let testLine = currentValueLine ? `${currentValueLine} ${word}` : word;
+        if (boldFont.widthOfTextAtSize(testLine, 9) > maxValueWidth) {
+          if (currentValueLine === '') {
             while (boldFont.widthOfTextAtSize(testLine + '...', 9) > maxValueWidth && testLine.length > 0) {
               testLine = testLine.slice(0, -1);
             }
-            lines.push(testLine + '...');
-            currentLine = '';
+            valueLines.push(testLine + '...');
+            currentValueLine = '';
           } else {
-            lines.push(currentLine);
-            currentLine = word;
+            valueLines.push(currentValueLine);
+            currentValueLine = word;
           }
         } else {
-          currentLine = testLine;
+          currentValueLine = testLine;
         }
       });
-      if (currentLine) lines.push(currentLine);
+      if (currentValueLine) valueLines.push(currentValueLine);
 
-      const itemRowHeight = Math.max(baseRowHeight, (lines.length * 10) + 8);
+      const itemRowHeight = Math.max(baseRowHeight, (labelLines.length * 10) + 8, (valueLines.length * 10) + 8);
 
       // zebra banding background
       if (idx % 2 === 0) {
@@ -246,17 +258,19 @@ const buildReportPdf = async (project: any, company: any, logoBytes?: Uint8Array
         });
       }
 
-      // Draw label
-      page.drawText(sanitize(item.label), {
-        x: x + 10,
-        y: y - 12,
-        font,
-        size: 9,
-        color: { type: 'RGB', red: 0.3, green: 0.3, blue: 0.3 },
+      // Draw wrapped label lines
+      labelLines.forEach((line, lineIdx) => {
+        page.drawText(line, {
+          x: x + 10,
+          y: y - 12 - (lineIdx * 10),
+          font,
+          size: 9,
+          color: { type: 'RGB', red: 0.3, green: 0.3, blue: 0.3 },
+        });
       });
       
       // Draw wrapped value lines
-      lines.forEach((line, lineIdx) => {
+      valueLines.forEach((line, lineIdx) => {
         page.drawText(line, {
           x: x + valueOffsetX,
           y: y - 12 - (lineIdx * 10),
@@ -269,7 +283,7 @@ const buildReportPdf = async (project: any, company: any, logoBytes?: Uint8Array
       y -= itemRowHeight;
     });
 
-    // Draw full border after items are processed to match dynamic height
+    // Draw full border
     page.drawRectangle({
       x: x,
       y: y,
@@ -348,19 +362,39 @@ const buildReportPdf = async (project: any, company: any, logoBytes?: Uint8Array
 
   const bottomY = Math.min(leftY, rightY) - 10;
 
-  // Acknowledgement Box
-  const ackHeight = 50;
+  // Acknowledgement Box Wrapping
+  const ackTitle = 'ACKNOWLEDGEMENT';
+  const ackText1 = 'I agree to notify my energy advisor before making any changes to the design, including envelope components, windows, or mechanical systems. This ensures ongoing compliance during construction. Design changes may result in additional charges. I commit to ensuring the building plans match the designed energy model and the as-constructed state.';
+  
+  const ackMaxWidth = pageWidth - 2 * margin - 20;
+  const ackWords = ackText1.split(' ');
+  let ackLines: string[] = [];
+  let currentAckLine = '';
+  
+  ackWords.forEach(word => {
+    const testLine = currentAckLine ? `${currentAckLine} ${word}` : word;
+    if (font.widthOfTextAtSize(testLine, 8) > ackMaxWidth) {
+      ackLines.push(currentAckLine);
+      currentAckLine = word;
+    } else {
+      currentAckLine = testLine;
+    }
+  });
+  ackLines.push(currentAckLine);
+
+  const ackBoxHeight = 30 + (ackLines.length * 10);
+  
   page.drawRectangle({
     x: margin,
-    y: bottomY - ackHeight,
+    y: bottomY - ackBoxHeight,
     width: pageWidth - 2 * margin,
-    height: ackHeight,
+    height: ackBoxHeight,
     borderColor: { type: 'RGB', red: 0.9, green: 0.7, blue: 0.2 },
     borderWidth: 1,
     color: { type: 'RGB', red: 0.99, green: 0.97, blue: 0.9 },
   });
 
-  page.drawText('ACKNOWLEDGEMENT', {
+  page.drawText(ackTitle, {
     x: margin + 10,
     y: bottomY - 15,
     font: boldFont,
@@ -368,23 +402,14 @@ const buildReportPdf = async (project: any, company: any, logoBytes?: Uint8Array
     color: { type: 'RGB', red: 0.9, green: 0.5, blue: 0 },
   });
 
-  const ackText1 = 'I agree to notify my energy advisor before making any changes to the design, including envelope components, windows, or mechanical systems. This ensures ongoing compliance during';
-  const ackText2 = 'construction. Design changes may result in additional charges. I commit to ensuring the building plans match the designed energy model and the as-constructed state.';
-
-  page.drawText(ackText1, {
-    x: margin + 10,
-    y: bottomY - 30,
-    font,
-    size: 8,
-    color: { type: 'RGB', red: 0.3, green: 0.3, blue: 0.3 },
-  });
-
-  page.drawText(ackText2, {
-    x: margin + 10,
-    y: bottomY - 42,
-    font,
-    size: 8,
-    color: { type: 'RGB', red: 0.3, green: 0.3, blue: 0.3 },
+  ackLines.forEach((line, idx) => {
+    page.drawText(line, {
+      x: margin + 10,
+      y: bottomY - 30 - (idx * 10),
+      font,
+      size: 8,
+      color: { type: 'RGB', red: 0.3, green: 0.3, blue: 0.3 },
+    });
   });
 
   const bytes = await pdfDoc.save();
