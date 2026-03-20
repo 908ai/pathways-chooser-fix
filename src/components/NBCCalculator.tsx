@@ -503,7 +503,7 @@ const NBCCalculator = () => {
           hrvEfficiency: p.hrv_erv_efficiency && p.hrv_erv_efficiency !== 0 ? p.hrv_erv_efficiency.toString() : "",
           hasSecondaryHrv: p.has_secondary_hrv || "",
           secondaryHrvEfficiency: p.secondary_hrv_efficiency || "",
-          waterHeater: p.water_heating_type || "",
+          waterHeater: p.water_heater_make_model || "",
           waterHeaterMakeModel: p.water_heater_make_model || "",
           waterHeaterType: p.water_heating_type || "",
           otherWaterHeaterType: p.other_water_heater_type || "",
