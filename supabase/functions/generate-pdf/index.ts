@@ -1146,11 +1146,10 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
   });
 
   const selectedHrv =
-    project.hrv_erv === true ||
-    project.hrv_erv === 'Yes' ||
-    project.hrv_erv === 'yes' ||
-    project.hrv_erv === 'HRV' ||
-    project.hrv_erv === 'ERV';
+    project.hrv_erv_type &&
+    project.hrv_erv_type !== "None" &&
+    project.hrv_erv_type !== "no_hrv" &&
+    project.hrv_erv_type !== "without_hrv";
 
   const hrvBoxSize = 9;
   const yesBoxX = margin + 105;
