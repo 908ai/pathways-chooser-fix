@@ -604,17 +604,34 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
   currentY -= 56;
 
   // Intro text
-  page.drawText('This form is intended to clarify the compliance with Section 9.36, prescriptive path.', { x: margin, y: currentY, font: boldFont, size: 10 });
-  currentY -= 15;
+  const introTitle = 'This form is intended to clarify the compliance with Section 9.36, prescriptive path.';
+  const introTitleSize = 10;
+  const introTitleWidth = boldFont.widthOfTextAtSize(introTitle, introTitleSize);
+
+  page.drawText(introTitle, {
+    x: (pageWidth - introTitleWidth) / 2,
+    y: currentY,
+    font: boldFont,
+    size: introTitleSize,
+  });
+
+  currentY -= 14;
+
   const introSub = 'Must be completed by a competent person who is knowledgeable, experienced, and trained in building\ndesign under Section 9.36 of the NBC and acceptable to the Authority Having Jurisdiction.';
+
   introSub.split('\n').forEach(line => {
-    page.drawText(sanitize(line), {
-      x: margin,
+    const safeLine = sanitize(line);
+    const fontSize = 9;
+    const lineWidth = font.widthOfTextAtSize(safeLine, fontSize);
+
+    page.drawText(safeLine, {
+      x: (pageWidth - lineWidth) / 2,
       y: currentY,
       font,
-      size: 9
+      size: fontSize
     });
-    currentY -= 12;
+
+    currentY -= 11;
   });
 
   currentY -= 10;
@@ -730,6 +747,46 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
 
   currentY -= 20;
 
+  // Energy prescriptive compliance paths row
+  const energyRowHeight = 86;
+
+  page.drawRectangle({
+    x: margin,
+    y: currentY - energyRowHeight,
+    width: tableWidth,
+    height: energyRowHeight,
+    borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 },
+    borderWidth: 1
+  });
+
+  const energyTitle = 'Energy prescriptive compliance paths apply to:';
+  page.drawText(energyTitle, {
+    x: margin + 8,
+    y: currentY - 18,
+    font: boldFont,
+    size: 9
+  });
+
+  const bulletLines = [
+    '• Buildings of residential occupancy to which Part 9 applies.',
+    '• Buildings containing business and personal services, mercantile or low hazard industrial occupancies to which Part 9 applies',
+    '  to whose combined floor area does not exceed 300 m², excluding parking garages serving residential occupancies, and',
+    '• Buildings containing any mixture of the above two.'
+  ];
+
+  let bulletY = currentY - 34;
+
+  bulletLines.forEach((line) => {
+    page.drawText(sanitize(line), {
+      x: margin + 28,
+      y: bulletY,
+      font,
+      size: 8
+    });
+    bulletY -= 11;
+  });
+
+  currentY -= energyRowHeight;
   currentY -= 10;
 
   // Checklist Sections
@@ -887,7 +944,7 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
     }
 
     currentY -= rowHeight;
-  };
+  };  
 
   const drawFenestrationRow = (col1: string, mergedCol23: string, col4: string) => {
     const baseRowHeight = 18;
@@ -992,7 +1049,191 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
     }
 
     currentY -= rowHeight;
-  };
+  }; 
+
+  // Prescriptive note + conversions + HRV/ERV block
+  const topBlockTopY = currentY;
+
+  const leftBlockWidth = tableWidth * 0.58;
+  const rightBlockWidth = tableWidth * 0.42;
+
+  // Right conversions box
+  const convX = margin + tableWidth - rightBlockWidth;
+  const convTopY = topBlockTopY - 2;
+  const convHeaderH = 13;
+  const convBodyH = 17;
+  const convTotalH = convHeaderH + convBodyH;
+
+  page.drawRectangle({
+    x: convX,
+    y: convTopY - convTotalH,
+    width: rightBlockWidth,
+    height: convTotalH,
+    borderColor: { type: 'RGB', red: 0.5, green: 0.5, blue: 0.5 },
+    borderWidth: 0.8,
+  });
+
+  page.drawLine({
+    start: { x: convX, y: convTopY - convHeaderH },
+    end: { x: convX + rightBlockWidth, y: convTopY - convHeaderH },
+    thickness: 0.8,
+    color: { type: 'RGB', red: 0.5, green: 0.5, blue: 0.5 },
+  });
+
+  page.drawLine({
+    start: { x: convX + rightBlockWidth / 2, y: convTopY - convHeaderH },
+    end: { x: convX + rightBlockWidth / 2, y: convTopY - convTotalH },
+    thickness: 0.8,
+    color: { type: 'RGB', red: 0.5, green: 0.5, blue: 0.5 },
+  });
+
+  const convTitle = 'Conversions:';
+  const convTitleSize = 8;
+  const convTitleWidth = font.widthOfTextAtSize(convTitle, convTitleSize);
+
+  page.drawText(convTitle, {
+    x: convX + (rightBlockWidth - convTitleWidth) / 2,
+    y: convTopY - 10,
+    font,
+    size: convTitleSize,
+  });
+
+  const leftConv = 'R = 5.678 x RSI';
+  const rightConv = 'U = 1 / RSI';
+  const convFontSize = 8;
+
+  const leftConvWidth = font.widthOfTextAtSize(leftConv, convFontSize);
+  const rightConvWidth = font.widthOfTextAtSize(rightConv, convFontSize);
+
+  page.drawText(leftConv, {
+    x: convX + (rightBlockWidth / 2 - leftConvWidth) / 2,
+    y: convTopY - convHeaderH - 11,
+    font,
+    size: convFontSize,
+  });
+
+  page.drawText(rightConv, {
+    x: convX + rightBlockWidth / 2 + ((rightBlockWidth / 2 - rightConvWidth) / 2),
+    y: convTopY - convHeaderH - 11,
+    font,
+    size: convFontSize,
+  });
+
+  // Left text vertically centered relative to conversion box
+  const noteTitle = 'Prescriptive Compliance Path (9.36.2. – 9.36.4.)';
+  const noteLine1 = 'All calculations and specifications must be attached to this form to';
+  const noteLine2 = 'be considered complete and be accepted for review.';
+
+  const noteTitleSize = 9;
+  const noteBodySize = 8;
+
+  // posições relativas dentro do bloco
+  const titleOffset = 0;
+  const line1Offset = 14;
+  const line2Offset = 24;
+
+  // altura visual total do bloco da esquerda
+  const leftTextBlockHeight = line2Offset + noteBodySize;
+
+  // centro da tabela de conversão da direita
+  const convCenterY = convTopY - (convTotalH / 2);
+
+  // y da primeira linha do bloco da esquerda para centralizar tudo
+  const leftTextTopY = convCenterY + (leftTextBlockHeight / 2) - noteTitleSize + 1;
+
+  page.drawText(noteTitle, {
+    x: margin,
+    y: leftTextTopY - titleOffset,
+    font: boldFont,
+    size: noteTitleSize,
+  });
+
+  page.drawText(noteLine1, {
+    x: margin,
+    y: leftTextTopY - line1Offset,
+    font,
+    size: noteBodySize,
+  });
+
+  page.drawText(noteLine2, {
+    x: margin,
+    y: leftTextTopY - line2Offset,
+    font,
+    size: noteBodySize,
+  });
+
+  // HRV / ERV row closer to next section header
+  const hrvY = convTopY - convTotalH - 28;
+
+  page.drawText('HRV / ERV:', {
+    x: margin,
+    y: hrvY,
+    font,
+    size: 9,
+  });
+
+  const selectedHrv =
+    project.hrv_erv === true ||
+    project.hrv_erv === 'Yes' ||
+    project.hrv_erv === 'yes' ||
+    project.hrv_erv === 'HRV' ||
+    project.hrv_erv === 'ERV';
+
+  const hrvBoxSize = 9;
+  const yesBoxX = margin + 105;
+  const noBoxX = yesBoxX + 85;
+
+  page.drawRectangle({
+    x: yesBoxX,
+    y: hrvY - 2,
+    width: hrvBoxSize,
+    height: hrvBoxSize,
+    borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 },
+    borderWidth: 1,
+  });
+
+  page.drawText('Yes', {
+    x: yesBoxX + 16,
+    y: hrvY,
+    font,
+    size: 9,
+  });
+
+  page.drawRectangle({
+    x: noBoxX,
+    y: hrvY - 2,
+    width: hrvBoxSize,
+    height: hrvBoxSize,
+    borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 },
+    borderWidth: 1,
+  });
+
+  page.drawText('No', {
+    x: noBoxX + 16,
+    y: hrvY,
+    font,
+    size: 9,
+  });
+
+  // Mark selected option
+  if (selectedHrv) {
+    page.drawText('X', {
+      x: yesBoxX + 2,
+      y: hrvY,
+      font: boldFont,
+      size: 9,
+    });
+  } else {
+    page.drawText('X', {
+      x: noBoxX + 2,
+      y: hrvY,
+      font: boldFont,
+      size: 9,
+    });
+  }
+
+  // leave only a very small gap before next grey header
+  currentY = hrvY - 8;  
 
   drawChecklistHeader('Effective Thermal Resistance of Above Ground Opaque Building Assemblies (RSI)');
   drawChecklistRow('Assembly', 'w/ HRV', 'w/o HRV', 'Proposed');
