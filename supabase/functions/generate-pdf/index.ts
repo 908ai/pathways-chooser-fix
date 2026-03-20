@@ -1263,8 +1263,39 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
   drawChecklistRow('Heated Floors', '2.84', '2.84', project.heated_floors_rsi ? String(project.heated_floors_rsi) : '');
 
   currentY -= 20;
-  const footerText = `Updated September 2025        Section 9.36 – Tiered Prescriptive / Trade-Off Compliance Form        Page 1 of 1`;
-  page.drawText(footerText, { x: margin, y: 20, font, size: 8 });
+  
+  const footerY = 20;
+  const footerSize = 8;
+
+  const footerLeft = 'Updated September 2025';
+  const footerCenter = 'Section 9.36 – Tiered Prescriptive / Trade-Off Compliance Form';
+  const footerRight = 'Page 1 of 1';
+
+  // Left
+  page.drawText(footerLeft, {
+    x: margin,
+    y: footerY,
+    font,
+    size: footerSize,
+  });
+
+  // Center
+  const footerCenterWidth = font.widthOfTextAtSize(footerCenter, footerSize);
+  page.drawText(footerCenter, {
+    x: (pageWidth - footerCenterWidth) / 2,
+    y: footerY,
+    font,
+    size: footerSize,
+  });
+
+  // Right
+  const footerRightWidth = font.widthOfTextAtSize(footerRight, footerSize);
+  page.drawText(footerRight, {
+    x: pageWidth - margin - footerRightWidth,
+    y: footerY,
+    font,
+    size: footerSize,
+  });
 
   const bytes = await pdfDoc.save();
   return bytes;
