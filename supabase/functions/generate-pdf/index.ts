@@ -207,12 +207,12 @@ const buildReportPdf = async (project: any, company: any, logoBytes?: Uint8Array
     });
 
     page.drawRectangle({
-        x: 0,
-        y: height - 3,
-        width,
-        height: 3,
-        color: colors.orange,
-      });    
+      x: 0,
+      y: height - 3,
+      width,
+      height: 3,
+      color: colors.orange,
+    });
 
     // header azul
     page.drawRectangle({
@@ -572,7 +572,7 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
   if (logoImage) {
     const { width: lw, height: lh } = logoImage.scale(1);
     const scale = 40 / lh;
-    page.drawImage(logoImage, { x: margin, y: currentY - 40, width: lw * scale, height: 40 });
+    page.drawImage(logoImage, { x: margin, y: currentY - 29, width: lw * scale, height: 40 });
   }
 
   // Header Text
@@ -582,21 +582,38 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
     'Section 9.36 of the National Building Code of Canada'
   ];
 
+  const headerRightX = pageWidth - margin;
+
   headerLines.forEach((line, i) => {
-    const size = i === 1 ? 12 : 10;
+    const size = i === 1 ? 11 : 8;
     const f = i === 1 ? boldFont : font;
     const w = f.widthOfTextAtSize(line, size);
-    page.drawText(line, { x: pageWidth / 2 + 20, y: currentY - (i * 15), font: f, size });
+
+    let y = currentY;
+    if (i === 1) y = currentY - 13;
+    if (i === 2) y = currentY - 22;
+
+    page.drawText(line, {
+      x: headerRightX - w,
+      y,
+      font: f,
+      size,
+    });
   });
 
-  currentY -= 60;
+  currentY -= 56;
 
   // Intro text
-  page.drawText('This form is intended to clarify the compliance with Section 9.36, prescriptive path.', { x: margin, y: currentY, font: boldFont, size: 11 });
+  page.drawText('This form is intended to clarify the compliance with Section 9.36, prescriptive path.', { x: margin, y: currentY, font: boldFont, size: 10 });
   currentY -= 15;
   const introSub = 'Must be completed by a competent person who is knowledgeable, experienced, and trained in building\ndesign under Section 9.36 of the NBC and acceptable to the Authority Having Jurisdiction.';
   introSub.split('\n').forEach(line => {
-    page.drawText(line, { x: margin, y: currentY, font: font, size: 10, italic: true });
+    page.drawText(sanitize(line), {
+      x: margin,
+      y: currentY,
+      font,
+      size: 9
+    });
     currentY -= 12;
   });
 
@@ -611,13 +628,41 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
   const drawRow = (labels: string[], values: string[], colWidths: number[]) => {
     let x = margin;
     const rowHeight = 20;
+    const leftPadding = 5;
+
     labels.forEach((label, i) => {
-      page.drawRectangle({ x, y: currentY - rowHeight, width: colWidths[i], height: rowHeight, borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 }, borderWidth: 1 });
-      page.drawText(label, { x: x + 2, y: currentY - 13, font, size: 9 });
-      const labelW = font.widthOfTextAtSize(label, 9);
-      page.drawText(sanitize(values[i]), { x: x + labelW + 5, y: currentY - 13, font: boldFont, size: 9 });
+      page.drawRectangle({
+        x,
+        y: currentY - rowHeight,
+        width: colWidths[i],
+        height: rowHeight,
+        borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 },
+        borderWidth: 1
+      });
+
+      const safeLabel = sanitize(label);
+      const safeValue = sanitize(values[i] || '');
+
+      const labelX = x + leftPadding;
+      page.drawText(safeLabel, {
+        x: labelX,
+        y: currentY - 13,
+        font,
+        size: 9
+      });
+
+      const labelW = font.widthOfTextAtSize(safeLabel, 9);
+
+      page.drawText(safeValue, {
+        x: labelX + labelW + 5,
+        y: currentY - 13,
+        font: boldFont,
+        size: 9
+      });
+
       x += colWidths[i];
     });
+
     currentY -= rowHeight;
   };
 
@@ -625,23 +670,92 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
   drawRow(['Occupancy Class:', 'Conditioned Space Volume (m³):'], [project.occupancy_class || '', project.building_volume ? String(project.building_volume) : ''], [tableWidth * 0.4, tableWidth * 0.6]);
 
   // Tier Selection
-  page.drawRectangle({ x: margin, y: currentY - 20, width: tableWidth, height: 20, borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 }, borderWidth: 1 });
-  page.drawText('Select Performance Tier', { x: margin + 5, y: currentY - 14, font, size: 9 });
-  let tierX = margin + 110;
-  const tiers = ['Tier 2', 'Tier 3', 'Tier 4', 'Tier 5'];
-  tiers.forEach(tier => {
-    page.drawRectangle({ x: tierX, y: currentY - 15, width: 8, height: 8, borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 }, borderWidth: 1 });
-    page.drawText(tier, { x: tierX + 12, y: currentY - 14, font, size: 9 });
-    tierX += 60;
+  page.drawRectangle({
+    x: margin,
+    y: currentY - 20,
+    width: tableWidth,
+    height: 20,
+    borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 },
+    borderWidth: 1
   });
+
+  const tierLabel = 'Select Performance Tier';
+  const tierLabelX = margin + 5;
+  page.drawText(tierLabel, {
+    x: tierLabelX,
+    y: currentY - 14,
+    font,
+    size: 9
+  });
+
+  const tiers = ['Tier 2', 'Tier 3', 'Tier 4', 'Tier 5'];
+  const boxSize = 8;
+  const tierFontSize = 9;
+  const gapBoxToText = 6;
+  const gapBetweenOptions = 28;
+
+  // mede largura total do grupo de opções
+  const optionWidths = tiers.map(tier => {
+    const textWidth = font.widthOfTextAtSize(tier, tierFontSize);
+    return boxSize + gapBoxToText + textWidth;
+  });
+
+  const totalOptionsWidth =
+    optionWidths.reduce((sum, w) => sum + w, 0) + gapBetweenOptions * (tiers.length - 1);
+
+  // centraliza o grupo na linha inteira
+  let tierX = margin + (tableWidth - totalOptionsWidth) / 2;
+
+  tiers.forEach((tier, index) => {
+    const textWidth = font.widthOfTextAtSize(tier, tierFontSize);
+
+    page.drawRectangle({
+      x: tierX,
+      y: currentY - 15,
+      width: boxSize,
+      height: boxSize,
+      borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 },
+      borderWidth: 1
+    });
+
+    page.drawText(tier, {
+      x: tierX + boxSize + gapBoxToText,
+      y: currentY - 14,
+      font,
+      size: tierFontSize
+    });
+
+    tierX += boxSize + gapBoxToText + textWidth + gapBetweenOptions;
+  });
+
   currentY -= 20;
 
   currentY -= 10;
 
   // Checklist Sections
   const drawChecklistHeader = (title: string) => {
-    page.drawRectangle({ x: margin, y: currentY - 18, width: tableWidth, height: 18, color: { type: 'RGB', red: 0.9, green: 0.9, blue: 0.9 }, borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 }, borderWidth: 1 });
-    page.drawText(title, { x: margin + 5, y: currentY - 13, font: boldFont, size: 10, color: { type: 'RGB', red: 0, green: 0, blue: 0 } });
+    page.drawRectangle({
+      x: margin,
+      y: currentY - 18,
+      width: tableWidth,
+      height: 18,
+      color: { type: 'RGB', red: 0.9, green: 0.9, blue: 0.9 },
+      borderColor: { type: 'RGB', red: 0, green: 0, blue: 0 },
+      borderWidth: 1
+    });
+
+    const safeTitle = sanitize(title);
+    const titleSize = 10;
+    const titleWidth = boldFont.widthOfTextAtSize(safeTitle, titleSize);
+
+    page.drawText(safeTitle, {
+      x: margin + (tableWidth - titleWidth) / 2,
+      y: currentY - 13,
+      font: boldFont,
+      size: titleSize,
+      color: { type: 'RGB', red: 0, green: 0, blue: 0 }
+    });
+
     currentY -= 18;
   };
 
@@ -651,15 +765,232 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
     const w2 = tableWidth * 0.25;
     const w3 = tableWidth * 0.25;
     const w4 = tableWidth * 0.15;
-    
-    [w1, w2, w3, w4].reduce((currX, w, i) => {
-      page.drawRectangle({ x: currX, y: currentY - rowHeight, width: w, height: rowHeight, borderColor: { type: 'RGB', red: 0.7, green: 0.7, blue: 0.7 }, borderWidth: 0.5 });
-      const text = [col1, col2, col3, col4][i];
-      if (text) {
-        page.drawText(sanitize(text), { x: currX + 5, y: currentY - 13, font: i === 0 ? font : boldFont, size: 8 });
+
+    const columns = [
+      { text: col1, width: w1, fontRef: font, align: 'left' },
+      { text: col2, width: w2, fontRef: font, align: 'center' },
+      { text: col3, width: w3, fontRef: font, align: 'center' },
+      { text: col4, width: w4, fontRef: boldFont, align: 'center' },
+    ];
+
+    let currX = margin;
+
+    columns.forEach((col, i) => {
+      page.drawRectangle({
+        x: currX,
+        y: currentY - rowHeight,
+        width: col.width,
+        height: rowHeight,
+        borderColor: { type: 'RGB', red: 0.7, green: 0.7, blue: 0.7 },
+        borderWidth: 0.5
+      });
+
+      const safeText = sanitize(col.text || '');
+
+      if (safeText) {
+        const fontSize = 8;
+        const textWidth = col.fontRef.widthOfTextAtSize(safeText, fontSize);
+
+        let textX = currX + 5;
+
+        if (col.align === 'center') {
+          textX = currX + (col.width - textWidth) / 2;
+        }
+
+        page.drawText(safeText, {
+          x: textX,
+          y: currentY - 13,
+          font: col.fontRef,
+          size: fontSize
+        });
       }
-      return currX + w;
-    }, margin);
+
+      currX += col.width;
+    });
+
+    currentY -= rowHeight;
+  };
+
+  const drawChecklistRowMerged23 = (col1: string, mergedCol23: string, col4: string) => {
+    const rowHeight = 18;
+    const w1 = tableWidth * 0.35;
+    const w2 = tableWidth * 0.25;
+    const w3 = tableWidth * 0.25;
+    const w4 = tableWidth * 0.15;
+    const mergedW = w2 + w3;
+    const fontSize = 8;
+
+    // Column 1
+    page.drawRectangle({
+      x: margin,
+      y: currentY - rowHeight,
+      width: w1,
+      height: rowHeight,
+      borderColor: { type: 'RGB', red: 0.7, green: 0.7, blue: 0.7 },
+      borderWidth: 0.5,
+    });
+
+    // Merged columns 2 + 3
+    page.drawRectangle({
+      x: margin + w1,
+      y: currentY - rowHeight,
+      width: mergedW,
+      height: rowHeight,
+      borderColor: { type: 'RGB', red: 0.7, green: 0.7, blue: 0.7 },
+      borderWidth: 0.5,
+    });
+
+    // Column 4
+    page.drawRectangle({
+      x: margin + w1 + mergedW,
+      y: currentY - rowHeight,
+      width: w4,
+      height: rowHeight,
+      borderColor: { type: 'RGB', red: 0.7, green: 0.7, blue: 0.7 },
+      borderWidth: 0.5,
+    });
+
+    // Col 1 = left
+    if (col1) {
+      page.drawText(sanitize(col1), {
+        x: margin + 5,
+        y: currentY - 13,
+        font,
+        size: fontSize,
+      });
+    }
+
+    // Merged col 2+3 = centered
+    if (mergedCol23) {
+      const safeText = sanitize(mergedCol23);
+      const textWidth = font.widthOfTextAtSize(safeText, fontSize);
+
+      page.drawText(safeText, {
+        x: margin + w1 + (mergedW - textWidth) / 2,
+        y: currentY - 13,
+        font: font,
+        size: fontSize,
+      });
+    }
+
+    // Col 4 = centered
+    if (col4) {
+      const safeText = sanitize(col4);
+      const textWidth = boldFont.widthOfTextAtSize(safeText, fontSize);
+
+      page.drawText(safeText, {
+        x: margin + w1 + mergedW + (w4 - textWidth) / 2,
+        y: currentY - 13,
+        font: boldFont,
+        size: fontSize,
+      });
+    }
+
+    currentY -= rowHeight;
+  };
+
+  const drawFenestrationRow = (col1: string, mergedCol23: string, col4: string) => {
+    const baseRowHeight = 18;
+    const w1 = tableWidth * 0.35;
+    const w2 = tableWidth * 0.25;
+    const w3 = tableWidth * 0.25;
+    const w4 = tableWidth * 0.15;
+    const mergedW = w2 + w3;
+    const fontSize = 8;
+    const lineHeight = 9;
+
+    const safeCol1 = sanitize(col1 || '');
+    const safeMerged = sanitize(mergedCol23 || '');
+    const safeCol4 = sanitize(col4 || '');
+
+    const maxMergedWidth = mergedW - 10;
+    const words = safeMerged.split(' ').filter(Boolean);
+    const mergedLines: string[] = [];
+    let currentLine = '';
+
+    words.forEach((word) => {
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      const testWidth = boldFont.widthOfTextAtSize(testLine, fontSize);
+
+      if (testWidth <= maxMergedWidth) {
+        currentLine = testLine;
+      } else {
+        if (currentLine) mergedLines.push(currentLine);
+        currentLine = word;
+      }
+    });
+
+    if (currentLine) mergedLines.push(currentLine);
+    if (mergedLines.length === 0) mergedLines.push('');
+
+    const rowHeight = Math.max(baseRowHeight, mergedLines.length * lineHeight + 6);
+
+    // Column 1
+    page.drawRectangle({
+      x: margin,
+      y: currentY - rowHeight,
+      width: w1,
+      height: rowHeight,
+      borderColor: { type: 'RGB', red: 0.7, green: 0.7, blue: 0.7 },
+      borderWidth: 0.5,
+    });
+
+    // Merged columns 2 + 3
+    page.drawRectangle({
+      x: margin + w1,
+      y: currentY - rowHeight,
+      width: mergedW,
+      height: rowHeight,
+      borderColor: { type: 'RGB', red: 0.7, green: 0.7, blue: 0.7 },
+      borderWidth: 0.5,
+    });
+
+    // Column 4
+    page.drawRectangle({
+      x: margin + w1 + mergedW,
+      y: currentY - rowHeight,
+      width: w4,
+      height: rowHeight,
+      borderColor: { type: 'RGB', red: 0.7, green: 0.7, blue: 0.7 },
+      borderWidth: 0.5,
+    });
+
+    // Column 1 text
+    if (safeCol1) {
+      page.drawText(safeCol1, {
+        x: margin + 5,
+        y: currentY - 13,
+        font,
+        size: fontSize,
+      });
+    }
+
+    // Merged col 2+3 centered
+    const totalTextHeight = mergedLines.length * lineHeight;
+    const firstLineY = currentY - ((rowHeight - totalTextHeight) / 2) - 6;
+
+    mergedLines.forEach((line, index) => {
+      const textWidth = boldFont.widthOfTextAtSize(line, fontSize);
+
+      page.drawText(line, {
+        x: margin + w1 + (mergedW - textWidth) / 2,
+        y: firstLineY - (index * lineHeight),
+        font: font,
+        size: fontSize,
+      });
+    });
+
+    // Column 4 centered
+    if (safeCol4) {
+      const textWidth = boldFont.widthOfTextAtSize(safeCol4, fontSize);
+      page.drawText(safeCol4, {
+        x: margin + w1 + mergedW + (w4 - textWidth) / 2,
+        y: currentY - 13,
+        font: boldFont,
+        size: fontSize,
+      });
+    }
+
     currentY -= rowHeight;
   };
 
@@ -668,15 +999,19 @@ const buildChecklistPdf = async (project: any, company: any, logoBytes?: Uint8Ar
   drawChecklistRow('Ceilings below attics', '8.67', '10.43', project.attic_rsi ? String(project.attic_rsi) : '');
   drawChecklistRow('Cathedral / Flat roofs', '5.02', '5.02', project.cathedral_flat_rsi ? String(project.cathedral_flat_rsi) : '');
   drawChecklistRow('Walls & Rim joists', '2.97', '3.08', project.wall_rsi ? String(project.wall_rsi) : '');
-  drawChecklistRow('Floors over unheated spaces', '5.02', '5.02', project.floor_rsi ? String(project.floor_rsi) : '');
-  drawChecklistRow('Floors within garage', '4.86', '4.86', project.floors_garage_rsi ? String(project.floors_garage_rsi) : '');
+  drawChecklistRowMerged23('Floors over unheated spaces', '5.02', project.floor_rsi ? String(project.floor_rsi) : '');
+  drawChecklistRowMerged23('Floors within garage', '4.86', project.floors_garage_rsi ? String(project.floors_garage_rsi) : '');
 
   drawChecklistHeader('Thermal Characteristics of Fenestration, Doors and Skylights (U)');
-  drawChecklistRow('Assembly', 'Efficiency', '', 'Proposed');
-  drawChecklistRow('Windows & Doors', 'Max U-Value 1.61', '', project.window_u_value ? String(project.window_u_value) : '');
-  drawChecklistRow('One door exception', 'Max U-Value 2.60', '', '');
-  drawChecklistRow('Attic hatch', 'Min RSI 2.60', '', '');
-  drawChecklistRow('Skylights', 'Max U-Value 2.75', '', project.skylight_u_value ? String(project.skylight_u_value) : '');
+  drawFenestrationRow('Assembly', 'Efficiency', 'Proposed');
+  drawFenestrationRow(
+    'Windows & Doors',
+    'Maximum U-Value 1.61 or Minimum Energy Rating >= 25',
+    project.window_u_value ? String(project.window_u_value) : ''
+  );
+  drawFenestrationRow('One door exception', 'Maximum U-Value 2.60', '');
+  drawFenestrationRow('Attic hatch', 'Minimum RSInom 2.60', '');
+  drawFenestrationRow('Skylights', 'Maximum U-Value 2.75', project.skylight_u_value ? String(project.skylight_u_value) : '');
 
   drawChecklistHeader('Effective Thermal Resistance of Below-Grade Opaque Buildings Assemblies (RSI)');
   drawChecklistRow('Assembly', 'w/ HRV', 'w/o HRV', 'Proposed');
@@ -1052,14 +1387,14 @@ serve(async (req) => {
     } else {
       pdfBytes = await buildPdf(project, company, logoBytes);
     }
-    
+
     const pdfBase64 = encode(pdfBytes);
 
-    return new Response(JSON.stringify({ pdfData: pdfBase64 }), { 
-      headers: { 
-        ...corsHeaders, 
+    return new Response(JSON.stringify({ pdfData: pdfBase64 }), {
+      headers: {
+        ...corsHeaders,
         'Content-Type': 'application/json',
-      } 
+      }
     });
 
   } catch (error) {
