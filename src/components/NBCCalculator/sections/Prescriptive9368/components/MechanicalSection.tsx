@@ -42,6 +42,57 @@ export default function MechanicalSection({
                 </div>
             )}
 
+            <div id="heatingType" className="space-y-2">
+                <div className="flex items-center gap-3">
+                    <label className="text-sm font-medium text-foreground">Heating Type <span className="text-red-500">*</span></label>
+                    <InfoButton title="CAN/CSA F280-12 - Room by Room Heat Loss/Gain Calculation">
+                        <div className="space-y-4">
+                            <div>
+                                <h5 className="font-medium text-base mb-2">What's the Benefit of an F280 Calculation?</h5>
+                                <p className="text-base text-muted-foreground">
+                                    An F280 is a room-by-room heat loss and gain calculation that ensures your heating and cooling
+                                    system is sized exactly right for your home — not based on guesses or whole-house averages.
+                                    It's especially useful for energy-efficient homes, where oversized systems waste energy, cost more,
+                                    and perform poorly.
+                                </p>
+                            </div>
+                            <div>
+                                <h5 className="font-medium text-base mb-2">Key Benefits</h5>
+                                <ul className="text-base text-muted-foreground ml-4 space-y-1 list-disc">
+                                    <li>Ensures every room stays comfortable</li>
+                                    <li>Allows for smaller, cheaper mechanical systems</li>
+                                    <li>Enables smaller ductwork and easier design</li>
+                                    <li>Boosts efficiency and reduces energy bills</li>
+                                    <li>Prevents issues from oversizing (like poor humidity control)</li>
+                                    <li>Improves system lifespan and indoor air quality</li>
+                                    <li>Reduces need for backup heat in cold weather</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </InfoButton>
+                </div>
+                <Select required value={selections.heatingType} onValueChange={value => setSelections(prev => ({
+                    ...prev,
+                    heatingType: value,
+                    heatingEfficiency: "",
+                    otherHeatingEfficiency: "",
+                    indirectTank: value !== 'boiler' ? '' : prev.indirectTank,
+                    indirectTankSize: value !== 'boiler' ? '' : prev.indirectTankSize,
+                }))}>
+                    <SelectTrigger className={cn(
+                        (validationErrors.heatingType || isMissing("heatingType")) && missingFieldClass,
+                        validationErrors.heatingType && "border-red-500 ring-2 ring-red-500"
+                    )}>
+                        <SelectValue placeholder="Select heating type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="furnace">Furnace</SelectItem>
+                        <SelectItem value="boiler">Boiler</SelectItem>
+                        <SelectItem value="heat-pump">Heat Pump</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
             {/* HRV/ERV Section for 9368 - Mandatory */}
             <div className="space-y-3" id="hrvEfficiency">
                 <div className="flex items-center gap-3">
