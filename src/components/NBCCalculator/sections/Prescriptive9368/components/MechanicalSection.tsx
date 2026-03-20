@@ -93,6 +93,26 @@ export default function MechanicalSection({
                 </Select>
             </div>
 
+            {selections.heatingType && (
+                <div id="heatingEfficiency" className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">
+                        {selections.heatingType === 'heat-pump' ? 'Heat Pump Type and Efficiency' : 'Heating Efficiency'} <span className="text-red-500">*</span>
+                    </label>
+                    <Input required type="text"
+                        placeholder={selections.heatingType === 'boiler' ? "Enter heating efficiency (e.g. 90% AFUE)" : selections.heatingType === 'heat-pump' ? "Enter heat pump efficiency (e.g. 10.0 HSPF)" : "Enter heating efficiency (e.g. 95% AFUE)"}
+                        value={selections.heatingEfficiency}
+                        onChange={e => setSelections(prev => ({
+                            ...prev,
+                            heatingEfficiency: e.target.value
+                        }))}
+                        className={cn(
+                            (validationErrors.heatingEfficiency || isMissing("heatingEfficiency")) && missingFieldClass,
+                            validationErrors.heatingEfficiency && "border-red-500 ring-2 ring-red-500"
+                        )}
+                    />
+                </div>
+            )}
+
             {/* HRV/ERV Section for 9368 - Mandatory */}
             <div className="space-y-3" id="hrvEfficiency">
                 <div className="flex items-center gap-3">
