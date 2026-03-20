@@ -453,7 +453,7 @@ const NBCCalculator = () => {
           compliancePath: loadedCompliancePath,
           isVolumeOver380: p.building_volume && p.building_volume > 380 ? "yes" : "no",
           buildingVolume: p.building_volume ? (
-            p.compliance_path === '9362' ? String(p.building_volume) :
+            loadedCompliancePath === '9362' ? String(p.building_volume) :
             p.building_volume > 380 && p.building_volume <= 390 ? "380-390" :
             p.building_volume > 370 && p.building_volume <= 380 ? "370-380" :
             p.building_volume > 360 && p.building_volume <= 370 ? "360-370" :
