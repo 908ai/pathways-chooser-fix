@@ -578,10 +578,12 @@ const ProjectSummaryForm = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                   {renderField('CSA-F280 Calculation Status', selections.hasF280Calculation || 'No')}
                   {renderField('Mid-Construction Blower Door Test Planned', selections.midConstructionBlowerDoorPlanned ? 'Yes' : 'No')}
-                  {selections.interestedCertifications && selections.interestedCertifications.length > 0 && (
-                    <div className="col-span-full mt-2">
-                      {renderField('Interested Certifications', selections.interestedCertifications.join(', '))}
-                    </div>
+                  
+                  {renderField(
+                    'Interested Certifications', 
+                    (selections.interestedCertifications && selections.interestedCertifications.length > 0) 
+                      ? selections.interestedCertifications.join(', ') 
+                      : 'None selected'
                   )}
                 </div>
               </AccordionContent>
