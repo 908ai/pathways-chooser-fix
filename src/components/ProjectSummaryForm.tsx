@@ -384,7 +384,6 @@ const ProjectSummaryForm = ({
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-        {renderField('F280 Calculation Completed', selections.hasF280Calculation || 'No')}
         {renderField('Heating Type', selections.heatingType || 'Not provided')}
         {renderField('Heating Efficiency/Model', selections.heatingEfficiency || selections.heatingMakeModel || 'Not provided')}
         
@@ -561,7 +560,6 @@ const ProjectSummaryForm = ({
                   )}
 
                   {renderField('Building Volume', selections.buildingVolume || 'Not provided', 'm³')}
-                  {renderField('Mid-Construction Blower Door Test', selections.midConstructionBlowerDoorPlanned ? 'Yes' : 'No')}
                   {renderAirtightnessDetails()}
                 </div>
               </AccordionContent>
@@ -573,18 +571,22 @@ const ProjectSummaryForm = ({
                 {renderMechanicalFields()}
               </AccordionContent>
             </AccordionItem>
-            
-            {selections.interestedCertifications && selections.interestedCertifications.length > 0 && (
-              <AccordionItem value="item-optional">
-                <AccordionTrigger className="text-lg font-semibold"><Info className="h-5 w-5 mr-2" />Optional Services</AccordionTrigger>
-                <AccordionContent className="pt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                    {renderField('Interested Certifications', selections.interestedCertifications.join(', '))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            )}
 
+            <AccordionItem value="item-optional-services">
+              <AccordionTrigger className="text-lg font-semibold"><Info className="h-5 w-5 mr-2" />Optional Services</AccordionTrigger>
+              <AccordionContent className="pt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                  {renderField('CSA-F280 Calculation Status', selections.hasF280Calculation || 'No')}
+                  {renderField('Mid-Construction Blower Door Test Planned', selections.midConstructionBlowerDoorPlanned ? 'Yes' : 'No')}
+                  {selections.interestedCertifications && selections.interestedCertifications.length > 0 && (
+                    <div className="col-span-full mt-2">
+                      {renderField('Interested Certifications', selections.interestedCertifications.join(', '))}
+                    </div>
+                  )}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+            
             {selections.notes && (
               <AccordionItem value="item-notes">
                 <AccordionTrigger className="text-lg font-semibold"><FileText className="h-5 w-5 mr-2" />Additional Notes</AccordionTrigger>
