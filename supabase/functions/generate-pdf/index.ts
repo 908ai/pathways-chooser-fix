@@ -197,33 +197,56 @@ const buildReportPdf = async (project: any, company: any, logoBytes?: Uint8Array
     
     y -= headerHeight;
 
-    const rowHeight = 18;
-    const valueOffsetX = columnWidth * 0.45; // 45% of column width for values
+    const baseRowHeight = 18;
+    const valueOffsetX = columnWidth * 0.45; 
     const maxValueWidth = columnWidth - valueOffsetX - 10;
-
-    // Draw border around content
-    const contentHeight = items.length * rowHeight;
-    page.drawRectangle({
-      x: x,
-      y: y - contentHeight,
-      width: columnWidth,
-      height: contentHeight,
-      borderColor: { type: 'RGB', red: 0.7, green: 0.7, blue: 0.8 },
-      borderWidth: 1,
-    });
+    const sectionTopY = y;
 
     items.forEach((item, idx) => {
-      // zebra banding
+      const safeVal = sanitize(item.value);
+      
+      // Calculate wrapped text lines
+      const words = safeVal.split(' ');
+      let lines: string[] = [];
+      let currentLine = '';
+
+      words.forEach(word => {
+        let testLine = currentLine ? `${currentLine} ${word}` : word;
+        let testLineWidth = boldFont.widthOfTextAtSize(testLine, 9);
+        
+        if (testLineWidth > maxValueWidth) {
+          // If a single word is wider than the column, we must break it or truncate it
+          if (currentLine === '') {
+            // Very long word case: truncate it to fit
+            while (boldFont.widthOfTextAtSize(testLine + '...', 9) > maxValueWidth && testLine.length > 0) {
+              testLine = testLine.slice(0, -1);
+            }
+            lines.push(testLine + '...');
+            currentLine = '';
+          } else {
+            lines.push(currentLine);
+            currentLine = word;
+          }
+        } else {
+          currentLine = testLine;
+        }
+      });
+      if (currentLine) lines.push(currentLine);
+
+      const itemRowHeight = Math.max(baseRowHeight, (lines.length * 10) + 8);
+
+      // zebra banding background
       if (idx % 2 === 0) {
         page.drawRectangle({
           x: x + 1,
-          y: y - rowHeight + 1,
+          y: y - itemRowHeight + 1,
           width: columnWidth - 2,
-          height: rowHeight - 2,
+          height: itemRowHeight - 2,
           color: { type: 'RGB', red: 0.96, green: 0.97, blue: 0.99 },
         });
       }
 
+      // Draw label
       page.drawText(sanitize(item.label), {
         x: x + 10,
         y: y - 12,
@@ -232,33 +255,31 @@ const buildReportPdf = async (project: any, company: any, logoBytes?: Uint8Array
         color: { type: 'RGB', red: 0.3, green: 0.3, blue: 0.3 },
       });
       
-      let safeVal = sanitize(item.value);
-      
-      // Calculate text wrapping / truncation
-      let textToDraw = safeVal;
-      let textWidth = boldFont.widthOfTextAtSize(textToDraw, 9);
-      
-      if (textWidth > maxValueWidth) {
-        // Simple truncation if it's too long
-        while (textWidth > maxValueWidth && textToDraw.length > 0) {
-          textToDraw = textToDraw.slice(0, -1);
-          textWidth = boldFont.widthOfTextAtSize(textToDraw + '...', 9);
-        }
-        textToDraw += '...';
-      }
-
-      page.drawText(textToDraw, {
-        x: x + valueOffsetX,
-        y: y - 12,
-        font: boldFont,
-        size: 9,
-        color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.4 },
+      // Draw wrapped value lines
+      lines.forEach((line, lineIdx) => {
+        page.drawText(line, {
+          x: x + valueOffsetX,
+          y: y - 12 - (lineIdx * 10),
+          font: boldFont,
+          size: 9,
+          color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.4 },
+        });
       });
       
-      y -= rowHeight;
+      y -= itemRowHeight;
     });
 
-    return y - 15; // return next Y start
+    // Draw full border after items are processed to match dynamic height
+    page.drawRectangle({
+      x: x,
+      y: y,
+      width: columnWidth,
+      height: sectionTopY - y,
+      borderColor: { type: 'RGB', red: 0.7, green: 0.7, blue: 0.8 },
+      borderWidth: 1,
+    });
+
+    return y - 15; 
   };
 
   const getAirtightnessDisplay = (val: any) => val ? String(val) : 'Not specified';
