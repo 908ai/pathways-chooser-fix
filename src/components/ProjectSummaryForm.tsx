@@ -156,6 +156,7 @@ const ProjectSummaryForm = ({
         cooling_system_type: selections.coolingApplicable === 'yes' ? 'Central AC' : 'None',
         cooling_efficiency: parseFloat(selections.coolingEfficiency) || null,
         water_heating_type: selections.waterHeaterType || selections.waterHeater,
+        water_heating_efficiency: parseFloat(selections.waterHeaterEfficiency) || null,
         hrv_erv_type: selections.hasHrv === 'with_hrv' ? selections.hrv || 'HRV' : 'None',
         hrv_erv_efficiency: selections.hrvEfficiency || null,
         
@@ -360,11 +361,13 @@ const ProjectSummaryForm = ({
 
     // Default behavior for other pathways (9362, 9365, 9367)
     const is9362 = selections.compliancePath === '9362';
+    const is9365 = selections.compliancePath === '9365';
+    const is9367 = selections.compliancePath === '9367';
     
     return (
       <>
-        {is9362 && renderField('Are there any cathedral ceilings or flat roofs?', selections.hasCathedralOrFlatRoof || 'no')}
-        {is9362 && selections.hasCathedralOrFlatRoof === 'yes' && 
+        {(is9362 || is9365 || is9367) && renderField('Are there any cathedral ceilings or flat roofs?', selections.hasCathedralOrFlatRoof || 'no')}
+        {(is9362 || is9365 || is9367) && selections.hasCathedralOrFlatRoof === 'yes' && 
           renderField('Cathedral / Flat Roof Insulation', selections.cathedralFlatRSIValue || selections.cathedralFlatRSI || 'Not provided', 'RSI')}
 
         {renderField('Unheated Floor Below Frostline', selections.unheatedFloorBelowFrostRSI || (selections.floorsSlabsSelected?.includes('unheatedBelowFrost') ? 'Not provided' : null), 'RSI')}
@@ -372,6 +375,7 @@ const ProjectSummaryForm = ({
         {renderField('Heated Floors', selections.heatedFloorsRSI || selections.inFloorHeatRSI || (selections.floorsSlabsSelected?.includes('heatedFloors') ? 'Not provided' : null), 'RSI')}
         {renderField('Slab on Grade with Integral Footing', selections.slabOnGradeIntegralFootingRSI || selections.slabOnGradeRSI || (selections.floorsSlabsSelected?.includes('slabOnGradeIntegralFooting') ? 'Not provided' : null), 'RSI')}
         {renderField('Floors over Unheated Spaces (Cantilevers)', selections.floorsOverUnheatedSpacesRSI || selections.floorsUnheatedRSI || (selections.floorsSlabsSelected?.includes('floorsOverUnheatedSpaces') ? 'Not provided' : null), 'RSI')}
+        {renderField('Floors above Garages', selections.floorsGarageRSI || selections.floorsOverGarageRSI || (selections.floorsSlabsSelected?.includes('floorsGarage') ? 'Not provided' : null), 'RSI')}
       </>
     );
   };
@@ -456,8 +460,8 @@ const ProjectSummaryForm = ({
         <div className="space-y-2">
           <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Domestic Hot Water (DHW)</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            {renderField('Primary DHW Type', selections.waterHeaterType || (is9365 || is9367 ? 'Not provided' : null))}
-            {renderField('Primary DHW Model/Efficiency', selections.waterHeater || selections.waterHeaterMakeModel || (is9365 || is9367 ? 'Not provided' : null))}
+            {renderField('Primary DHW Type', selections.waterHeaterType || selections.waterHeater || (is9365 || is9367 ? 'Not provided' : null))}
+            {renderField('Primary DHW Model/Efficiency', selections.waterHeaterEfficiency || selections.waterHeaterMakeModel || (is9365 || is9367 ? 'Not provided' : null))}
             {renderField('Drain Water Heat Recovery', selections.hasDWHR || (is9365 || is9367 ? 'No' : null))}
           </div>
         </div>
@@ -651,14 +655,7 @@ const ProjectSummaryForm = ({
                 <div className="space-y-2">
                   <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Secondary & Specific Assemblies</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                    {/* Cathedral/Flat Roof logic based on pathway */}
-                    {(selections.compliancePath === '9362' || selections.compliancePath === '9368' || selections.compliancePath === '9365' || selections.compliancePath === '9367') && (
-                      <>
-                        {renderField('Cathedral Ceilings/Flat Roofs?', selections.hasCathedralOrFlatRoof || selections.hasCathedralOrFlatRoofSelection || 'no')}
-                        {(selections.hasCathedralOrFlatRoof === 'yes' || selections.hasCathedralOrFlatRoofSelection === 'yes') && 
-                          renderField('Cathedral/Flat Roof Insulation', selections.cathedralFlatRSIValue || selections.cathedralFlatRSI || 'Not provided', 'RSI')}
-                      </>
-                    )}
+                    {/* Cathedral/Flat Roof logic handled inside getSlabInsulationDisplay */}
                     {getSlabInsulationDisplay()}
                   </div>
                 </div>
@@ -669,8 +666,8 @@ const ProjectSummaryForm = ({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                     {renderField('Window & Door U-Value', selections.windowUValue || 'Not provided', 'W/(m²·K)')}
                     
-                    {/* Skylights logic based on pathway */}
-                    {(selections.compliancePath === '9362' || selections.compliancePath === '9368') && (
+                    {/* Skylights logic for all relevant pathways */}
+                    {(selections.compliancePath === '9362' || selections.compliancePath === '9368' || selections.compliancePath === '9365' || selections.compliancePath === '9367') && (
                       <>
                         {renderField('Skylights?', selections.hasSkylights || 'no')}
                         {selections.hasSkylights === 'yes' && renderField('Skylight U-Value', selections.skylightUValue || 'Not provided', 'W/(m²·K)')}
