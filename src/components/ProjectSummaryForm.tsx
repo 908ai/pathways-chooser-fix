@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Save, FileText, AlertTriangle, Info, Building, Thermometer, Zap, FolderOpen, ChevronRight, Wind } from 'lucide-react';
+import { Save, FileText, AlertTriangle, Info, Building, Thermometer, Zap, FolderOpen, ChevronRight, Wind, MapPin, ClipboardList } from 'lucide-react';
 import FileManager from '@/components/FileManager';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import {
@@ -296,16 +296,16 @@ const ProjectSummaryForm = ({
     
     // Mapping for F280 Calculation display
     let finalDisplayValue = displayValue;
-    if (label === 'F280 Calculation Completed' || label === 'CSA-F280 Calculation Required') {
+    if (label === 'F280 Calculation Completed' || label === 'CSA-F280 Calculation Required' || label === 'CSA-F280 Calculation Status') {
       if (value === 'completed') finalDisplayValue = 'Yes, completed';
       if (value === 'request-quote') finalDisplayValue = 'Request a quote';
       if (value === 'in-progress-or-na') finalDisplayValue = 'F280 in Progress or N/A';
     }
 
     return (
-      <div className="flex justify-between items-start text-sm py-2 border-b border-border md:border-none">
-        <span className="text-muted-foreground mr-2">{label}:</span>
-        <span className="font-medium text-foreground text-right break-words">{finalDisplayValue} {unit}</span>
+      <div className="flex justify-between items-start text-sm py-2 border-b border-border/50 md:border-none hover:bg-slate-50/50 dark:hover:bg-slate-800/30 px-1 rounded transition-colors">
+        <span className="text-muted-foreground mr-2 font-medium">{label}:</span>
+        <span className="font-semibold text-foreground text-right break-words">{finalDisplayValue}{unit ? ` ${unit}` : ''}</span>
       </div>
     );
   };
@@ -595,23 +595,38 @@ const ProjectSummaryForm = ({
 
             <AccordionItem value="item-1">
               <AccordionTrigger className="text-lg font-semibold"><Building className="h-5 w-5 mr-2" />Project & Contact Information</AccordionTrigger>
-              <AccordionContent className="pt-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                  {renderField('First Name', selections.firstName)}
-                  {renderField('Last Name', selections.lastName)}
-                  {renderField('Company', selections.company)}
-                  {renderField('Phone Number', selections.phoneNumber)}
-                  {renderField('Company Address', selections.companyAddress)}
-                  {renderField('Street Address', selections.streetAddress)}
-                  {renderField('Unit Number', selections.unitNumber)}
-                  {renderField('City', selections.city)}
-                  {renderField('Province', selections.province)}
-                  {renderField('Postal Code', selections.postalCode)}
-                  {renderField('Building Type', selections.buildingType)}
-                  {renderField('Occupancy Class', selections.occupancyClass)}
-                  {renderField('Climate Zone', selections.climateZone)}
-                  {renderField('Front Door Orientation', selections.frontDoorOrientation)}
-                  {renderField('EnerGuide Pathway', selections.energuidePathway)}
+              <AccordionContent className="pt-4 space-y-6">
+                <div className="space-y-2">
+                  <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Contact Details</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                    {renderField('First Name', selections.firstName)}
+                    {renderField('Last Name', selections.lastName)}
+                    {renderField('Company', selections.company)}
+                    {renderField('Phone Number', selections.phoneNumber)}
+                    {renderField('Company Address', selections.companyAddress)}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Project Location</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                    {renderField('Street Address', selections.streetAddress)}
+                    {renderField('Unit Number', selections.unitNumber)}
+                    {renderField('City', selections.city)}
+                    {renderField('Province', selections.province)}
+                    {renderField('Postal Code', selections.postalCode)}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Building Specifications</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                    {renderField('Building Type', selections.buildingType)}
+                    {renderField('Occupancy Class', selections.occupancyClass)}
+                    {renderField('Climate Zone', selections.climateZone)}
+                    {renderField('Front Door Orientation', selections.frontDoorOrientation)}
+                    {renderField('EnerGuide Pathway', selections.energuidePathway)}
+                  </div>
                 </div>
               </AccordionContent>
             </AccordionItem>
