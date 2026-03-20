@@ -391,6 +391,12 @@ const ProjectSummaryForm = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
             {renderField('Heating Type', selections.heatingType || 'Not provided')}
             {renderField('Heating Efficiency/Model', selections.heatingEfficiency || selections.heatingMakeModel || 'Not provided')}
+            {selections.heatingType === 'boiler' && (
+              <>
+                {renderField('Installing Indirect Tank?', selections.indirectTank || 'No')}
+                {selections.indirectTank === 'yes' && renderField('Indirect Tank Size', selections.indirectTankSize, 'gal')}
+              </>
+            )}
           </div>
         </div>
 
@@ -404,6 +410,12 @@ const ProjectSummaryForm = ({
                 <>
                   {renderField('Secondary Heating Type', selections.secondaryHeatingType || 'Not provided')}
                   {renderField('Secondary Heating Efficiency', selections.secondaryHeatingEfficiency || 'Not provided')}
+                  {selections.secondaryHeatingType === 'boiler' && (
+                    <>
+                      {renderField('Secondary Indirect Tank?', selections.secondaryIndirectTank || 'No')}
+                      {selections.secondaryIndirectTank === 'yes' && renderField('Secondary Indirect Tank Size', selections.secondaryIndirectTankSize, 'gal')}
+                    </>
+                  )}
                 </>
               )}
             </div>
@@ -460,6 +472,12 @@ const ProjectSummaryForm = ({
                   <>
                     {renderField('Second Heating Type', selections.murbSecondHeatingType || 'Not provided')}
                     {renderField('Second Heating Efficiency', selections.murbSecondHeatingEfficiency || 'Not provided')}
+                    {selections.murbSecondHeatingType === 'boiler' && (
+                      <>
+                        {renderField('MURB Second Indirect Tank?', selections.murbSecondIndirectTank || 'No')}
+                        {selections.murbSecondIndirectTank === 'yes' && renderField('MURB Second Indirect Tank Size', selections.murbSecondIndirectTankSize, 'gal')}
+                      </>
+                    )}
                   </>
                 )}
               </div>
