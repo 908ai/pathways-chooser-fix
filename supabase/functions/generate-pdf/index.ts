@@ -199,6 +199,7 @@ const buildReportPdf = async (project: any, company: any, logoBytes?: Uint8Array
 
     const rowHeight = 18;
     const valueOffsetX = columnWidth * 0.45; // 45% of column width for values
+    const maxValueWidth = columnWidth - valueOffsetX - 10;
 
     // Draw border around content
     const contentHeight = items.length * rowHeight;
@@ -231,8 +232,22 @@ const buildReportPdf = async (project: any, company: any, logoBytes?: Uint8Array
         color: { type: 'RGB', red: 0.3, green: 0.3, blue: 0.3 },
       });
       
-      const safeVal = sanitize(item.value);
-      page.drawText(safeVal.length > 50 ? safeVal.substring(0, 47) + '...' : safeVal, {
+      let safeVal = sanitize(item.value);
+      
+      // Calculate text wrapping / truncation
+      let textToDraw = safeVal;
+      let textWidth = boldFont.widthOfTextAtSize(textToDraw, 9);
+      
+      if (textWidth > maxValueWidth) {
+        // Simple truncation if it's too long
+        while (textWidth > maxValueWidth && textToDraw.length > 0) {
+          textToDraw = textToDraw.slice(0, -1);
+          textWidth = boldFont.widthOfTextAtSize(textToDraw + '...', 9);
+        }
+        textToDraw += '...';
+      }
+
+      page.drawText(textToDraw, {
         x: x + valueOffsetX,
         y: y - 12,
         font: boldFont,

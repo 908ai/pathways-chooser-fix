@@ -752,8 +752,31 @@ const ProjectDetail = () => {
     if (!project) return;
     setGeneratingPdf(true);
     try {
+      // Try to read the logo from public assets and convert to base64
+      const getLogoBase64 = async (): Promise<string | null> => {
+        try {
+          const res = await fetch('/assets/energy-navigator-logo.png');
+          if (!res.ok) return null;
+          const blob = await res.blob();
+          return new Promise<string | null>((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const result = reader.result as string;
+              // result is data URL: data:image/png;base64,XXXXX
+              const base64 = result.split(',')[1] || '';
+              resolve(base64 || null);
+            };
+            reader.readAsDataURL(blob);
+          });
+        } catch {
+          return null;
+        }
+      };
+
+      const logoBase64 = await getLogoBase64();
+
       const { data, error } = await supabase.functions.invoke('generate-pdf', {
-        body: { projectId: project.id, type: 'report' },
+        body: { projectId: project.id, logoBase64, type: 'report' },
       });
 
       if (error) throw error;
