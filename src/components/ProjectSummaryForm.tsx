@@ -156,8 +156,8 @@ const ProjectSummaryForm = ({
         cooling_system_type: selections.coolingApplicable === 'yes' ? 'Central AC' : 'None',
         cooling_efficiency: parseFloat(selections.coolingEfficiency) || null,
         water_heating_type: selections.waterHeaterType,
-        water_heating_efficiency: null, // This numeric column is often for numeric values, but model/make is usually text
-        hrv_erv_type: selections.hasHrv === 'with_hrv' ? selections.hrv || 'HRV' : 'None',
+        water_heating_efficiency: null,
+        hrv_erv_type: (selections.hasHrv === 'with_hrv' || selections.hasHrvErv9365 === 'with_hrv') ? (selections.hrv || 'HRV') : 'None',
         hrv_erv_efficiency: selections.hrvEfficiency || null,
         
         // Performance
@@ -206,7 +206,7 @@ const ProjectSummaryForm = ({
         secondary_indirect_tank: selections.secondaryIndirectTank,
         secondary_indirect_tank_size: selections.secondaryIndirectTankSize,
         cooling_make_model: selections.coolingMakeModel,
-        water_heater_make_model: selections.waterHeater, // Store 'Water Heater' input here
+        water_heater_make_model: selections.waterHeater || selections.waterHeaterMakeModel,
         other_water_heater_type: selections.otherWaterHeaterType,
         has_secondary_water_heater: selections.hasSecondaryWaterHeater,
         secondary_water_heater_same_as_main: selections.secondaryWaterHeaterSameAsMain,
@@ -460,7 +460,7 @@ const ProjectSummaryForm = ({
         <div className="space-y-2">
           <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500 border-b pb-1">Domestic Hot Water (DHW)</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            {renderField('Primary DHW Type', selections.waterHeaterType || (is9365 || is9367 ? 'Not provided' : null))}
+            {renderField('Water Heater Type', selections.waterHeaterType || (is9365 || is9367 ? 'Not provided' : null))}
             {renderField('Primary DHW Model/Efficiency', selections.waterHeater || selections.waterHeaterMakeModel || (is9365 || is9367 ? 'Not provided' : null))}
             {renderField('Drain Water Heat Recovery', selections.hasDWHR || (is9365 || is9367 ? 'No' : null))}
           </div>
