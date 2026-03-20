@@ -57,11 +57,77 @@ const buildReportPdf = async (project: any, company: any, logoBytes?: Uint8Array
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-  const page = pdfDoc.addPage([841.89, 595.28]); // A4 Landscape for better 2-col fit, or wait, standard image looks landscape or wide. No, image looks like landscape, aspect ratio is wide. Wait, 595 x 841 is A4 Portrait. The image has 2 wide columns, so landscape (841.89, 595.28) might be good. Let's do Landscape A4. Actually, the image looks almost square or landscape. We'll use landscape A4: [841.89, 595.28]
+  const page = pdfDoc.addPage([595.28, 841.89]); // A4 Portrait
   const { width: pageWidth, height: pageHeight } = page.getSize();
   const margin = 30;
   
   let currentY = pageHeight - margin;
+
+  // 1. Stylized Top Header: Logo (left) and Title (right)
+  const headerHeight = 50;
+  const logoImage = logoBytes && logoBytes.length > 0 ? await pdfDoc.embedPng(logoBytes).catch(() => null) : null;
+  
+  if (logoImage) {
+    const { width: lw, height: lh } = logoImage.scale(1);
+    const scale = (headerHeight - 10) / lh;
+    page.drawImage(logoImage, {
+      x: margin,
+      y: currentY - headerHeight + 5,
+      width: lw * scale,
+      height: lh * scale,
+    });
+  }
+
+  const titleText = '9.36 PROJECT SUMMARY';
+  const titleSize = 18;
+  const titleWidth = boldFont.widthOfTextAtSize(titleText, titleSize);
+  page.drawText(titleText, {
+    x: pageWidth - margin - titleWidth,
+    y: currentY - 30,
+    font: boldFont,
+    size: titleSize,
+    color: { type: 'RGB', red: 0.1, green: 0.2, blue: 0.5 }
+  });
+
+  currentY -= headerHeight + 10;
+
+  // 2. Project Name (Full Width)
+  const projectName = sanitize(project.project_name || 'Unnamed Project');
+  page.drawText(projectName, {
+    x: margin,
+    y: currentY,
+    font: boldFont,
+    size: 14,
+    color: { type: 'RGB', red: 0, green: 0, blue: 0 }
+  });
+  currentY -= 18;
+
+  // 3. Project Address (Below Name)
+  const projectAddress = sanitize(project.location || 'Not specified');
+  page.drawText(projectAddress, {
+    x: margin,
+    y: currentY,
+    font,
+    size: 10,
+    color: { type: 'RGB', red: 0.4, green: 0.4, blue: 0.4 }
+  });
+  currentY -= 25;
+
+  // Divider
+  page.drawLine({
+    start: { x: margin, y: currentY },
+    end: { x: pageWidth - margin, y: currentY },
+    thickness: 1,
+    color: { type: 'RGB', red: 0.8, green: 0.8, blue: 0.8 }
+  });
+  currentY -= 20;
+
+  const columnWidth = (pageWidth - margin * 3) / 2;
+  const leftColX = margin;
+  const rightColX = margin * 2 + columnWidth;
+  
+  let leftY = currentY;
+  let rightY = currentY;
 
   // Header info
   const headerFontSize = 10;
@@ -107,13 +173,6 @@ const buildReportPdf = async (project: any, company: any, logoBytes?: Uint8Array
     color: { type: 'RGB', red: 0.8, green: 0.8, blue: 0.8 }
   });
   currentY -= 15;
-
-  const columnWidth = (pageWidth - margin * 3) / 2;
-  const leftColX = margin;
-  const rightColX = margin * 2 + columnWidth;
-  
-  let leftY = currentY;
-  let rightY = currentY;
 
   const drawSection = (x: number, startY: number, title: string, items: {label: string, value: string}[]) => {
     let y = startY;
